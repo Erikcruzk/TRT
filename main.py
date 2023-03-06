@@ -10,7 +10,6 @@ def find_vulnerablities_and_repair_sc(sc_path):
         repaired_sc.find_vulnerabilities()
         vulnerability_differences = sc.get_vulnerabilities_difference(repaired_sc)
         print(f'{repaired_sc.sc_filename} fixes \n{vulnerability_differences}\n')
-    
 
 def main():
     sc_path = 'experiments/sc_to_repair/test_reentrancy.sol'
