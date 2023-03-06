@@ -56,7 +56,7 @@ class SC:
             model="code-davinci-002",
             prompt=self.generate_prompt(),
             temperature=temperature,
-            max_tokens=1182,
+            max_tokens=3000,
             top_p=top_p,
             frequency_penalty=0,
             presence_penalty=0,
