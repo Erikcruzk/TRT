@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from SC import SC
 import os
 
