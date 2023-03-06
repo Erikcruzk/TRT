@@ -14,15 +14,12 @@ contract Reentrance {
 
   function withdraw(uint _amount) public {
     if(balances[msg.sender] >= _amount) {
-      //<yes> <report>
-      uint256 allowedToWithdraw = balances[msg.sender] - _amount;
-      if(msg.sender.call.value(_amount)()) {
-        balances[msg.sender] = allowedToWithdraw;
-      }
-      //balances[msg.sender] -= _amount;
+      // <no> <report> REENTRANCY
+      // <yes> <fix> REENTRANCY
+      require(msg.sender.call.value(_amount)());
+      balances[msg.sender] -= _amount;
     }
   }
 
   function() public payable {}
 }
-

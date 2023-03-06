@@ -4,7 +4,7 @@ def find_vulnerablities_and_repair_sc(sc_path):
     sc = SC(sc_path)
     sc.find_vulnerabilities()
 
-    repaired_contracts = sc.get_codex_repaired_sc(1, 0.93, 2)
+    repaired_contracts = sc.get_codex_repaired_sc(1, 0.93, 1)
     print(f'\n\n{sc.sc_filename} Repairs')
     for repaired_sc in repaired_contracts:
         repaired_sc.find_vulnerabilities()
