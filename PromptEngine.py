@@ -39,7 +39,7 @@ class PromptEngine:
         """
         self.sc = sc
         
-    def generate_prompt(self, prompt_type = 'C_vulnerability_examples') -> str:
+    def generate_prompt(self, prompt_style = 'C_vulnerability_examples') -> str:
         """
         Generates a prompt for the OpenAI Codex API based on the given prompt type.
 
@@ -57,11 +57,11 @@ class PromptEngine:
             basic = f'/// The task is to repair the vulnerable below {self.sc.language} Smart Contract\n\n/// Vulnerable {self.sc.language} Smart Contract\n{self.sc.source_code}\n\n/// Fixed {self.sc.language} Smart Contract'
             vulnerability_context = f'/// The task is to repair the below {self.sc.language} Smart Contract that is, according to smart contract analyzers, vulnerable to {concatenate_with_and(self.sc.vulnerabilities)} attacks\n\n/// Vulnerable {self.sc.language} Smart Contract\n{self.sc.source_code}\n\n/// Fixed {self.sc.language} Smart Contract'
 
-            if prompt_type == 'A_basic':
+            if prompt_style == 'A_basic':
                 return basic
-            elif prompt_type == 'B_vulnerability_context':
+            elif prompt_style == 'B_vulnerability_context':
                 return vulnerability_context
-            elif prompt_type == 'C_vulnerability_examples':
+            elif prompt_style == 'C_vulnerability_examples':
                 directories = [ f'sc_repair_examples/{x}' for x in list(set(element for value in self.sc.vulnerabilities.values() for element in value))]
                 directories = [x for x in directories if os.path.exists(x)]
 
@@ -110,7 +110,7 @@ class PromptEngine:
                 try:
                     os.makedirs(os.path.dirname(repaired_sc_path), exist_ok=True)
                     with open(repaired_sc_path, 'w') as the_file:
-                        the_file.write(choice.text)
+                        the_file.write(choice.text.strip())
                 except Exception as e:
                     raise IOError(f"Failed to write to file '{repaired_sc_path}': {str(e)}")
                 finally:
