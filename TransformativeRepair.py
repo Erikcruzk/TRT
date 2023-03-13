@@ -6,11 +6,9 @@ from pyvis.network import Network
 from SmartContract import SmartContract
 from PromptEngine import PromptEngine
 from networkx.readwrite import json_graph
+import multiprocessing
 
 class TransformativeRepair:
-    
-    def __init__(self):
-        self.G = nx.DiGraph()
     
     def show_prompt_types(self, sc_path):
         """
@@ -35,13 +33,11 @@ class TransformativeRepair:
         print(f'C_vulnerability_examples\n\n{pe.generate_prompt("C_vulnerability_examples")}\n\n')
     
     # Visualize
-    def visualize_graph_pyvis(self, results_path):
-        nt = Network('100%', '100%', directed=True)
-        nt.from_nx(self.G)
+    def visualize_graph_pyvis(self, G:nx.DiGraph, results_path:str):
+        nt = Network('800', '100%', directed=True)
+        nt.from_nx(G)
         # nt.show_buttons(filter_=['physics'])
         nt.set_options('''{
-        "height": "100%",
-        "width": "100%",
         "physics": {
             "forceAtlas2Based": {
             "theta": 0.1,
@@ -65,12 +61,12 @@ class TransformativeRepair:
         nt.write_html(f'{results_path}.html')
         
         # Save to Json
-        data = json_graph.node_link_data(self.G)
+        data = json_graph.node_link_data(G)
         with open(f'{results_path}.json', 'w') as outfile:
             json.dump(data, outfile)
 
-    
-    def create_repair_results_network(self, sc_path:str, promt_style:str='C_vulnerability_examples', vulnerability_limitations:list=[], temperature:float=0.8, top_p:str=0.95, n_repairs:int=1):
+    @staticmethod
+    def create_repair_results_network(sc_path:str, promt_style:str='C_vulnerability_examples', vulnerability_limitations:list=[], temperature:float=0.8, top_p:str=0.95, n_repairs:int=1) -> nx.DiGraph:
         '''
         Finds vulnerabilities in a smart contract and attempts to repair it using Codex. Then, creates a network of the original smart contract and its repaired versions, showing the repaired vulnerabilities, if any.
 
@@ -86,9 +82,11 @@ class TransformativeRepair:
         :type top_p: float
         :param n_repairs: The number of repairs to attempt using the Codex API, defaults to 1.
         :type n_repairs: int
-        :return: None.
-        :rtype: None
+        :return: Graph.
+        :rtype: nx.DiGraph
         '''
+        G = nx.DiGraph()
+
         start_sc = SmartContract(sc_path)
         start_sc.find_vulnerabilities(vulnerability_limitations)
 
@@ -97,24 +95,25 @@ class TransformativeRepair:
 
         # Create Network
         # Add START node
-        self.G.add_node(start_sc.filename, group=1, size=30)
+        G.add_node(start_sc.filename, group=1, size=30)
         for repaired_sc in repaired_contracts:
             repaired_sc.find_vulnerabilities(vulnerability_limitations)
             repaired_vulnerabilities = start_sc.get_repaired_vulnerabilities(repaired_sc)
             
-            self.G.add_node(repaired_sc.filename, 
+            G.add_node(repaired_sc.filename, 
                 group = random.randint(4, 24))
 
             color = 'green'
             dashes = False
-            if 'error' in repaired_vulnerabilities:
-                color = 'red'
-                dashes = True
-            elif not repaired_vulnerabilities:
-                color = 'red'
-                dashes = False
+            for tool in repaired_vulnerabilities:
+                if 'error' in tool:
+                    color = 'red'
+                    dashes = True
+                elif not tool:
+                    color = 'red'
+                    dashes = False
             
-            self.G.add_edge(start_sc.filename, repaired_sc.filename, 
+            G.add_edge(start_sc.filename, repaired_sc.filename, 
                 color = color,
                 dashes = dashes,
                 weight=0.0,
@@ -123,4 +122,25 @@ class TransformativeRepair:
                 capacity=0,
                 length=0,
                 alpha=0.9)
+        return G
+            
+    def find_vulnerabilities_and_repair_sc_in_directory(self, directory_path:str, prompt_style:str='C_vulnerability_examples', vulnerability_limitations:list=[], temperature:float=0.8, top_p:str=0.95, n_repairs:int=1):
+        
+        sc_paths = [os.path.join(directory_path, sc_path) for sc_path in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, sc_path))]
+
+        
+        with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+            subgraphs = []
+            for sc_path in sc_paths:
+                subgraphs.append(pool.apply_async(self.create_repair_results_network, args=(sc_path, prompt_style, vulnerability_limitations, temperature, top_p, n_repairs)))
+            pool.close()
+            pool.join()
+        
+            results = [subgraph.get() for subgraph in subgraphs]
+
+        # Merge the sub-graphs into a single large graph
+        G = nx.compose_all(results)
+
+        return G
+
         
