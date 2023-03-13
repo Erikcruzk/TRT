@@ -95,13 +95,16 @@ class TransformativeRepair:
 
         # Create Network
         # Add START node
-        G.add_node(start_sc.filename, sc_data=start_sc, group=1, size=30)
+        G.add_node(start_sc.filename, 
+                    # sc_data=start_sc, 
+                    group=1, 
+                    size=30)
         for repaired_sc in repaired_contracts:
             repaired_sc.find_vulnerabilities(vulnerability_limitations)
             repaired_vulnerabilities = start_sc.get_repaired_vulnerabilities(repaired_sc)
             
             G.add_node(repaired_sc.filename, 
-                sc_data=repaired_sc, 
+                # sc_data=repaired_sc, 
                 group = random.randint(4, 24))
 
             color = 'green'
@@ -128,7 +131,6 @@ class TransformativeRepair:
     def find_vulnerabilities_and_repair_sc_in_directory(self, directory_path:str, prompt_style:str='C_vulnerability_examples', vulnerability_limitations:list=[], temperature:float=0.8, top_p:str=0.95, n_repairs:int=1):
         
         sc_paths = [os.path.join(directory_path, sc_path) for sc_path in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, sc_path))]
-
         
         with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
             subgraphs = []
