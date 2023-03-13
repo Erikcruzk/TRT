@@ -95,12 +95,13 @@ class TransformativeRepair:
 
         # Create Network
         # Add START node
-        G.add_node(start_sc.filename, group=1, size=30)
+        G.add_node(start_sc.filename, sc_data=start_sc, group=1, size=30)
         for repaired_sc in repaired_contracts:
             repaired_sc.find_vulnerabilities(vulnerability_limitations)
             repaired_vulnerabilities = start_sc.get_repaired_vulnerabilities(repaired_sc)
             
             G.add_node(repaired_sc.filename, 
+                sc_data=repaired_sc, 
                 group = random.randint(4, 24))
 
             color = 'green'
