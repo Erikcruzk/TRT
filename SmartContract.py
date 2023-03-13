@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import subprocess
 import json
@@ -36,10 +37,11 @@ class SmartContract:
         self.filename = os.path.basename(self.path)
         self.language = 'Solidity' if self.filename.endswith('.sol') else 'Unknown'
         self.source_code = open(self.path, 'r').read()
+        self.hash = hashlib.sha256(open(self.path, 'rb').read()).hexdigest()
         self.vulnerabilities = {}
         self.candidate_patches = []
     
-    def set_vulnerabilities(self, tool_name:str, tool_result:dict):
+    def set_vulnerabilities(self, tool_name:str, tool_result:dict, vulnerability_limitations:list=[]):
         """
         Set vulnerabilities for a given tool's result.
 
@@ -81,10 +83,14 @@ class SmartContract:
                     
                     # Finally add vulnerability name
                     self.vulnerabilities[tool_name].append(vulnerability_name)
+            # In strict mode clean undesired vulnerabilities
+            if vulnerability_limitations:
+                self.vulnerabilities[tool_name] = [x for x in self.vulnerabilities[tool_name] if x in vulnerability_limitations]
+
         except Exception as e:
             logging.critical("An exception occurred: %s", str(e), exc_info=True)
 
-    def load_vulnerabilities(self):
+    def load_vulnerabilities(self, vulnerability_limitations:list=[]):
         '''
         Load the detected vulnerabilities from the results directory of the vulnerability detection tools.
 
@@ -106,11 +112,11 @@ class SmartContract:
                     with open(os.path.join(full_path, 'result.json'), 'r') as f:
                         tool_result = json.load(f)
 
-                    self.set_vulnerabilities(tool_name, tool_result)
+                    self.set_vulnerabilities(tool_name, tool_result, vulnerability_limitations)
         except Exception as e:
             logging.critical("An exception occurred: %s", str(e), exc_info=True)
 
-    def find_vulnerabilities(self):
+    def find_vulnerabilities(self, vulnerability_limitations:list=[]):
         '''
         Use the Smart Bugs tool to find vulnerabilities in the smart contract.
 
@@ -119,7 +125,7 @@ class SmartContract:
         '''
         try:
             output = subprocess.run([f'./smartbugs/smartbugs -c smart_bugs_settings.yaml -f {self.path}'], capture_output=True, text=True, shell=True)
-            self.load_vulnerabilities()
+            self.load_vulnerabilities(vulnerability_limitations)
         except Exception as e:
             logging.critical("An exception occurred: %s", str(e), exc_info=True)
 
