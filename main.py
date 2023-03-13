@@ -3,6 +3,7 @@ from TransformativeRepair import TransformativeRepair
 def main():
     sc_path = 'experiments/sc_to_repair/reentrance.sol'
     sc_directory = 'experiments/sc_to_repair'
+    results_path = 'results/test_sb_curated_reentrancy'
 
     # 0. Initialize TFR!
     tfr = TransformativeRepair()
@@ -16,7 +17,7 @@ def main():
 
     # 3. Activate to Generate Network Grah of repairs of directory
     G = tfr.find_vulnerabilities_and_repair_sc_in_directory(sc_directory, prompt_style='C_vulnerability_examples', vulnerability_limitations=['reentrancy'], temperature=0.5, top_p=0.95, n_repairs=2)
-    tfr.visualize_graph_pyvis(G, 'results/test_sb_curated_reentrancy')
+    tfr.visualize_graph_pyvis(G, results_path)
 
 if __name__ == "__main__":
     main()
