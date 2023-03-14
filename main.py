@@ -1,29 +1,23 @@
-#!/usr/bin/python3
-from SC import SC
-import os
-
-def find_vulnerablities_and_repair_sc(sc_path):
-    sc = SC(sc_path)
-    sc.find_vulnerabilities()
-
-    repaired_contracts = sc.get_codex_repaired_sc(1, 0.93, 1)
-    print(f'\n\n{sc.sc_filename} Repairs')
-    for repaired_sc in repaired_contracts:
-        repaired_sc.find_vulnerabilities()
-        vulnerability_differences = sc.get_vulnerabilities_difference(repaired_sc)
-        print(f'{repaired_sc.sc_filename} fixes \n{vulnerability_differences}\n')
-
-def find_vulnerabilities_and_repair_sc_in_directory(directory_path):
-    for filename in os.listdir(directory_path):
-        find_vulnerablities_and_repair_sc(os.path.join(directory_path, filename))
-            
+from TransformativeRepair import TransformativeRepair
 
 def main():
-    # sc_path = 'experiments/sc_to_repair/test_reentrancy.sol'
-    # find_vulnerablities_and_repair_sc(sc_path)
+    sc_path = 'experiments/sc_to_repair/reentrance.sol'
+    sc_directory = 'experiments/sc_to_repair'
+    results_path = 'results/test_sb_curated_reentrancy'
 
-    directory_path = 'experiments/sc_to_repair'
-    find_vulnerabilities_and_repair_sc_in_directory(directory_path)
+    # 0. Initialize TFR!
+    tfr = TransformativeRepair()
+
+    # 1. Activate to show the different prompt_styles
+    # tfr.show_prompt_types(sc_path)
+
+    # 2. Activate to Generate a simple Network Graph of a simple repair
+    # G = tfr.create_repair_results_network(sc_path, promt_style='C_vulnerability_examples', vulnerability_limitations=['reentrancy'], temperature=0.5, top_p=0.95, n_repairs=2)
+    # tfr.visualize_graph_pyvis(G, 'results/simple_example')
+
+    # 3. Activate to Generate Network Grah of repairs of directory
+    G = tfr.find_vulnerabilities_and_repair_sc_in_directory(sc_directory, prompt_style='C_vulnerability_examples', vulnerability_limitations=['reentrancy'], temperature=0.5, top_p=0.95, n_repairs=2)
+    tfr.visualize_graph_pyvis(G, results_path)
 
 if __name__ == "__main__":
     main()
