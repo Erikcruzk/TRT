@@ -1,9 +1,10 @@
+from pathlib import Path
 import subprocess
 import json
 import os
 import traceback
+from typing import List
 import openai
-import decouple
 from SmartContract import SmartContract;
 import logging
 
@@ -26,9 +27,7 @@ def concatenate_with_and(vulnerabilities:dict) -> str:
         logging.critical("An exception occurred: %s", str(e), exc_info=True)
         return "unknown"
 
-class PromptEngine:
-    config = decouple.AutoConfig(' ')
-    openai.api_key = config('OPENAI_API_KEY')   
+class PromptEngine:    
 
     def __init__(self, sc: SmartContract):
         """
@@ -38,13 +37,14 @@ class PromptEngine:
         - sc: A SmartContract object representing the Solidity smart contract to be repaired.
         """
         self.sc = sc
+        self.prompt = None
         
-    def generate_prompt(self, prompt_style = 'C_vulnerability_examples') -> str:
+    def generate_prompt(self, experiment_settings:dict) -> str:
         """
         Generates a prompt for the OpenAI Codex API based on the given prompt type.
 
         Args:
-        - prompt_type: A string indicating the type of prompt to generate. Default is 'C_vulnerability_examples'.
+        - prompt_style: A string indicating the type of prompt to generate. Default is 'C_vulnerability_examples'.
         
         Returns:
         - A string representing the generated prompt.
@@ -57,12 +57,12 @@ class PromptEngine:
             basic = f'/// The task is to repair the vulnerable below {self.sc.language} Smart Contract\n\n/// Vulnerable {self.sc.language} Smart Contract\n{self.sc.source_code}\n\n/// Fixed {self.sc.language} Smart Contract'
             vulnerability_context = f'/// The task is to repair the below {self.sc.language} Smart Contract that is, according to smart contract analyzers, vulnerable to {concatenate_with_and(self.sc.vulnerabilities)} attacks\n\n/// Vulnerable {self.sc.language} Smart Contract\n{self.sc.source_code}\n\n/// Fixed {self.sc.language} Smart Contract'
 
-            if prompt_style == 'A_basic':
+            if experiment_settings["prompt_style"] == 'A_basic':
                 return basic
-            elif prompt_style == 'B_vulnerability_context':
+            elif experiment_settings["prompt_style"] == 'B_vulnerability_context':
                 return vulnerability_context
-            elif prompt_style == 'C_vulnerability_examples':
-                directories = [ f'sc_repair_examples/{x}' for x in list(set(element for value in self.sc.vulnerabilities.values() for element in value))]
+            elif experiment_settings["prompt_style"] == 'C_vulnerability_examples':
+                directories = [f'{experiment_settings["patch_examples_directory"]}/{x}' for x in list(set(element for value in self.sc.vulnerabilities.values() for element in value))]
                 directories = [x for x in directories if os.path.exists(x)]
 
                 if not directories:
@@ -75,7 +75,7 @@ class PromptEngine:
             logging.critical("An exception occurred: %s", str(e), exc_info=True)
             return vulnerability_context
 
-    def get_codex_repaired_sc(self, prompt_style = 'C_vulnerability_examples', temperature:float = 0.8, top_p:float = 0.95, n:int=1): # TODO: add type of out
+    def get_codex_repaired_sc(self, experiment_settings:dict, llm_settings:dict, sc:SmartContract, prompt:str) -> List[str]:
         """
         Generates a repaired version of the Solidity smart contract using the OpenAI Codex API.
 
@@ -90,38 +90,41 @@ class PromptEngine:
         """
         try:
             # Generate Repair
-            response = openai.Completion.create(
-                model='code-davinci-002',
-                prompt=self.generate_prompt(prompt_style),
-                temperature=temperature,
-                max_tokens=1182,
-                top_p=top_p,
+            openai.api_key = os.environ.get(llm_settings["secret_api_key"]) 
+            response = openai.ChatCompletion.create(
+                model=llm_settings["model_name"],
+                messages=[
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=llm_settings["temperature"],
+                max_tokens=1182, # TODO: calculate tokens
+                top_p=llm_settings["top_p"],
                 frequency_penalty=0,
                 presence_penalty=0,
-                stop=['///'],
-                n=n,
+                stop=llm_settings["stop"],
+                n=llm_settings["num_candidate_patches"],
                 )
 
-            # Save repair
-            repaired_sc_path_template = f'experiments/sc_repaired/{{i}}_repaired_{self.sc.filename}'
-            repaired_contracts = []
+            # Save repair            
+            candidate_patches_paths = []
             for i, choice in enumerate(response.choices):
-                repaired_sc_path = repaired_sc_path_template.format(i=i)
                 try:
-                    os.makedirs(os.path.dirname(repaired_sc_path), exist_ok=True)
-                    with open(repaired_sc_path, 'w') as the_file:
-                        the_file.write(choice.text.strip())
-                except Exception as e:
-                    raise IOError(f"Failed to write to file '{repaired_sc_path}': {str(e)}")
-                finally:
-                    the_file.close()
-                try:
-                    repaired_sc = SmartContract(repaired_sc_path)
-                    repaired_contracts.append(repaired_sc)
-                except Exception as e:
-                    raise ValueError(f"Failed to parse repaired contract from file '{repaired_sc_path}': {str(e)}")
+                    repaired_sc_dir = os.path.join(sc.results_dir,
+                        "candidate_patches",
+                        f'patch_{i}')
+                    
+                    Path(repaired_sc_dir).mkdir(parents=True, exist_ok=True) # TODO: minimize mkdir
 
-            return repaired_contracts
+                    patch_path = os.path.join(repaired_sc_dir, f'patch_{i}.sol')
+                    
+                    with open(patch_path, 'w') as repaired_sc:
+                        repaired_sc.write(choice["message"]["content"].strip())
+                    
+                    candidate_patches_paths.append(patch_path)
+                except Exception as e:
+                    raise IOError(f"Fail on '{patch_path}': {str(e)}")         
+
+            return candidate_patches_paths
         except Exception as e:
             logging.critical("An exception occurred: %s", str(e), exc_info=True)
             return []
