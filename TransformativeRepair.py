@@ -237,7 +237,7 @@ class TransformativeRepair:
 
             #### Step 5: Enqueue to repair queue
             if do_repair_sc:
-                repair_sc_queue.put(sc.path)
+                repair_sc_queue.put(sc.path, sc_results_dir)
         except Exception as e:
             logging.critical(f'An exception occurred when finding vulnerabilities for contract={sc_path}: {str(e)}', exc_info=True)            
 
