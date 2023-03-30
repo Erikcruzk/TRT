@@ -115,7 +115,7 @@ class PromptEngine:
                     
                     Path(repaired_sc_dir).mkdir(parents=True, exist_ok=True) # TODO: minimize mkdir
 
-                    patch_path = os.path.join(repaired_sc_dir, f'patch_{i}.sol')
+                    patch_path = Path(os.path.join(repaired_sc_dir, f'patch_{i}.sol'))
                     
                     with open(patch_path, 'w') as repaired_sc:
                         repaired_sc.write(choice["message"]["content"].strip())

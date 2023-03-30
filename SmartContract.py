@@ -29,25 +29,25 @@ class SmartContract:
     - get_vulnerabilities_difference(self, other_sc): compares the vulnerabilities detected in the current SmartContract instance to those detected in another SmartContract instance, and returns the differences.
     '''
 
-    def __init__(self, experiment_settings:dict, sc_path:str, sc_results_dir:str):
+    def __init__(self, experiment_settings:dict, sc_path:Path):
         '''
         Constructor method that initializes a SmartContract object with the specified Solidity smart contract file path.
 
         Args:
         - sc_path (str): a string representing the file path to the Solidity smart contract.
         '''
-        self.experiment_settings = experiment_settings
-        self.path = sc_path
+        self.experiment_settings:dict = experiment_settings
+        self.path:Path = sc_path
+        self.results_dir:Path = self.path.parent.absolute()
+
         self.filename = os.path.basename(self.path)
         self.name, _ = os.path.splitext(self.filename)
         self.language = 'Solidity' if self.filename.endswith('.sol') else 'Unknown'
         self.source_code = open(self.path, 'r').read()
         self.hash = hashlib.sha256(open(self.path, 'rb').read()).hexdigest()
+
         self.vulnerabilities = {}
         self.candidate_patches = []
-
-        self.results_dir = Path(os.path.join(sc_results_dir,
-                self.name))
     
     def set_vulnerabilities(self, tool_name:str, tool_result:dict):
         """

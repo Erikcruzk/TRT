@@ -13,6 +13,7 @@ import multiprocessing
 from typing import List
 from pathlib import Path
 import queue
+import shutil
 
 class TransformativeRepair:
     
@@ -21,7 +22,7 @@ class TransformativeRepair:
         self.llm_settings = llm_settings
 
         self.experiments_dir:str = f'experiment_results/{experiment_settings["experiment_name"]}_{experiment_settings["llm_model"]}'
-        self.contracts_dir:str = experiment_settings["vulnerable_contracts_directory"]
+        self.vulnerable_contracts_dir:str = experiment_settings["vulnerable_contracts_directory"]
         self.target_vulnerabilities:List[str] = experiment_settings["target_vulnerabilities"]
         self.patch_examples_dir:str = experiment_settings["patch_examples_directory"]
         self.smartbugs_tools:List[str] = experiment_settings["smartbugs_tools"]
@@ -112,24 +113,19 @@ class TransformativeRepair:
 
         #### Step 1: Initialize SC
         sc = SmartContract(sc_path)
-
-        #### Step2: Specify the results directory path
-        sc_results_dir = Path(os.path.join("experiment_results",
-            f'{experiment_settings["experiment_name"]}_{model_name}',
-            sc.name))
         
-        #### Step 3: Find Vulnerabilities
-        sc.run_smartbugs(experiment_settings, sc_results_dir)
+        #### Step 2: Find Vulnerabilities
+        sc.run_smartbugs()
 
-        #### Step 4: Create Prompt Engine and generate prompt
+        #### Step 3: Create Prompt Engine and generate prompt
         pe = PromptEngine(sc)
         prompt = pe.generate_prompt(experiment_settings)
         # Save prompt
-        with open(os.path.join(sc_results_dir, "prompt.txt"), 'w') as file:
+        with open(os.path.join(sc.results_dir, "prompt.txt"), 'w') as file:
             file.write(prompt)
 
 
-        #### Step 5: Repair smart contract
+        #### Step 4: Repair smart contract
         if model_name == "gpt-3.5-turbo":
             pe.get_codex_repaired_sc(experiment_settings, llm_settings[model_name], sc, prompt)
         else:
@@ -200,8 +196,8 @@ class TransformativeRepair:
  
     def find_vulnerabilities_and_repair_sc_in_directory(self):
         
-        sc_paths = [os.path.join(self.contracts_dir, sc_path) for sc_path in os.listdir(self.contracts_dir) 
-                    if os.path.isfile(os.path.join(self.contracts_dir, sc_path))
+        sc_paths = [os.path.join(self.vulnerable_contracts_dir, sc_path) for sc_path in os.listdir(self.vulnerable_contracts_dir) 
+                    if os.path.isfile(os.path.join(self.vulnerable_contracts_dir, sc_path))
                     and os.path.splitext(os.path.basename(sc_path))[1] == ".sol"]
         
         TransformativeRepair.create_repair_results_network(sc_paths[0], self.experiment_settings, self.llm_settings)
@@ -221,23 +217,18 @@ class TransformativeRepair:
         return G
     
     @staticmethod
-    def find_vulnerabilities(experiment_settings:dict, sc_path:str, sc_results_dir:str, do_repair_sc:bool, repair_sc_queue:queue.Queue) -> None:
+    def find_vulnerabilities(experiment_settings:dict, sc_path:Path, do_repair_sc:bool, repair_sc_queue:queue.Queue) -> None:
 
         try:
             #### Step 1: Initialize SC
-            sc = SmartContract(experiment_settings, sc_path, sc_results_dir)
-            
-            #### Step 3: Create results directory
-            if sc.results_dir.exists():
-                return # vulnerabilities already found TODO: check results file      
-            sc.results_dir.mkdir(parents=True, exist_ok=True)
+            sc = SmartContract(experiment_settings, sc_path)
 
-            #### Step 4: Find Vulnerabilities
+            #### Step 2: Find Vulnerabilities
             sc.run_smartbugs()
 
-            #### Step 5: Enqueue to repair queue
+            #### Step 3: Enqueue to repair queue
             if do_repair_sc:
-                repair_sc_queue.put(sc.path, sc_results_dir)
+                repair_sc_queue.put(sc.path)
         except Exception as e:
             logging.critical(f'An exception occurred when finding vulnerabilities for contract={sc_path}: {str(e)}', exc_info=True)            
 
@@ -248,8 +239,8 @@ class TransformativeRepair:
         while True:
             try:
                 sleeps = 0
-                sc_path, sc_results_dir, do_repair_sc = smartbugs_sc_queue.get(block=False)
-                TransformativeRepair.find_vulnerabilities(experiment_setting, sc_path, sc_results_dir, do_repair_sc, repair_sc_queue)
+                sc_path, do_repair_sc = smartbugs_sc_queue.get(block=False)
+                TransformativeRepair.find_vulnerabilities(experiment_setting, sc_path, do_repair_sc, repair_sc_queue)
             except queue.Empty:
                 # The queue is empty, so sleep for a short time before trying again
                 if sleeps == 10:
@@ -259,11 +250,17 @@ class TransformativeRepair:
 
 
     @staticmethod
-    def repair_sc(experiment_settings:dict, llm_settings:dict, sc_path:str, sc_results_dir:str, smartbugs_sc_queue:queue.Queue):
+    def repair_sc(experiment_settings:dict, llm_settings:dict, sc_path:str, smartbugs_sc_queue:queue.Queue):
         
+
         #### Step 1: Initialize SC
-        sc = SmartContract(experiment_settings, sc_path, sc_results_dir)
+        sc = SmartContract(experiment_settings, sc_path)
         
+        # Check if repair already done successfull
+        results_0_dir = Path(os.path.join(sc.results_dir, "candidate_patches"))
+        if results_0_dir.exists():
+            return # vulnerabilities already found TODO: check results file      
+
         #### Step 2: Create Prompt Engine and generate prompt
         pe = PromptEngine(sc)
         prompt = pe.generate_prompt(experiment_settings)
@@ -281,8 +278,8 @@ class TransformativeRepair:
             raise KeyError(f'model_name={model_name} not found!')
         
         #### Step 5: Add to find vulnerabilities queue
-        for candidate_patch in candidate_patches_paths:
-            smartbugs_sc_queue.put(candidate_patch, os.path.join(sc.results_dir, "candidate_patches"), False)
+        for candidate_patch_path in candidate_patches_paths:
+            smartbugs_sc_queue.put((candidate_patch_path, False))
 
 
     @staticmethod
@@ -291,8 +288,8 @@ class TransformativeRepair:
         while True:
             try:
                 sleeps = 0
-                sc_path, sc_results_dir = repair_sc_queue.get(block=False)
-                TransformativeRepair.repair_sc(experiment_setting, llm_settings, sc_path, sc_results_dir, smartbugs_sc_queue)
+                sc_path = repair_sc_queue.get(block=False)
+                TransformativeRepair.repair_sc(experiment_setting, llm_settings, sc_path, smartbugs_sc_queue)
             except queue.Empty:
                 # The queue is empty, so sleep for a short time before trying again
                 if sleeps == 10:
@@ -303,11 +300,27 @@ class TransformativeRepair:
     def start(self):
         
         #### Step 1: Add all vulnerable sc to smartbugs_sc_queue
-        results_dir = os.path.join("experiment_results",
-                f'{self.experiment_settings["experiment_name"]}_{self.experiment_settings["llm_model"]}')
-        for sc_path in os.listdir(self.contracts_dir):
-            if os.path.isfile(os.path.join(self.contracts_dir, sc_path)) and os.path.splitext(os.path.basename(sc_path))[1] == ".sol":
-                self.smartbugs_sc_queue.put((os.path.join(self.contracts_dir, sc_path), results_dir, True))
+
+        results_dir = Path(os.path.join("experiment_results",
+                f'{self.experiment_settings["experiment_name"]}_{self.experiment_settings["llm_model"]}'))
+        results_dir.mkdir(parents=True, exist_ok=True)
+
+        for sc_filename in os.listdir(self.vulnerable_contracts_dir):
+            sc_name, file_extension = os.path.splitext(os.path.basename(sc_filename))
+            sc_path = os.path.join(self.vulnerable_contracts_dir, sc_filename)
+            if os.path.isfile(sc_path) and file_extension == ".sol":
+                # Create dir for contract
+                results_dir =  Path(os.path.join("experiment_results",
+                f'{self.experiment_settings["experiment_name"]}_{self.experiment_settings["llm_model"]}'),
+                sc_name)
+                results_dir.mkdir(parents=True, exist_ok=True)
+
+                # Copy vulnerable sc to results
+                sc_results_path = Path(os.path.join(results_dir, sc_filename))
+                shutil.copyfile(sc_path, sc_results_path)
+                
+                # Add to results
+                self.smartbugs_sc_queue.put((sc_results_path, True))
         # sc_paths = [self.queue_find_vulnerabilities.put(os.path.join(self.contracts_dir, sc_path)) for sc_path in os.listdir(self.contracts_dir) 
         #             if os.path.isfile(os.path.join(self.contracts_dir, sc_path))
         #             and os.path.splitext(os.path.basename(sc_path))[1] == ".sol"]
@@ -321,7 +334,6 @@ class TransformativeRepair:
         for i in range(self.experiment_settings["n_repair_threads"]):
             repair_thread = threading.Thread(target=TransformativeRepair.consumer_of_repair_queue, args=(self.experiment_settings, self.llm_settings, self.smartbugs_sc_queue, self.repair_sc_queue))
             repair_thread.start()
-            repair_thread.join()
 
         # smartbugs_thread = threading.Thread(target=TransformativeRepair.start_smartbugs_analyzers, args=(self.experiment_settings, sc_paths))
         # codex_thread = threading.Thread(target=launch_codex_service, args=(contracts_dir, results_dir))
