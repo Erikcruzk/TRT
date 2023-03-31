@@ -24,6 +24,7 @@ def main():
 
     # 0. Initialize TFR!
     tfr = TransformativeRepair(config["experiment_settings"], config["llm_settings"])
+    #TransformativeRepair.create_summary(config["experiment_settings"], config["llm_settings"], None, True)
     tfr.start()
 
     toc = time.perf_counter()
