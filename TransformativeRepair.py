@@ -1,15 +1,14 @@
 import json
 import logging
 import os
-import random
 import threading
 import time
+import traceback
 import networkx as nx
 from pyvis.network import Network
 from SmartContract import SmartContract
 from PromptEngine import PromptEngine
 from networkx.readwrite import json_graph
-import multiprocessing
 from typing import List
 from pathlib import Path
 import queue
@@ -57,7 +56,8 @@ class TransformativeRepair:
         print(f'C_vulnerability_examples\n\n{pe.generate_prompt("C_vulnerability_examples")}\n\n')
     
     # Visualize
-    def visualize_graph_pyvis(self, G:nx.DiGraph, results_path:str):
+    @staticmethod
+    def save_graph(G:nx.DiGraph, results_path:str):
         nt = Network('800', '100%', directed=True)
         nt.from_nx(G)
         # nt.show_buttons(filter_=['physics'])
@@ -87,134 +87,103 @@ class TransformativeRepair:
         # Save to Json
         data = json_graph.node_link_data(G)
         with open(f'{results_path}.json', 'w') as outfile:
-            json.dump(data, outfile)
-
+            json.dump(data, outfile)    
+    
     @staticmethod
-    def create_repair_results_network(sc_path, experiment_settings:dict, llm_settings:dict, smartbugs_sc_queue:queue.Queue) -> nx.DiGraph:
-        '''
-        Finds vulnerabilities in a smart contract and attempts to repair it using Codex. Then, creates a network of the original smart contract and its repaired versions, showing the repaired vulnerabilities, if any.
+    def get_repaired_vulnerabilities(original_vulnerabilities:dict, patch_vulnerabilities:dict) -> dict:
+        try:
+            repaired_vulnerabilities = {}
+            all_tool_repair = True
+            for tool, tool_vulnerabilities in patch_vulnerabilities.items():
+                if('error' in tool_vulnerabilities):
+                    repaired_vulnerabilities[tool] = tool_vulnerabilities
+                    all_tool_repair = False
+                    continue
 
-        :param sc_path: The file path of the smart contract to repair.
-        :type sc_path: str
-        :param prompt_style: The prompt style to use for the Codex API, defaults to 'C_vulnerability_examples'.
-        :type prompt_style: str
-        :param vulnerability_limitations: A list of vulnerability limitations to consider when finding and repairing vulnerabilities, defaults to an empty list.
-        :type vulnerability_limitations: list
-        :param temperature: A temperature value to use for the Codex API, defaults to 0.8.
-        :type temperature: float
-        :param top_p: A top-p value to use for the Codex API, defaults to 0.95.
-        :type top_p: float
-        :param n_repairs: The number of repairs to attempt using the Codex API, defaults to 1.
-        :type n_repairs: int
-        :return: Graph.
-        :rtype: nx.DiGraph
-        '''
-        model_name = experiment_settings["llm_model"]
+                #repaired_vulnerabilities[tool] = [x for x in original_vulnerabilities[tool] if x not in tool_vulnerabilities]
 
-        #### Step 1: Initialize SC
-        sc = SmartContract(sc_path)
-        
-        #### Step 2: Find Vulnerabilities
-        sc.run_smartbugs()
-
-        #### Step 3: Create Prompt Engine and generate prompt
-        pe = PromptEngine(sc)
-        prompt = pe.generate_prompt(experiment_settings)
-        # Save prompt
-        with open(os.path.join(sc.results_dir, "prompt.txt"), 'w') as file:
-            file.write(prompt)
-
-
-        #### Step 4: Repair smart contract
-        if model_name == "gpt-3.5-turbo":
-            pe.get_codex_repaired_sc(experiment_settings, llm_settings[model_name], sc, prompt)
-        else:
-            raise KeyError(f'model_name={model_name} not found!')
-        
-        smartbugs_sc_queue.put((sc.path, False))
-
-
-        # Path(os.path.join(f'experiment_results/{experiment_settings["experiment_name"]}_{experiment_settings["llm_model"]}',
-        #                   sc_name)).mkdir(parents=True, exist_ok=True)
-
-        
-
-
-        # Path(experiments_dir).mkdir(parents=True, exist_ok=True)
-        # sc_path = 'experiments/sc_to_repair/reentrance.sol'
-        # sc_directory = 'experiments/sc_to_repair'
-        
-        # target_vulnerabilities = experiment_settings["target_vulnerabilities"]
-        # prompt_style = experiment_settings["prompt_style"]        
-
-        # start_sc.find_vulnerabilities(target_vulnerabilities)
-
-
-
-
-        # pe = PromptEngine(start_sc)
-
-        
-        # repaired_contracts = pe.get_codex_repaired_sc(prompt_style, 0.8, 0.95, 1)
-        # repaired_contracts = pe.get_codex_repaired_sc(self.prompt_style, temperature, top_p, n_repairs)
-
-        # G = nx.DiGraph()
-        # # Create Network
-        # # Add START node
-        # G.add_node(start_sc.filename, 
-        #             # sc_data=start_sc, 
-        #             group=1, 
-        #             size=30)
-        # for repaired_sc in repaired_contracts:
-        #     repaired_sc.find_vulnerabilities(self.target_vulnerabilities)
-        #     repaired_vulnerabilities = start_sc.get_repaired_vulnerabilities(repaired_sc)
+                repaired_vulnerabilities[tool] = [x for x in original_vulnerabilities[tool] + tool_vulnerabilities if x not in original_vulnerabilities[tool] or x not in tool_vulnerabilities]
+                if tool_vulnerabilities:
+                    all_tool_repair = False
             
-        #     G.add_node(repaired_sc.filename, 
-        #         # sc_data=repaired_sc, 
-        #         group = random.randint(4, 24))
+            return repaired_vulnerabilities, all_tool_repair
+        except Exception as e:
+            logging.critical("An exception occurred: %s", str(e), exc_info=True)
+            return {"error": str(e), 'stacktrace': traceback.format_exc()}
+    
+    @staticmethod
+    def create_summary(experiment_settings:dict, llm_settings:dict, stop_event:threading.Event):
 
-        #     color = 'green'
-        #     dashes = False
-        #     for tool in repaired_vulnerabilities:
-        #         if 'error' in tool:
-        #             color = 'red'
-        #             dashes = True
-        #         elif not tool:
-        #             color = 'red'
-        #             dashes = False
+        G = nx.DiGraph()
+        summary = {}
+
+        results_dir = Path(os.path.join("experiment_results",
+            f'{experiment_settings["experiment_name"]}_{experiment_settings["llm_model"]}'))
+        
+        # Loop that checks that all patches have got their vulnerablities.json => they are done
+        while True:
+            time.sleep(3)
+            try:
+                finished = True
+                for sc_dir in [os.path.join(results_dir, item) for item in os.listdir(results_dir) if os.path.isdir(os.path.join(results_dir, item))]:
+                    candidate_patches_path = os.path.join(sc_dir, "candidate_patches")
+                    for patch_dir in [os.path.join(candidate_patches_path, item) for item in os.listdir(candidate_patches_path) if os.path.isdir(os.path.join(candidate_patches_path, item))]:
+                        if "vulnerabilities.json" not in os.listdir(patch_dir):
+                            finished = False
+                if finished:
+                    break
+
+            except Exception as e:
+                logging.warning("An exception occurred: %s", str(e), exc_info=True)              
+
+        # Create summary
+        for sc_name in [os.path.join(results_dir, item) for item in os.listdir(results_dir) if os.path.isdir(os.path.join(results_dir, item))]:
             
-        #     G.add_edge(start_sc.filename, repaired_sc.filename, 
-        #         color = color,
-        #         dashes = dashes,
-        #         weight=0.0,
-        #         title=f'Equal={start_sc.hash == repaired_sc.hash} RV={json.dumps(repaired_vulnerabilities)}',
-        #         equal= f'Equal={start_sc.hash == repaired_sc.hash}',
-        #         capacity=0,
-        #         length=0,
-        #         alpha=0.9)
-        # return G
- 
-    def find_vulnerabilities_and_repair_sc_in_directory(self):
-        
-        sc_paths = [os.path.join(self.vulnerable_contracts_dir, sc_path) for sc_path in os.listdir(self.vulnerable_contracts_dir) 
-                    if os.path.isfile(os.path.join(self.vulnerable_contracts_dir, sc_path))
-                    and os.path.splitext(os.path.basename(sc_path))[1] == ".sol"]
-        
-        TransformativeRepair.create_repair_results_network(sc_paths[0], self.experiment_settings, self.llm_settings)
-        
-        # with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-        #     subgraphs = []
-        #     for sc_path in sc_paths:
-        #         subgraphs.append(pool.apply_async(TransformativeRepair.create_repair_results_network, args=(sc_path, self.experiment_settings, self.llm_settings)))
-        #     pool.close()
-        #     pool.join()
-        
-        #     results = [subgraph.get() for subgraph in subgraphs]
+            # Create Network
+            # Add START node
+            G.add_node(sc_name, 
+                # sc_data=start_sc, 
+                group=1, 
+                size=30)
 
-        # Merge the sub-graphs into a single large graph
-        G = nx.compose_all(results)
+            summary[sc_name] = {}
+            summary[sc_name]["plausible_patches"] = 0
+            summary[sc_name]["repaired_vulnerability"] = []
+            with open(os.path.join(sc_dir, "vulnerabilities.json")) as f:
+                original_vulnerabilities = json.load(f)
+                candidate_patches_dir = os.path.join(sc_dir, 'candidate_patches')
+            for patch_name in os.listdir(candidate_patches_dir):
+                patch_vulnerabilities_file = os.path.join(candidate_patches_dir, patch_name, 'vulnerabilities.json')
+                with open(patch_vulnerabilities_file) as f:
+                    patch_vulnerabilities = json.load(f)
+                
+                repaired_vulnerabilities_dict, all_tool_repair = TransformativeRepair.get_repaired_vulnerabilities(original_vulnerabilities, patch_vulnerabilities)
+                
+                if all_tool_repair:
+                    summary[sc_name]["plausible_patches"] += 1
+                    summary[sc_name]["repaired_vulnerability"] = list(set(summary[sc_name]["repaired_vulnerability"] + [v for sublist in repaired_vulnerabilities_dict.values() for item in sublist for v in (item if isinstance(item, list) else [item])]))
+                    G.add_node(patch_name, 
+                        # sc_data=start_sc,
+                        color="green")
+                else:
+                    G.add_node(patch_name, 
+                        # sc_data=start_sc,
+                        color="red")
+                
+                G.add_edge(sc_name, patch_name)
+                
+        
+        with open(os.path.join(results_dir, "summary_experiment.json"), "w") as outfile:
+            outfile.write(json.dumps(summary))
+        
+        TransformativeRepair.save_graph(G, results_dir)        
 
-        return G
+        # Stop all threads and finish program
+        for thread in threading.enumerate():
+            if thread != threading.main_thread():
+                stop_event.set()
+
+
     
     @staticmethod
     def find_vulnerabilities(experiment_settings:dict, sc_path:Path, do_repair_sc:bool, repair_sc_queue:queue.Queue) -> None:
@@ -234,19 +203,14 @@ class TransformativeRepair:
 
 
     @staticmethod
-    def consumer_of_vulnerabilities_queue(experiment_setting:dict, smartbugs_sc_queue:queue.Queue, repair_sc_queue:queue.Queue) -> None:
-        sleeps: 0
-        while True:
+    def consumer_of_vulnerabilities_queue(experiment_setting:dict, smartbugs_sc_queue:queue.Queue, repair_sc_queue:queue.Queue, stop_event:threading.Event) -> None:
+
+        while not stop_event.is_set():
             try:
-                sleeps = 0
                 sc_path, do_repair_sc = smartbugs_sc_queue.get(block=False)
                 TransformativeRepair.find_vulnerabilities(experiment_setting, sc_path, do_repair_sc, repair_sc_queue)
             except queue.Empty:
-                # The queue is empty, so sleep for a short time before trying again
-                if sleeps == 10:
-                    return
                 time.sleep(10)
-                sleeps += 1
 
 
     @staticmethod
@@ -283,24 +247,17 @@ class TransformativeRepair:
 
 
     @staticmethod
-    def consumer_of_repair_queue(experiment_setting:dict, llm_settings:dict, smartbugs_sc_queue:queue.Queue, repair_sc_queue:queue.Queue):
-        sleeps: 0
-        while True:
+    def consumer_of_repair_queue(experiment_setting:dict, llm_settings:dict, smartbugs_sc_queue:queue.Queue, repair_sc_queue:queue.Queue, stop_event:threading.Event):
+        while not stop_event.is_set():
             try:
-                sleeps = 0
                 sc_path = repair_sc_queue.get(block=False)
                 TransformativeRepair.repair_sc(experiment_setting, llm_settings, sc_path, smartbugs_sc_queue)
             except queue.Empty:
-                # The queue is empty, so sleep for a short time before trying again
-                if sleeps == 10:
-                    return
                 time.sleep(10)
-                sleeps += 1
     
     def start(self):
         
         #### Step 1: Add all vulnerable sc to smartbugs_sc_queue
-
         results_dir = Path(os.path.join("experiment_results",
                 f'{self.experiment_settings["experiment_name"]}_{self.experiment_settings["llm_model"]}'))
         results_dir.mkdir(parents=True, exist_ok=True)
@@ -321,39 +278,21 @@ class TransformativeRepair:
                 
                 # Add to results
                 self.smartbugs_sc_queue.put((sc_results_path, True))
-        # sc_paths = [self.queue_find_vulnerabilities.put(os.path.join(self.contracts_dir, sc_path)) for sc_path in os.listdir(self.contracts_dir) 
-        #             if os.path.isfile(os.path.join(self.contracts_dir, sc_path))
-        #             and os.path.splitext(os.path.basename(sc_path))[1] == ".sol"]
-        
+
+        stop_event = threading.Event()
         #### Step 2: Consume smartbugs_queue
         for i in range(self.experiment_settings["n_smartbugs_threads"]):
-            smartbugs_thread = threading.Thread(target=TransformativeRepair.consumer_of_vulnerabilities_queue, args=(self.experiment_settings, self.smartbugs_sc_queue, self.repair_sc_queue))
+            smartbugs_thread = threading.Thread(target=TransformativeRepair.consumer_of_vulnerabilities_queue, args=(self.experiment_settings, self.smartbugs_sc_queue, self.repair_sc_queue, stop_event))
             smartbugs_thread.start()
 
         #### Step 2: Consume smart repair_sc_queue
         for i in range(self.experiment_settings["n_repair_threads"]):
-            repair_thread = threading.Thread(target=TransformativeRepair.consumer_of_repair_queue, args=(self.experiment_settings, self.llm_settings, self.smartbugs_sc_queue, self.repair_sc_queue))
+            repair_thread = threading.Thread(target=TransformativeRepair.consumer_of_repair_queue, args=(self.experiment_settings, self.llm_settings, self.smartbugs_sc_queue, self.repair_sc_queue, stop_event))
             repair_thread.start()
 
-        # smartbugs_thread = threading.Thread(target=TransformativeRepair.start_smartbugs_analyzers, args=(self.experiment_settings, sc_paths))
-        # codex_thread = threading.Thread(target=launch_codex_service, args=(contracts_dir, results_dir))
-        # smartbugs_thread.start()
-        # codex_thread.start()
+        #### Start Summary Thread
+        summary_thread = threading.Thread(target=TransformativeRepair.create_summary, args=(self.experiment_settings, self.llm_settings, stop_event))
+        summary_thread.start()
 
-        # TransformativeRepair.create_repair_results_network(sc_paths[0], self.experiment_settings, self.llm_settings)
-        
-        # with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-        #     subgraphs = []
-        #     for sc_path in sc_paths:
-        #         subgraphs.append(pool.apply_async(TransformativeRepair.create_repair_results_network, args=(sc_path, self.experiment_settings, self.llm_settings)))
-        #     pool.close()
-        #     pool.join()
-        
-        #     results = [subgraph.get() for subgraph in subgraphs]
-
-        # Merge the sub-graphs into a single large graph
-        # G = nx.compose_all(results)
-
-        #return
 
         
