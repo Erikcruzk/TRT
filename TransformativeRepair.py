@@ -13,6 +13,8 @@ from typing import List
 from pathlib import Path
 import queue
 import shutil
+from tqdm import tqdm
+
 
 class TransformativeRepair:
     
@@ -112,7 +114,7 @@ class TransformativeRepair:
             return {"error": str(e), 'stacktrace': traceback.format_exc()}
     
     @staticmethod
-    def create_summary(experiment_settings:dict, llm_settings:dict, stop_event:threading.Event):
+    def create_summary(experiment_settings:dict, llm_settings:dict, stop_event:threading.Event=None, finished=False):
 
         G = nx.DiGraph()
         summary = {}
@@ -121,7 +123,7 @@ class TransformativeRepair:
             f'{experiment_settings["experiment_name"]}_{experiment_settings["llm_model"]}'))
         
         # Loop that checks that all patches have got their vulnerablities.json => they are done
-        while True:
+        while not finished:
             time.sleep(3)
             try:
                 finished = True
@@ -134,11 +136,14 @@ class TransformativeRepair:
                     break
 
             except Exception as e:
+                finished = False
+                continue
                 logging.warning("An exception occurred: %s", str(e), exc_info=True)              
 
         # Create summary
-        for sc_name in [os.path.join(results_dir, item) for item in os.listdir(results_dir) if os.path.isdir(os.path.join(results_dir, item))]:
+        for sc_dir in [os.path.join(results_dir, item) for item in os.listdir(results_dir) if os.path.isdir(os.path.join(results_dir, item))]:
             
+            sc_name = os.path.basename(sc_dir)
             # Create Network
             # Add START node
             G.add_node(sc_name, 
@@ -153,6 +158,7 @@ class TransformativeRepair:
                 original_vulnerabilities = json.load(f)
                 candidate_patches_dir = os.path.join(sc_dir, 'candidate_patches')
             for patch_name in os.listdir(candidate_patches_dir):
+                patch_node_name = f'{sc_name}_{patch_name}'
                 patch_vulnerabilities_file = os.path.join(candidate_patches_dir, patch_name, 'vulnerabilities.json')
                 with open(patch_vulnerabilities_file) as f:
                     patch_vulnerabilities = json.load(f)
@@ -162,15 +168,13 @@ class TransformativeRepair:
                 if all_tool_repair:
                     summary[sc_name]["plausible_patches"] += 1
                     summary[sc_name]["repaired_vulnerability"] = list(set(summary[sc_name]["repaired_vulnerability"] + [v for sublist in repaired_vulnerabilities_dict.values() for item in sublist for v in (item if isinstance(item, list) else [item])]))
-                    G.add_node(patch_name, 
-                        # sc_data=start_sc,
+                    G.add_node(patch_node_name,
                         color="green")
                 else:
-                    G.add_node(patch_name, 
-                        # sc_data=start_sc,
+                    G.add_node(patch_node_name, 
                         color="red")
                 
-                G.add_edge(sc_name, patch_name)
+                G.add_edge(sc_name, patch_node_name)
                 
         
         with open(os.path.join(results_dir, "summary_experiment.json"), "w") as outfile:
@@ -203,12 +207,13 @@ class TransformativeRepair:
 
 
     @staticmethod
-    def consumer_of_vulnerabilities_queue(experiment_setting:dict, smartbugs_sc_queue:queue.Queue, repair_sc_queue:queue.Queue, stop_event:threading.Event) -> None:
+    def consumer_of_vulnerabilities_queue(experiment_setting:dict, smartbugs_sc_queue:queue.Queue, repair_sc_queue:queue.Queue, stop_event:threading.Event, progressbar:tqdm) -> None:
 
         while not stop_event.is_set():
             try:
                 sc_path, do_repair_sc = smartbugs_sc_queue.get(block=False)
                 TransformativeRepair.find_vulnerabilities(experiment_setting, sc_path, do_repair_sc, repair_sc_queue)
+                progressbar.update(1)
             except queue.Empty:
                 time.sleep(10)
 
@@ -262,6 +267,8 @@ class TransformativeRepair:
                 f'{self.experiment_settings["experiment_name"]}_{self.experiment_settings["llm_model"]}'))
         results_dir.mkdir(parents=True, exist_ok=True)
 
+        sc_vulnerable_count = 0
+
         for sc_filename in os.listdir(self.vulnerable_contracts_dir):
             sc_name, file_extension = os.path.splitext(os.path.basename(sc_filename))
             sc_path = os.path.join(self.vulnerable_contracts_dir, sc_filename)
@@ -277,12 +284,17 @@ class TransformativeRepair:
                 shutil.copyfile(sc_path, sc_results_path)
                 
                 # Add to results
+                sc_vulnerable_count += 1
                 self.smartbugs_sc_queue.put((sc_results_path, True))
+
+        # Initialize progress bar
+        n_candidate_patches = self.llm_settings[self.experiment_settings["llm_model"]]["num_candidate_patches"]
+        progressbar = tqdm(total=sc_vulnerable_count * n_candidate_patches, desc="Processing items", colour='#ff5a5f')
 
         stop_event = threading.Event()
         #### Step 2: Consume smartbugs_queue
         for i in range(self.experiment_settings["n_smartbugs_threads"]):
-            smartbugs_thread = threading.Thread(target=TransformativeRepair.consumer_of_vulnerabilities_queue, args=(self.experiment_settings, self.smartbugs_sc_queue, self.repair_sc_queue, stop_event))
+            smartbugs_thread = threading.Thread(target=TransformativeRepair.consumer_of_vulnerabilities_queue, args=(self.experiment_settings, self.smartbugs_sc_queue, self.repair_sc_queue, stop_event, progressbar))
             smartbugs_thread.start()
 
         #### Step 2: Consume smart repair_sc_queue
