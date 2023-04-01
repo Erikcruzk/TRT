@@ -69,6 +69,8 @@ class PromptEngine:
                     raise FileExistsError
                 repair_examples = "\n".join([f"\n/// Repair Example {i+1} of {os.path.basename(directory)} attack\n{open(os.path.join(directory, file)).read()}" for directory in directories for i, file in enumerate(os.listdir(directory))])
                 return f'/// Here are some examples of vulnerable {self.sc.language} Smart Contracts and how to repair them\n{repair_examples}\n\n{vulnerability_context}'
+            elif experiment_settings["prompt_style"] == 'D_vulnerability_info':
+                return f'/// The task is to repair a {self.sc.language} Smart Contract\n\n/// According to the following smart contract analyzers, this {self.sc.language} Smart Contract is vulnerable to the following attacks\n\n{json.dumps(self.sc.vulnerabilities, indent=2)}\n\n/// Vulnerable {self.sc.language} Smart Contract\n{self.sc.source_code}\n\n/// Repaired {self.sc.language} Smart Contract''
             else:
                 raise KeyError()
         except Exception as e:

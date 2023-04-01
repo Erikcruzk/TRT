@@ -46,7 +46,8 @@ class SmartContract:
         self.source_code = open(self.path, 'r').read()
         self.hash = hashlib.sha256(open(self.path, 'rb').read()).hexdigest()
 
-        self.vulnerabilities = {}
+        vulnerabilities_file_path = os.path.join(self.results_dir, "vulnerabilities.json")
+        self.vulnerabilities = json.load(open(vulnerabilities_file_path, 'r')) if os.path.isfile(vulnerabilities_file_path) else {}
         self.candidate_patches = []
     
     def set_vulnerabilities(self, tool_name:str, tool_result:dict):
@@ -63,12 +64,18 @@ class SmartContract:
         """
         try:
             # Create aliases, fill if necessary
-            reentrancy_aliases = ['reentrancy', 'Re-Entrancy Vulnerability']
-            integer_overflow_aliases = ['integer overflow', 'Integer Overflow']
+            reentrancy_aliases = ['reentrancy', 'Re-Entrancy Vulnerability', 'Reentrancy', 'Money flow', 'DAO', 'Not destructible (no self-destruct)', 'Unprotected Ether Withdrawal']
+            integer_aliases = ['overflow', 'underflow', 'integer overflow']
+            unhandled_exception_aliases = ['Unhandled Exception', 'unhandled', 'UnhandledException', 'Exception Disorder']
+            unchecked_call_aliases = ['Unchecked Low Level Call', 'Unchecked return value from external call', 'unchecked']
+            callstack_aliases = ['callstack', 'avoid-low-level-calls', 'avoid-call-value'] 
 
             vulnerabilities_aliases = {}
             vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in reentrancy_aliases], 'reentrancy'))
-            vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in integer_overflow_aliases], 'integer_overflow'))
+            vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in integer_aliases], 'integer_overflow'))
+            vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unhandled_exception_aliases], 'unhandled_exception'))
+            vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unchecked_call_aliases], 'unchecked_low_level_call'))
+            vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in callstack_aliases], 'callstack'))
 
             self.vulnerabilities[tool_name] = []
             # First check if any errors = no findings TODO: check correct contract
@@ -129,13 +136,13 @@ class SmartContract:
         This method runs the Smart Bugs tool on the Solidity file and loads the resulting
         vulnerabilities into the `vulnerabilities` attribute using the `load_vulnerabilities` method.
         '''
-
         smartbugs_results_dir = Path(os.path.join(self.results_dir,
                 "smartbugs_results"))
             
         #### Step 3: Find Vulnerabilities
         # Create results directory
-        if smartbugs_results_dir.exists():
+        vulnerabilities_file_path = os.path.join(self.results_dir, "vulnerabilities.json")
+        if os.path.isfile(vulnerabilities_file_path):
             return # vulnerabilities already found TODO: check results file      
         smartbugs_results_dir.mkdir(parents=True, exist_ok=True)
 
@@ -147,7 +154,8 @@ class SmartContract:
             'json': True,
             'tools': self.experiment_settings["smartbugs_tools"],
             'results': os.path.join(smartbugs_results_dir, "${TOOL}_${RUNID}"),
-            'log': os.path.join(self.results_dir,'smartbugs_logs', '{RUNID}.log')
+            'log': os.path.join(self.results_dir,'smartbugs_logs', '{RUNID}.log'),
+            'processes': self.experiment_settings["smartbugs_processes"],
         }
 
         # write the data to a YAML file
@@ -155,11 +163,12 @@ class SmartContract:
         with open(smartbugs_config_path, 'w') as f:
             yaml.dump(smartbugs_config, f)
 
+        # Run smartbugs
         output = subprocess.run([f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}'], capture_output=True, text=True, shell=True)
-        self.get_vulnerabilities()
 
         # Save vulnerabilities
-        with open(os.path.join(self.results_dir, "vulnerabilities.json"), "w") as outfile:
+        self.get_vulnerabilities()
+        with open(vulnerabilities_file_path, "w") as outfile:
             outfile.write(json.dumps(self.vulnerabilities))
 
     def get_repaired_vulnerabilities(self, repaired_sc) -> dict:

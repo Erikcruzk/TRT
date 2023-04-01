@@ -83,12 +83,11 @@ class TransformativeRepair:
             }
         }''')
         
-        os.makedirs(os.path.dirname(f'{results_path}.html'), exist_ok=True)
-        nt.write_html(f'{results_path}.html')
+        nt.write_html(os.path.join(results_path, f'pyvis_{os.path.basename(results_path)}.html'))
         
         # Save to Json
         data = json_graph.node_link_data(G)
-        with open(f'{results_path}.json', 'w') as outfile:
+        with open(os.path.join(results_path, f'pyvis_{os.path.basename(results_path)}.json'), 'w') as outfile:
             json.dump(data, outfile)    
     
     @staticmethod
@@ -289,7 +288,7 @@ class TransformativeRepair:
 
         # Initialize progress bar
         n_candidate_patches = self.llm_settings[self.experiment_settings["llm_model"]]["num_candidate_patches"]
-        progressbar = tqdm(total=sc_vulnerable_count * n_candidate_patches, desc="Processing items", colour='#ff5a5f')
+        progressbar = tqdm(total=sc_vulnerable_count + sc_vulnerable_count * n_candidate_patches, desc="Smartbugs processes", colour='#ff5a5f')
 
         stop_event = threading.Event()
         #### Step 2: Consume smartbugs_queue
