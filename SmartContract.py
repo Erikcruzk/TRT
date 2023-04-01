@@ -7,35 +7,10 @@ import os
 import traceback
 from typing import List
 import yaml
+import re
 
 class SmartContract:
-    '''
-    A class that represents a Solidity smart contract.
-
-    This class contains methods to load, find, and compare vulnerabilities in a Solidity smart contract. It also includes methods to store and retrieve candidate patches.
-
-    Attributes:
-    - path (str): a string representing the file path to the Solidity smart contract.
-    - filename (str): a string representing the name of the Solidity smart contract file.
-    - language (str): a string representing the programming language of the Solidity smart contract.
-    - source_code (str): a string representing the source code of the Solidity smart contract.
-    - vulnerabilities (dict): a dictionary that maps the name of a vulnerability detection tool to a list of detected vulnerabilities.
-    - candidate_patches (list): a list of candidate patches for the Solidity smart contract.
-
-    Methods:
-    - __init__(self, sc_path): constructor method that initializes the SmartContract object.
-    - load_vulnerabilities(self): loads the detected vulnerabilities from the results directory of a vulnerability detection tool.
-    - find_vulnerabilities(self): finds vulnerabilities in the Solidity smart contract using the SmartBugs vulnerability detection tool.
-    - get_vulnerabilities_difference(self, other_sc): compares the vulnerabilities detected in the current SmartContract instance to those detected in another SmartContract instance, and returns the differences.
-    '''
-
     def __init__(self, experiment_settings:dict, sc_path:Path):
-        '''
-        Constructor method that initializes a SmartContract object with the specified Solidity smart contract file path.
-
-        Args:
-        - sc_path (str): a string representing the file path to the Solidity smart contract.
-        '''
         self.experiment_settings:dict = experiment_settings
         self.path:Path = sc_path
         self.results_dir:Path = self.path.parent.absolute()
@@ -44,77 +19,71 @@ class SmartContract:
         self.name, _ = os.path.splitext(self.filename)
         self.language = 'Solidity' if self.filename.endswith('.sol') else 'Unknown'
         self.source_code = open(self.path, 'r').read()
-        self.hash = hashlib.sha256(open(self.path, 'rb').read()).hexdigest()
+        self.hash = SmartContract.get_stripped_source_code_hash(self.source_code)
 
         vulnerabilities_file_path = os.path.join(self.results_dir, "vulnerabilities.json")
         self.vulnerabilities = json.load(open(vulnerabilities_file_path, 'r')) if os.path.isfile(vulnerabilities_file_path) else {}
         self.candidate_patches = []
+
+    @staticmethod
+    def remove_comments(string):
+        pattern = r"(\".*?\"|\'.*?\')|(/\*.*?\*/|//[^\r\n]*$)"
+        # first group captures quoted strings (double or single)
+        # second group captures comments (//single-line or /* multi-line */)
+        regex = re.compile(pattern, re.MULTILINE|re.DOTALL)
+        def _replacer(match):
+            # if the 2nd group (capturing comments) is not None,
+            # it means we have captured a non-quoted (real) comment string.
+            if match.group(2) is not None:
+                return "" # so we will return empty to remove the comment
+            else: # otherwise, we will return the 1st group
+                return match.group(1) # captured quoted-string
+        return regex.sub(_replacer, string)
     
-    def set_vulnerabilities(self, tool_name:str, tool_result:dict):
-        """
-        Set vulnerabilities for a given tool's result.
+    @staticmethod
+    def get_stripped_source_code_hash(source_code) -> str:
+        # Remove comments
+        stripped_source_code = SmartContract.remove_comments(source_code)
+        
+        # Remove new lines, tabs, and spaces
+        stripped_source_code = re.sub(r"[\n\t\s]*", "", stripped_source_code)
 
-        Parameters:
-        tool_name (str): The name of the tool used to generate the result.
-        tool_result (dict): The result of running the tool, including findings and errors.
+        # Create a SHA-256 hash of the stripped source code
+        hash_object = hashlib.sha256(stripped_source_code.encode())
+        return hash_object.hexdigest()
 
-        Returns:
-        None
+    def create_vulnerabilities_from_sb_results(self, tool_name:str, tool_result:dict) -> None:
+        tool_vulnerabilities = {}
+        tool_vulnerabilities["successfull_analysis"] = False if tool_result["errors"] and not tool_result['findings'] else True
+        tool_vulnerabilities["errors"] = tool_result["errors"]
 
-        """
-        try:
-            # Create aliases, fill if necessary
-            reentrancy_aliases = ['reentrancy', 'Re-Entrancy Vulnerability', 'Reentrancy', 'Money flow', 'DAO', 'Not destructible (no self-destruct)', 'Unprotected Ether Withdrawal']
-            integer_aliases = ['overflow', 'underflow', 'integer overflow']
-            unhandled_exception_aliases = ['Unhandled Exception', 'unhandled', 'UnhandledException', 'Exception Disorder']
-            unchecked_call_aliases = ['Unchecked Low Level Call', 'Unchecked return value from external call', 'unchecked']
-            callstack_aliases = ['callstack', 'avoid-low-level-calls', 'avoid-call-value'] 
+        vulnerability_findings = []
+        for finding in tool_result['findings']:
+            vulnerability = {}
+            vulnerability["name"] = finding["name"]
+            vulnerability["line_of_vulnerability"] = finding.get("line", None)
+            vulnerability_findings.append(vulnerability)
+        
+        tool_vulnerabilities["vulnerability_findings"] = vulnerability_findings
 
-            vulnerabilities_aliases = {}
-            vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in reentrancy_aliases], 'reentrancy'))
-            vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in integer_aliases], 'integer_overflow'))
-            vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unhandled_exception_aliases], 'unhandled_exception'))
-            vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unchecked_call_aliases], 'unchecked_low_level_call'))
-            vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in callstack_aliases], 'callstack'))
+        self.vulnerabilities["analyzer_results"][tool_name] = tool_vulnerabilities
+    
+    def set_vulnerabilities(self):
+        smartbugs_results_dir = os.path.join(self.results_dir, "smartbugs_results")
+        self.vulnerabilities["analyzer_results"] = {}
 
-            self.vulnerabilities[tool_name] = []
-            # First check if any errors = no findings TODO: check correct contract
-            if not tool_result['findings']:
-                self.vulnerabilities[tool_name] = ['error'] + tool_result['errors']
-            else:
-                for vulnerability_name in [finding['name'] for finding in tool_result['findings']]:
-                    vulnerability_name = vulnerability_name.lower()
+        # Loop through all smartbugs_results
+        for smartbugs_result_file in [os.path.join(smartbugs_results_dir, f) for f in os.listdir(smartbugs_results_dir) if os.path.isdir(os.path.join(smartbugs_results_dir, f))]:
+            sb_result_dir = os.path.join(smartbugs_results_dir, smartbugs_result_file)
+            tool_name = os.path.basename(sb_result_dir).split('_', 1)[0]
+            tool_result = json.load(open(os.path.join(sb_result_dir, 'result.json'), 'r'))
+            self.create_vulnerabilities_from_sb_results(tool_name, tool_result)
+            
+            
 
-                    # Check if alias fount
-                    if vulnerability_name in vulnerabilities_aliases:
-                        self.vulnerabilities[tool_name].append(vulnerabilities_aliases[vulnerability_name])
-                        continue
-                    
-                    # Check if vulnerability_name contains any alias
-                    vulnerability_name_contains_alias = vulnerabilities_aliases.get(next((key for key in vulnerabilities_aliases if key in vulnerability_name), None));
-                    if vulnerability_name_contains_alias:
-                        self.vulnerabilities[tool_name].append(vulnerability_name_contains_alias)
-                        continue
-                    
-                    # Finally add vulnerability name
-                    self.vulnerabilities[tool_name].append(vulnerability_name)
-            # In strict mode clean undesired vulnerabilities
-            if self.experiment_settings["target_vulnerabilities"]:
-                self.vulnerabilities[tool_name] = [x for x in self.vulnerabilities[tool_name] if x in self.experiment_settings["target_vulnerabilities"]]            
-        except Exception as e:
-            logging.critical("An exception occurred: %s", str(e), exc_info=True)
+                      
 
     def get_vulnerabilities(self) -> None:
-        '''
-        Load the detected vulnerabilities from the results directory of the vulnerability detection tools.
-
-        This method looks for a subdirectory in the `sb_results` directory with the same name as the Solidity smart contract file.
-        For each subdirectory, it loads the detected vulnerabilities from the `result.json` file of each vulnerability detection tool.
-
-        Raises:
-        - FileNotFoundError: If the results directory for the Solidity smart contract file cannot be found.
-
-        '''
         try:
             smartbugs_results_dir = os.path.join(self.results_dir, "smartbugs_results")
 
@@ -129,21 +98,9 @@ class SmartContract:
         except Exception as e:
             logging.critical("An exception occurred: %s", str(e), exc_info=True)
 
-    def run_smartbugs(self) -> None:
-        '''
-        Use the Smart Bugs tool to find vulnerabilities in the smart contract.
-
-        This method runs the Smart Bugs tool on the Solidity file and loads the resulting
-        vulnerabilities into the `vulnerabilities` attribute using the `load_vulnerabilities` method.
-        '''
-        smartbugs_results_dir = Path(os.path.join(self.results_dir,
-                "smartbugs_results"))
-            
-        #### Step 3: Find Vulnerabilities
-        # Create results directory
-        vulnerabilities_file_path = os.path.join(self.results_dir, "vulnerabilities.json")
-        if os.path.isfile(vulnerabilities_file_path):
-            return # vulnerabilities already found TODO: check results file      
+    def run_smartbugs(self) -> None:    
+        # Create smsrtbugs results directory
+        smartbugs_results_dir = Path(os.path.join(self.results_dir, "smartbugs_results"))
         smartbugs_results_dir.mkdir(parents=True, exist_ok=True)
 
         #### Create smartbugs config yaml file
@@ -167,31 +124,23 @@ class SmartContract:
         output = subprocess.run([f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}'], capture_output=True, text=True, shell=True)
 
         # Save vulnerabilities
-        self.get_vulnerabilities()
-        with open(vulnerabilities_file_path, "w") as outfile:
-            outfile.write(json.dumps(self.vulnerabilities))
+        self.set_vulnerabilities()
+        self.vulnerabilities["smartbugs_completed"] = True
+        with open(os.path.join(self.results_dir, "vulnerabilities.json"), "w") as outfile:
+            outfile.write(json.dumps(self.vulnerabilities, indent=2))
 
-    def get_repaired_vulnerabilities(self, repaired_sc) -> dict:
-        '''
-        Returns a dictionary containing the vulnerabilities that have been repaired in a given SmartContract object, `repaired_sc`.
+    # def get_repaired_vulnerabilities(self, repaired_sc) -> dict:
+    #     try:
+    #         repaired_vulnerabilities = {}
+    #         for tool, vulnerabilities in repaired_sc.vulnerabilities.items():
+    #             if('error' in vulnerabilities):
+    #                 repaired_vulnerabilities[tool] = vulnerabilities
+    #                 continue
 
-        Args:
-            - repaired_sc: A SmartContract object containing the attempted repair.
-
-        Returns:
-            A dictionary where the keys represent the tool used to detect the vulnerabilities, and the values represent the list of vulnerabilities that have been repaired, that is they are not present in the tool.
-        '''
-        try:
-            repaired_vulnerabilities = {}
-            for tool, vulnerabilities in repaired_sc.vulnerabilities.items():
-                if('error' in vulnerabilities):
-                    repaired_vulnerabilities[tool] = vulnerabilities
-                    continue
-
-                repaired_vulnerabilities[tool] = [x for x in self.vulnerabilities[tool] if x not in vulnerabilities]
+    #             repaired_vulnerabilities[tool] = [x for x in self.vulnerabilities[tool] if x not in vulnerabilities]
             
-            return repaired_vulnerabilities
-        except Exception as e:
-            logging.critical("An exception occurred: %s", str(e), exc_info=True)
-            return {"error": str(e), 'stacktrace': traceback.format_exc()}
+    #         return repaired_vulnerabilities
+    #     except Exception as e:
+    #         logging.critical("An exception occurred: %s", str(e), exc_info=True)
+    #         return {"error": str(e), 'stacktrace': traceback.format_exc()}
         

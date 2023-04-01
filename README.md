@@ -20,6 +20,24 @@ cd smartbugs
 install/setup-venv.sh
 ```
 
+#### Install solidity compiler
+
+`Linux`
+```
+sudo add-apt-repository ppa:ethereum/ethereum
+sudo apt-get update
+sudo apt-get install solc
+```
+
+
+`Mac OS`
+```
+brew update
+brew upgrade
+brew tap ethereum/ethereum
+brew install solidity
+```
+
 #### Add the API Key for OpenAI
 
 Add .env file with openAI-key
