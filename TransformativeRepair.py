@@ -59,7 +59,7 @@ class TransformativeRepair:
     
     # Visualize
     @staticmethod
-    def save_graph(G:nx.DiGraph, results_path:str):
+    def save_graph(G:nx.DiGraph, results_path:str, name:str):
         nt = Network('800', '100%', directed=True)
         nt.from_nx(G)
         # nt.show_buttons(filter_=['physics'])
@@ -83,103 +83,273 @@ class TransformativeRepair:
             }
         }''')
         
-        nt.write_html(os.path.join(results_path, f'pyvis_{os.path.basename(results_path)}.html'))
+        nt.write_html(os.path.join(results_path, f'pyvis_{os.path.basename(results_path)}_{name}.html'))
         
         # Save to Json
         data = json_graph.node_link_data(G)
-        with open(os.path.join(results_path, f'pyvis_{os.path.basename(results_path)}.json'), 'w') as outfile:
+        with open(os.path.join(results_path, f'pyvis_{os.path.basename(results_path)}_{name}.json'), 'w') as outfile:
             json.dump(data, outfile)    
     
     @staticmethod
-    def get_repaired_vulnerabilities(original_vulnerabilities:dict, patch_vulnerabilities:dict) -> dict:
-        try:
-            repaired_vulnerabilities = {}
-            all_tool_repair = True
-            for tool, tool_vulnerabilities in patch_vulnerabilities.items():
-                if('error' in tool_vulnerabilities):
-                    repaired_vulnerabilities[tool] = tool_vulnerabilities
-                    all_tool_repair = False
-                    continue
+    def get_vulnerability_aliases(vulnerabilities:dict) -> dict:
+        analyzer_results_with_aliases = {}
+        # Create aliases, fill if necessary
+        reentrancy_aliases = ['reentrancy', 'Re-Entrancy Vulnerability', 'DAO', 'Not destructible (no self-destruct)', 'Unprotected Ether Withdrawal']
+        integer_aliases = ['overflow', 'underflow', 'integer overflow']
+        unhandled_exception_aliases = ['Unhandled Exception', 'unhandled', 'UnhandledException', 'Exception Disorder']
+        unchecked_call_aliases = ['Unchecked Low Level Call', 'Unchecked return value from external call', 'unchecked']
+        callstack_aliases = ['callstack', 'avoid-low-level-calls', 'avoid-call-value'] 
 
-                #repaired_vulnerabilities[tool] = [x for x in original_vulnerabilities[tool] if x not in tool_vulnerabilities]
+        vulnerabilities_aliases = {}
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in reentrancy_aliases], 'reentrancy'))
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in integer_aliases], 'integer_over-underflow'))
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unhandled_exception_aliases], 'unhandled_exception'))
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unchecked_call_aliases], 'unchecked_low_level_call'))
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in callstack_aliases], 'callstack'))
 
-                repaired_vulnerabilities[tool] = [x for x in original_vulnerabilities[tool] + tool_vulnerabilities if x not in original_vulnerabilities[tool] or x not in tool_vulnerabilities]
-                if tool_vulnerabilities:
-                    all_tool_repair = False
+        for tool_name, tool_result in vulnerabilities["analyzer_results"].items():
+            analyzer_results_with_aliases[tool_name] = []
+            findings = tool_result['vulnerability_findings']
+            # First check if any errors = no findings TODO: check correct contract
+            if not findings:
+                analyzer_results_with_aliases[tool_name] = ['error'] + tool_result['errors']
             
-            return repaired_vulnerabilities, all_tool_repair
-        except Exception as e:
-            logging.critical("An exception occurred: %s", str(e), exc_info=True)
-            return {"error": str(e), 'stacktrace': traceback.format_exc()}
+            if not tool_result.get("successfull_analysis", False):
+                analyzer_results_with_aliases[tool_name].append("unsuccessfull_analysis")
+
+            for finding in findings:
+                vulnerability_name = finding["name"].lower()
+
+                # Check if alias fount
+                if vulnerability_name in vulnerabilities_aliases:
+                    analyzer_results_with_aliases[tool_name].append(vulnerabilities_aliases[vulnerability_name])
+                    continue
+                
+                # Check if vulnerability_name contains any alias
+                vulnerability_name_contains_alias = vulnerabilities_aliases.get(next((key for key in vulnerabilities_aliases if key in vulnerability_name), None));
+                if vulnerability_name_contains_alias:
+                    analyzer_results_with_aliases[tool_name].append(vulnerability_name_contains_alias)
+                    continue
+                
+                # Finally add vulnerability name
+                #print(vulnerability_name)
+                analyzer_results_with_aliases[tool_name].append(vulnerability_name)
+            
+            # Delete duplicates
+            analyzer_results_with_aliases[tool_name] = list(set( analyzer_results_with_aliases[tool_name]))
+
+            # Only focus on one vulnerability
+            # analyzer_results_with_aliases[tool_name] = [x for x in analyzer_results_with_aliases[tool_name] if x == target_vulnerability] 
+        return analyzer_results_with_aliases
+
+    @staticmethod
+    def check_if_compiles(patch_analyzer_results:dict) -> bool:
+        compiles = True
+
+        errorTexts = ["solidity compilation failed", "error", "unsuccessfull_analysis"]
+
+        for tool_vulnerabilities  in patch_analyzer_results.values():
+            lower_vulnerabilities =  [x.lower() for x in tool_vulnerabilities]
+
+            if(any(elem in lower_vulnerabilities for elem in errorTexts)):
+                compiles = False
+        # repaired_vulnerabilities = {}
+        # compiles = True
+
+        # errorTexts = ["solidity compilation failed", "error", "unsuccessfull_analysis"]
+
+        # for tool_name, tool_vulnerabilities  in patch_analyzer_results.items():
+        #     lower_vulnerabilities =  [x.lower() for x in tool_vulnerabilities]
+
+        #     if(any(elem in lower_vulnerabilities for elem in errorTexts)):
+        #         compiles = False
+        #         repaired_vulnerabilities[tool_name] = []
+        #         continue
+           
+        #     repaired_vulnerabilities[tool_name] = [original_vulnerabilities for original_vulnerabilities in original_analyzer_results[tool_name] if original_vulnerabilities not in tool_vulnerabilities]
+            
+
+        # all_tool_repair = True
+        # for tool_name, tool_vulnerabilities in patch_vulnerabilities.items():
+        #     if('error' in tool_vulnerabilities):
+        #         repaired_vulnerabilities[tool_name] = tool_vulnerabilities
+        #         all_tool_repair = False
+        #         continue
+
+        #     #repaired_vulnerabilities[tool] = [x for x in original_vulnerabilities[tool] if x not in tool_vulnerabilities]
+
+        #     repaired_vulnerabilities[tool_name] = [x for x in original_vulnerabilities[tool_name] + tool_vulnerabilities if x not in original_vulnerabilities[tool_name] or x not in tool_vulnerabilities]
+        #     if tool_vulnerabilities:
+        #         all_tool_repair = False
+        
+        return compiles
     
+    @staticmethod
+    def generate_summary_markdown(summary, results_dir) -> None:
+        # Generate markdown
+        markdown = f"# Summary of settings\n\n| Setting | Value |\n| --- | --- |\n"
+        for key, value in summary.items():
+            if key != "target_vulnerabilities":
+                markdown += f"| {key} | {value} |\n"
+        markdown += "\n## Target Vulnerabilities\n\n"
+        for vulnerability, vulnerability_data in summary["target_vulnerabilities"].items():
+            contracts = vulnerability_data["contracts"]
+            markdown += f"### {vulnerability}\n\n"
+            markdown += "| Contract Name | # Patches | Unique Patches That Compile | Best Patch | Osiris | Conkas | Oyente | Slither |\n"
+            markdown += "| --- | --- | --- | --- | --- | --- | --- | --- |\n"
+            for contract, info in contracts.items():
+                markdown += f"| {info['sc_name']} | {info['n_patches']} | {info['unique_paches_that_compile']} | {info['best_patch']} | {info.get('osiris', '-')} | {info.get('conkas', '-')} | {info.get('oyente', '-')} | {info.get('slither', '-')} |\n"
+
+        # Save markdown to file
+        experiment_name = summary["experiment_name"]
+        with open(os.path.join(results_dir, f'summary_{experiment_name}.md'), 'w') as f:
+            f.write(markdown)
+
     @staticmethod
     def create_summary(experiment_settings:dict, llm_settings:dict, stop_event:threading.Event=None, finished=False):
 
-        G = nx.DiGraph()
-        summary = {}
 
         results_dir = Path(os.path.join("experiment_results",
             f'{experiment_settings["experiment_name"]}_{experiment_settings["llm_model"]}'))
         
         # Loop that checks that all patches have got their vulnerablities.json => they are done
+        sleep = 0
         while not finished:
-            time.sleep(3)
+            time.sleep(sleep)
             try:
                 finished = True
                 for sc_dir in [os.path.join(results_dir, item) for item in os.listdir(results_dir) if os.path.isdir(os.path.join(results_dir, item))]:
-                    candidate_patches_path = os.path.join(sc_dir, "candidate_patches")
-                    for patch_dir in [os.path.join(candidate_patches_path, item) for item in os.listdir(candidate_patches_path) if os.path.isdir(os.path.join(candidate_patches_path, item))]:
-                        if "vulnerabilities.json" not in os.listdir(patch_dir):
-                            finished = False
-                if finished:
-                    break
+                    candidate_patches_dir = os.path.join(sc_dir, "candidate_patches")
+                    patch_results_path = os.path.join(candidate_patches_dir, "patch_results.json")
+                    patch_results = json.load(open(patch_results_path, 'r')) if os.path.isfile(patch_results_path) else {}
 
+                    # Check that all patch generations have completed
+                    if not patch_results.get("patch_generation_completed", False):
+                        finished = False
+                        break
+                    
+                    # Check that all unique contracts have run smartbugs
+                    for patch_vulnerability_path in [os.path.join(candidate_patches_dir, key.replace('.sol', ''), "vulnerabilities.json") for key in patch_results["unique_patches"].keys()]:
+                        patch_vulnerability = json.load(open(patch_vulnerability_path, 'r')) if os.path.isfile(patch_vulnerability_path) else {}
+                        if not patch_vulnerability.get("smartbugs_completed", False):
+                            finished = False
+                            break
             except Exception as e:
-                finished = False
-                continue
-                logging.warning("An exception occurred: %s", str(e), exc_info=True)              
+                finished = False  
+            sleep = 5
 
         # Create summary
+        summary = {}
+        summary["experiment_name"] = f'{experiment_settings["experiment_name"]}_{experiment_settings["llm_model"]}'
+        summary["dataset"] = experiment_settings["vulnerable_contracts_directory"]
+        summary["smartbugs_tools"] = experiment_settings["smartbugs_tools"]
+        summary["prompt_style"] = experiment_settings["prompt_style"]
+        summary["llm_settings"] = llm_settings[experiment_settings["llm_model"]]
+        summary["target_vulnerabilities"] = {}
+
+
         for sc_dir in [os.path.join(results_dir, item) for item in os.listdir(results_dir) if os.path.isdir(os.path.join(results_dir, item))]:
+            # Get original sc
+            original_vulnerabilities = json.load(open(os.path.join(sc_dir, "vulnerabilities.json"), 'r'))
+            original_analyzer_results_with_aliases = TransformativeRepair.get_vulnerability_aliases(original_vulnerabilities)
+            candidate_patches_dir = os.path.join(sc_dir, "candidate_patches")
+            patch_results = json.load(open(os.path.join(candidate_patches_dir,  "patch_results.json"), 'r'))
+            
+            n_patches = len([name for name in os.listdir(candidate_patches_dir) if os.path.isdir(os.path.join(candidate_patches_dir, name))])
+            n_unique_paches = len(patch_results["unique_patches"])
+            n_unique_patches_that_compile = 0
+
+            target_max_repair = {}
+            target_summary = {}
+            target_graph = {}
             
             sc_name = os.path.basename(sc_dir)
-            # Create Network
-            # Add START node
-            G.add_node(sc_name, 
-                # sc_data=start_sc, 
-                group=1, 
-                size=30)
-
-            summary[sc_name] = {}
-            summary[sc_name]["plausible_patches"] = 0
-            summary[sc_name]["repaired_vulnerability"] = []
-            with open(os.path.join(sc_dir, "vulnerabilities.json")) as f:
-                original_vulnerabilities = json.load(f)
-                candidate_patches_dir = os.path.join(sc_dir, 'candidate_patches')
-            for patch_name in os.listdir(candidate_patches_dir):
+            for patch_file_name in patch_results["unique_patches"].keys():
+                patch_name, _ = os.path.splitext(patch_file_name)
                 patch_node_name = f'{sc_name}_{patch_name}'
-                patch_vulnerabilities_file = os.path.join(candidate_patches_dir, patch_name, 'vulnerabilities.json')
-                with open(patch_vulnerabilities_file) as f:
-                    patch_vulnerabilities = json.load(f)
                 
-                repaired_vulnerabilities_dict, all_tool_repair = TransformativeRepair.get_repaired_vulnerabilities(original_vulnerabilities, patch_vulnerabilities)
-                
-                if all_tool_repair:
-                    summary[sc_name]["plausible_patches"] += 1
-                    summary[sc_name]["repaired_vulnerability"] = list(set(summary[sc_name]["repaired_vulnerability"] + [v for sublist in repaired_vulnerabilities_dict.values() for item in sublist for v in (item if isinstance(item, list) else [item])]))
-                    G.add_node(patch_node_name,
-                        color="green")
-                else:
-                    G.add_node(patch_node_name, 
-                        color="red")
-                
-                G.add_edge(sc_name, patch_node_name)
-                
+                patch_vulnerabilities = json.load(open(os.path.join(candidate_patches_dir, patch_name, "vulnerabilities.json"), 'r'))
+                patch_analyzer_results_with_aliases = TransformativeRepair.get_vulnerability_aliases(patch_vulnerabilities)
+
+                compiles = TransformativeRepair.check_if_compiles(patch_analyzer_results_with_aliases)
+                if compiles:
+                    n_unique_patches_that_compile += 1
+
+                for target_vulnerability in experiment_settings["target_vulnerabilities"]:  
+                    if target_vulnerability not in target_summary:
+                        target_summary[target_vulnerability] = {}
+                        target_summary[target_vulnerability]["contracts"] = {}
+                        G = nx.DiGraph()
+                        G.add_node(sc_name, 
+                            # sc_data=start_sc, 
+                            group=1, 
+                            size=30)
+                        target_graph[target_vulnerability] = G
+
+                    if sc_name not in target_summary[target_vulnerability]["contracts"]:
+                        target_summary[target_vulnerability]["contracts"][sc_name] = {}
+                    
+                    patch_data = {}                               
+
+                    current_max = target_max_repair.get(target_vulnerability, -1)
+                    n_smatbug_tools = len(patch_analyzer_results_with_aliases.keys())
+
+                    if compiles:
+                        repairs_of_target = sum(target_vulnerability in my_list for my_list in patch_analyzer_results_with_aliases.values())
+                        is_plausible_patch = repairs_of_target == n_smatbug_tools
+                    else:
+                        repairs_of_target = 0
+                        is_plausible_patch = False
+                        
+                    # Add patch to graph
+                    G = target_graph[target_vulnerability]
+                    if is_plausible_patch:
+                        target_summary[target_vulnerability]["plausible_patches"] = target_summary[target_vulnerability].get("plausible_patches",0) + 1                
+                        G.add_node(patch_node_name,
+                            color="green")
+                    else:
+                        target_summary[target_vulnerability]["plausible_patches"] = target_summary[target_vulnerability].get("plausible_patches",0)
+                        G.add_node(patch_node_name, 
+                            color="red")
+                    
+                    G.add_edge(sc_name, patch_node_name)
+
+                    # New best patch
+                    if repairs_of_target > current_max:                            
+                        patch_data["n_patches"] = n_patches
+                        patch_data["best_patch"] =  patch_name
+                        patch_data["plausible_patch"] = is_plausible_patch
+
+
+                        for tool_name, tool_vulnerabilities in patch_analyzer_results_with_aliases.items():
+                            original_status = 'Fix'
+                            if target_vulnerability in original_analyzer_results_with_aliases[tool_name]:
+                                original_status = 'Bug'
+                            
+                            repaired_status = "Fix"
+                            if target_vulnerability in tool_vulnerabilities or not compiles:
+                                repaired_status = "Bug"
+
+                            patch_data[tool_name] =  f'{original_status}/{repaired_status}'
+                        
+                        target_summary[target_vulnerability]["contracts"][sc_name] = patch_data
+            
+            for target_vulnerability in target_summary.keys():
+                target_summary[target_vulnerability]["contracts"][sc_name]["unique_paches_that_compile"] =  f'{n_unique_patches_that_compile}/{n_unique_paches}'
+                                                    
+        summary["target_vulnerabilities"] = target_summary
         
-        with open(os.path.join(results_dir, "summary_experiment.json"), "w") as outfile:
-            outfile.write(json.dumps(summary))
+        summaries_dir = Path(os.path.join(results_dir))
+        summaries_dir.mkdir(parents=True, exist_ok=True)
+
+        with open(os.path.join(summaries_dir, f'summary_{summary["experiment_name"]}.json'), "w") as outfile:
+            outfile.write(json.dumps(summary, indent=2))
+        TransformativeRepair.generate_summary_markdown(summary, summaries_dir)
         
-        TransformativeRepair.save_graph(G, results_dir)        
+        pyvis_dir = Path(os.path.join(summaries_dir))
+        pyvis_dir.mkdir(parents=True, exist_ok=True)
+        for target_vulnerability in experiment_settings["target_vulnerabilities"]:
+            TransformativeRepair.save_graph(target_graph[target_vulnerability], results_dir, target_vulnerability)        
 
         # Stop all threads and finish program
         for thread in threading.enumerate():
@@ -195,8 +365,9 @@ class TransformativeRepair:
             #### Step 1: Initialize SC
             sc = SmartContract(experiment_settings, sc_path)
 
-            #### Step 2: Find Vulnerabilities
-            sc.run_smartbugs()
+            if not sc.vulnerabilities.get("smartbugs_completed", False):
+                #### Step 2: Find Vulnerabilities
+                sc.run_smartbugs()
 
             #### Step 3: Enqueue to repair queue
             if do_repair_sc:
@@ -218,36 +389,69 @@ class TransformativeRepair:
 
 
     @staticmethod
-    def repair_sc(experiment_settings:dict, llm_settings:dict, sc_path:str, smartbugs_sc_queue:queue.Queue):
+    def repair_sc(experiment_settings:dict, llm_settings:dict, sc_path:Path, smartbugs_sc_queue:queue.Queue):
         
+        candidate_patches_dir = Path(os.path.join(sc_path.parent.absolute(), "candidate_patches"))
+        candidate_patches_dir.mkdir(parents=True, exist_ok=True)
 
-        #### Step 1: Initialize SC
-        sc = SmartContract(experiment_settings, sc_path)
-        
-        # Check if repair already done successfull
-        results_0_dir = Path(os.path.join(sc.results_dir, "candidate_patches"))
-        if results_0_dir.exists():
-            return # vulnerabilities already found TODO: check results file      
+        # Load patch results if exists
+        patches_results_path = os.path.join(candidate_patches_dir, "patch_results.json")
+        patches_results = json.load(open(patches_results_path, 'r')) if os.path.isfile(patches_results_path) else {}
+        patches_results["patch_generation_completed"] = patches_results.get("patch_generation_completed", False)
 
-        #### Step 2: Create Prompt Engine and generate prompt
-        pe = PromptEngine(sc)
-        prompt = pe.generate_prompt(experiment_settings)
+        # Return if patches already generated and successfull
+        if patches_results["patch_generation_completed"]:
+            return
 
-        #### Step 3: Save prompt
-        with open(os.path.join(sc.results_dir, "prompt.txt"), 'w') as file:
-            file.write(prompt)
+        try:
+            #### Step 1: Initialize SC
+            sc = SmartContract(experiment_settings, sc_path)
+            
+            #### Step 2: Create Prompt Engine and generate prompt
+            pe = PromptEngine(sc)
+            prompt = pe.generate_prompt(experiment_settings)
+
+            #### Step 3: Save prompt
+            with open(os.path.join(sc.results_dir, "prompt.txt"), 'w') as file:
+                file.write(prompt)
+            
+            #### Step 4: Repair smart contract
+            model_name = experiment_settings["llm_model"]
+            candidate_patches_paths = []
+            if model_name == "gpt-3.5-turbo":
+                candidate_patches_paths = pe.get_codex_repaired_sc(experiment_settings, llm_settings[model_name], sc, prompt)
+            else:
+                raise KeyError(f'model_name={model_name} not found!')
+            
+            #### Step 5: Find all unique patches and add them to the repair queue
+            patches_results = {}
+            unique_patches = {}
+            hash_to_first_patch = {}
+            for candidate_patch_path in candidate_patches_paths:
+                patch_name = os.path.basename(candidate_patch_path)
+                hash = SmartContract.get_stripped_source_code_hash(open(candidate_patch_path, 'r').read())
+                
+                # Unique patch
+                if hash not in hash_to_first_patch:
+                    hash_to_first_patch[hash] = patch_name
+                    unique_patches[patch_name] = []
+                    smartbugs_sc_queue.put((candidate_patch_path, False))
+                    continue
+                
+                # Dubplicate patch
+                unique_contract = hash_to_first_patch[hash]
+                unique_patches[unique_contract].append(patch_name)
+                
+            patches_results["unique_patches"] = unique_patches
+            patches_results["patch_generation_completed"] = True
+
+        except Exception as e:
+            patches_results["patch_generation_error"] = str(e)
+            logging.critical("An exception occurred: %s", str(e), exc_info=True)
+
+        with open(patches_results_path, "w") as outfile:
+            outfile.write(json.dumps(patches_results, indent=2))
         
-        #### Step 4: Repair smart contract
-        model_name = experiment_settings["llm_model"]
-        candidate_patches_paths = []
-        if model_name == "gpt-3.5-turbo":
-            candidate_patches_paths = pe.get_codex_repaired_sc(experiment_settings, llm_settings[model_name], sc, prompt)
-        else:
-            raise KeyError(f'model_name={model_name} not found!')
-        
-        #### Step 5: Add to find vulnerabilities queue
-        for candidate_patch_path in candidate_patches_paths:
-            smartbugs_sc_queue.put((candidate_patch_path, False))
 
 
     @staticmethod
