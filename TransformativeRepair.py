@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 import os
@@ -317,7 +318,7 @@ class TransformativeRepair:
         return target_summaries
 
     @staticmethod
-    def create_summary(experiment_settings:dict, llm_settings:dict) -> None:
+    def create_summary(experiment_settings:dict, llm_settings:dict, start_time:datetime) -> None:
         results_dir = Path(os.path.join("experiment_results",
             f'{experiment_settings["experiment_name"]}_{experiment_settings["llm_model"]}'))
         # Create summary
@@ -326,8 +327,10 @@ class TransformativeRepair:
         summary["dataset"] = experiment_settings["vulnerable_contracts_directory"]
         summary["smartbugs_tools"] = experiment_settings["smartbugs_tools"]
         summary["prompt_style"] = experiment_settings["prompt_style"]
+        summary["n_threads"] = f'sb_threads={experiment_settings["n_smartbugs_threads"]} llm_rapair_threads={experiment_settings["n_repair_threads"]}'
         summary["llm_settings"] = llm_settings[experiment_settings["llm_model"]]
         summary["target_vulnerabilities"] = TransformativeRepair.create_target_summary_and_graphs(experiment_settings)
+        summary["run_time"] = str(datetime.datetime.utcnow() - start_time).split('.')[0]
 
         # Save JSON summary
         with open(os.path.join(results_dir, f'summary_{summary["experiment_name"]}.json'), "w") as outfile:
@@ -339,6 +342,7 @@ class TransformativeRepair:
     @staticmethod
     def shutdown_thread(experiment_settings:dict, llm_settings:dict, stop_event:threading.Event=None, finished=False):
 
+        start_time = datetime.datetime.utcnow()
 
         results_dir = Path(os.path.join("experiment_results",
             f'{experiment_settings["experiment_name"]}_{experiment_settings["llm_model"]}'))
@@ -370,7 +374,7 @@ class TransformativeRepair:
             sleep = 5
 
         # Create summary
-        TransformativeRepair.create_summary(experiment_settings, llm_settings)        
+        TransformativeRepair.create_summary(experiment_settings, llm_settings, start_time)        
 
         # Stop all threads and finish program
         for thread in threading.enumerate():
