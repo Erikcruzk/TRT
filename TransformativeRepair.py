@@ -197,7 +197,7 @@ class TransformativeRepair:
         for vulnerability, vulnerability_data in summary["target_vulnerabilities"].items():
             contracts = vulnerability_data["contracts"]
             markdown += f"\n### {vulnerability}\n"
-            markdown += f'`n_contracts={len(contracts.keys())}`\n`plausible_patches={vulnerability_data["plausible_patches"]}`\n\n'
+            markdown += f'n_plausible_patches/n_contracts = `{vulnerability_data["plausible_patches"]}/{len(contracts.keys())}`\n\n'
             
             # Add table headers
             markdown += f'| {" | ".join(str(k) for k in contracts[next(iter(contracts.keys()))].keys())} |\n' 
@@ -206,10 +206,6 @@ class TransformativeRepair:
             # Add table content
             for contract, info in contracts.items():
                 markdown += f'| {" | ".join([str(info[k]) for k in info])}|\n'
-                
-
-            # for contract, info in contracts.items():
-            #     markdown += f"| {info['sc_name']} | {info['n_patches']} | {info['unique_paches_that_compile']} | {info['best_patch']} | {info.get('osiris', '-')} | {info.get('conkas', '-')} | {info.get('oyente', '-')} | {info.get('slither', '-')} |\n"
 
         # Save markdown to file
         experiment_name = summary["experiment_name"]
@@ -217,7 +213,131 @@ class TransformativeRepair:
             f.write(markdown)
 
     @staticmethod
-    def create_summary(experiment_settings:dict, llm_settings:dict, stop_event:threading.Event=None, finished=False):
+    def create_target_summary_and_graphs(experiment_settings:dict) -> dict:
+        results_dir = Path(os.path.join("experiment_results",
+            f'{experiment_settings["experiment_name"]}_{experiment_settings["llm_model"]}'))
+        
+        for sc_dir in [os.path.join(results_dir, item) for item in os.listdir(results_dir) if os.path.isdir(os.path.join(results_dir, item))]:
+            # Get original sc
+            original_vulnerabilities = json.load(open(os.path.join(sc_dir, "vulnerabilities.json"), 'r'))
+            original_analyzer_results_with_aliases = TransformativeRepair.get_vulnerability_aliases(original_vulnerabilities)
+            candidate_patches_dir = os.path.join(sc_dir, "candidate_patches")
+            patch_results = json.load(open(os.path.join(candidate_patches_dir,  "patch_results.json"), 'r'))
+            
+            n_patches = len([name for name in os.listdir(candidate_patches_dir) if os.path.isdir(os.path.join(candidate_patches_dir, name))])
+            n_unique_paches = len(patch_results["unique_patches"])
+            n_unique_patches_that_compile = 0
+
+            target_max_repair = {}
+            target_summaries = {}
+            target_graphs = {}
+            
+            sc_name = os.path.basename(sc_dir)
+            for patch_file_name in patch_results["unique_patches"].keys():
+                patch_name, _ = os.path.splitext(patch_file_name)
+                patch_node_name = f'{sc_name}_{patch_name}'
+                
+                patch_vulnerabilities = json.load(open(os.path.join(candidate_patches_dir, patch_name, "vulnerabilities.json"), 'r'))
+                patch_analyzer_results_with_aliases = TransformativeRepair.get_vulnerability_aliases(patch_vulnerabilities)
+
+                compiles = TransformativeRepair.check_if_compiles(patch_analyzer_results_with_aliases)
+                if compiles:
+                    n_unique_patches_that_compile += 1
+
+                for target_vulnerability in experiment_settings["target_vulnerabilities"]:  
+                    if target_vulnerability not in target_summaries:
+                        target_summaries[target_vulnerability] = {}
+                        target_summaries[target_vulnerability]["contracts"] = {}
+                        G = nx.DiGraph()
+                        G.add_node(sc_name, 
+                            # sc_data=start_sc, 
+                            group=1, 
+                            size=30)
+                        target_graphs[target_vulnerability] = G
+
+                    if sc_name not in target_summaries[target_vulnerability]["contracts"]:
+                        target_summaries[target_vulnerability]["contracts"][sc_name] = {}
+                    
+                    patch_data = {}                               
+
+                    current_max = target_max_repair.get(target_vulnerability, -1)
+                    n_smatbug_tools = len(patch_analyzer_results_with_aliases.keys())
+
+                    if compiles:
+                        repairs_of_target = sum(target_vulnerability not in my_list for my_list in patch_analyzer_results_with_aliases.values())
+                        is_plausible_patch = repairs_of_target == n_smatbug_tools
+                    else:
+                        repairs_of_target = 0
+                        is_plausible_patch = False
+                        
+                    # Add patch to graph
+                    G = target_graphs[target_vulnerability]
+                    if is_plausible_patch:
+                        target_summaries[target_vulnerability]["plausible_patches"] = target_summaries[target_vulnerability].get("plausible_patches",0) + 1                
+                        G.add_node(patch_node_name,
+                            color="green")
+                    else:
+                        target_summaries[target_vulnerability]["plausible_patches"] = target_summaries[target_vulnerability].get("plausible_patches",0)
+                        G.add_node(patch_node_name, 
+                            color="red")
+                    
+                    G.add_edge(sc_name, patch_node_name)
+
+                    # New best patch
+                    if repairs_of_target > current_max:
+                        target_max_repair[target_vulnerability] = repairs_of_target   
+                        patch_data["sc_name"] = sc_name                    
+                        patch_data["n_patches"] = n_patches
+                        patch_data["unique_paches_that_compile"] =  None
+                        patch_data["best_patch"] =  patch_name
+                        patch_data["compiles"] = compiles
+                        patch_data["plausible_patch"] = is_plausible_patch
+
+
+                        for tool_name, tool_vulnerabilities in patch_analyzer_results_with_aliases.items():
+                            original_status = 'Fix'
+                            if target_vulnerability in original_analyzer_results_with_aliases[tool_name]:
+                                original_status = 'Bug'
+                            
+                            repaired_status = "Fix"
+                            if target_vulnerability in tool_vulnerabilities or not compiles:
+                                repaired_status = "Bug"
+
+                            patch_data[tool_name] =  f'{original_status}/{repaired_status}'
+                        
+                        target_summaries[target_vulnerability]["contracts"][sc_name] = patch_data
+            
+            for target_vulnerability in target_summaries.keys():
+                target_summaries[target_vulnerability]["contracts"][sc_name]["unique_paches_that_compile"] =  f'{n_unique_patches_that_compile}/{n_unique_paches}'
+        
+        # Create pyvis graphs
+        for target_vulnerability in experiment_settings["target_vulnerabilities"]:
+            TransformativeRepair.save_graph(target_graphs[target_vulnerability], results_dir, target_vulnerability)    
+
+        return target_summaries
+
+    @staticmethod
+    def create_summary(experiment_settings:dict, llm_settings:dict) -> None:
+        results_dir = Path(os.path.join("experiment_results",
+            f'{experiment_settings["experiment_name"]}_{experiment_settings["llm_model"]}'))
+        # Create summary
+        summary = {}
+        summary["experiment_name"] = f'{experiment_settings["experiment_name"]}_{experiment_settings["llm_model"]}'
+        summary["dataset"] = experiment_settings["vulnerable_contracts_directory"]
+        summary["smartbugs_tools"] = experiment_settings["smartbugs_tools"]
+        summary["prompt_style"] = experiment_settings["prompt_style"]
+        summary["llm_settings"] = llm_settings[experiment_settings["llm_model"]]
+        summary["target_vulnerabilities"] = TransformativeRepair.create_target_summary_and_graphs(experiment_settings)
+
+        # Save JSON summary
+        with open(os.path.join(results_dir, f'summary_{summary["experiment_name"]}.json'), "w") as outfile:
+            outfile.write(json.dumps(summary, indent=2))
+        
+        # Save Markdown summary
+        TransformativeRepair.generate_summary_markdown(summary, results_dir)
+
+    @staticmethod
+    def shutdown_thread(experiment_settings:dict, llm_settings:dict, stop_event:threading.Event=None, finished=False):
 
 
         results_dir = Path(os.path.join("experiment_results",
@@ -250,121 +370,7 @@ class TransformativeRepair:
             sleep = 5
 
         # Create summary
-        summary = {}
-        summary["experiment_name"] = f'{experiment_settings["experiment_name"]}_{experiment_settings["llm_model"]}'
-        summary["dataset"] = experiment_settings["vulnerable_contracts_directory"]
-        summary["smartbugs_tools"] = experiment_settings["smartbugs_tools"]
-        summary["prompt_style"] = experiment_settings["prompt_style"]
-        summary["llm_settings"] = llm_settings[experiment_settings["llm_model"]]
-        summary["target_vulnerabilities"] = {}
-
-
-        for sc_dir in [os.path.join(results_dir, item) for item in os.listdir(results_dir) if os.path.isdir(os.path.join(results_dir, item))]:
-            # Get original sc
-            original_vulnerabilities = json.load(open(os.path.join(sc_dir, "vulnerabilities.json"), 'r'))
-            original_analyzer_results_with_aliases = TransformativeRepair.get_vulnerability_aliases(original_vulnerabilities)
-            candidate_patches_dir = os.path.join(sc_dir, "candidate_patches")
-            patch_results = json.load(open(os.path.join(candidate_patches_dir,  "patch_results.json"), 'r'))
-            
-            n_patches = len([name for name in os.listdir(candidate_patches_dir) if os.path.isdir(os.path.join(candidate_patches_dir, name))])
-            n_unique_paches = len(patch_results["unique_patches"])
-            n_unique_patches_that_compile = 0
-
-            target_max_repair = {}
-            target_summary = {}
-            target_graph = {}
-            
-            sc_name = os.path.basename(sc_dir)
-            for patch_file_name in patch_results["unique_patches"].keys():
-                patch_name, _ = os.path.splitext(patch_file_name)
-                patch_node_name = f'{sc_name}_{patch_name}'
-                
-                patch_vulnerabilities = json.load(open(os.path.join(candidate_patches_dir, patch_name, "vulnerabilities.json"), 'r'))
-                patch_analyzer_results_with_aliases = TransformativeRepair.get_vulnerability_aliases(patch_vulnerabilities)
-
-                compiles = TransformativeRepair.check_if_compiles(patch_analyzer_results_with_aliases)
-                if compiles:
-                    n_unique_patches_that_compile += 1
-
-                for target_vulnerability in experiment_settings["target_vulnerabilities"]:  
-                    if target_vulnerability not in target_summary:
-                        target_summary[target_vulnerability] = {}
-                        target_summary[target_vulnerability]["contracts"] = {}
-                        G = nx.DiGraph()
-                        G.add_node(sc_name, 
-                            # sc_data=start_sc, 
-                            group=1, 
-                            size=30)
-                        target_graph[target_vulnerability] = G
-
-                    if sc_name not in target_summary[target_vulnerability]["contracts"]:
-                        target_summary[target_vulnerability]["contracts"][sc_name] = {}
-                    
-                    patch_data = {}                               
-
-                    current_max = target_max_repair.get(target_vulnerability, -1)
-                    n_smatbug_tools = len(patch_analyzer_results_with_aliases.keys())
-
-                    if compiles:
-                        repairs_of_target = sum(target_vulnerability not in my_list for my_list in patch_analyzer_results_with_aliases.values())
-                        is_plausible_patch = repairs_of_target == n_smatbug_tools
-                    else:
-                        repairs_of_target = 0
-                        is_plausible_patch = False
-                        
-                    # Add patch to graph
-                    G = target_graph[target_vulnerability]
-                    if is_plausible_patch:
-                        target_summary[target_vulnerability]["plausible_patches"] = target_summary[target_vulnerability].get("plausible_patches",0) + 1                
-                        G.add_node(patch_node_name,
-                            color="green")
-                    else:
-                        target_summary[target_vulnerability]["plausible_patches"] = target_summary[target_vulnerability].get("plausible_patches",0)
-                        G.add_node(patch_node_name, 
-                            color="red")
-                    
-                    G.add_edge(sc_name, patch_node_name)
-
-                    # New best patch
-                    if repairs_of_target > current_max:
-                        target_max_repair[target_vulnerability] = repairs_of_target   
-                        patch_data["sc_name"] = sc_name                    
-                        patch_data["n_patches"] = n_patches
-                        patch_data["unique_paches_that_compile"] =  None
-                        patch_data["best_patch"] =  patch_name
-                        patch_data["compiles"] = compiles
-                        patch_data["plausible_patch"] = is_plausible_patch
-
-
-                        for tool_name, tool_vulnerabilities in patch_analyzer_results_with_aliases.items():
-                            original_status = 'Fix'
-                            if target_vulnerability in original_analyzer_results_with_aliases[tool_name]:
-                                original_status = 'Bug'
-                            
-                            repaired_status = "Fix"
-                            if target_vulnerability in tool_vulnerabilities or not compiles:
-                                repaired_status = "Bug"
-
-                            patch_data[tool_name] =  f'{original_status}/{repaired_status}'
-                        
-                        target_summary[target_vulnerability]["contracts"][sc_name] = patch_data
-            
-            for target_vulnerability in target_summary.keys():
-                target_summary[target_vulnerability]["contracts"][sc_name]["unique_paches_that_compile"] =  f'{n_unique_patches_that_compile}/{n_unique_paches}'
-                                                    
-        summary["target_vulnerabilities"] = target_summary
-        
-        summaries_dir = Path(os.path.join(results_dir))
-        summaries_dir.mkdir(parents=True, exist_ok=True)
-
-        with open(os.path.join(summaries_dir, f'summary_{summary["experiment_name"]}.json'), "w") as outfile:
-            outfile.write(json.dumps(summary, indent=2))
-        TransformativeRepair.generate_summary_markdown(summary, summaries_dir)
-        
-        pyvis_dir = Path(os.path.join(summaries_dir))
-        pyvis_dir.mkdir(parents=True, exist_ok=True)
-        for target_vulnerability in experiment_settings["target_vulnerabilities"]:
-            TransformativeRepair.save_graph(target_graph[target_vulnerability], results_dir, target_vulnerability)        
+        TransformativeRepair.create_summary(experiment_settings, llm_settings)        
 
         # Stop all threads and finish program
         for thread in threading.enumerate():
@@ -485,6 +491,8 @@ class TransformativeRepair:
                 f'{self.experiment_settings["experiment_name"]}_{self.experiment_settings["llm_model"]}'))
         results_dir.mkdir(parents=True, exist_ok=True)
 
+        shutil.copyfile('config.yml', os.path.join(results_dir, "config.yml"))
+
         sc_vulnerable_count = 0
 
         for sc_filename in os.listdir(self.vulnerable_contracts_dir):
@@ -521,8 +529,8 @@ class TransformativeRepair:
             repair_thread.start()
 
         #### Start Summary Thread
-        summary_thread = threading.Thread(target=TransformativeRepair.create_summary, args=(self.experiment_settings, self.llm_settings, stop_event))
-        summary_thread.start()
+        shutdown_thread = threading.Thread(target=TransformativeRepair.shutdown_thread, args=(self.experiment_settings, self.llm_settings, stop_event))
+        shutdown_thread.start()
 
 
         
