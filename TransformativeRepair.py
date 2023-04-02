@@ -186,19 +186,30 @@ class TransformativeRepair:
     
     @staticmethod
     def generate_summary_markdown(summary, results_dir) -> None:
-        # Generate markdown
-        markdown = f"# Summary of settings\n\n| Setting | Value |\n| --- | --- |\n"
+        # Generate settings of experiment
+        markdown = f"# Settings of experiment\n\n| Setting | Value |\n| --- | --- |\n"
         for key, value in summary.items():
             if key != "target_vulnerabilities":
                 markdown += f"| {key} | {value} |\n"
+        
+        # Generate Results of Experiments
         markdown += "\n## Target Vulnerabilities\n\n"
         for vulnerability, vulnerability_data in summary["target_vulnerabilities"].items():
             contracts = vulnerability_data["contracts"]
-            markdown += f"### {vulnerability}\n\n"
-            markdown += "| Contract Name | # Patches | Unique Patches That Compile | Best Patch | Osiris | Conkas | Oyente | Slither |\n"
-            markdown += "| --- | --- | --- | --- | --- | --- | --- | --- |\n"
+            markdown += f"\n### {vulnerability}\n"
+            markdown += f'`n_contracts={len(contracts.keys())}`\n`plausible_patches={vulnerability_data["plausible_patches"]}`\n\n'
+            
+            # Add table headers
+            markdown += f'| {" | ".join(str(k) for k in contracts[next(iter(contracts.keys()))].keys())} |\n' 
+            # Add table format
+            markdown += f'| {" | ".join("---" for k in contracts[next(iter(contracts.keys()))].keys())} |\n'
+            # Add table content
             for contract, info in contracts.items():
-                markdown += f"| {info['sc_name']} | {info['n_patches']} | {info['unique_paches_that_compile']} | {info['best_patch']} | {info.get('osiris', '-')} | {info.get('conkas', '-')} | {info.get('oyente', '-')} | {info.get('slither', '-')} |\n"
+                markdown += f'| {" | ".join([str(info[k]) for k in info])}|\n'
+                
+
+            # for contract, info in contracts.items():
+            #     markdown += f"| {info['sc_name']} | {info['n_patches']} | {info['unique_paches_that_compile']} | {info['best_patch']} | {info.get('osiris', '-')} | {info.get('conkas', '-')} | {info.get('oyente', '-')} | {info.get('slither', '-')} |\n"
 
         # Save markdown to file
         experiment_name = summary["experiment_name"]
@@ -295,7 +306,7 @@ class TransformativeRepair:
                     n_smatbug_tools = len(patch_analyzer_results_with_aliases.keys())
 
                     if compiles:
-                        repairs_of_target = sum(target_vulnerability in my_list for my_list in patch_analyzer_results_with_aliases.values())
+                        repairs_of_target = sum(target_vulnerability not in my_list for my_list in patch_analyzer_results_with_aliases.values())
                         is_plausible_patch = repairs_of_target == n_smatbug_tools
                     else:
                         repairs_of_target = 0
@@ -315,9 +326,13 @@ class TransformativeRepair:
                     G.add_edge(sc_name, patch_node_name)
 
                     # New best patch
-                    if repairs_of_target > current_max:                            
+                    if repairs_of_target > current_max:
+                        target_max_repair[target_vulnerability] = repairs_of_target   
+                        patch_data["sc_name"] = sc_name                    
                         patch_data["n_patches"] = n_patches
+                        patch_data["unique_paches_that_compile"] =  None
                         patch_data["best_patch"] =  patch_name
+                        patch_data["compiles"] = compiles
                         patch_data["plausible_patch"] = is_plausible_patch
 
 
