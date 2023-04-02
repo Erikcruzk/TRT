@@ -7,6 +7,7 @@
 | smartbugs_tools | ['oyente', 'slither', 'conkas', 'honeybadger', 'osiris'] |
 | prompt_style | D_vulnerability_info |
 | llm_settings | {'model_name': 'gpt-3.5-turbo', 'secret_api_key': 'KTH_OPENAI_API_KEY', 'temperature': 0.5, 'top_p': 0.9, 'num_candidate_patches': 5, 'max_time': 3600, 'stop': ['///']} |
+| run_time | 0:00:00.035432 |
 
 ## Target Vulnerabilities
 
