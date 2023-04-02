@@ -12,16 +12,14 @@
 
 
 ### reentrancy
-`n_contracts=1`
-`plausible_patches=1`
+n_plausible_patches/n_contracts = `1/1`
 
 | sc_name | n_patches | unique_paches_that_compile | best_patch | compiles | plausible_patch | osiris | honeybadger | conkas | oyente | slither |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | etherstore | 5 | 1/5 | patch_1 | True | True | Bug/Fix | Fix/Fix | Bug/Fix | Bug/Fix | Bug/Fix|
 
 ### integer_over-underflow
-`n_contracts=1`
-`plausible_patches=0`
+n_plausible_patches/n_contracts = `0/1`
 
 | sc_name | n_patches | unique_paches_that_compile | best_patch | compiles | plausible_patch | osiris | honeybadger | conkas | oyente | slither |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
