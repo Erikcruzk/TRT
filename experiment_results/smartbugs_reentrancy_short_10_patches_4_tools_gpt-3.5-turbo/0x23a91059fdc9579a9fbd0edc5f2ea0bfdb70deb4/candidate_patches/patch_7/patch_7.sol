@@ -1,0 +1,66 @@
+/*
+ * @source: etherscan.io 
+ * @author:
+ * @vulnerable_at_lines: 38
+ */
+
+pragma solidity ^0.4.19;
+
+contract PrivateBank {
+    mapping (address => uint) public balances;
+    uint public MinDeposit = 1 ether;
+    Log TransferLog;
+    bool private locked;
+
+    function PrivateBank(address _log) public {
+        TransferLog = Log(_log);
+        locked = false;
+    }
+
+    function Deposit() public payable {
+        if(msg.value >= MinDeposit) {
+            balances[msg.sender] += msg.value;
+            TransferLog.AddMessage(msg.sender, msg.value, "Deposit");
+        }
+    }
+
+    function CashOut(uint _am) public {
+        if(_am <= balances[msg.sender] && !locked) {
+            locked = true;
+            balances[msg.sender] -= _am;
+            if(msg.sender.call.value(_am)()) {
+                TransferLog.AddMessage(msg.sender, _am, "CashOut");
+            }
+            locked = false;
+        }
+    }
+
+    function() public payable {}
+
+}
+
+contract Log {
+    struct Message {
+        address Sender;
+        string Data;
+        uint Val;
+        uint Time;
+    }
+
+    Message[] public History;
+    Message private LastMsg;
+
+    function AddMessage(address _adr, uint _val, string _data) public {
+        LastMsg.Sender = _adr;
+        LastMsg.Time = now;
+        LastMsg.Val = _val;
+        LastMsg.Data = _data;
+        History.push(LastMsg);
+    }
+} 
+
+// Changes Made:
+// 1. Added a bool variable 'locked' to prevent reentrancy attack.
+// 2. Moved the variable 'LastMsg' to 'private' visibility to prevent external modification.
+// 3. Made the constructor function 'Public'.
+// 4. Added 'public' visibility to the 'CashOut' function.

@@ -1,0 +1,137 @@
+/// The task is to repair a Solidity Smart Contract
+
+/// According to the following smart contract analyzers, this Solidity Smart Contract is vulnerable to the following attacks
+
+{
+  "slither": {
+    "successfull_analysis": true,
+    "errors": [
+      "EXIT_CODE_10"
+    ],
+    "vulnerability_findings": [
+      {
+        "name": "reentrancy-eth",
+        "line_of_vulnerability": 21
+      },
+      {
+        "name": "external-function",
+        "line_of_vulnerability": 13
+      },
+      {
+        "name": "external-function",
+        "line_of_vulnerability": 17
+      },
+      {
+        "name": "external-function",
+        "line_of_vulnerability": 21
+      },
+      {
+        "name": "external-function",
+        "line_of_vulnerability": 31
+      },
+      {
+        "name": "solc-version",
+        "line_of_vulnerability": 7
+      },
+      {
+        "name": "low-level-calls",
+        "line_of_vulnerability": 21
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 13
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 17
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 21
+      }
+    ]
+  },
+  "oyente": {
+    "successfull_analysis": true,
+    "errors": [],
+    "vulnerability_findings": [
+      {
+        "name": "Integer Overflow",
+        "line_of_vulnerability": 14
+      },
+      {
+        "name": "Re-Entrancy Vulnerability",
+        "line_of_vulnerability": 24
+      }
+    ]
+  },
+  "honeybadger": {
+    "successfull_analysis": true,
+    "errors": [],
+    "vulnerability_findings": [
+      {
+        "name": "Money flow",
+        "line_of_vulnerability": null
+      }
+    ]
+  },
+  "osiris": {
+    "successfull_analysis": true,
+    "errors": [],
+    "vulnerability_findings": [
+      {
+        "name": "Callstack bug",
+        "line_of_vulnerability": 24
+      },
+      {
+        "name": "Overflow bugs",
+        "line_of_vulnerability": 14
+      },
+      {
+        "name": "Reentrancy bug",
+        "line_of_vulnerability": 24
+      },
+      {
+        "name": "Underflow bugs",
+        "line_of_vulnerability": 27
+      }
+    ]
+  }
+}
+
+/// Vulnerable Solidity Smart Contract
+/*
+ * @source: https://ethernaut.zeppelin.solutions/level/0xf70706db003e94cfe4b5e27ffd891d5c81b39488
+ * @author: Alejandro Santander
+ * @vulnerable_at_lines: 24
+ */
+
+pragma solidity ^0.4.18;
+
+contract Reentrance {
+
+  mapping(address => uint) public balances;
+
+  function donate(address _to) public payable {
+    balances[_to] += msg.value;
+  }
+
+  function balanceOf(address _who) public view returns (uint balance) {
+    return balances[_who];
+  }
+
+  function withdraw(uint _amount) public {
+    if(balances[msg.sender] >= _amount) {
+      // <yes> <report> REENTRANCY
+      if(msg.sender.call.value(_amount)()) {
+        _amount;
+      }
+      balances[msg.sender] -= _amount;
+    }
+  }
+
+  function() public payable {}
+}
+
+
+/// Repaired Solidity Smart Contract
