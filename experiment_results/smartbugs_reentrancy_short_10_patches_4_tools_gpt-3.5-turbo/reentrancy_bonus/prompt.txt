@@ -1,0 +1,110 @@
+/// The task is to repair a Solidity Smart Contract
+
+/// According to the following smart contract analyzers, this Solidity Smart Contract is vulnerable to the following attacks
+
+{
+  "slither": {
+    "successfull_analysis": true,
+    "errors": [
+      "EXIT_CODE_7"
+    ],
+    "vulnerability_findings": [
+      {
+        "name": "arbitrary-send",
+        "line_of_vulnerability": 16
+      },
+      {
+        "name": "reentrancy-eth",
+        "line_of_vulnerability": 23
+      },
+      {
+        "name": "external-function",
+        "line_of_vulnerability": 23
+      },
+      {
+        "name": "solc-version",
+        "line_of_vulnerability": 7
+      },
+      {
+        "name": "low-level-calls",
+        "line_of_vulnerability": 16
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 9
+      },
+      {
+        "name": "unused-state",
+        "line_of_vulnerability": 12
+      }
+    ]
+  },
+  "oyente": {
+    "successfull_analysis": true,
+    "errors": [],
+    "vulnerability_findings": []
+  },
+  "honeybadger": {
+    "successfull_analysis": true,
+    "errors": [],
+    "vulnerability_findings": []
+  },
+  "osiris": {
+    "successfull_analysis": true,
+    "errors": [],
+    "vulnerability_findings": [
+      {
+        "name": "Callstack bug",
+        "line_of_vulnerability": 19
+      },
+      {
+        "name": "Concurrency bug",
+        "line_of_vulnerability": 19
+      },
+      {
+        "name": "Overflow bugs",
+        "line_of_vulnerability": 26
+      },
+      {
+        "name": "Reentrancy bug",
+        "line_of_vulnerability": 19
+      }
+    ]
+  }
+}
+
+/// Vulnerable Solidity Smart Contract
+/*
+ * @source: https://consensys.github.io/smart-contract-best-practices/known_attacks/
+ * @author: consensys
+ * @vulnerable_at_lines: 28
+ */
+
+pragma solidity ^0.4.0;
+
+contract Reentrancy_bonus{
+
+    // INSECURE
+    mapping (address => uint) private userBalances;
+    mapping (address => bool) private claimedBonus;
+    mapping (address => uint) private rewardsForA;
+
+    function withdrawReward(address recipient) public {
+        uint amountToWithdraw = rewardsForA[recipient];
+        rewardsForA[recipient] = 0;
+        (bool success, ) = recipient.call.value(amountToWithdraw)("");
+        require(success);
+    }
+
+    function getFirstWithdrawalBonus(address recipient) public {
+        require(!claimedBonus[recipient]); // Each recipient should only be able to claim the bonus once
+
+        rewardsForA[recipient] += 100;
+        // <yes> <report> REENTRANCY
+        withdrawReward(recipient); // At this point, the caller will be able to execute getFirstWithdrawalBonus again.
+        claimedBonus[recipient] = true;
+    }
+}
+
+
+/// Repaired Solidity Smart Contract

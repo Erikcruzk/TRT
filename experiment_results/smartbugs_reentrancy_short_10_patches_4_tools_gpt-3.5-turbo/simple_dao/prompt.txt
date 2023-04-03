@@ -1,0 +1,112 @@
+/// The task is to repair a Solidity Smart Contract
+
+/// According to the following smart contract analyzers, this Solidity Smart Contract is vulnerable to the following attacks
+
+{
+  "slither": {
+    "successfull_analysis": true,
+    "errors": [
+      "EXIT_CODE_6"
+    ],
+    "vulnerability_findings": [
+      {
+        "name": "reentrancy-eth",
+        "line_of_vulnerability": 16
+      },
+      {
+        "name": "external-function",
+        "line_of_vulnerability": 12
+      },
+      {
+        "name": "external-function",
+        "line_of_vulnerability": 16
+      },
+      {
+        "name": "external-function",
+        "line_of_vulnerability": 24
+      },
+      {
+        "name": "solc-version",
+        "line_of_vulnerability": 7
+      },
+      {
+        "name": "low-level-calls",
+        "line_of_vulnerability": 16
+      }
+    ]
+  },
+  "oyente": {
+    "successfull_analysis": true,
+    "errors": [],
+    "vulnerability_findings": [
+      {
+        "name": "Re-Entrancy Vulnerability",
+        "line_of_vulnerability": 19
+      }
+    ]
+  },
+  "osiris": {
+    "successfull_analysis": true,
+    "errors": [],
+    "vulnerability_findings": [
+      {
+        "name": "Callstack bug",
+        "line_of_vulnerability": 19
+      },
+      {
+        "name": "Overflow bugs",
+        "line_of_vulnerability": 13
+      },
+      {
+        "name": "Reentrancy bug",
+        "line_of_vulnerability": 19
+      },
+      {
+        "name": "Underflow bugs",
+        "line_of_vulnerability": 20
+      }
+    ]
+  },
+  "honeybadger": {
+    "successfull_analysis": true,
+    "errors": [],
+    "vulnerability_findings": [
+      {
+        "name": "Money flow",
+        "line_of_vulnerability": null
+      }
+    ]
+  }
+}
+
+/// Vulnerable Solidity Smart Contract
+/*
+ * @source: http://blockchain.unica.it/projects/ethereum-survey/attacks.html#simpledao
+ * @author: -
+ * @vulnerable_at_lines: 19
+ */
+
+pragma solidity ^0.4.2;
+
+contract SimpleDAO {
+  mapping (address => uint) public credit;
+
+  function donate(address to) payable {
+    credit[to] += msg.value;
+  }
+
+  function withdraw(uint amount) {
+    if (credit[msg.sender]>= amount) {
+      // <yes> <report> REENTRANCY
+      bool res = msg.sender.call.value(amount)();
+      credit[msg.sender]-=amount;
+    }
+  }
+
+  function queryCredit(address to) returns (uint){
+    return credit[to];
+  }
+}
+
+
+/// Repaired Solidity Smart Contract

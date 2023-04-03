@@ -1,0 +1,272 @@
+/// The task is to repair a Solidity Smart Contract
+
+/// According to the following smart contract analyzers, this Solidity Smart Contract is vulnerable to the following attacks
+
+{
+  "slither": {
+    "successfull_analysis": true,
+    "errors": [
+      "EXIT_CODE_26"
+    ],
+    "vulnerability_findings": [
+      {
+        "name": "reentrancy-eth",
+        "line_of_vulnerability": 47
+      },
+      {
+        "name": "external-function",
+        "line_of_vulnerability": 19
+      },
+      {
+        "name": "external-function",
+        "line_of_vulnerability": 26
+      },
+      {
+        "name": "external-function",
+        "line_of_vulnerability": 33
+      },
+      {
+        "name": "external-function",
+        "line_of_vulnerability": 47
+      },
+      {
+        "name": "external-function",
+        "line_of_vulnerability": 62
+      },
+      {
+        "name": "external-function",
+        "line_of_vulnerability": 87
+      },
+      {
+        "name": "solc-version",
+        "line_of_vulnerability": 7
+      },
+      {
+        "name": "low-level-calls",
+        "line_of_vulnerability": 47
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 9
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 19
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 19
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 26
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 26
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 33
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 39
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 47
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 47
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 13
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 15
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 87
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 87
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 87
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 87
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 83
+      },
+      {
+        "name": "naming-convention",
+        "line_of_vulnerability": 85
+      }
+    ]
+  },
+  "oyente": {
+    "successfull_analysis": true,
+    "errors": [],
+    "vulnerability_findings": [
+      {
+        "name": "Re-Entrancy Vulnerability",
+        "line_of_vulnerability": 54
+      }
+    ]
+  },
+  "honeybadger": {
+    "successfull_analysis": true,
+    "errors": [
+      "SYMBOLIC EXECUTION TIMEOUT"
+    ],
+    "vulnerability_findings": [
+      {
+        "name": "Money flow",
+        "line_of_vulnerability": null
+      },
+      {
+        "name": "Straw man contract",
+        "line_of_vulnerability": 57
+      }
+    ]
+  },
+  "osiris": {
+    "successfull_analysis": true,
+    "errors": [
+      "SYMBOLIC EXECUTION TIMEOUT"
+    ],
+    "vulnerability_findings": [
+      {
+        "name": "Overflow bugs",
+        "line_of_vulnerability": 2
+      },
+      {
+        "name": "Overflow bugs",
+        "line_of_vulnerability": 43
+      },
+      {
+        "name": "Reentrancy bug",
+        "line_of_vulnerability": 54
+      },
+      {
+        "name": "Reentrancy bug",
+        "line_of_vulnerability": 57
+      },
+      {
+        "name": "Underflow bugs",
+        "line_of_vulnerability": 56
+      }
+    ]
+  }
+}
+
+/// Vulnerable Solidity Smart Contract
+/*
+ * @source: etherscan.io 
+ * @author: -
+ * @vulnerable_at_lines: 54
+ */
+
+pragma solidity ^0.4.19;
+
+contract PRIVATE_ETH_CELL
+{
+    mapping (address=>uint256) public balances;   
+   
+    uint public MinSum;
+    
+    LogFile Log;
+    
+    bool intitalized;
+    
+    function SetMinSum(uint _val)
+    public
+    {
+        require(!intitalized);
+        MinSum = _val;
+    }
+    
+    function SetLogFile(address _log)
+    public
+    {
+        require(!intitalized);
+        Log = LogFile(_log);
+    }
+    
+    function Initialized()
+    public
+    {
+        intitalized = true;
+    }
+    
+    function Deposit()
+    public
+    payable
+    {
+        balances[msg.sender]+= msg.value;
+        Log.AddMessage(msg.sender,msg.value,"Put");
+    }
+    
+    function Collect(uint _am)
+    public
+    payable
+    {
+        if(balances[msg.sender]>=MinSum && balances[msg.sender]>=_am)
+        {
+            // <yes> <report> REENTRANCY
+            if(msg.sender.call.value(_am)())
+            {
+                balances[msg.sender]-=_am;
+                Log.AddMessage(msg.sender,_am,"Collect");
+            }
+        }
+    }
+    
+    function() 
+    public 
+    payable
+    {
+        Deposit();
+    }
+    
+}
+
+
+
+contract LogFile
+{
+    struct Message
+    {
+        address Sender;
+        string  Data;
+        uint Val;
+        uint  Time;
+    }
+    
+    Message[] public History;
+    
+    Message LastMsg;
+    
+    function AddMessage(address _adr,uint _val,string _data)
+    public
+    {
+        LastMsg.Sender = _adr;
+        LastMsg.Time = now;
+        LastMsg.Val = _val;
+        LastMsg.Data = _data;
+        History.push(LastMsg);
+    }
+}
+
+/// Repaired Solidity Smart Contract
