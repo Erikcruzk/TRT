@@ -4,7 +4,6 @@ import logging
 import os
 import threading
 import time
-import traceback
 import networkx as nx
 from pyvis.network import Network
 from SmartContract import SmartContract
@@ -15,7 +14,6 @@ from pathlib import Path
 import queue
 import shutil
 from tqdm import tqdm
-
 
 class TransformativeRepair:
     
@@ -115,7 +113,7 @@ class TransformativeRepair:
             if not findings:
                 analyzer_results_with_aliases[tool_name] = ['error'] + tool_result['errors']
             
-            if not tool_result.get("successfull_analysis", False):
+            if not tool_result.get("successfull_analysis", False) == True:
                 analyzer_results_with_aliases[tool_name].append("unsuccessfull_analysis")
 
             for finding in findings:
@@ -147,7 +145,7 @@ class TransformativeRepair:
     def check_if_compiles(patch_analyzer_results:dict) -> bool:
         compiles = True
 
-        errorTexts = ["solidity compilation failed", "error", "unsuccessfull_analysis"]
+        errorTexts = ["solidity compilation failed", "unsuccessfull_analysis"]
 
         for tool_vulnerabilities  in patch_analyzer_results.values():
             lower_vulnerabilities =  [x.lower() for x in tool_vulnerabilities]
@@ -218,6 +216,9 @@ class TransformativeRepair:
         results_dir = Path(os.path.join("experiment_results",
             f'{experiment_settings["experiment_name"]}_{experiment_settings["llm_model"]}'))
         
+        target_summaries = {}
+        target_graphs = {}
+
         for sc_dir in [os.path.join(results_dir, item) for item in os.listdir(results_dir) if os.path.isdir(os.path.join(results_dir, item))]:
             # Get original sc
             original_vulnerabilities = json.load(open(os.path.join(sc_dir, "vulnerabilities.json"), 'r'))
@@ -230,8 +231,6 @@ class TransformativeRepair:
             n_unique_patches_that_compile = 0
 
             target_max_repair = {}
-            target_summaries = {}
-            target_graphs = {}
             
             sc_name = os.path.basename(sc_dir)
             for patch_file_name in patch_results["unique_patches"].keys():
@@ -248,16 +247,17 @@ class TransformativeRepair:
                 for target_vulnerability in experiment_settings["target_vulnerabilities"]:  
                     if target_vulnerability not in target_summaries:
                         target_summaries[target_vulnerability] = {}
+                        target_summaries[target_vulnerability]["plausible_patches"] = 0
                         target_summaries[target_vulnerability]["contracts"] = {}
-                        G = nx.DiGraph()
+                        target_graphs[target_vulnerability] = nx.DiGraph()
+
+                    if sc_name not in target_summaries[target_vulnerability]["contracts"]:
+                        target_summaries[target_vulnerability]["contracts"][sc_name] = {}
+                        G = target_graphs[target_vulnerability]
                         G.add_node(sc_name, 
                             # sc_data=start_sc, 
                             group=1, 
                             size=30)
-                        target_graphs[target_vulnerability] = G
-
-                    if sc_name not in target_summaries[target_vulnerability]["contracts"]:
-                        target_summaries[target_vulnerability]["contracts"][sc_name] = {}
                     
                     patch_data = {}                               
 
@@ -274,7 +274,7 @@ class TransformativeRepair:
                     # Add patch to graph
                     G = target_graphs[target_vulnerability]
                     if is_plausible_patch:
-                        target_summaries[target_vulnerability]["plausible_patches"] = target_summaries[target_vulnerability].get("plausible_patches",0) + 1                
+                                 
                         G.add_node(patch_node_name,
                             color="green")
                     else:
@@ -309,6 +309,7 @@ class TransformativeRepair:
                         target_summaries[target_vulnerability]["contracts"][sc_name] = patch_data
             
             for target_vulnerability in target_summaries.keys():
+                target_summaries[target_vulnerability]["plausible_patches"] =  sum(1 for contract in target_summaries[target_vulnerability]["contracts"].values() if contract.get("plausible_patch"))
                 target_summaries[target_vulnerability]["contracts"][sc_name]["unique_paches_that_compile"] =  f'{n_unique_patches_that_compile}/{n_unique_paches}'
         
         # Create pyvis graphs
@@ -366,7 +367,7 @@ class TransformativeRepair:
                     # Check that all unique contracts have run smartbugs
                     for patch_vulnerability_path in [os.path.join(candidate_patches_dir, key.replace('.sol', ''), "vulnerabilities.json") for key in patch_results["unique_patches"].keys()]:
                         patch_vulnerability = json.load(open(patch_vulnerability_path, 'r')) if os.path.isfile(patch_vulnerability_path) else {}
-                        if not patch_vulnerability.get("smartbugs_completed", False):
+                        if not patch_vulnerability.get("smartbugs_completed", False) == True:
                             finished = False
                             break
             except Exception as e:
@@ -389,10 +390,12 @@ class TransformativeRepair:
         try:
             #### Step 1: Initialize SC
             sc = SmartContract(experiment_settings, sc_path)
-
-            if not sc.vulnerabilities.get("smartbugs_completed", False):
+            
+            if not sc.vulnerabilities.get("smartbugs_completed", False) == True:
                 #### Step 2: Find Vulnerabilities
                 sc.run_smartbugs()
+            else:
+                sc.remove_old_smartbugs_directories()
 
             #### Step 3: Enqueue to repair queue
             if do_repair_sc:
@@ -414,7 +417,7 @@ class TransformativeRepair:
 
 
     @staticmethod
-    def repair_sc(experiment_settings:dict, llm_settings:dict, sc_path:Path, smartbugs_sc_queue:queue.Queue):
+    def repair_sc(experiment_settings:dict, llm_settings:dict, sc_path:Path, smartbugs_sc_queue:queue.Queue, progressbar:tqdm):
         
         candidate_patches_dir = Path(os.path.join(sc_path.parent.absolute(), "candidate_patches"))
         candidate_patches_dir.mkdir(parents=True, exist_ok=True)
@@ -422,10 +425,21 @@ class TransformativeRepair:
         # Load patch results if exists
         patches_results_path = os.path.join(candidate_patches_dir, "patch_results.json")
         patches_results = json.load(open(patches_results_path, 'r')) if os.path.isfile(patches_results_path) else {}
-        patches_results["patch_generation_completed"] = patches_results.get("patch_generation_completed", False)
+        patches_results["patch_generation_completed"] = patches_results.get("patch_generation_completed", False) == True
 
         # Return if patches already generated and successfull
         if patches_results["patch_generation_completed"]:
+            for patch_name in patches_results["unique_patches"].keys():
+                patch_dir, _ = os.path.splitext(patch_name)
+                patch_path = Path(os.path.join(candidate_patches_dir, patch_dir, patch_name))
+
+                sc = SmartContract(experiment_settings, patch_path)
+                if not sc.vulnerabilities.get("smartbugs_completed", False) == True:
+                    smartbugs_sc_queue.put((patch_path, False))
+                else:
+                    sc.remove_old_smartbugs_directories()
+                    progressbar.update(1)
+                                    
             return
 
         try:
@@ -466,6 +480,7 @@ class TransformativeRepair:
                 # Dubplicate patch
                 unique_contract = hash_to_first_patch[hash]
                 unique_patches[unique_contract].append(patch_name)
+                progressbar.update(1)
                 
             patches_results["unique_patches"] = unique_patches
             patches_results["patch_generation_completed"] = True
@@ -476,15 +491,13 @@ class TransformativeRepair:
 
         with open(patches_results_path, "w") as outfile:
             outfile.write(json.dumps(patches_results, indent=2))
-        
-
 
     @staticmethod
-    def consumer_of_repair_queue(experiment_setting:dict, llm_settings:dict, smartbugs_sc_queue:queue.Queue, repair_sc_queue:queue.Queue, stop_event:threading.Event):
+    def consumer_of_repair_queue(experiment_setting:dict, llm_settings:dict, smartbugs_sc_queue:queue.Queue, repair_sc_queue:queue.Queue, stop_event:threading.Event, progressbar:tqdm, ):
         while not stop_event.is_set():
             try:
                 sc_path = repair_sc_queue.get(block=False)
-                TransformativeRepair.repair_sc(experiment_setting, llm_settings, sc_path, smartbugs_sc_queue)
+                TransformativeRepair.repair_sc(experiment_setting, llm_settings, sc_path, smartbugs_sc_queue, progressbar)
             except queue.Empty:
                 time.sleep(10)
     
@@ -529,7 +542,7 @@ class TransformativeRepair:
 
         #### Step 2: Consume smart repair_sc_queue
         for i in range(self.experiment_settings["n_repair_threads"]):
-            repair_thread = threading.Thread(target=TransformativeRepair.consumer_of_repair_queue, args=(self.experiment_settings, self.llm_settings, self.smartbugs_sc_queue, self.repair_sc_queue, stop_event))
+            repair_thread = threading.Thread(target=TransformativeRepair.consumer_of_repair_queue, args=(self.experiment_settings, self.llm_settings, self.smartbugs_sc_queue, self.repair_sc_queue, stop_event, progressbar))
             repair_thread.start()
 
         #### Start Summary Thread
