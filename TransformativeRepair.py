@@ -360,7 +360,7 @@ class TransformativeRepair:
                     patch_results = json.load(open(patch_results_path, 'r')) if os.path.isfile(patch_results_path) else {}
 
                     # Check that all patch generations have completed
-                    if not patch_results.get("patch_generation_completed", False):
+                    if not patch_results.get("patch_generation_completed", False) == True:
                         finished = False
                         break
                     
@@ -413,7 +413,7 @@ class TransformativeRepair:
                 TransformativeRepair.find_vulnerabilities(experiment_setting, sc_path, do_repair_sc, repair_sc_queue)
                 progressbar.update(1)
             except queue.Empty:
-                time.sleep(10)
+                time.sleep(1)
 
 
     @staticmethod
@@ -438,8 +438,7 @@ class TransformativeRepair:
                     smartbugs_sc_queue.put((patch_path, False))
                 else:
                     sc.remove_old_smartbugs_directories()
-                    progressbar.update(1)
-                                    
+                    progressbar.update(1)                   
             return
 
         try:
@@ -499,7 +498,7 @@ class TransformativeRepair:
                 sc_path = repair_sc_queue.get(block=False)
                 TransformativeRepair.repair_sc(experiment_setting, llm_settings, sc_path, smartbugs_sc_queue, progressbar)
             except queue.Empty:
-                time.sleep(10)
+                time.sleep(1)
     
     def start(self):
         
