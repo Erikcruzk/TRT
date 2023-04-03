@@ -1,13 +1,25 @@
+from datetime import datetime
 import hashlib
 import logging
 from pathlib import Path
+import shutil
 import subprocess
 import json
 import os
-import traceback
 from typing import List
 import yaml
 import re
+import atexit
+
+def exit_handler(process):
+    if process.poll() is None:
+        # Try to gracefully terminate the process
+        process.terminate()
+        try:
+            process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            # If the process does not terminate in 5 seconds, kill it
+            process.kill()
 
 class SmartContract:
     def __init__(self, experiment_settings:dict, sc_path:Path):
@@ -68,9 +80,33 @@ class SmartContract:
 
         self.vulnerabilities["analyzer_results"][tool_name] = tool_vulnerabilities
     
+    def remove_old_smartbugs_directories(self):
+        smartbugs_results_dir = Path(os.path.join(self.results_dir, "smartbugs_results"))
+        dirs = os.listdir(smartbugs_results_dir)
+        tool_dirs = {}
+        for d in dirs:
+            if os.path.isdir(os.path.join(smartbugs_results_dir, d)):
+                parts = d.split("_")
+                tool = parts[0]
+                date_str = parts[1]
+                time_str = parts[2]
+                date_time = datetime.strptime(date_str + " " + time_str, "%Y%m%d %H%M%S")
+                
+                if tool not in tool_dirs:
+                    tool_dirs[tool] = (d, date_time)
+                else:
+                    newest_dir, newest_date = tool_dirs[tool]
+                    if date_time > newest_date:
+                        tool_dirs[tool] = (d, date_time)
+
+        for tool, (newest_dir, _) in tool_dirs.items():
+            for d in dirs:
+                if tool in d and d != newest_dir:
+                    shutil.rmtree(os.path.join(smartbugs_results_dir, d))
+
     def set_vulnerabilities(self):
-        smartbugs_results_dir = os.path.join(self.results_dir, "smartbugs_results")
-        self.vulnerabilities["analyzer_results"] = {}
+        smartbugs_results_dir = Path(os.path.join(self.results_dir, "smartbugs_results"))
+        self.vulnerabilities["analyzer_results"] = {}        
 
         # Loop through all smartbugs_results
         for smartbugs_result_file in [os.path.join(smartbugs_results_dir, f) for f in os.listdir(smartbugs_results_dir) if os.path.isdir(os.path.join(smartbugs_results_dir, f))]:
@@ -79,10 +115,6 @@ class SmartContract:
             tool_result = json.load(open(os.path.join(sb_result_dir, 'result.json'), 'r'))
             self.create_vulnerabilities_from_sb_results(tool_name, tool_result)
             
-            
-
-                      
-
     def get_vulnerabilities(self) -> None:
         try:
             smartbugs_results_dir = os.path.join(self.results_dir, "smartbugs_results")
@@ -99,48 +131,45 @@ class SmartContract:
             logging.critical("An exception occurred: %s", str(e), exc_info=True)
 
     def run_smartbugs(self) -> None:    
-        # Create smsrtbugs results directory
-        smartbugs_results_dir = Path(os.path.join(self.results_dir, "smartbugs_results"))
-        smartbugs_results_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            # Create smsrtbugs results directory
+            smartbugs_results_dir = Path(os.path.join(self.results_dir, "smartbugs_results"))
+            smartbugs_results_dir.mkdir(parents=True, exist_ok=True)            
 
-        #### Create smartbugs config yaml file
-        # set the fields that are not editable
-        smartbugs_config = {
-            'runtime': False,
-            'runid': '${YEAR}${MONTH}${DAY}_${HOUR}${MIN}',
-            'json': True,
-            'tools': self.experiment_settings["smartbugs_tools"],
-            'results': os.path.join(smartbugs_results_dir, "${TOOL}_${RUNID}"),
-            'log': os.path.join(self.results_dir,'smartbugs_logs', '{RUNID}.log'),
-            'processes': self.experiment_settings["smartbugs_processes"],
-        }
+            #### Create smartbugs config yaml file
+            # set the fields that are not editable
+            smartbugs_config = {
+                'runtime': False,
+                'runid': '${YEAR}${MONTH}${DAY}_${HOUR}${MIN}',
+                'json': True,
+                'tools': self.experiment_settings["smartbugs_tools"],
+                'results': os.path.join(smartbugs_results_dir, "${TOOL}_${RUNID}"),
+                'log': os.path.join(self.results_dir,'smartbugs_logs', '{RUNID}.log'),
+                'processes': self.experiment_settings["smartbugs_processes"],
+                'timeout': 60*3
+            }
 
-        # write the data to a YAML file
-        smartbugs_config_path = os.path.join(self.results_dir,'smartbugs_config.yml')
-        with open(smartbugs_config_path, 'w') as f:
-            yaml.dump(smartbugs_config, f)
+            # write the data to a YAML file
+            smartbugs_config_path = os.path.join(self.results_dir,'smartbugs_config.yml')
+            with open(smartbugs_config_path, 'w') as f:
+                yaml.dump(smartbugs_config, f)
 
-        # Run smartbugs
-        output = subprocess.run([f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}'], capture_output=True, text=True, shell=True)
+            # Run smartbugs
+            process = subprocess.Popen(f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}', shell=True, stdout=subprocess.DEVNULL)
+            
+            atexit.register(exit_handler, process)
 
-        # Save vulnerabilities
-        self.set_vulnerabilities()
-        self.vulnerabilities["smartbugs_completed"] = True
+            # Wait for the process to complete and get the exit code
+            exit_code = process.wait()
+
+            # clean all old runs:
+            self.remove_old_smartbugs_directories()
+            # Save vulnerabilities
+            self.set_vulnerabilities()
+            self.vulnerabilities["smartbugs_completed"] = True
+        except Exception as e:
+            self.vulnerabilities["smartbugs_completed"] = str(e)
+            logging.critical(f'Smartbugs failure {self.results_dir} {str(e)}', exc_info=True)
+        
         with open(os.path.join(self.results_dir, "vulnerabilities.json"), "w") as outfile:
             outfile.write(json.dumps(self.vulnerabilities, indent=2))
-
-    # def get_repaired_vulnerabilities(self, repaired_sc) -> dict:
-    #     try:
-    #         repaired_vulnerabilities = {}
-    #         for tool, vulnerabilities in repaired_sc.vulnerabilities.items():
-    #             if('error' in vulnerabilities):
-    #                 repaired_vulnerabilities[tool] = vulnerabilities
-    #                 continue
-
-    #             repaired_vulnerabilities[tool] = [x for x in self.vulnerabilities[tool] if x not in vulnerabilities]
-            
-    #         return repaired_vulnerabilities
-    #     except Exception as e:
-    #         logging.critical("An exception occurred: %s", str(e), exc_info=True)
-    #         return {"error": str(e), 'stacktrace': traceback.format_exc()}
-        
