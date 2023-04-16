@@ -20,26 +20,16 @@ cd smartbugs
 install/setup-venv.sh
 ```
 
-#### Install solidity compiler
-
-`Linux`
-```
-sudo add-apt-repository ppa:ethereum/ethereum
-sudo apt-get update
-sudo apt-get install solc
-```
-
-
-`Mac OS`
-```
-brew update
-brew upgrade
-brew tap ethereum/ethereum
-brew install solidity
-```
-
 #### Add the API Key for OpenAI
 
 Add .env file with openAI-key
 
 `OPENAI_API_KEY=XXXXX`
+
+#### Prompt experiment roadmap
+Temperature 0.5 and 0.7. Top_p 0.95
+
+1. Basic. Just Fix this vulnerable Solidity Smart Contract `basic`
+2. Json info from analyzers `analyzer_json_info`
+3. Natural language info from analyzers `analyzer_natural_language_info`
+

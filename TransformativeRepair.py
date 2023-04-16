@@ -90,100 +90,6 @@ class TransformativeRepair:
             json.dump(data, outfile)    
     
     @staticmethod
-    def get_vulnerability_aliases(vulnerabilities:dict) -> dict:
-        analyzer_results_with_aliases = {}
-        # Create aliases, fill if necessary
-        reentrancy_aliases = ['reentrancy', 'Re-Entrancy Vulnerability', 'DAO', 'Not destructible (no self-destruct)', 'Unprotected Ether Withdrawal']
-        integer_aliases = ['overflow', 'underflow', 'integer overflow']
-        unhandled_exception_aliases = ['Unhandled Exception', 'unhandled', 'UnhandledException', 'Exception Disorder']
-        unchecked_call_aliases = ['Unchecked Low Level Call', 'Unchecked return value from external call', 'unchecked']
-        callstack_aliases = ['callstack', 'avoid-low-level-calls', 'avoid-call-value'] 
-
-        vulnerabilities_aliases = {}
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in reentrancy_aliases], 'reentrancy'))
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in integer_aliases], 'integer_over-underflow'))
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unhandled_exception_aliases], 'unhandled_exception'))
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unchecked_call_aliases], 'unchecked_low_level_call'))
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in callstack_aliases], 'callstack'))
-
-        for tool_name, tool_result in vulnerabilities["analyzer_results"].items():
-            analyzer_results_with_aliases[tool_name] = []
-            findings = tool_result['vulnerability_findings']
-            # First check if any errors = no findings TODO: check correct contract
-            if not findings:
-                analyzer_results_with_aliases[tool_name] = ['error'] + tool_result['errors']
-            
-            if not tool_result.get("successfull_analysis", False) == True:
-                analyzer_results_with_aliases[tool_name].append("unsuccessfull_analysis")
-
-            for finding in findings:
-                vulnerability_name = finding["name"].lower()
-
-                # Check if alias fount
-                if vulnerability_name in vulnerabilities_aliases:
-                    analyzer_results_with_aliases[tool_name].append(vulnerabilities_aliases[vulnerability_name])
-                    continue
-                
-                # Check if vulnerability_name contains any alias
-                vulnerability_name_contains_alias = vulnerabilities_aliases.get(next((key for key in vulnerabilities_aliases if key in vulnerability_name), None));
-                if vulnerability_name_contains_alias:
-                    analyzer_results_with_aliases[tool_name].append(vulnerability_name_contains_alias)
-                    continue
-                
-                # Finally add vulnerability name
-                #print(vulnerability_name)
-                analyzer_results_with_aliases[tool_name].append(vulnerability_name)
-            
-            # Delete duplicates
-            analyzer_results_with_aliases[tool_name] = list(set( analyzer_results_with_aliases[tool_name]))
-
-            # Only focus on one vulnerability
-            # analyzer_results_with_aliases[tool_name] = [x for x in analyzer_results_with_aliases[tool_name] if x == target_vulnerability] 
-        return analyzer_results_with_aliases
-
-    @staticmethod
-    def check_if_compiles(patch_analyzer_results:dict) -> bool:
-        compiles = True
-
-        errorTexts = ["solidity compilation failed", "unsuccessfull_analysis"]
-
-        for tool_vulnerabilities  in patch_analyzer_results.values():
-            lower_vulnerabilities =  [x.lower() for x in tool_vulnerabilities]
-
-            if(any(elem in lower_vulnerabilities for elem in errorTexts)):
-                compiles = False
-        # repaired_vulnerabilities = {}
-        # compiles = True
-
-        # errorTexts = ["solidity compilation failed", "error", "unsuccessfull_analysis"]
-
-        # for tool_name, tool_vulnerabilities  in patch_analyzer_results.items():
-        #     lower_vulnerabilities =  [x.lower() for x in tool_vulnerabilities]
-
-        #     if(any(elem in lower_vulnerabilities for elem in errorTexts)):
-        #         compiles = False
-        #         repaired_vulnerabilities[tool_name] = []
-        #         continue
-           
-        #     repaired_vulnerabilities[tool_name] = [original_vulnerabilities for original_vulnerabilities in original_analyzer_results[tool_name] if original_vulnerabilities not in tool_vulnerabilities]
-            
-
-        # all_tool_repair = True
-        # for tool_name, tool_vulnerabilities in patch_vulnerabilities.items():
-        #     if('error' in tool_vulnerabilities):
-        #         repaired_vulnerabilities[tool_name] = tool_vulnerabilities
-        #         all_tool_repair = False
-        #         continue
-
-        #     #repaired_vulnerabilities[tool] = [x for x in original_vulnerabilities[tool] if x not in tool_vulnerabilities]
-
-        #     repaired_vulnerabilities[tool_name] = [x for x in original_vulnerabilities[tool_name] + tool_vulnerabilities if x not in original_vulnerabilities[tool_name] or x not in tool_vulnerabilities]
-        #     if tool_vulnerabilities:
-        #         all_tool_repair = False
-        
-        return compiles
-    
-    @staticmethod
     def generate_summary_markdown(summary, results_dir) -> None:
         # Generate settings of experiment
         markdown = f"# Settings of experiment\n\n| Setting | Value |\n| --- | --- |\n"
@@ -222,7 +128,7 @@ class TransformativeRepair:
         for sc_dir in [os.path.join(results_dir, item) for item in os.listdir(results_dir) if os.path.isdir(os.path.join(results_dir, item))]:
             # Get original sc
             original_vulnerabilities = json.load(open(os.path.join(sc_dir, "vulnerabilities.json"), 'r'))
-            original_analyzer_results_with_aliases = TransformativeRepair.get_vulnerability_aliases(original_vulnerabilities)
+            original_analyzer_results_with_aliases = SmartContract.get_analyzer_results_for_summary(original_vulnerabilities)
             candidate_patches_dir = os.path.join(sc_dir, "candidate_patches")
             patch_results = json.load(open(os.path.join(candidate_patches_dir,  "patch_results.json"), 'r'))
             
@@ -238,9 +144,9 @@ class TransformativeRepair:
                 patch_node_name = f'{sc_name}_{patch_name}'
                 
                 patch_vulnerabilities = json.load(open(os.path.join(candidate_patches_dir, patch_name, "vulnerabilities.json"), 'r'))
-                patch_analyzer_results_with_aliases = TransformativeRepair.get_vulnerability_aliases(patch_vulnerabilities)
+                patch_analyzer_results_with_aliases = SmartContract.get_analyzer_results_for_summary(patch_vulnerabilities)
 
-                compiles = TransformativeRepair.check_if_compiles(patch_analyzer_results_with_aliases)
+                compiles = SmartContract.check_if_compiles(patch_analyzer_results_with_aliases, ["oyente", "slither"])
                 if compiles:
                     n_unique_patches_that_compile += 1
 
@@ -447,7 +353,7 @@ class TransformativeRepair:
             
             #### Step 2: Create Prompt Engine and generate prompt
             pe = PromptEngine(sc)
-            prompt = pe.generate_prompt(experiment_settings)
+            prompt = pe.generate_prompt(experiment_settings["prompt_style"])
 
             #### Step 3: Save prompt
             with open(os.path.join(sc.results_dir, "prompt.txt"), 'w') as file:

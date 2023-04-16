@@ -30,7 +30,7 @@ class SmartContract:
         self.filename = os.path.basename(self.path)
         self.name, _ = os.path.splitext(self.filename)
         self.language = 'Solidity' if self.filename.endswith('.sol') else 'Unknown'
-        self.source_code = open(self.path, 'r').read()
+        self.source_code = open(self.path, 'r').read().strip()
         self.hash = SmartContract.get_stripped_source_code_hash(self.source_code)
 
         vulnerabilities_file_path = os.path.join(self.results_dir, "vulnerabilities.json")
@@ -64,7 +64,105 @@ class SmartContract:
         hash_object = hashlib.sha256(stripped_source_code.encode())
         return hash_object.hexdigest()
 
+
+
+    @staticmethod
+    def get_vulnerability_aliases() -> dict:
+        # Create aliases, fill if necessary
+        reentrancy_aliases = ['reentrancy', 'Re-Entrancy Vulnerability', 'DAO', 'Not destructible (no self-destruct)', 'Unprotected Ether Withdrawal']
+        integer_aliases = ['overflow', 'underflow', 'integer overflow']
+        unhandled_exception_aliases = ['Unhandled Exception', 'unhandled', 'UnhandledException', 'Exception Disorder']
+        unchecked_call_aliases = ['Unchecked Low Level Call', 'Unchecked return value from external call', 'unchecked']
+        callstack_aliases = ['callstack', 'avoid-low-level-calls', 'avoid-call-value'] 
+
+        vulnerabilities_aliases = {}
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in reentrancy_aliases], 'reentrancy'))
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in integer_aliases], 'integer_over-underflow'))
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unhandled_exception_aliases], 'unhandled_exception'))
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unchecked_call_aliases], 'unchecked_low_level_call'))
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in callstack_aliases], 'callstack'))
+
+        return vulnerabilities_aliases
+    
+    @staticmethod
+    def rename_findings_with_aliases(findings:list) -> list:
+        vulnerabilities_aliases = SmartContract.get_vulnerability_aliases()
+
+        findings_renamed = findings.copy()
+        for finding in findings_renamed:
+            
+            vulnerability_name = finding["name"].lower()
+
+            # Check if alias fount
+            if vulnerability_name in vulnerabilities_aliases:
+                finding["name"] = vulnerabilities_aliases[vulnerability_name]
+                continue
+            
+            # Check if vulnerability_name contains any alias
+            vulnerability_name_contains_alias = vulnerabilities_aliases.get(next((key for key in vulnerabilities_aliases if key in vulnerability_name), None));
+            if vulnerability_name_contains_alias:
+                finding["name"] = vulnerability_name_contains_alias
+                continue
+        
+        return findings_renamed
+
+    @staticmethod
+    def get_analyzer_results_for_summary(vulnerabilities:dict) -> dict:
+        analyzer_results_for_summary = {}
+
+        vulnerabilities_aliases = SmartContract.get_vulnerability_aliases()
+
+        for tool_name, tool_result in vulnerabilities["analyzer_results"].items():
+            analyzer_results_for_summary[tool_name] = []
+            findings = tool_result['vulnerability_findings']
+            # # First check if any errors = no findings TODO: check correct contract
+            # if not findings:
+            #     analyzer_results_for_summary[tool_name] = ['error'] + tool_result['errors']
+            
+            if not tool_result.get("successfull_analysis", False) == True:
+                analyzer_results_for_summary[tool_name].append("unsuccessfull_analysis")
+
+            for finding in findings:
+                vulnerability_name = finding["name"].lower()
+
+                # Check if alias fount
+                if vulnerability_name in vulnerabilities_aliases:
+                    analyzer_results_for_summary[tool_name].append(vulnerabilities_aliases[vulnerability_name])
+                    continue
+                
+                # Check if vulnerability_name contains any alias
+                vulnerability_name_contains_alias = vulnerabilities_aliases.get(next((key for key in vulnerabilities_aliases if key in vulnerability_name), None));
+                if vulnerability_name_contains_alias:
+                    analyzer_results_for_summary[tool_name].append(vulnerability_name_contains_alias)
+                    continue
+                
+                # Finally add vulnerability name
+                #print(vulnerability_name)
+                analyzer_results_for_summary[tool_name].append(vulnerability_name)
+            
+            # Delete duplicates
+            analyzer_results_for_summary[tool_name] = list(set( analyzer_results_for_summary[tool_name]))
+
+            # Only focus on one vulnerability
+            # analyzer_results_with_aliases[tool_name] = [x for x in analyzer_results_with_aliases[tool_name] if x == target_vulnerability] 
+        return analyzer_results_for_summary
+
+    @staticmethod
+    def check_if_compiles(analyzer_results:dict, compilation_tools:list) -> bool:
+        compiles = True
+
+        errorTexts = ["solidity compilation failed", "unsuccessfull_analysis"]
+
+        for tool_vulnerabilities  in {k: v for k, v in analyzer_results.items() if k in compilation_tools}.values():
+            lower_vulnerabilities =  [x.lower() for x in tool_vulnerabilities]
+
+            if(any(elem in lower_vulnerabilities for elem in errorTexts)):
+                compiles = False
+        return compiles
+    
     def create_vulnerabilities_from_sb_results(self, tool_name:str, tool_result:dict) -> None:
+        
+        lines = self.source_code.split("\n")
         tool_vulnerabilities = {}
         tool_vulnerabilities["successfull_analysis"] = False if tool_result["errors"] and not tool_result['findings'] else True
         tool_vulnerabilities["errors"] = tool_result["errors"]
@@ -73,7 +171,23 @@ class SmartContract:
         for finding in tool_result['findings']:
             vulnerability = {}
             vulnerability["name"] = finding["name"]
-            vulnerability["line_of_vulnerability"] = finding.get("line", None)
+
+            from_line = finding.get("line", None)
+            vulnerability["vulnerability_from_line"] = from_line
+            to_line = finding.get("line_end", None)
+            vulnerability["vulnerability_to_line"] = to_line
+    
+            if from_line and to_line:
+                code = '\n'.join(lines[from_line - 1 : to_line - 1])
+            elif from_line:
+                code = lines[from_line - 1]
+            else:
+                code = None
+
+            vulnerability["vulnerability_code"] = code        
+
+            vulnerability["message"] = finding.get("message", None)
+
             vulnerability_findings.append(vulnerability)
         
         tool_vulnerabilities["vulnerability_findings"] = vulnerability_findings
@@ -155,8 +269,9 @@ class SmartContract:
                 yaml.dump(smartbugs_config, f)
 
             # Run smartbugs
-            process = subprocess.Popen(f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}', shell=True, stdout=subprocess.DEVNULL)
-            
+            # process = subprocess.Popen(f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}', shell=True, stdout=subprocess.DEVNULL)
+            process = subprocess.Popen(f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}', shell=True) # DEBUG
+
             atexit.register(exit_handler, process)
 
             # Wait for the process to complete and get the exit code

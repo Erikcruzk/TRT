@@ -3,10 +3,11 @@ import subprocess
 import json
 import os
 import traceback
-from typing import List
+from typing import Dict, List
 import openai
 from SmartContract import SmartContract;
 import logging
+from langchain.prompts import PromptTemplate
 
 def concatenate_with_and(vulnerabilities:dict) -> str:
     try:
@@ -22,32 +23,39 @@ class PromptEngine:
 
     def __init__(self, sc: SmartContract):
         self.sc = sc
-        self.prompt = None
+        self.templates:Dict[str, PromptTemplate] = PromptEngine.get_templates()
         
-    def generate_prompt(self, experiment_settings:dict) -> str:
-        try:
-            basic = f'/// The task is to repair the vulnerable below {self.sc.language} Smart Contract\n\n/// Vulnerable {self.sc.language} Smart Contract\n{self.sc.source_code}\n\n/// Fixed {self.sc.language} Smart Contract'
-            # vulnerability_context = f'/// The task is to repair the below {self.sc.language} Smart Contract that is, according to smart contract analyzers, vulnerable to {concatenate_with_and(self.sc.vulnerabilities)} attacks\n\n/// Vulnerable {self.sc.language} Smart Contract\n{self.sc.source_code}\n\n/// Fixed {self.sc.language} Smart Contract'
-
-            if experiment_settings["prompt_style"] == 'A_basic':
-                return basic
-            # elif experiment_settings["prompt_style"] == 'B_vulnerability_context':
-            #     return vulnerability_context
-            # elif experiment_settings["prompt_style"] == 'C_vulnerability_examples':
-            #     directories = [f'{experiment_settings["patch_examples_directory"]}/{x}' for x in list(set(element for value in self.sc.vulnerabilities.values() for element in value))]
-            #     directories = [x for x in directories if os.path.exists(x)]
-
-            #     if not directories:
-            #         raise FileExistsError
-            #     repair_examples = "\n".join([f"\n/// Repair Example {i+1} of {os.path.basename(directory)} attack\n{open(os.path.join(directory, file)).read()}" for directory in directories for i, file in enumerate(os.listdir(directory))])
-            #     return f'/// Here are some examples of vulnerable {self.sc.language} Smart Contracts and how to repair them\n{repair_examples}\n\n{vulnerability_context}'
-            elif experiment_settings["prompt_style"] == 'D_vulnerability_info':
-                return f'/// The task is to repair a {self.sc.language} Smart Contract\n\n/// According to the following smart contract analyzers, this {self.sc.language} Smart Contract is vulnerable to the following attacks\n\n{json.dumps(self.sc.vulnerabilities["analyzer_results"], indent=2)}\n\n/// Vulnerable {self.sc.language} Smart Contract\n{self.sc.source_code}\n\n/// Repaired {self.sc.language} Smart Contract'
-            else:
-                raise KeyError()
+    def generate_prompt(self, prompt_style:str) -> str:
+        try:            
+            match prompt_style:
+                case "basic":
+                    return self.templates["basic"].format(
+                        sc_language=self.sc.language, 
+                        sc_source_code=self.sc.source_code)
+                case "analyzers_json_results":
+                    return self.templates["analyzers_json_results"].format(
+                        sc_language=self.sc.language, 
+                        sc_source_code=self.sc.source_code,
+                        analyzer_results=json.dumps(
+                        PromptEngine.delete_empty_analyzers_and_rename_findings_to_alias(self.sc.vulnerabilities["analyzer_results"])
+                        , indent=2))
+                # case "analyzers_json_results_slim":
+                #     return self.templates["analyzers_json_results"].format(
+                #         sc_language=self.sc.language, 
+                #         sc_source_code=self.sc.source_code,
+                #         analyzer_results=json.dumps(SmartContract.get_vulnerability_aliases(self.sc.vulnerabilities)["analyzer_results"], indent=2))
+                case "analyzers_natural_language_results":
+                    return self.templates["analyzers_natural_language_results"].format(
+                        sc_language=self.sc.language, 
+                        sc_source_code=self.sc.source_code,
+                        analyzer_results=PromptEngine.format_analyzer_results(
+                            PromptEngine.delete_empty_analyzers_and_rename_findings_to_alias(self.sc.vulnerabilities["analyzer_results"])
+                        ))
+                case _:
+                    raise KeyError()                
         except Exception as e:
             logging.critical("An exception occurred: %s", str(e), exc_info=True)
-            return vulnerability_context
+            return ""
 
     def get_codex_repaired_sc(self, experiment_settings:dict, llm_settings:dict, sc:SmartContract, prompt:str) -> List[str]:
         # Generate Repair
@@ -86,3 +94,93 @@ class PromptEngine:
                 raise IOError(f"Fail on '{patch_path}': {str(e)}")         
 
         return candidate_patches_paths
+
+    @staticmethod
+    def delete_empty_analyzers_and_rename_findings_to_alias(analyzer_results:dict, slim=False) -> dict:
+        non_empty_analyzers = {tool_name: tool_results_dict for tool_name, tool_results_dict in analyzer_results.items() if tool_results_dict["successfull_analysis"] == True and tool_results_dict["vulnerability_findings"]}
+        
+        analyzer_results_filtered = {}
+        for tool_name, tool_results_dict in analyzer_results.items():
+            # Remove analyzers with empty reults
+            if tool_results_dict["successfull_analysis"] == False or not tool_results_dict["vulnerability_findings"]:
+                continue
+            analyzer_results_filtered[tool_name] = tool_results_dict;
+            # Rename findings
+            analyzer_results_filtered[tool_name]["vulnerability_findings"] = SmartContract.rename_findings_with_aliases(analyzer_results_filtered[tool_name]["vulnerability_findings"])
+            
+        return analyzer_results
+        
+
+
+        return non_empty_analyzers
+    @staticmethod
+    def format_analyzer_results(analyzer_results:dict, comment_symbol="/// ", comment_out_code=False):
+        context = ""
+        tool_counter = 0
+        for tool_name, tool_results_dict in analyzer_results.items():
+            tool_counter += 1
+            context += f"\n{comment_symbol}{tool_counter}. {tool_name.capitalize()} Analysis Results\n\n"
+            
+            for i, vulnerability in enumerate(tool_results_dict["vulnerability_findings"]):
+                context += f"{comment_symbol}{tool_counter}.{i+1}. Vulnerability: {vulnerability['name']}"
+                if vulnerability.get('vulnerability_from_line', None) is not None:
+                    context += f" at Line {vulnerability['vulnerability_from_line']}"
+                    if vulnerability['vulnerability_to_line'] is not None:
+                        context += f"-{vulnerability['vulnerability_to_line']}"
+                    context += f":"
+                if vulnerability.get('vulnerability_code', None) is not None:
+                    if comment_out_code:
+                        context += f"{chr(10)}{comment_symbol}  {f'{chr(10)}{comment_symbol}  '.join(vulnerability['vulnerability_code'].splitlines())}"
+                    else:
+                        context += f"{chr(10)}{f'{chr(10)}'.join(vulnerability['vulnerability_code'].splitlines())}"                  
+                if vulnerability.get('message', None) is not None:
+                    context += f"\n{comment_symbol} Message:"
+                    context += f"\n{comment_symbol}  ".join(vulnerability['message'].strip().split("\n"))
+                    
+                context += f"\n"
+                
+            context += f"\n"
+        
+        return context
+    
+    # @staticmethod
+    # def get_slim_results(analyzer_results:dict, keys_to_keep:list):
+
+        
+
+    @staticmethod
+    def get_templates() -> dict:
+        templates = {}
+
+        # 1. basic Template
+        templates["basic"] = PromptTemplate(
+                input_variables=["sc_language", "sc_source_code"],
+                template="""/// Your task is to repair the following {sc_language} Smart Contract
+{sc_source_code}
+
+/// Repaired {sc_language} Smart Contract""")
+
+        # 2. analyzers_json_results Template
+        templates["analyzers_json_results"] = PromptTemplate(
+                input_variables=["sc_language", "sc_source_code", "analyzer_results"],
+                template="""/// Your task is to repair the following {sc_language} Smart Contract
+{sc_source_code}
+
+/// This {sc_language} Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+{analyzer_results}
+
+/// Repaired {sc_language} Smart Contract""")
+
+
+        templates["analyzers_natural_language_results"] = PromptTemplate(
+                input_variables=["sc_language", "sc_source_code", "analyzer_results"],
+                template="""/// Your task is to repair the following {sc_language} Smart Contract
+{sc_source_code}
+
+/// This {sc_language} Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+{analyzer_results}
+
+/// Repaired {sc_language} Smart Contract""")
+
+
+        return templates
