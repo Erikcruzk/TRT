@@ -101,9 +101,25 @@ class TransformativeRepair:
         markdown += "\n## Target Vulnerabilities\n\n"
         for vulnerability, vulnerability_data in summary["target_vulnerabilities"].items():
             contracts = vulnerability_data["contracts"]
-            markdown += f"\n### {vulnerability}\n"
-            markdown += f'n_plausible_patches/n_contracts = `{vulnerability_data["plausible_patches"]}/{len(contracts.keys())}`\n\n'
             
+            markdown += f"\n### {vulnerability}\n"
+            
+            #### Summary
+            target_summary = vulnerability_data["summary"]
+            summary_headers = ["n_plausible_patches/n_contracts", "n_unique patches/n_patches", "n_patches_compiles/n_unique_patches"]
+            summary_results = [f'{target_summary["n_plausible_patches"]}/{target_summary["n_contracts"]}', f'{target_summary["unique_patches"]}/{target_summary["n_patches"]}', f'{target_summary["n_unique_paches_that_compile"]}/{target_summary["unique_patches"]}']
+            # Add Title
+            markdown += f"\n#### Summary\n"
+            # Add table headers
+            markdown += f'| {" | ".join(summary_headers)} |\n'
+            # Add table format
+            markdown += f'| {" | ".join("---" for k in summary_headers)} |\n'
+            # Add table content
+            markdown += f'| {" | ".join(summary_results)} |\n' 
+            
+            #### Results
+            # Add title
+            markdown += f"\n#### Results\n"
             # Add table headers
             markdown += f'| {" | ".join(str(k) for k in contracts[next(iter(contracts.keys()))].keys())} |\n' 
             # Add table format
@@ -153,7 +169,14 @@ class TransformativeRepair:
                 for target_vulnerability in experiment_settings["target_vulnerabilities"]:  
                     if target_vulnerability not in target_summaries:
                         target_summaries[target_vulnerability] = {}
-                        target_summaries[target_vulnerability]["plausible_patches"] = 0
+                        
+                        target_summaries[target_vulnerability]["summary"] = {}
+                        target_summaries[target_vulnerability]["summary"]["n_contracts"] = 0
+                        target_summaries[target_vulnerability]["summary"]["n_patches"] = 0
+                        target_summaries[target_vulnerability]["summary"]["n_plausible_patches"] = 0
+                        target_summaries[target_vulnerability]["summary"]["unique_patches"] = 0
+                        target_summaries[target_vulnerability]["summary"]["n_unique_paches_that_compile"] = 0
+                        
                         target_summaries[target_vulnerability]["contracts"] = {}
                         target_graphs[target_vulnerability] = nx.DiGraph()
 
@@ -215,8 +238,15 @@ class TransformativeRepair:
                         target_summaries[target_vulnerability]["contracts"][sc_name] = patch_data
             
             for target_vulnerability in target_summaries.keys():
-                target_summaries[target_vulnerability]["plausible_patches"] =  sum(1 for contract in target_summaries[target_vulnerability]["contracts"].values() if contract.get("plausible_patch"))
-                target_summaries[target_vulnerability]["contracts"][sc_name]["unique_paches_that_compile"] =  f'{n_unique_patches_that_compile}/{n_unique_paches}'
+                target_summaries[target_vulnerability]["contracts"][sc_name]["unique_paches_that_compile"] =  f'{n_unique_patches_that_compile}/{n_unique_paches}'       
+
+                target_summaries[target_vulnerability]["summary"]["n_contracts"] += 1
+                target_summaries[target_vulnerability]["summary"]["n_patches"] += n_patches
+                target_summaries[target_vulnerability]["summary"]["n_plausible_patches"] = sum(1 for contract in target_summaries[target_vulnerability]["contracts"].values() if contract.get("plausible_patch"))
+                target_summaries[target_vulnerability]["summary"]["unique_patches"] += n_unique_paches
+                target_summaries[target_vulnerability]["summary"]["n_unique_paches_that_compile"] += n_unique_patches_that_compile
+
+
         
         # Create pyvis graphs
         for target_vulnerability in experiment_settings["target_vulnerabilities"]:
