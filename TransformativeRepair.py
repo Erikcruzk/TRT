@@ -18,8 +18,11 @@ import shutil
 from tqdm import tqdm
 
 def clear_queues(smartbugs_sc_queue:queue.Queue, repair_sc_queue:queue.Queue):
-    smartbugs_sc_queue.clear()
-    repair_sc_queue.clear()
+    while not smartbugs_sc_queue.empty():
+        smartbugs_sc_queue.get()
+    
+    while not repair_sc_queue.empty():
+        repair_sc_queue.get()
     print("Cleared queues")
 class TransformativeRepair:
     
