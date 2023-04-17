@@ -1,9 +1,6 @@
 import yaml
-import os
 from TransformativeRepair import TransformativeRepair
 from dotenv import load_dotenv
-import shutil
-
 
 def main():
     # Load settings from YAML file
