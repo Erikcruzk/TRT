@@ -62,7 +62,7 @@ class TransformativeRepair:
     def save_graph(G:nx.DiGraph, results_path:str, name:str):
         
         heading_name = f'{name.capitalize()} <br> Experiment: {os.path.basename(results_path)}';
-        nt = Network(heading=heading_name, height='1000px', directed=True)
+        nt = Network(heading=heading_name, height='1200px', directed=True) # TODO: unify networks with filter_menu=True
         nt.from_nx(G)
         # nt.show_buttons(filter_=['physics'])
         nt.set_options('''{
