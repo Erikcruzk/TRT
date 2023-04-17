@@ -116,7 +116,8 @@ class PromptEngine:
             # Do not add empty analyzer results              
             if not renamed_findings:
                 continue
-
+            
+            analyzer_results_filtered[tool_name] = tool_results_dict
             analyzer_results_filtered[tool_name]["vulnerability_findings"] = renamed_findings
             
         return analyzer_results
