@@ -13,11 +13,6 @@ def main():
     # Load variables from .env file
     load_dotenv()
 
-    # Delete experiment resuts if requested
-    experiment_dir = os.path.join("experiment_results", f'{config["experiment_settings"]["experiment_name"]}_{config["experiment_settings"]["llm_model"]}')
-    if config["experiment_settings"]["delete_old_experiment_name"] and os.path.exists(experiment_dir):
-        shutil.rmtree(experiment_dir)
-
     # 0. Initialize TFR!
     tfr = TransformativeRepair(config["experiment_settings"], config["llm_settings"])
     #TransformativeRepair.create_summary(config["experiment_settings"], config["llm_settings"], None, True)

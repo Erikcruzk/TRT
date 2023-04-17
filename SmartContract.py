@@ -269,8 +269,8 @@ class SmartContract:
                 yaml.dump(smartbugs_config, f)
 
             # Run smartbugs
-            # process = subprocess.Popen(f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}', shell=True, stdout=subprocess.DEVNULL)
-            process = subprocess.Popen(f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}', shell=True) # DEBUG
+            process = subprocess.Popen(f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}', shell=True, stdout=subprocess.DEVNULL)
+            #process = subprocess.Popen(f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}', shell=True) # DEBUG
 
             atexit.register(exit_handler, process)
 
