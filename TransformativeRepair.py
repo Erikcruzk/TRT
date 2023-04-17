@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 import os
+import re
 import threading
 import time
 import networkx as nx
@@ -59,7 +60,9 @@ class TransformativeRepair:
     # Visualize
     @staticmethod
     def save_graph(G:nx.DiGraph, results_path:str, name:str):
-        nt = Network('800', '100%', directed=True)
+        
+        heading_name = f'{name.capitalize()} <br> Experiment: {os.path.basename(results_path)}';
+        nt = Network(heading=heading_name, height='1000px', directed=True)
         nt.from_nx(G)
         # nt.show_buttons(filter_=['physics'])
         nt.set_options('''{
@@ -82,11 +85,19 @@ class TransformativeRepair:
             }
         }''')
         
-        nt.write_html(os.path.join(results_path, f'pyvis_{os.path.basename(results_path)}_{name}.html'))
-        
+        file_name = f'{os.path.basename(results_path)}_{name}'
+        nt.write_html(os.path.join(results_path, f'pyvis_{file_name}.html'))
+
+        # Fix for Pyvis open issue where double titles appear
+        pyvis_path = os.path.join(results_path, f'pyvis_{file_name}.html')
+        with open(pyvis_path, "r") as f:
+            html = f.read()
+        with open(pyvis_path, "w") as f:
+            f.write(re.sub(r'<center>.+?<\/h1>\s+<\/center>', '', html, 1, re.DOTALL))
+
         # Save to Json
         data = json_graph.node_link_data(G)
-        with open(os.path.join(results_path, f'pyvis_{os.path.basename(results_path)}_{name}.json'), 'w') as outfile:
+        with open(os.path.join(results_path, f'pyvis_{file_name}.json'), 'w') as outfile:
             json.dump(data, outfile)    
     
     @staticmethod
@@ -133,15 +144,25 @@ class TransformativeRepair:
         with open(os.path.join(results_dir, f'summary_{experiment_name}.md'), 'w') as f:
             f.write(markdown)
 
+
     @staticmethod
-    def create_target_summary_and_graphs(experiment_settings:dict) -> dict:
+    def create_targets_summary_and_graphs(experiment_settings:dict) -> dict:
         results_dir = Path(os.path.join("experiment_results",
             f'{experiment_settings["experiment_name"]}_{experiment_settings["llm_model"]}'))
         
         target_summaries = {}
-        target_graphs = {}
+        repair_target_graphs = {}
+        compile_graph = nx.DiGraph()
 
         for sc_dir in [os.path.join(results_dir, item) for item in os.listdir(results_dir) if os.path.isdir(os.path.join(results_dir, item))]:
+            sc_name = os.path.basename(sc_dir)
+
+            # Add to compile graph
+            compile_graph.add_node(sc_name, 
+                # sc_data=start_sc, 
+                group=1, 
+                size=30)
+
             # Get original sc
             original_vulnerabilities = json.load(open(os.path.join(sc_dir, "vulnerabilities.json"), 'r'))
             original_analyzer_results_with_aliases = SmartContract.get_analyzer_results_for_summary(original_vulnerabilities)
@@ -154,7 +175,6 @@ class TransformativeRepair:
 
             target_max_repair = {}
             
-            sc_name = os.path.basename(sc_dir)
             for patch_file_name in patch_results["unique_patches"].keys():
                 patch_name, _ = os.path.splitext(patch_file_name)
                 patch_node_name = f'{sc_name}_{patch_name}'
@@ -165,6 +185,13 @@ class TransformativeRepair:
                 compiles = SmartContract.check_if_compiles(patch_analyzer_results_with_aliases, ["oyente", "slither"])
                 if compiles:
                     n_unique_patches_that_compile += 1
+                    compile_graph.add_node(patch_node_name,
+                        color="green")
+                else:
+                    compile_graph.add_node(patch_node_name, 
+                        color="red")
+                
+                compile_graph.add_edge(sc_name, patch_node_name)
 
                 for target_vulnerability in experiment_settings["target_vulnerabilities"]:  
                     if target_vulnerability not in target_summaries:
@@ -178,11 +205,11 @@ class TransformativeRepair:
                         target_summaries[target_vulnerability]["summary"]["n_unique_paches_that_compile"] = 0
                         
                         target_summaries[target_vulnerability]["contracts"] = {}
-                        target_graphs[target_vulnerability] = nx.DiGraph()
+                        repair_target_graphs[target_vulnerability] = nx.DiGraph()
 
                     if sc_name not in target_summaries[target_vulnerability]["contracts"]:
                         target_summaries[target_vulnerability]["contracts"][sc_name] = {}
-                        G = target_graphs[target_vulnerability]
+                        G = repair_target_graphs[target_vulnerability]
                         G.add_node(sc_name, 
                             # sc_data=start_sc, 
                             group=1, 
@@ -201,7 +228,7 @@ class TransformativeRepair:
                         is_plausible_patch = False
                         
                     # Add patch to graph
-                    G = target_graphs[target_vulnerability]
+                    G = repair_target_graphs[target_vulnerability]
                     if is_plausible_patch:
                                  
                         G.add_node(patch_node_name,
@@ -248,9 +275,12 @@ class TransformativeRepair:
 
 
         
-        # Create pyvis graphs
+        # Create pyvis graphs for results
         for target_vulnerability in experiment_settings["target_vulnerabilities"]:
-            TransformativeRepair.save_graph(target_graphs[target_vulnerability], results_dir, target_vulnerability)    
+            TransformativeRepair.save_graph(repair_target_graphs[target_vulnerability], results_dir, target_vulnerability)   
+
+        # Create pyvis graphs for compilation
+        TransformativeRepair.save_graph(compile_graph, results_dir, "compilation") 
 
         return target_summaries
 
@@ -266,7 +296,7 @@ class TransformativeRepair:
         summary["prompt_style"] = experiment_settings["prompt_style"]
         summary["n_threads"] = f'sb_threads={experiment_settings["n_smartbugs_threads"]} llm_rapair_threads={experiment_settings["n_repair_threads"]}'
         summary["llm_settings"] = llm_settings[experiment_settings["llm_model"]]
-        summary["target_vulnerabilities"] = TransformativeRepair.create_target_summary_and_graphs(experiment_settings)
+        summary["target_vulnerabilities"] = TransformativeRepair.create_targets_summary_and_graphs(experiment_settings)
         summary["run_time"] = str(datetime.datetime.utcnow() - start_time).split('.')[0]
 
         # Save JSON summary
