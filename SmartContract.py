@@ -85,7 +85,7 @@ class SmartContract:
         return vulnerabilities_aliases
     
     @staticmethod
-    def rename_findings_with_aliases(findings:list) -> list:
+    def rename_findings_with_aliases(findings:List[dict]) -> list:
         vulnerabilities_aliases = SmartContract.get_vulnerability_aliases()
 
         findings_renamed = findings.copy()

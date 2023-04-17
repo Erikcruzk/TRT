@@ -21,9 +21,10 @@ def concatenate_with_and(vulnerabilities:dict) -> str:
 
 class PromptEngine:    
 
-    def __init__(self, sc: SmartContract):
+    def __init__(self, sc: SmartContract, experiment_settings:dict):
         self.sc = sc
         self.templates:Dict[str, PromptTemplate] = PromptEngine.get_templates()
+        self.experiment_settings:dict = experiment_settings
         
     def generate_prompt(self, prompt_style:str) -> str:
         try:            
@@ -37,7 +38,7 @@ class PromptEngine:
                         sc_language=self.sc.language, 
                         sc_source_code=self.sc.source_code,
                         analyzer_results=json.dumps(
-                        PromptEngine.delete_empty_analyzers_and_rename_findings_to_alias(self.sc.vulnerabilities["analyzer_results"])
+                        PromptEngine.delete_empty_analyzers_and_rename_findings_to_alias(self.sc.vulnerabilities["analyzer_results"], self.experiment_settings["target_vulnerabilities"])
                         , indent=2))
                 # case "analyzers_json_results_slim":
                 #     return self.templates["analyzers_json_results"].format(
@@ -49,7 +50,7 @@ class PromptEngine:
                         sc_language=self.sc.language, 
                         sc_source_code=self.sc.source_code,
                         analyzer_results=PromptEngine.format_analyzer_results(
-                            PromptEngine.delete_empty_analyzers_and_rename_findings_to_alias(self.sc.vulnerabilities["analyzer_results"])
+                            PromptEngine.delete_empty_analyzers_and_rename_findings_to_alias(self.sc.vulnerabilities["analyzer_results"], self.experiment_settings["target_vulnerabilities"])
                         ))
                 case _:
                     raise KeyError()                
@@ -96,7 +97,7 @@ class PromptEngine:
         return candidate_patches_paths
 
     @staticmethod
-    def delete_empty_analyzers_and_rename_findings_to_alias(analyzer_results:dict, slim=False) -> dict:
+    def delete_empty_analyzers_and_rename_findings_to_alias(analyzer_results:dict, target_vulnerabilities:list) -> dict:
         non_empty_analyzers = {tool_name: tool_results_dict for tool_name, tool_results_dict in analyzer_results.items() if tool_results_dict["successfull_analysis"] == True and tool_results_dict["vulnerability_findings"]}
         
         analyzer_results_filtered = {}
@@ -106,7 +107,12 @@ class PromptEngine:
                 continue
             analyzer_results_filtered[tool_name] = tool_results_dict;
             # Rename findings
-            analyzer_results_filtered[tool_name]["vulnerability_findings"] = SmartContract.rename_findings_with_aliases(analyzer_results_filtered[tool_name]["vulnerability_findings"])
+            renamed_findings = SmartContract.rename_findings_with_aliases(analyzer_results_filtered[tool_name]["vulnerability_findings"])
+
+            if target_vulnerabilities:
+                renamed_findings = [vf for vf in renamed_findings if vf["name"] in target_vulnerabilities
+]           
+            analyzer_results_filtered[tool_name]["vulnerability_findings"] = renamed_findings
             
         return analyzer_results
         
