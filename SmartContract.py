@@ -146,7 +146,7 @@ class SmartContract:
                 analyzer_results_for_summary[tool_name].append(vulnerability_name)
             
             # Delete duplicates
-            analyzer_results_for_summary[tool_name] = list(set( analyzer_results_for_summary[tool_name]))
+            analyzer_results_for_summary[tool_name] = list(set(analyzer_results_for_summary[tool_name]))
 
             # Only focus on one vulnerability
             # analyzer_results_with_aliases[tool_name] = [x for x in analyzer_results_with_aliases[tool_name] if x == target_vulnerability] 
