@@ -17,13 +17,9 @@ import queue
 import shutil
 from tqdm import tqdm
 
-def clear_queues(smartbugs_sc_queue:queue.Queue, repair_sc_queue:queue.Queue):
-    while not smartbugs_sc_queue.empty():
-        smartbugs_sc_queue.get()
-    
-    while not repair_sc_queue.empty():
-        repair_sc_queue.get()
-    print("Cleared queues")
+def clear_queue(queue:queue.Queue):
+    while not queue.empty():
+        queue.get()
 class TransformativeRepair:
     
     def __init__(self, experiment_settings:dict, llm_settings:dict) -> None:
@@ -52,7 +48,8 @@ class TransformativeRepair:
 
         self.smartbugs_sc_queue = queue.Queue()
         self.repair_sc_queue = queue.Queue()
-        atexit.register(clear_queues, self.smartbugs_sc_queue , self.repair_sc_queue)
+        atexit.register(clear_queue, self.smartbugs_sc_queue)
+        atexit.register(clear_queue, self.repair_sc_queue)
     
     # Visualize
     @staticmethod
@@ -384,7 +381,8 @@ class TransformativeRepair:
 
     @staticmethod
     def consumer_of_vulnerabilities_queue(experiment_setting:dict, smartbugs_sc_queue:queue.Queue, repair_sc_queue:queue.Queue, stop_event:threading.Event, progressbar:tqdm) -> None:
-
+        atexit.register(clear_queue, smartbugs_sc_queue)
+        atexit.register(clear_queue, repair_sc_queue)
         while not stop_event.is_set():
             try:
                 sc_path, do_repair_sc = smartbugs_sc_queue.get(block=False)
@@ -471,6 +469,8 @@ class TransformativeRepair:
 
     @staticmethod
     def consumer_of_repair_queue(experiment_setting:dict, llm_settings:dict, smartbugs_sc_queue:queue.Queue, repair_sc_queue:queue.Queue, stop_event:threading.Event, progressbar:tqdm, ):
+        atexit.register(clear_queue, smartbugs_sc_queue)
+        atexit.register(clear_queue, repair_sc_queue)
         while not stop_event.is_set():
             try:
                 sc_path = repair_sc_queue.get(block=False)
