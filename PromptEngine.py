@@ -105,13 +105,18 @@ class PromptEngine:
             # Remove analyzers with empty reults
             if tool_results_dict["successfull_analysis"] == False or not tool_results_dict["vulnerability_findings"]:
                 continue
-            analyzer_results_filtered[tool_name] = tool_results_dict;
-            # Rename findings
-            renamed_findings = SmartContract.rename_findings_with_aliases(analyzer_results_filtered[tool_name]["vulnerability_findings"])
 
+            # Rename findings
+            renamed_findings = SmartContract.rename_findings_with_aliases(tool_results_dict["vulnerability_findings"])
+
+            # Remove all findings that are not known
             if target_vulnerabilities:
-                renamed_findings = [vf for vf in renamed_findings if vf["name"] in target_vulnerabilities
-]           
+                renamed_findings = [vf for vf in renamed_findings if vf["name"] in target_vulnerabilities]
+
+            # Do not add empty analyzer results              
+            if not renamed_findings:
+                continue
+
             analyzer_results_filtered[tool_name]["vulnerability_findings"] = renamed_findings
             
         return analyzer_results

@@ -19,7 +19,13 @@ from tqdm import tqdm
 
 def clear_queue(queue:queue.Queue):
     while not queue.empty():
-        queue.get()
+        queue.get(timeout=1)
+
+def close_all_threads(stop_event:threading.Event, sleep=0):
+    time.sleep(sleep)
+    for thread in threading.enumerate():
+        if thread != threading.main_thread():
+            stop_event.set()
 class TransformativeRepair:
     
     def __init__(self, experiment_settings:dict, llm_settings:dict) -> None:
@@ -314,6 +320,7 @@ class TransformativeRepair:
     @staticmethod
     def shutdown_thread(experiment_settings:dict, llm_settings:dict, stop_event:threading.Event=None, finished=False):
 
+        atexit.register(close_all_threads, stop_event)
         start_time = datetime.datetime.utcnow()
 
         # Add more info to dir
@@ -353,9 +360,7 @@ class TransformativeRepair:
         TransformativeRepair.create_summary(experiment_settings, llm_settings, start_time)        
 
         # Stop all threads and finish program
-        for thread in threading.enumerate():
-            if thread != threading.main_thread():
-                stop_event.set()
+        close_all_threads(stop_event, 5)
 
 
     
@@ -388,6 +393,7 @@ class TransformativeRepair:
                 sc_path, do_repair_sc = smartbugs_sc_queue.get(block=False)
                 TransformativeRepair.find_vulnerabilities(experiment_setting, sc_path, do_repair_sc, repair_sc_queue)
                 progressbar.update(1)
+                # print(progressbar.n) 
             except queue.Empty:
                 time.sleep(1)
 
@@ -414,7 +420,8 @@ class TransformativeRepair:
                     smartbugs_sc_queue.put((patch_path, False))
                 else:
                     sc.remove_old_smartbugs_directories()
-                    progressbar.update(1)                   
+                    progressbar.update(1) 
+                    # print(progressbar.n)           
             return
 
         try:
@@ -456,6 +463,7 @@ class TransformativeRepair:
                 unique_contract = hash_to_first_patch[hash]
                 unique_patches[unique_contract].append(patch_name)
                 progressbar.update(1)
+                #print(progressbar.n) 
                 
             patches_results["unique_patches"] = unique_patches
             patches_results["patch_generation_completed"] = True
@@ -479,7 +487,9 @@ class TransformativeRepair:
                 time.sleep(1)
     
     def start(self):
-        
+        #### Start!
+        print(f'Starting experiment: {self.experiment_results_dir}')
+
         #### Step 1: Add all vulnerable sc to smartbugs_sc_queue
         self.experiment_results_dir.mkdir(parents=True, exist_ok=True)
 
@@ -509,6 +519,8 @@ class TransformativeRepair:
         progressbar = tqdm(total=sc_vulnerable_count + sc_vulnerable_count * n_candidate_patches, desc="Smartbugs processes", colour='#ff5a5f')
 
         stop_event = threading.Event()
+        atexit.register(close_all_threads, stop_event)
+
         #### Step 2: Consume smartbugs_queue
         for i in range(self.experiment_settings["n_smartbugs_threads"]):
             smartbugs_thread = threading.Thread(target=TransformativeRepair.consumer_of_vulnerabilities_queue, args=(self.experiment_settings, self.smartbugs_sc_queue, self.repair_sc_queue, stop_event, progressbar))
