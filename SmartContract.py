@@ -34,7 +34,12 @@ class SmartContract:
         self.hash = SmartContract.get_stripped_source_code_hash(self.source_code)
 
         vulnerabilities_file_path = os.path.join(self.results_dir, "vulnerabilities.json")
-        self.vulnerabilities = json.load(open(vulnerabilities_file_path, 'r')) if os.path.isfile(vulnerabilities_file_path) else {}
+        try:
+            with open(vulnerabilities_file_path, 'r') as f:
+                self.vulnerabilities = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            self.vulnerabilities = {}
+
         self.candidate_patches = []
 
     @staticmethod
@@ -230,19 +235,16 @@ class SmartContract:
             self.create_vulnerabilities_from_sb_results(tool_name, tool_result)
             
     def get_vulnerabilities(self) -> None:
-        try:
-            smartbugs_results_dir = os.path.join(self.results_dir, "smartbugs_results")
+        smartbugs_results_dir = os.path.join(self.results_dir, "smartbugs_results")
 
-            for smartbugs_result_file in os.listdir(smartbugs_results_dir):
-                full_path = os.path.join(smartbugs_results_dir, smartbugs_result_file)
-                if os.path.isdir(full_path):
-                    tool_name = os.path.basename(full_path).split('_', 1)[0]
-                    with open(os.path.join(full_path, 'result.json'), 'r') as f:
-                        tool_result = json.load(f)
+        for smartbugs_result_file in os.listdir(smartbugs_results_dir):
+            full_path = os.path.join(smartbugs_results_dir, smartbugs_result_file)
+            if os.path.isdir(full_path):
+                tool_name = os.path.basename(full_path).split('_', 1)[0]
+                with open(os.path.join(full_path, 'result.json'), 'r') as f:
+                    tool_result = json.load(f)
 
-                    self.set_vulnerabilities(tool_name, tool_result)
-        except Exception as e:
-            logging.critical("An exception occurred: %s", str(e), exc_info=True)
+                self.set_vulnerabilities()
 
     def run_smartbugs(self) -> None:    
         try:
