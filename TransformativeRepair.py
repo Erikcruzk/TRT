@@ -1,3 +1,4 @@
+import atexit
 import datetime
 import json
 import logging
@@ -16,6 +17,10 @@ import queue
 import shutil
 from tqdm import tqdm
 
+def clear_queues(smartbugs_sc_queue:queue.Queue, repair_sc_queue:queue.Queue):
+    smartbugs_sc_queue.clear()
+    repair_sc_queue.clear()
+    print("Cleared queues")
 class TransformativeRepair:
     
     def __init__(self, experiment_settings:dict, llm_settings:dict) -> None:
@@ -44,12 +49,13 @@ class TransformativeRepair:
 
         self.smartbugs_sc_queue = queue.Queue()
         self.repair_sc_queue = queue.Queue()
+        atexit.register(clear_queues, self.smartbugs_sc_queue , self.repair_sc_queue)
     
     # Visualize
     @staticmethod
     def save_graph(G:nx.DiGraph, results_dir:Path, name:str):
         
-        heading_name = f'{name.capitalize()} <br> Experiment: {os.path.basename(results_dir)}';
+        heading_name = f'{name.capitalize()}';
         nt = Network(heading=heading_name, height='1200px', directed=True) # TODO: unify networks with filter_menu=True
         nt.from_nx(G)
         # nt.show_buttons(filter_=['physics'])
@@ -415,7 +421,7 @@ class TransformativeRepair:
             sc = SmartContract(experiment_settings, sc_path)
             
             #### Step 2: Create Prompt Engine and generate prompt
-            pe = PromptEngine(sc)
+            pe = PromptEngine(sc, experiment_settings)
             prompt = pe.generate_prompt(experiment_settings["prompt_style"])
 
             #### Step 3: Save prompt
