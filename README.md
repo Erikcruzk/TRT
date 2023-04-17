@@ -20,6 +20,8 @@ cd smartbugs
 install/setup-venv.sh
 ```
 
+#### Start docker
+
 #### Add the API Key for OpenAI
 
 Add .env file with openAI-key
