@@ -412,7 +412,7 @@ class TransformativeRepair:
 
         # Return if patches already generated and successfull
         if patches_results["patch_generation_completed"]:
-            for patch_name in patches_results["unique_patches"].keys():
+            for patch_name, duplicate_list in patches_results["unique_patches"].items():
                 patch_dir, _ = os.path.splitext(patch_name)
                 patch_path = Path(os.path.join(candidate_patches_dir, patch_dir, patch_name))
 
@@ -422,7 +422,10 @@ class TransformativeRepair:
                 else:
                     sc.remove_old_smartbugs_directories()
                     progressbar.update(1) 
-                    # print(progressbar.n)           
+
+                # Add duplicate patches as completed
+                progressbar.update(len(duplicate_list))
+                # print(progressbar.n)
             return
 
         try:
