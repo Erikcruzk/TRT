@@ -1,3 +1,4 @@
+import copy
 from datetime import datetime
 import hashlib
 import logging
@@ -12,14 +13,13 @@ import re
 import atexit
 
 def exit_handler(process):
-    if process.poll() is None:
-        # Try to gracefully terminate the process
-        process.terminate()
-        try:
-            process.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            # If the process does not terminate in 5 seconds, kill it
-            process.kill()
+    # Try to gracefully terminate the process
+    process.terminate()
+    try:
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        # If the process does not terminate in 5 seconds, kill it
+        process.kill()
 
 class SmartContract:
     def __init__(self, experiment_settings:dict, sc_path:Path):
@@ -74,7 +74,7 @@ class SmartContract:
     @staticmethod
     def get_vulnerability_aliases() -> dict:
         # Create aliases, fill if necessary
-        reentrancy_aliases = ['reentrancy', 'Re-Entrancy Vulnerability', 'DAO', 'Not destructible (no self-destruct)', 'Unprotected Ether Withdrawal']
+        reentrancy_aliases = ['reentrancy', 'Re-Entrancy Vulnerability', 'DAO', 'Not destructible (no self-destruct)', 'Unprotected Ether Withdrawal', 'reentrance']
         integer_aliases = ['overflow', 'underflow', 'integer overflow']
         unhandled_exception_aliases = ['Unhandled Exception', 'unhandled', 'UnhandledException', 'Exception Disorder']
         unchecked_call_aliases = ['Unchecked Low Level Call', 'Unchecked return value from external call', 'unchecked']
@@ -93,7 +93,7 @@ class SmartContract:
     def rename_findings_with_aliases(findings:List[dict]) -> list:
         vulnerabilities_aliases = SmartContract.get_vulnerability_aliases()
 
-        findings_renamed = findings.copy()
+        findings_renamed = copy.deepcopy(findings)
         for finding in findings_renamed:
             
             vulnerability_name = finding["name"].lower()
