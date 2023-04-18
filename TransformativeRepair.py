@@ -132,12 +132,13 @@ class TransformativeRepair:
             # Add title
             markdown += f"\n#### Results\n"
             # Add table headers
-            markdown += f'| {" | ".join(str(k) for k in contracts[next(iter(contracts.keys()))].keys())} |\n' 
+            markdown += f'| n | {" | ".join(str(k) for k in contracts[next(iter(contracts.keys()))].keys())} |\n' 
             # Add table format
-            markdown += f'| {" | ".join("---" for k in contracts[next(iter(contracts.keys()))].keys())} |\n'
+            markdown += f'| --- | {" | ".join("---" for k in contracts[next(iter(contracts.keys()))].keys())} |\n'
             # Add table content
-            for contract, info in contracts.items():
-                markdown += f'| {" | ".join([str(info[k]) for k in info])}|\n'
+            for i, (contract, info) in enumerate(sorted(contracts.items())):
+                n = i + 1
+                markdown += f'| {n} | {" | ".join([str(info[k]) for k in info])}|\n'
 
         # Save markdown to file
         experiment_name = summary["experiment_name"]
