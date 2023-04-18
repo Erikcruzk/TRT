@@ -147,7 +147,7 @@ class PromptEngine:
                 if vulnerability.get('message', None) is not None:
                     context += f"\n{comment_symbol} Message:"
                     context += f"\n{comment_symbol}  ".join(vulnerability['message'].strip().split("\n"))                    
-                
+                context += f"\n"
             context += f"\n"
         
         return context   
