@@ -1,0 +1,199 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_19"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinDeposit = 1 ether;",
+          "message": "PrivateBank.MinDeposit should be constant (patch_2.sol#7)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function Deposit()\n    public\n    payable\n    {\n        require(msg.value >= MinDeposit);\n        balances[msg.sender]+=msg.value;\n        TransferLog.AddMessage(msg.sender,msg.value,\"Deposit\");",
+          "message": "PrivateBank.Deposit (patch_2.sol#16-23) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 32,
+          "vulnerability_code": "    function CashOut(uint _am)\n    public\n    {\n        require(_am<=balances[msg.sender]);\n        balances[msg.sender]-=_am;\n        require(msg.sender.call.value(_am)());\n        TransferLog.AddMessage(msg.sender,_am,\"CashOut\");",
+          "message": "PrivateBank.CashOut (patch_2.sol#25-32) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable{}    ",
+          "message": "PrivateBank.fallback (patch_2.sol#34) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": 56,
+          "vulnerability_code": "    function AddMessage(address _adr,uint _val,string _data)\n    public\n    {\n        Message memory newMessage = Message(_adr, _data, _val, now);\n        History.push(newMessage);",
+          "message": "Log.AddMessage (patch_2.sol#51-56) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_2.sol:\n\t- pragma solidity^0.4.19 (patch_2.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 32,
+          "vulnerability_code": "    function CashOut(uint _am)\n    public\n    {\n        require(_am<=balances[msg.sender]);\n        balances[msg.sender]-=_am;\n        require(msg.sender.call.value(_am)());\n        TransferLog.AddMessage(msg.sender,_am,\"CashOut\");",
+          "message": "Low level call in PrivateBank.CashOut (patch_2.sol#25-32):\n\t-require(bool)(msg.sender.call.value(_am)()) patch_2.sol#30\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function PrivateBank(address _lib)\n    {\n        TransferLog = Log(_lib);",
+          "message": "Function 'PrivateBank.PrivateBank' (patch_2.sol#11-14) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function PrivateBank(address _lib)",
+          "message": "Parameter '_lib' of PrivateBank.PrivateBank (patch_2.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function Deposit()\n    public\n    payable\n    {\n        require(msg.value >= MinDeposit);\n        balances[msg.sender]+=msg.value;\n        TransferLog.AddMessage(msg.sender,msg.value,\"Deposit\");",
+          "message": "Function 'PrivateBank.Deposit' (patch_2.sol#16-23) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 32,
+          "vulnerability_code": "    function CashOut(uint _am)\n    public\n    {\n        require(_am<=balances[msg.sender]);\n        balances[msg.sender]-=_am;\n        require(msg.sender.call.value(_am)());\n        TransferLog.AddMessage(msg.sender,_am,\"CashOut\");",
+          "message": "Function 'PrivateBank.CashOut' (patch_2.sol#25-32) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function CashOut(uint _am)",
+          "message": "Parameter '_am' of PrivateBank.CashOut (patch_2.sol#25) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinDeposit = 1 ether;",
+          "message": "Variable 'PrivateBank.MinDeposit' (patch_2.sol#7) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Log TransferLog;",
+          "message": "Variable 'PrivateBank.TransferLog' (patch_2.sol#9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": 56,
+          "vulnerability_code": "    function AddMessage(address _adr,uint _val,string _data)\n    public\n    {\n        Message memory newMessage = Message(_adr, _data, _val, now);\n        History.push(newMessage);",
+          "message": "Function 'Log.AddMessage' (patch_2.sol#51-56) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function AddMessage(address _adr,uint _val,string _data)",
+          "message": "Parameter '_adr' of Log.AddMessage (patch_2.sol#51) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function AddMessage(address _adr,uint _val,string _data)",
+          "message": "Parameter '_val' of Log.AddMessage (patch_2.sol#51) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function AddMessage(address _adr,uint _val,string _data)",
+          "message": "Parameter '_data' of Log.AddMessage (patch_2.sol#51) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public History;",
+          "message": "Variable 'Log.History' (patch_2.sol#49) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        History.push(newMessage);",
+          "message": null
+        },
+        {
+          "name": "Underflow bugs",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        History.push(newMessage);",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        balances[msg.sender]+=msg.value;",
+          "message": null
+        },
+        {
+          "name": "Reentrancy bug",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender.call.value(_am)());",
+          "message": null
+        },
+        {
+          "name": "Reentrancy bug",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        TransferLog.AddMessage(msg.sender,_am,\"CashOut\");",
+          "message": null
+        }
+      ]
+    }
+  }
+}

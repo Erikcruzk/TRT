@@ -1,0 +1,80 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function withdrawReward(address recipient) public {\n        uint amountToWithdraw = rewardsForA[recipient];\n        rewardsForA[recipient] = 0;\n        require(recipient.call.value(amountToWithdraw)());",
+          "message": "Reentrancy_bonus.withdrawReward (patch_0.sol#10-14) sends eth to arbitrary user\n\tDangerous calls:\n\t- require(bool)(recipient.call.value(amountToWithdraw)()) (patch_0.sol#13)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 22,
+          "vulnerability_code": "    function getFirstWithdrawalBonus(address recipient) public {\n        require(!claimedBonus[recipient]); // Each recipient should only be able to claim the bonus once\n\n        claimedBonus[recipient] = true;\n        rewardsForA[recipient] += 100;\n        withdrawReward(recipient);",
+          "message": "Reentrancy_bonus.getFirstWithdrawalBonus (patch_0.sol#16-22) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function withdrawReward(address recipient) public {\n        uint amountToWithdraw = rewardsForA[recipient];\n        rewardsForA[recipient] = 0;\n        require(recipient.call.value(amountToWithdraw)());",
+          "message": "Low level call in Reentrancy_bonus.withdrawReward (patch_0.sol#10-14):\n\t-require(bool)(recipient.call.value(amountToWithdraw)()) patch_0.sol#13\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "contract Reentrancy_bonus{\n\n    // SECURE\n    mapping (address => uint) private userBalances;\n    mapping (address => bool) private claimedBonus;\n    mapping (address => uint) private rewardsForA;\n\n    function withdrawReward(address recipient) public {\n        uint amountToWithdraw = rewardsForA[recipient];\n        rewardsForA[recipient] = 0;\n        require(recipient.call.value(amountToWithdraw)());\n    }\n\n    function getFirstWithdrawalBonus(address recipient) public {\n        require(!claimedBonus[recipient]); // Each recipient should only be able to claim the bonus once\n\n        claimedBonus[recipient] = true;\n        rewardsForA[recipient] += 100;\n        withdrawReward(recipient);\n    }",
+          "message": "Contract 'Reentrancy_bonus' (patch_0.sol#3-23) is not in CapWords\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping (address => uint) private userBalances;",
+          "message": "Reentrancy_bonus.userBalances (patch_0.sol#6) is never used in Reentrancy_bonus\n"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Concurrency bug",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(recipient.call.value(amountToWithdraw)());",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        rewardsForA[recipient] += 100;",
+          "message": null
+        },
+        {
+          "name": "Reentrancy bug",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(recipient.call.value(amountToWithdraw)());",
+          "message": null
+        }
+      ]
+    }
+  }
+}

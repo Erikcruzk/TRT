@@ -1,0 +1,73 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Concurrency bug",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender.call.value(amountToWithdraw)());",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        rewardsForA[msg.sender] += 100;",
+          "message": null
+        },
+        {
+          "name": "Reentrancy bug",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender.call.value(amountToWithdraw)());",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function getFirstWithdrawalBonus() public {\n        require(!claimedBonus[msg.sender]); // Each recipient should only be able to claim the bonus once\n\n        rewardsForA[msg.sender] += 100;\n        claimedBonus[msg.sender] = true;\n        withdrawReward();",
+          "message": "Reentrancy_bonus.getFirstWithdrawalBonus (patch_1.sol#15-21) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function withdrawReward() public {\n        uint amountToWithdraw = rewardsForA[msg.sender];\n        rewardsForA[msg.sender] = 0;\n        require(msg.sender.call.value(amountToWithdraw)());",
+          "message": "Low level call in Reentrancy_bonus.withdrawReward (patch_1.sol#9-13):\n\t-require(bool)(msg.sender.call.value(amountToWithdraw)()) patch_1.sol#12\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 22,
+          "vulnerability_code": "contract Reentrancy_bonus{\n\n    mapping (address => uint) private userBalances;\n    mapping (address => bool) private claimedBonus;\n    mapping (address => uint) private rewardsForA;\n\n    function withdrawReward() public {\n        uint amountToWithdraw = rewardsForA[msg.sender];\n        rewardsForA[msg.sender] = 0;\n        require(msg.sender.call.value(amountToWithdraw)());\n    }\n\n    function getFirstWithdrawalBonus() public {\n        require(!claimedBonus[msg.sender]); // Each recipient should only be able to claim the bonus once\n\n        rewardsForA[msg.sender] += 100;\n        claimedBonus[msg.sender] = true;\n        withdrawReward();\n    }",
+          "message": "Contract 'Reentrancy_bonus' (patch_1.sol#3-22) is not in CapWords\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping (address => uint) private userBalances;",
+          "message": "Reentrancy_bonus.userBalances (patch_1.sol#5) is never used in Reentrancy_bonus\n"
+        }
+      ]
+    }
+  }
+}

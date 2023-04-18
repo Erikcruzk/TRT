@@ -1,0 +1,66 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 8,
+          "vulnerability_code": "    function getBalance(address user) public view returns(uint) {  \n\t\treturn userBalances[user];",
+          "message": "EtherBank.getBalance (patch_0.sol#6-8) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "\tfunction addToBalance() public payable {  \n\t\tuserBalances[msg.sender] += msg.value;",
+          "message": "EtherBank.addToBalance (patch_0.sol#10-12) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "\tfunction withdrawBalance() public {  \n\t\tuint amountToWithdraw = userBalances[msg.sender];\n\t\tuserBalances[msg.sender] = 0;\n\t\trequire(msg.sender.call.value(amountToWithdraw)());",
+          "message": "EtherBank.withdrawBalance (patch_0.sol#14-18) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "\tfunction withdrawBalance() public {  \n\t\tuint amountToWithdraw = userBalances[msg.sender];\n\t\tuserBalances[msg.sender] = 0;\n\t\trequire(msg.sender.call.value(amountToWithdraw)());",
+          "message": "Low level call in EtherBank.withdrawBalance (patch_0.sol#14-18):\n\t-require(bool)(msg.sender.call.value(amountToWithdraw)()) patch_0.sol#17\n"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tuserBalances[msg.sender] += msg.value;",
+          "message": null
+        },
+        {
+          "name": "Reentrancy bug",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\trequire(msg.sender.call.value(amountToWithdraw)());",
+          "message": null
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "  function donate(address to) public payable {\n    require(to != address(0)); // Prevent donating to address 0x0\n    credit[to] += msg.value;",
+          "message": "SimpleDAO.donate (patch_6.sol#6-9) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "  function withdraw(uint amount) public {\n    require(amount > 0); // Prevent withdrawing 0 or negative amount\n    require(credit[msg.sender] >= amount); // Require sender to have enough credit\n    credit[msg.sender] -= amount;\n    msg.sender.transfer(amount);",
+          "message": "SimpleDAO.withdraw (patch_6.sol#11-16) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "  function queryCredit(address to) public view returns (uint){\n    return credit[to];",
+          "message": "SimpleDAO.queryCredit (patch_6.sol#18-20) should be declared external\n"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    credit[to] += msg.value;",
+          "message": null
+        }
+      ]
+    }
+  }
+}

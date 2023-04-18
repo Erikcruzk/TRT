@@ -1,0 +1,131 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [
+        "SYMBOLIC EXECUTION TIMEOUT"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "Truncation bugs",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public history;",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        balances[msg.sender] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_13"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public minDeposit = 1 ether;",
+          "message": "PrivateBank.minDeposit should be constant (patch_8.sol#5)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function deposit() public payable {\n        require(msg.value >= minDeposit);\n        balances[msg.sender] += msg.value;\n        transferLog.addMessage(msg.sender, msg.value, \"Deposit\");",
+          "message": "PrivateBank.deposit (patch_8.sol#20-24) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": 31,
+          "vulnerability_code": "    function cashOut(uint _am) public noReentrancy {\n        require(_am <= balances[msg.sender]);\n        balances[msg.sender] -= _am;\n        require(msg.sender.call.value(_am)());\n        transferLog.addMessage(msg.sender, _am, \"CashOut\");",
+          "message": "PrivateBank.cashOut (patch_8.sol#26-31) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "PrivateBank.fallback (patch_8.sol#33) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": 54,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {\n        Message memory newMsg = Message({\n            sender: _adr,\n            time: now,\n            val: _val,\n            data: _data\n        });\n        history.push(newMsg);",
+          "message": "Log.addMessage (patch_8.sol#46-54) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_8.sol:\n\t- pragma solidity^0.4.19 (patch_8.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": 31,
+          "vulnerability_code": "    function cashOut(uint _am) public noReentrancy {\n        require(_am <= balances[msg.sender]);\n        balances[msg.sender] -= _am;\n        require(msg.sender.call.value(_am)());\n        transferLog.addMessage(msg.sender, _am, \"CashOut\");",
+          "message": "Low level call in PrivateBank.cashOut (patch_8.sol#26-31):\n\t-require(bool)(msg.sender.call.value(_am)()) patch_8.sol#29\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "    function PrivateBank(address _lib) public {\n        transferLog = Log(_lib);",
+          "message": "Function 'PrivateBank.PrivateBank' (patch_8.sol#16-18) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function PrivateBank(address _lib) public {",
+          "message": "Parameter '_lib' of PrivateBank.PrivateBank (patch_8.sol#16) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function cashOut(uint _am) public noReentrancy {",
+          "message": "Parameter '_am' of PrivateBank.cashOut (patch_8.sol#26) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of Log.addMessage (patch_8.sol#46) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of Log.addMessage (patch_8.sol#46) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of Log.addMessage (patch_8.sol#46) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

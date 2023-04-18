@@ -1,0 +1,53 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.0;
+
+contract EtherStore {
+
+    uint256 public withdrawalLimit = 1 ether;
+    mapping(address => uint256) public lastWithdrawTime;
+    mapping(address => uint256) public balances;
+
+    function depositFunds() public payable {
+        balances[msg.sender] += msg.value;
+    }
+
+    function withdrawFunds (uint256 _weiToWithdraw) public {
+        require(balances[msg.sender] >= _weiToWithdraw);
+        // limit the withdrawal
+        require(_weiToWithdraw <= withdrawalLimit);
+        // limit the time allowed to withdraw
+        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);
+        require(msg.sender.call.value(_weiToWithdraw)());
+        balances[msg.sender] -= _weiToWithdraw;
+        lastWithdrawTime[msg.sender] = now;
+    }
+ }
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+/// 1. Osiris Analysis Results
+/// 1.1. Vulnerability: integer_over-underflow at Line 10:
+        balances[msg.sender] += msg.value;/// 1.2. Vulnerability: integer_over-underflow at Line 18:
+        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);/// 1.3. Vulnerability: reentrancy at Line 19:
+        require(msg.sender.call.value(_weiToWithdraw)());
+
+/// 2. Slither Analysis Results
+/// 2.1. Vulnerability: reentrancy at Line 13-22:
+    function withdrawFunds (uint256 _weiToWithdraw) public {
+        require(balances[msg.sender] >= _weiToWithdraw);
+        // limit the withdrawal
+        require(_weiToWithdraw <= withdrawalLimit);
+        // limit the time allowed to withdraw
+        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);
+        require(msg.sender.call.value(_weiToWithdraw)());
+        balances[msg.sender] -= _weiToWithdraw;
+        lastWithdrawTime[msg.sender] = now;
+///  Message:Reentrancy in EtherStore.withdrawFunds (etherstore.sol#13-22):
+///   	External calls:
+///   	- require(bool)(msg.sender.call.value(_weiToWithdraw)()) (etherstore.sol#19)
+///   	State variables written after the call(s):
+///   	- balances (etherstore.sol#20)
+///   	- lastWithdrawTime (etherstore.sol#21)
+
+
+/// Repaired Solidity Smart Contract
