@@ -256,7 +256,7 @@ class SmartContract:
                 'tools': self.experiment_settings["smartbugs_tools"],
                 'results': os.path.join(smartbugs_results_dir, "${TOOL}_${RUNID}"),
                 'log': os.path.join(self.results_dir,'smartbugs_logs', '{RUNID}.log'),
-                'processes': self.experiment_settings["smartbugs_processes"] * len(self.experiment_settings["smartbugs_tools"]),
+                'processes': self.experiment_settings["smartbugs_processes"],
                 'timeout': 60*7
             }
 
