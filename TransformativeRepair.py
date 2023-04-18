@@ -411,7 +411,7 @@ class TransformativeRepair:
         patches_results["patch_generation_completed"] = patches_results.get("patch_generation_completed", False) == True
 
         # Return if patches already generated and successfull
-        if patches_results["patch_generation_completed"]:
+        if patches_results["patch_generation_completed"] == True:
             for patch_name, duplicate_list in patches_results["unique_patches"].items():
                 patch_dir, _ = os.path.splitext(patch_name)
                 patch_path = Path(os.path.join(candidate_patches_dir, patch_dir, patch_name))
@@ -453,19 +453,20 @@ class TransformativeRepair:
             unique_patches = {}
             hash_to_first_patch = {}
             for candidate_patch_path in candidate_patches_paths:
-                patch_name = os.path.basename(candidate_patch_path)
-                hash = SmartContract.get_stripped_source_code_hash(open(candidate_patch_path, 'r').read())
-                
+                sc_candidate_patch = SmartContract(experiment_settings, candidate_patch_path)
+                                
                 # Unique patch
-                if hash not in hash_to_first_patch:
-                    hash_to_first_patch[hash] = patch_name
-                    unique_patches[patch_name] = []
+                if sc_candidate_patch.hash not in hash_to_first_patch:
+                    hash_to_first_patch[sc_candidate_patch.hash] = sc_candidate_patch.filename
+                    unique_patches[sc_candidate_patch.filename] = []
                     smartbugs_sc_queue.put((candidate_patch_path, False))
                     continue
                 
-                # Dubplicate patch
-                unique_contract = hash_to_first_patch[hash]
-                unique_patches[unique_contract].append(patch_name)
+                # Dubplicate patch has same hash
+                unique_contract = hash_to_first_patch[sc_candidate_patch.hash]
+                unique_patches[unique_contract].append(sc_candidate_patch.filename)
+                sc_candidate_patch.vulnerabilities["smartbugs_completed"] = "Duplicate patch. Smartbugs skipped"
+                sc.write_vulnerabilities_to_results_dir()
                 progressbar.update(1)
                 #print(progressbar.n) 
                 
@@ -473,9 +474,10 @@ class TransformativeRepair:
             patches_results["patch_generation_completed"] = True
 
         except Exception as e:
-            patches_results["patch_generation_error"] = str(e)
+            patches_results["patch_generation_completed"] = str(e)
             logging.critical("An exception occurred: %s", str(e), exc_info=True)
 
+        # Write to patches_results.json
         with open(patches_results_path, "w") as outfile:
             outfile.write(json.dumps(patches_results, indent=2))
 
