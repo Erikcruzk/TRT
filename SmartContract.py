@@ -120,9 +120,6 @@ class SmartContract:
         for tool_name, tool_result in vulnerabilities["analyzer_results"].items():
             analyzer_results_for_summary[tool_name] = []
             findings = tool_result['vulnerability_findings']
-            # # First check if any errors = no findings TODO: check correct contract
-            # if not findings:
-            #     analyzer_results_for_summary[tool_name] = ['error'] + tool_result['errors']
             
             if not tool_result.get("successfull_analysis", False) == True:
                 analyzer_results_for_summary[tool_name].append("unsuccessfull_analysis")
@@ -169,8 +166,8 @@ class SmartContract:
         
         lines = self.source_code.split("\n")
         tool_vulnerabilities = {}
-        tool_vulnerabilities["successfull_analysis"] = False if tool_result["errors"] and not tool_result['findings'] else True
-        tool_vulnerabilities["errors"] = tool_result["errors"]
+        tool_vulnerabilities["successfull_analysis"] = False if (tool_result["errors"] or tool_result["fails"]) and not tool_result['findings'] else True
+        tool_vulnerabilities["errors"] = tool_result["errors"] + tool_result.get("fails", [])
 
         vulnerability_findings = []
         for finding in tool_result['findings']:
