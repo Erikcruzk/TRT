@@ -1,3 +1,4 @@
+import copy
 from pathlib import Path
 import subprocess
 import json
@@ -97,9 +98,7 @@ class PromptEngine:
         return candidate_patches_paths
 
     @staticmethod
-    def delete_empty_analyzers_and_rename_findings_to_alias(analyzer_results:dict, target_vulnerabilities:list) -> dict:
-        non_empty_analyzers = {tool_name: tool_results_dict for tool_name, tool_results_dict in analyzer_results.items() if tool_results_dict["successfull_analysis"] == True and tool_results_dict["vulnerability_findings"]}
-        
+    def delete_empty_analyzers_and_rename_findings_to_alias(analyzer_results:dict, target_vulnerabilities:list) -> dict:        
         analyzer_results_filtered = {}
         for tool_name, tool_results_dict in analyzer_results.items():
             # Remove analyzers with empty reults
@@ -117,10 +116,10 @@ class PromptEngine:
             if not renamed_findings:
                 continue
             
-            analyzer_results_filtered[tool_name] = tool_results_dict
+            analyzer_results_filtered[tool_name] = copy.deepcopy(tool_results_dict)
             analyzer_results_filtered[tool_name]["vulnerability_findings"] = renamed_findings
             
-        return analyzer_results
+        return analyzer_results_filtered
         
 
 
@@ -131,7 +130,7 @@ class PromptEngine:
         tool_counter = 0
         for tool_name, tool_results_dict in analyzer_results.items():
             tool_counter += 1
-            context += f"\n{comment_symbol}{tool_counter}. {tool_name.capitalize()} Analysis Results\n\n"
+            context += f"\n{comment_symbol}{tool_counter}. {tool_name.capitalize()} Analysis Results\n"
             
             for i, vulnerability in enumerate(tool_results_dict["vulnerability_findings"]):
                 context += f"{comment_symbol}{tool_counter}.{i+1}. Vulnerability: {vulnerability['name']}"
@@ -147,18 +146,11 @@ class PromptEngine:
                         context += f"{chr(10)}{f'{chr(10)}'.join(vulnerability['vulnerability_code'].splitlines())}"                  
                 if vulnerability.get('message', None) is not None:
                     context += f"\n{comment_symbol} Message:"
-                    context += f"\n{comment_symbol}  ".join(vulnerability['message'].strip().split("\n"))
-                    
-                context += f"\n"
+                    context += f"\n{comment_symbol}  ".join(vulnerability['message'].strip().split("\n"))                    
                 
             context += f"\n"
         
-        return context
-    
-    # @staticmethod
-    # def get_slim_results(analyzer_results:dict, keys_to_keep:list):
-
-        
+        return context   
 
     @staticmethod
     def get_templates() -> dict:
