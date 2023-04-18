@@ -466,7 +466,7 @@ class TransformativeRepair:
                 unique_contract = hash_to_first_patch[sc_candidate_patch.hash]
                 unique_patches[unique_contract].append(sc_candidate_patch.filename)
                 sc_candidate_patch.vulnerabilities["smartbugs_completed"] = "Duplicate patch. Smartbugs skipped"
-                sc.write_vulnerabilities_to_results_dir()
+                sc_candidate_patch.write_vulnerabilities_to_results_dir()
                 progressbar.update(1)
                 #print(progressbar.n) 
                 
