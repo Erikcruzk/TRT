@@ -196,7 +196,6 @@ class SmartContract:
             vulnerability_findings.append(vulnerability)
         
         tool_vulnerabilities["vulnerability_findings"] = vulnerability_findings
-
         self.vulnerabilities["analyzer_results"][tool_name] = tool_vulnerabilities
     
     def remove_old_smartbugs_directories(self):
@@ -225,6 +224,7 @@ class SmartContract:
 
     def set_vulnerabilities(self):
         smartbugs_results_dir = Path(os.path.join(self.results_dir, "smartbugs_results"))
+        self.vulnerabilities["smartbugs_completed"] = False
         self.vulnerabilities["analyzer_results"] = {}        
 
         # Loop through all smartbugs_results
@@ -233,18 +233,13 @@ class SmartContract:
             tool_name = os.path.basename(sb_result_dir).split('_', 1)[0]
             tool_result = json.load(open(os.path.join(sb_result_dir, 'result.json'), 'r'))
             self.create_vulnerabilities_from_sb_results(tool_name, tool_result)
-            
-    def get_vulnerabilities(self) -> None:
-        smartbugs_results_dir = os.path.join(self.results_dir, "smartbugs_results")
+        
+        if not self.vulnerabilities["analyzer_results"] == {}:
+            self.vulnerabilities["smartbugs_completed"] = True
 
-        for smartbugs_result_file in os.listdir(smartbugs_results_dir):
-            full_path = os.path.join(smartbugs_results_dir, smartbugs_result_file)
-            if os.path.isdir(full_path):
-                tool_name = os.path.basename(full_path).split('_', 1)[0]
-                with open(os.path.join(full_path, 'result.json'), 'r') as f:
-                    tool_result = json.load(f)
-
-                self.set_vulnerabilities()
+    def write_vulnerabilities_to_results_dir(self):
+        with open(os.path.join(self.results_dir, "vulnerabilities.json"), "w") as outfile:
+            outfile.write(json.dumps(self.vulnerabilities, indent=2))
 
     def run_smartbugs(self) -> None:    
         try:
@@ -283,10 +278,9 @@ class SmartContract:
             self.remove_old_smartbugs_directories()
             # Save vulnerabilities
             self.set_vulnerabilities()
-            self.vulnerabilities["smartbugs_completed"] = True
+
         except Exception as e:
             self.vulnerabilities["smartbugs_completed"] = str(e)
             logging.critical(f'Smartbugs failure {self.results_dir} {str(e)}', exc_info=True)
         
-        with open(os.path.join(self.results_dir, "vulnerabilities.json"), "w") as outfile:
-            outfile.write(json.dumps(self.vulnerabilities, indent=2))
+        self.write_vulnerabilities_to_results_dir()
