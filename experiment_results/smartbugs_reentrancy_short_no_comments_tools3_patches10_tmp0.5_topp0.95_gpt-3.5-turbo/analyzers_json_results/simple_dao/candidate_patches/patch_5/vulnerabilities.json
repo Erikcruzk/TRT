@@ -1,0 +1,73 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    credit[_to] = credit[_to] + msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 8,
+          "vulnerability_code": "  function donate(address _to) public payable {\n    credit[_to] = credit[_to] + msg.value;",
+          "message": "SimpleDAO.donate (patch_5.sol#6-8) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "  function withdraw(uint _amount) public {\n    require(credit[msg.sender] >= _amount);\n    credit[msg.sender] = credit[msg.sender] - _amount;\n    msg.sender.transfer(_amount);",
+          "message": "SimpleDAO.withdraw (patch_5.sol#10-14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "  function queryCredit(address _to) public view returns (uint){\n    return credit[_to];",
+          "message": "SimpleDAO.queryCredit (patch_5.sol#16-18) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function donate(address _to) public payable {",
+          "message": "Parameter '_to' of SimpleDAO.donate (patch_5.sol#6) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function withdraw(uint _amount) public {",
+          "message": "Parameter '_amount' of SimpleDAO.withdraw (patch_5.sol#10) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function queryCredit(address _to) public view returns (uint){",
+          "message": "Parameter '_to' of SimpleDAO.queryCredit (patch_5.sol#16) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

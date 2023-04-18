@@ -1,0 +1,164 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_18"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 43,
+          "vulnerability_code": "    function withdrawToken(address _token, uint256 _amount, address _to) public onlyOwner {\n        require(_to != address(0));\n        require(_token != address(0));\n\n        bool success = false;\n        bytes4 selector = bytes4(keccak256(\"transfer(address,uint256)\"));\n        assembly {\n            let ptr := mload(0x40)\n            mstore(ptr, selector)\n            mstore(add(ptr, 0x04), _to)\n            mstore(add(ptr, 0x24), _amount)\n            success := call(sub(gas, 10000), _token, 0, ptr, 0x44, 0, 0)\n        }\n        require(success);",
+          "message": "Token.withdrawToken uses assembly (patch_9.sol#29-43)\n\t- patch_9.sol#35-42\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function changeOwner(address _newOwner) public onlyOwner {\n        require(_newOwner != address(0));\n        newOwner = _newOwner;",
+          "message": "Ownable.changeOwner (patch_9.sol#16-19) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function confirmOwner() public {\n        require(msg.sender == newOwner);\n        owner = newOwner;\n        newOwner = address(0);",
+          "message": "Ownable.confirmOwner (patch_9.sol#21-25) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": 57,
+          "vulnerability_code": "    function() public payable {\n        deposit();",
+          "message": "TokenBank.fallback (patch_9.sol#55-57) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 64,
+          "vulnerability_to_line": 68,
+          "vulnerability_code": "    function withdrawTokenToHolder(address _to, address _token, uint _amount) public onlyOwner {\n        require(holders[_to] > 0);\n        holders[_to] = 0;\n        withdrawToken(_token, _amount, _to);",
+          "message": "TokenBank.withdrawTokenToHolder (patch_9.sol#64-68) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": 75,
+          "vulnerability_code": "    function withdrawToHolder(address _addr, uint _wei) public onlyOwner {\n        require(holders[_addr] > 0);\n        require(_wei <= holders[_addr]);\n        holders[_addr] -= _wei;\n        require(_addr.call.value(_wei)());",
+          "message": "TokenBank.withdrawToHolder (patch_9.sol#70-75) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_9.sol:\n\t- pragma solidity^0.4.19 (patch_9.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": 75,
+          "vulnerability_code": "    function withdrawToHolder(address _addr, uint _wei) public onlyOwner {\n        require(holders[_addr] > 0);\n        require(_wei <= holders[_addr]);\n        holders[_addr] -= _wei;\n        require(_addr.call.value(_wei)());",
+          "message": "Low level call in TokenBank.withdrawToHolder (patch_9.sol#70-75):\n\t-require(bool)(_addr.call.value(_wei)()) patch_9.sol#74\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function Ownable() public {\n        owner = msg.sender;",
+          "message": "Function 'Ownable.Ownable' (patch_9.sol#7-9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function changeOwner(address _newOwner) public onlyOwner {",
+          "message": "Parameter '_newOwner' of Ownable.changeOwner (patch_9.sol#16) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdrawToken(address _token, uint256 _amount, address _to) public onlyOwner {",
+          "message": "Parameter '_token' of Token.withdrawToken (patch_9.sol#29) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdrawToken(address _token, uint256 _amount, address _to) public onlyOwner {",
+          "message": "Parameter '_to' of Token.withdrawToken (patch_9.sol#29) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": 53,
+          "vulnerability_code": "    function TokenBank() public {\n        owner = msg.sender;\n        minDeposit = 1 ether;",
+          "message": "Function 'TokenBank.TokenBank' (patch_9.sol#50-53) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 64,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdrawTokenToHolder(address _to, address _token, uint _amount) public onlyOwner {",
+          "message": "Parameter '_to' of TokenBank.withdrawTokenToHolder (patch_9.sol#64) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 64,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdrawTokenToHolder(address _to, address _token, uint _amount) public onlyOwner {",
+          "message": "Parameter '_token' of TokenBank.withdrawTokenToHolder (patch_9.sol#64) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 64,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdrawTokenToHolder(address _to, address _token, uint _amount) public onlyOwner {",
+          "message": "Parameter '_amount' of TokenBank.withdrawTokenToHolder (patch_9.sol#64) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdrawToHolder(address _addr, uint _wei) public onlyOwner {",
+          "message": "Parameter '_addr' of TokenBank.withdrawToHolder (patch_9.sol#70) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdrawToHolder(address _addr, uint _wei) public onlyOwner {",
+          "message": "Parameter '_wei' of TokenBank.withdrawToHolder (patch_9.sol#70) is not in mixedCase\n"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        holders[msg.sender] += msg.value;",
+          "message": null
+        },
+        {
+          "name": "Reentrancy bug",
+          "vulnerability_from_line": 74,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_addr.call.value(_wei)());",
+          "message": null
+        }
+      ]
+    }
+  }
+}

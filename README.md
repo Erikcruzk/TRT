@@ -32,6 +32,6 @@ Add .env file with openAI-key
 Temperature 0.5 and 0.7. Top_p 0.95
 
 1. Basic. Just Fix this vulnerable Solidity Smart Contract `basic`
-2. Json info from analyzers `analyzer_json_info`
-3. Natural language info from analyzers `analyzer_natural_language_info`
+2. Json info from analyzers `analyzers_json_results`
+3. Natural language info from analyzers `analyzers_natural_language_results`
 
