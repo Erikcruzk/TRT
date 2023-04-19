@@ -1,0 +1,56 @@
+pragma solidity ^0.4.25;
+
+contract WALLET {
+    struct Holder {
+        uint unlockTime;
+        uint balance;
+    }
+    
+    mapping (address => Holder) public Acc;
+    
+    Log LogFile;
+    
+    uint public MinSum = 1 ether;    
+    
+    function WALLET(address log) public {
+        LogFile = Log(log);
+    }
+    
+    function put(uint _unlockTime) public payable {
+        Acc[msg.sender].balance += msg.value;
+        Acc[msg.sender].unlockTime = _unlockTime > now ? _unlockTime : now;
+        LogFile.addMessage(msg.sender, msg.value, "Put");
+    }
+    
+    function collect(uint _am) public payable {
+        var acc = Acc[msg.sender];
+        require(acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime);
+        acc.balance -= _am;
+        msg.sender.transfer(_am);
+        LogFile.addMessage(msg.sender, _am, "Collect");
+    }
+    
+    function() public payable {
+        put(0);
+    }
+}
+
+contract Log {
+    struct Message {
+        address sender;
+        string data;
+        uint val;
+        uint time;
+    }
+    
+    Message[] public History;
+    
+    function addMessage(address _adr, uint _val, string _data) public {
+        Message memory msg;
+        msg.sender = _adr;
+        msg.time = now;
+        msg.val = _val;
+        msg.data = _data;
+        History.push(msg);
+    }
+}

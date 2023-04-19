@@ -1,0 +1,87 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_8"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function changeOwner(address addr) public onlyOwner {\n        newOwner = addr;",
+          "message": "Ownable.changeOwner (patch_2.sol#12-14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function confirmOwner() public {\n        require(msg.sender == newOwner);\n        owner = newOwner;\n        newOwner = address(0);",
+          "message": "Ownable.confirmOwner (patch_2.sol#16-20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "    function() public payable {\n        deposit();",
+          "message": "TokenBank.fallback (patch_2.sol#38-40) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": 53,
+          "vulnerability_code": "    function withdrawTokenToHolder(address to, address token, uint amount) public onlyOwner {\n        if (holders[to] > 0) {\n            holders[to] = 0;\n            withdrawToken(token, amount, to);\n        }",
+          "message": "TokenBank.withdrawTokenToHolder (patch_2.sol#48-53) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": 59,
+          "vulnerability_code": "    function withdrawToHolder(address addr, uint weiAmount) public onlyOwner {\n        require(holders[addr] >= weiAmount);\n        holders[addr] -= weiAmount;\n        addr.transfer(weiAmount);",
+          "message": "TokenBank.withdrawToHolder (patch_2.sol#55-59) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_2.sol:\n\t- pragma solidity^0.4.19 (patch_2.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": 26,
+          "vulnerability_code": "    function withdrawToken(address token, uint256 amount, address to) public onlyOwner {\n        require(token.call(bytes4(keccak256(\"transfer(address,uint256)\")), to, amount));",
+          "message": "Low level call in Token.withdrawToken (patch_2.sol#24-26):\n\t-require(bool)(token.call(bytes4(keccak256()(transfer(address,uint256))),to,amount)) patch_2.sol#25\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": 36,
+          "vulnerability_code": "    function TokenBank() public {\n        owner = msg.sender;\n        minDeposit = 1 ether;",
+          "message": "Function 'TokenBank.TokenBank' (patch_2.sol#33-36) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            holders[msg.sender] += msg.value;",
+          "message": null
+        }
+      ]
+    }
+  }
+}

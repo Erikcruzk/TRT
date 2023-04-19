@@ -1,0 +1,44 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.0;
+
+contract Reentrancy_cross_function {
+
+    mapping (address => uint) private userBalances;
+
+    function transfer(address to, uint amount) {
+        if (userBalances[msg.sender] >= amount) {
+            userBalances[to] += amount;
+            userBalances[msg.sender] -= amount;
+        }
+    }
+
+    function withdrawBalance() public {
+        uint amountToWithdraw = userBalances[msg.sender];
+        (bool success, ) = msg.sender.call.value(amountToWithdraw)(""); // At this point, the caller's code is executed, and can call transfer()
+        require(success);
+        userBalances[msg.sender] = 0;
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+/// 1. Slither Analysis Results
+/// 1.1. Vulnerability: reentrancy at Line 14-19:
+    function withdrawBalance() public {
+        uint amountToWithdraw = userBalances[msg.sender];
+        (bool success, ) = msg.sender.call.value(amountToWithdraw)(""); // At this point, the caller's code is executed, and can call transfer()
+        require(success);
+        userBalances[msg.sender] = 0;
+///  Message:Reentrancy in Reentrancy_cross_function.withdrawBalance (reentrancy_cross_function.sol#14-19):
+///   	External calls:
+///   	- (success) = msg.sender.call.value(amountToWithdraw)() (reentrancy_cross_function.sol#16)
+///   	State variables written after the call(s):
+///   	- userBalances (reentrancy_cross_function.sol#18)
+
+/// 2. Osiris Analysis Results
+/// 2.1. Vulnerability: integer_over-underflow at Line 9:
+            userBalances[to] += amount;/// 2.2. Vulnerability: reentrancy at Line 16:
+        (bool success, ) = msg.sender.call.value(amountToWithdraw)(""); // At this point, the caller's code is executed, and can call transfer()
+
+
+/// Repaired Solidity Smart Contract

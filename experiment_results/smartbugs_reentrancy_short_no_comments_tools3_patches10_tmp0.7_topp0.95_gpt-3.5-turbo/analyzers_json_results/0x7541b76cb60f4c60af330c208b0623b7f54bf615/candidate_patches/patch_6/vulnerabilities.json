@@ -1,0 +1,181 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [
+        "SYMBOLIC EXECUTION TIMEOUT"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.25;",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        History.push(Message({",
+          "message": null
+        },
+        {
+          "name": "Underflow bugs",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        History.push(Message({",
+          "message": null
+        },
+        {
+          "name": "Reentrancy bug",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender.call.value(_am)(), \"Transfer failed\");",
+          "message": null
+        },
+        {
+          "name": "Time dependency bug",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(now > acc.unlockTime, \"Unlock time has not passed yet\");",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_16"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum = 2 ether;",
+          "message": "U_BANK.MinSum should be constant (patch_6.sol#12)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function withdraw(uint _am) public {\n        require(_am > 0, \"Amount should be greater than 0\");\n        Holder storage acc = Acc[msg.sender];\n        require(acc.balance >= MinSum, \"Balance should be greater than minimum sum\");\n        require(acc.balance >= _am, \"Amount should be less than or equal to balance\");\n        require(now > acc.unlockTime, \"Unlock time has not passed yet\");\n        acc.balance -= _am;\n        emit Withdrawal(msg.sender, _am);\n        require(msg.sender.call.value(_am)(), \"Transfer failed\");",
+          "message": "U_BANK.withdraw (patch_6.sol#28-37) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 41,
+          "vulnerability_code": "    function() public payable {\n        deposit(0);",
+          "message": "U_BANK.fallback (patch_6.sol#39-41) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": 61,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {\n        History.push(Message({\n            Sender: _adr,\n            Time: now,\n            Val: _val,\n            Data: _data\n        }));",
+          "message": "Log.addMessage (patch_6.sol#54-61) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function withdraw(uint _am) public {\n        require(_am > 0, \"Amount should be greater than 0\");\n        Holder storage acc = Acc[msg.sender];\n        require(acc.balance >= MinSum, \"Balance should be greater than minimum sum\");\n        require(acc.balance >= _am, \"Amount should be less than or equal to balance\");\n        require(now > acc.unlockTime, \"Unlock time has not passed yet\");\n        acc.balance -= _am;\n        emit Withdrawal(msg.sender, _am);\n        require(msg.sender.call.value(_am)(), \"Transfer failed\");",
+          "message": "Low level call in U_BANK.withdraw (patch_6.sol#28-37):\n\t-require(bool,string)(msg.sender.call.value(_am)(),Transfer failed) patch_6.sol#36\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 42,
+          "vulnerability_code": "contract U_BANK {\n    struct Holder {\n        uint unlockTime;\n        uint balance;\n    }\n\n    mapping (address => Holder) public Acc;\n\n    Log private LogFile;\n    uint public MinSum = 2 ether;\n\n    event Deposit(address indexed account, uint amount);\n    event Withdrawal(address indexed account, uint amount);\n\n    function U_BANK(address log) public {\n        LogFile = Log(log);\n    }\n\n    function deposit(uint _unlockTime) public payable {\n        require(msg.value > 0, \"Amount should be greater than 0\");\n        Acc[msg.sender].balance += msg.value;\n        Acc[msg.sender].unlockTime = _unlockTime > now ? _unlockTime : now;\n        emit Deposit(msg.sender, msg.value);\n    }\n\n    function withdraw(uint _am) public {\n        require(_am > 0, \"Amount should be greater than 0\");\n        Holder storage acc = Acc[msg.sender];\n        require(acc.balance >= MinSum, \"Balance should be greater than minimum sum\");\n        require(acc.balance >= _am, \"Amount should be less than or equal to balance\");\n        require(now > acc.unlockTime, \"Unlock time has not passed yet\");\n        acc.balance -= _am;\n        emit Withdrawal(msg.sender, _am);\n        require(msg.sender.call.value(_am)(), \"Transfer failed\");\n    }\n\n    function() public payable {\n        deposit(0);\n    }",
+          "message": "Contract 'U_BANK' (patch_6.sol#3-42) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function U_BANK(address log) public {\n        LogFile = Log(log);",
+          "message": "Function 'U_BANK.U_BANK' (patch_6.sol#17-19) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function deposit(uint _unlockTime) public payable {",
+          "message": "Parameter '_unlockTime' of U_BANK.deposit (patch_6.sol#21) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdraw(uint _am) public {",
+          "message": "Parameter '_am' of U_BANK.withdraw (patch_6.sol#28) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping (address => Holder) public Acc;",
+          "message": "Variable 'U_BANK.Acc' (patch_6.sol#9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Log private LogFile;",
+          "message": "Variable 'U_BANK.LogFile' (patch_6.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum = 2 ether;",
+          "message": "Variable 'U_BANK.MinSum' (patch_6.sol#12) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of Log.addMessage (patch_6.sol#54) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of Log.addMessage (patch_6.sol#54) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of Log.addMessage (patch_6.sol#54) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public History;",
+          "message": "Variable 'Log.History' (patch_6.sol#52) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Re-Entrancy Vulnerability",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender.call.value(_am)(), \"Transfer failed\");",
+          "message": null
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_10"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public minDeposit = 1 ether;",
+          "message": "PrivateBank.minDeposit should be constant (patch_2.sol#5)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function deposit() public payable {\n        require(msg.value >= minDeposit, \"Deposit amount is less than minimum deposit.\");\n        balances[msg.sender] += msg.value;\n        transferLog.addMessage(msg.sender, msg.value, \"Deposit\");",
+          "message": "PrivateBank.deposit (patch_2.sol#12-16) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function cashOut(uint256 _am) public {\n        require(_am <= balances[msg.sender], \"Withdrawal amount is greater than balance.\");\n        balances[msg.sender] -= _am;\n        transferLog.addMessage(msg.sender, _am, \"CashOut\");\n        msg.sender.transfer(_am);",
+          "message": "PrivateBank.cashOut (patch_2.sol#18-23) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": 41,
+          "vulnerability_code": "    function addMessage(address _adr, uint256 _val, string memory _data) public {\n        Message memory message = Message(_adr, _data, _val, now);\n        history.push(message);",
+          "message": "Log.addMessage (patch_2.sol#38-41) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;",
+          "message": "Detected issues with version pragma in patch_2.sol:\n\t- pragma solidity^0.5.0 (patch_2.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _lib) public {",
+          "message": "Parameter '_lib' of PrivateBank. (patch_2.sol#8) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function cashOut(uint256 _am) public {",
+          "message": "Parameter '_am' of PrivateBank.cashOut (patch_2.sol#18) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint256 _val, string memory _data) public {",
+          "message": "Parameter '_adr' of Log.addMessage (patch_2.sol#38) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint256 _val, string memory _data) public {",
+          "message": "Parameter '_val' of Log.addMessage (patch_2.sol#38) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint256 _val, string memory _data) public {",
+          "message": "Parameter '_data' of Log.addMessage (patch_2.sol#38) is not in mixedCase\n"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

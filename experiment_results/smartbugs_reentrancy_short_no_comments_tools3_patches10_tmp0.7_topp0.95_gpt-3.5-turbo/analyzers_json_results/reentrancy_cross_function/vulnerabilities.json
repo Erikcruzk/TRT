@@ -1,0 +1,102 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack bug",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\"); // At this point, the caller's code is executed, and can call transfer()",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            userBalances[to] += amount;",
+          "message": null
+        },
+        {
+          "name": "Reentrancy bug",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\"); // At this point, the caller's code is executed, and can call transfer()",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Re-Entrancy Vulnerability",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\"); // At this point, the caller's code is executed, and can call transfer()",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function withdrawBalance() public {\n        uint amountToWithdraw = userBalances[msg.sender];\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\"); // At this point, the caller's code is executed, and can call transfer()\n        require(success);\n        userBalances[msg.sender] = 0;",
+          "message": "Reentrancy in Reentrancy_cross_function.withdrawBalance (reentrancy_cross_function.sol#14-19):\n\tExternal calls:\n\t- (success) = msg.sender.call.value(amountToWithdraw)() (reentrancy_cross_function.sol#16)\n\tState variables written after the call(s):\n\t- userBalances (reentrancy_cross_function.sol#18)\n"
+        },
+        {
+          "name": "erc20-interface",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "contract Reentrancy_cross_function {\n\n    mapping (address => uint) private userBalances;\n\n    function transfer(address to, uint amount) {\n        if (userBalances[msg.sender] >= amount) {\n            userBalances[to] += amount;\n            userBalances[msg.sender] -= amount;\n        }\n    }\n\n    function withdrawBalance() public {\n        uint amountToWithdraw = userBalances[msg.sender];\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\"); // At this point, the caller's code is executed, and can call transfer()\n        require(success);\n        userBalances[msg.sender] = 0;\n    }",
+          "message": "Reentrancy_cross_function (reentrancy_cross_function.sol#3-20) has incorrect ERC20 function interface(s):\n\t-transfer (reentrancy_cross_function.sol#7-12)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "    function transfer(address to, uint amount) {\n        if (userBalances[msg.sender] >= amount) {\n            userBalances[to] += amount;\n            userBalances[msg.sender] -= amount;\n        }",
+          "message": "Reentrancy_cross_function.transfer (reentrancy_cross_function.sol#7-12) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function withdrawBalance() public {\n        uint amountToWithdraw = userBalances[msg.sender];\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\"); // At this point, the caller's code is executed, and can call transfer()\n        require(success);\n        userBalances[msg.sender] = 0;",
+          "message": "Reentrancy_cross_function.withdrawBalance (reentrancy_cross_function.sol#14-19) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;",
+          "message": "Detected issues with version pragma in reentrancy_cross_function.sol:\n\t- pragma solidity^0.4.0 (reentrancy_cross_function.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function withdrawBalance() public {\n        uint amountToWithdraw = userBalances[msg.sender];\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\"); // At this point, the caller's code is executed, and can call transfer()\n        require(success);\n        userBalances[msg.sender] = 0;",
+          "message": "Low level call in Reentrancy_cross_function.withdrawBalance (reentrancy_cross_function.sol#14-19):\n\t-(success) = msg.sender.call.value(amountToWithdraw)() reentrancy_cross_function.sol#16\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "contract Reentrancy_cross_function {\n\n    mapping (address => uint) private userBalances;\n\n    function transfer(address to, uint amount) {\n        if (userBalances[msg.sender] >= amount) {\n            userBalances[to] += amount;\n            userBalances[msg.sender] -= amount;\n        }\n    }\n\n    function withdrawBalance() public {\n        uint amountToWithdraw = userBalances[msg.sender];\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\"); // At this point, the caller's code is executed, and can call transfer()\n        require(success);\n        userBalances[msg.sender] = 0;\n    }",
+          "message": "Contract 'Reentrancy_cross_function' (reentrancy_cross_function.sol#3-20) is not in CapWords\n"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        userBalances[to] += amount;",
+          "message": null
+        },
+        {
+          "name": "Reentrancy bug",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        msg.sender.transfer(amountToWithdraw);",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "erc20-interface",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "contract Reentrancy_cross_function {\n    mapping (address => uint) private userBalances;\n    mapping (address => bool) private locked;\n\n    function transfer(address to, uint amount) public {\n        require(userBalances[msg.sender] >= amount);\n        require(!locked[msg.sender]);\n        locked[msg.sender] = true;\n        userBalances[to] += amount;\n        userBalances[msg.sender] -= amount;\n        locked[msg.sender] = false;\n    }\n\n    function withdrawBalance() public {\n        require(!locked[msg.sender]);\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        locked[msg.sender] = true;\n        msg.sender.transfer(amountToWithdraw);\n        locked[msg.sender] = false;\n    }",
+          "message": "Reentrancy_cross_function (patch_2.sol#3-24) has incorrect ERC20 function interface(s):\n\t-transfer (patch_2.sol#7-14)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function transfer(address to, uint amount) public {\n        require(userBalances[msg.sender] >= amount);\n        require(!locked[msg.sender]);\n        locked[msg.sender] = true;\n        userBalances[to] += amount;\n        userBalances[msg.sender] -= amount;\n        locked[msg.sender] = false;",
+          "message": "Reentrancy_cross_function.transfer (patch_2.sol#7-14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender]);\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        locked[msg.sender] = true;\n        msg.sender.transfer(amountToWithdraw);\n        locked[msg.sender] = false;",
+          "message": "Reentrancy_cross_function.withdrawBalance (patch_2.sol#16-23) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "contract Reentrancy_cross_function {\n    mapping (address => uint) private userBalances;\n    mapping (address => bool) private locked;\n\n    function transfer(address to, uint amount) public {\n        require(userBalances[msg.sender] >= amount);\n        require(!locked[msg.sender]);\n        locked[msg.sender] = true;\n        userBalances[to] += amount;\n        userBalances[msg.sender] -= amount;\n        locked[msg.sender] = false;\n    }\n\n    function withdrawBalance() public {\n        require(!locked[msg.sender]);\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        locked[msg.sender] = true;\n        msg.sender.transfer(amountToWithdraw);\n        locked[msg.sender] = false;\n    }",
+          "message": "Contract 'Reentrancy_cross_function' (patch_2.sol#3-24) is not in CapWords\n"
+        }
+      ]
+    }
+  }
+}

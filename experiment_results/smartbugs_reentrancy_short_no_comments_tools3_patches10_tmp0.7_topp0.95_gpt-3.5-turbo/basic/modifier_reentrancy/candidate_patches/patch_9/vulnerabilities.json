@@ -1,0 +1,58 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "  function airDrop() hasNoBalance supportsToken public {\n    tokenBalance[msg.sender] += 20;",
+          "message": "ModifierEntrancy.airDrop (patch_9.sol#13-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": 49,
+          "vulnerability_code": "    function call(address token) public {\n        ModifierEntrancy(token).airDrop();",
+          "message": "attack.call (patch_9.sol#47-49) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address _bank) public {",
+          "message": "Parameter '_bank' of ModifierEntrancy. (patch_9.sol#8) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": 50,
+          "vulnerability_code": "contract attack {\n    bool hasBeenCalled;\n\n    function supportsToken() external returns(bytes32) {\n        if(!hasBeenCalled) {\n            hasBeenCalled = true;\n            ModifierEntrancy(msg.sender).airDrop();\n        }\n        return(keccak256(abi.encodePacked(\"Nu Token\")));\n    }\n\n    function call(address token) public {\n        ModifierEntrancy(token).airDrop();\n    }",
+          "message": "Contract 'attack' (patch_9.sol#36-50) is not in CapWords\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  string constant name = \"Nu Token\";",
+          "message": "ModifierEntrancy.name (patch_9.sol#5) is never used in ModifierEntrancy\n"
+        }
+      ]
+    }
+  }
+}

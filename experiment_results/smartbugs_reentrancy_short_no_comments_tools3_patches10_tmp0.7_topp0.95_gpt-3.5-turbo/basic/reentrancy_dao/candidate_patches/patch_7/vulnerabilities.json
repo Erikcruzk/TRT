@@ -1,0 +1,88 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function withdrawAll() public {\n        uint oCredit = credit[msg.sender];\n        if (oCredit > 0) {\n            credit[msg.sender] = 0;\n            balance -= oCredit;\n            bool callResult = msg.sender.call.value(oCredit)();\n            require (callResult);\n        }",
+          "message": "ReentrancyDAO.withdrawAll (patch_7.sol#7-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function deposit() public payable {\n        credit[msg.sender] += msg.value;\n        balance += msg.value;",
+          "message": "ReentrancyDAO.deposit (patch_7.sol#17-20) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_7.sol:\n\t- pragma solidity^0.4.19 (patch_7.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function withdrawAll() public {\n        uint oCredit = credit[msg.sender];\n        if (oCredit > 0) {\n            credit[msg.sender] = 0;\n            balance -= oCredit;\n            bool callResult = msg.sender.call.value(oCredit)();\n            require (callResult);\n        }",
+          "message": "Low level call in ReentrancyDAO.withdrawAll (patch_7.sol#7-15):\n\t-callResult = msg.sender.call.value(oCredit)() patch_7.sol#12\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            bool callResult = msg.sender.call.value(oCredit)();",
+          "message": null
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        credit[msg.sender] += msg.value;",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        balance += msg.value;",
+          "message": null
+        },
+        {
+          "name": "Reentrancy bug",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            bool callResult = msg.sender.call.value(oCredit)();",
+          "message": null
+        },
+        {
+          "name": "Underflow bugs",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            balance -= oCredit;",
+          "message": null
+        }
+      ]
+    }
+  }
+}
