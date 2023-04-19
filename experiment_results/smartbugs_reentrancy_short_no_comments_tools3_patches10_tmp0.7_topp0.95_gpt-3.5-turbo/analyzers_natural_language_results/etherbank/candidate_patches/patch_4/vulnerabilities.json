@@ -1,0 +1,59 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tuserBalances[msg.sender] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 8,
+          "vulnerability_code": "    function getBalance(address user) public view returns(uint) {  \n\t\treturn userBalances[user];",
+          "message": "EtherBank.getBalance (patch_4.sol#6-8) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "\tfunction addToBalance() public payable {  \n\t\tuserBalances[msg.sender] += msg.value;",
+          "message": "EtherBank.addToBalance (patch_4.sol#10-12) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "\tfunction withdrawBalance() public {  \n\t\tuint amountToWithdraw = userBalances[msg.sender];\n\t\tuserBalances[msg.sender] = 0;\n\t\tmsg.sender.transfer(amountToWithdraw);",
+          "message": "EtherBank.withdrawBalance (patch_4.sol#14-18) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;",
+          "message": "Detected issues with version pragma in patch_4.sol:\n\t- pragma solidity^0.4.0 (patch_4.sol#1): it allows old versions\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

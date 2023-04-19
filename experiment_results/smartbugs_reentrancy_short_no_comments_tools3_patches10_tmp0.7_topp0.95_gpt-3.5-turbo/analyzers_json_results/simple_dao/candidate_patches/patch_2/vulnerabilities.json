@@ -1,0 +1,67 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool res = msg.sender.call.value(amount)();",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "  function donate(address to) public payable {\n    require(msg.value > 0);\n    credit[to] = safeAdd(credit[to], msg.value);",
+          "message": "SimpleDAO.donate (patch_2.sol#6-9) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "  function withdraw(uint amount) public {\n    require(amount > 0 && credit[msg.sender] >= amount);\n    credit[msg.sender] = safeSub(credit[msg.sender], amount);\n    bool res = msg.sender.call.value(amount)();\n    require(res);",
+          "message": "SimpleDAO.withdraw (patch_2.sol#11-16) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "  function queryCredit(address to) public view returns (uint) {\n    return credit[to];",
+          "message": "SimpleDAO.queryCredit (patch_2.sol#18-20) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "  function withdraw(uint amount) public {\n    require(amount > 0 && credit[msg.sender] >= amount);\n    credit[msg.sender] = safeSub(credit[msg.sender], amount);\n    bool res = msg.sender.call.value(amount)();\n    require(res);",
+          "message": "Low level call in SimpleDAO.withdraw (patch_2.sol#11-16):\n\t-res = msg.sender.call.value(amount)() patch_2.sol#14\n"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Reentrancy bug",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool res = msg.sender.call.value(amount)();",
+          "message": null
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Reentrancy bug",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender.call.value(amountToWithdraw)()); // Use require statement after updating state variable",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 11,
+          "vulnerability_code": "    function withdrawBalance() public {\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0; // Update state variable before external call\n        require(msg.sender.call.value(amountToWithdraw)()); // Use require statement after updating state variable",
+          "message": "Reentrancy_secure.withdrawBalance (patch_9.sol#7-11) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;",
+          "message": "Detected issues with version pragma in patch_9.sol:\n\t- pragma solidity^0.4.0 (patch_9.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 11,
+          "vulnerability_code": "    function withdrawBalance() public {\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0; // Update state variable before external call\n        require(msg.sender.call.value(amountToWithdraw)()); // Use require statement after updating state variable",
+          "message": "Low level call in Reentrancy_secure.withdrawBalance (patch_9.sol#7-11):\n\t-require(bool)(msg.sender.call.value(amountToWithdraw)()) patch_9.sol#10\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "contract Reentrancy_secure {\n\n    mapping (address => uint) private userBalances;\n\n    function withdrawBalance() public {\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0; // Update state variable before external call\n        require(msg.sender.call.value(amountToWithdraw)()); // Use require statement after updating state variable\n    }",
+          "message": "Contract 'Reentrancy_secure' (patch_9.sol#3-12) is not in CapWords\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

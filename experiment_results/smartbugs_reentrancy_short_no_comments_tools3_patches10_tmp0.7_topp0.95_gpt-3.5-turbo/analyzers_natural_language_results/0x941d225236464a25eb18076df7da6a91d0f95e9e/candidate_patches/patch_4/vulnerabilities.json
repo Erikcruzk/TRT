@@ -1,0 +1,166 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_16"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-benign",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function deposit()\n    public\n    payable\n    {\n        if(msg.value >= MinDeposit)\n        {\n            balances[msg.sender] += msg.value;\n            TransferLog.addMessage(msg.sender, msg.value, \"Deposit\");\n            lastBlock = block.number;\n        }",
+          "message": "Reentrancy in ETH_FUND.deposit (patch_4.sol#19-29):\n\tExternal calls:\n\t- TransferLog.addMessage(msg.sender,msg.value,Deposit) (patch_4.sol#26)\n\tState variables written after the call(s):\n\t- lastBlock (patch_4.sol#27)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinDeposit = 1 ether;",
+          "message": "ETH_FUND.MinDeposit should be constant (patch_4.sol#7)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function deposit()\n    public\n    payable\n    {\n        if(msg.value >= MinDeposit)\n        {\n            balances[msg.sender] += msg.value;\n            TransferLog.addMessage(msg.sender, msg.value, \"Deposit\");\n            lastBlock = block.number;\n        }",
+          "message": "ETH_FUND.deposit (patch_4.sol#19-29) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": 38,
+          "vulnerability_code": "    function cashOut(uint _am)\n    public\n    {\n        require(_am <= balances[msg.sender] && block.number > lastBlock);\n        balances[msg.sender] -= _am;\n        msg.sender.transfer(_am);\n        TransferLog.addMessage(msg.sender, _am, \"CashOut\");",
+          "message": "ETH_FUND.cashOut (patch_4.sol#31-38) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable{}    ",
+          "message": "ETH_FUND.fallback (patch_4.sol#40) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": 67,
+          "vulnerability_code": "    function addMessage(address _adr,uint _val,string _data)\n    public\n    {\n        Message memory newMessage = Message({\n            Sender: _adr,\n            Time: now,\n            Val: _val,\n            Data: _data\n        });\n        History.push(newMessage);",
+          "message": "Log.addMessage (patch_4.sol#57-67) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_4.sol:\n\t- pragma solidity^0.4.19 (patch_4.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 42,
+          "vulnerability_code": "contract ETH_FUND\n{\n    mapping (address => uint) public balances;\n    \n    uint public MinDeposit = 1 ether;\n    \n    Log TransferLog;\n    \n    uint lastBlock;\n    \n    constructor(address _log)\n    public \n    {\n        TransferLog = Log(_log);\n    }\n    \n    function deposit()\n    public\n    payable\n    {\n        if(msg.value >= MinDeposit)\n        {\n            balances[msg.sender] += msg.value;\n            TransferLog.addMessage(msg.sender, msg.value, \"Deposit\");\n            lastBlock = block.number;\n        }\n    }\n    \n    function cashOut(uint _am)\n    public\n    {\n        require(_am <= balances[msg.sender] && block.number > lastBlock);\n        balances[msg.sender] -= _am;\n        msg.sender.transfer(_am);\n        TransferLog.addMessage(msg.sender, _am, \"CashOut\");\n    }\n    \n    function() public payable{}    \n    ",
+          "message": "Contract 'ETH_FUND' (patch_4.sol#3-42) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _log)",
+          "message": "Parameter '_log' of ETH_FUND. (patch_4.sol#13) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function cashOut(uint _am)",
+          "message": "Parameter '_am' of ETH_FUND.cashOut (patch_4.sol#31) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinDeposit = 1 ether;",
+          "message": "Variable 'ETH_FUND.MinDeposit' (patch_4.sol#7) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Log TransferLog;",
+          "message": "Variable 'ETH_FUND.TransferLog' (patch_4.sol#9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr,uint _val,string _data)",
+          "message": "Parameter '_adr' of Log.addMessage (patch_4.sol#57) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr,uint _val,string _data)",
+          "message": "Parameter '_val' of Log.addMessage (patch_4.sol#57) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr,uint _val,string _data)",
+          "message": "Parameter '_data' of Log.addMessage (patch_4.sol#57) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public History;",
+          "message": "Variable 'Log.History' (patch_4.sol#55) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [
+        "SYMBOLIC EXECUTION TIMEOUT"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            balances[msg.sender] += msg.value;",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        History.push(newMessage);",
+          "message": null
+        },
+        {
+          "name": "Underflow bugs",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        History.push(newMessage);",
+          "message": null
+        }
+      ]
+    }
+  }
+}

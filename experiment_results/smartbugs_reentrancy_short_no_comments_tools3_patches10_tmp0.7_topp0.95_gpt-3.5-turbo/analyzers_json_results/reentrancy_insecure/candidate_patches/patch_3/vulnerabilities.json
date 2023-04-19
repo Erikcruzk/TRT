@@ -1,0 +1,81 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack bug",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");",
+          "message": null
+        },
+        {
+          "name": "Reentrancy bug",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender]);\n        locked[msg.sender] = true;\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n        locked[msg.sender] = false;",
+          "message": "Reentrancy in Reentrancy_secure.withdrawBalance (patch_3.sol#8-16):\n\tExternal calls:\n\t- (success) = msg.sender.call.value(amountToWithdraw)() (patch_3.sol#13)\n\tState variables written after the call(s):\n\t- locked (patch_3.sol#15)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender]);\n        locked[msg.sender] = true;\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n        locked[msg.sender] = false;",
+          "message": "Reentrancy_secure.withdrawBalance (patch_3.sol#8-16) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;",
+          "message": "Detected issues with version pragma in patch_3.sol:\n\t- pragma solidity^0.4.0 (patch_3.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender]);\n        locked[msg.sender] = true;\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n        locked[msg.sender] = false;",
+          "message": "Low level call in Reentrancy_secure.withdrawBalance (patch_3.sol#8-16):\n\t-(success) = msg.sender.call.value(amountToWithdraw)() patch_3.sol#13\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 17,
+          "vulnerability_code": "contract Reentrancy_secure {\n\n    mapping (address => uint) private userBalances;\n    mapping (address => bool) private locked;\n\n    function withdrawBalance() public {\n        require(!locked[msg.sender]);\n        locked[msg.sender] = true;\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n        locked[msg.sender] = false;\n    }",
+          "message": "Contract 'Reentrancy_secure' (patch_3.sol#3-17) is not in CapWords\n"
+        }
+      ]
+    }
+  }
+}

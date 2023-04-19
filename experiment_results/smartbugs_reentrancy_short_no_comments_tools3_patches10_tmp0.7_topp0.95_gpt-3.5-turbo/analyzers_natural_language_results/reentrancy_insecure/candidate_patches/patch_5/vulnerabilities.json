@@ -1,0 +1,66 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack bug",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\"); // Make external call",
+          "message": null
+        },
+        {
+          "name": "Reentrancy bug",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\"); // Make external call",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender]); // Check if the user is already withdrawing funds\n        uint amountToWithdraw = userBalances[msg.sender];\n        locked[msg.sender] = true; // Lock the user account to prevent reentrancy\n        require(amountToWithdraw > 0); // Check if user has funds to withdraw\n        userBalances[msg.sender] = 0; // Set user balance to zero before making external call\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\"); // Make external call\n        require(success); // Check if external call was successful\n        locked[msg.sender] = false; // Unlock user account after external call is complete",
+          "message": "Reentrancy in Reentrancy_secure.withdrawBalance (patch_5.sol#7-16):\n\tExternal calls:\n\t- (success) = msg.sender.call.value(amountToWithdraw)() (patch_5.sol#13)\n\tState variables written after the call(s):\n\t- locked (patch_5.sol#15)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender]); // Check if the user is already withdrawing funds\n        uint amountToWithdraw = userBalances[msg.sender];\n        locked[msg.sender] = true; // Lock the user account to prevent reentrancy\n        require(amountToWithdraw > 0); // Check if user has funds to withdraw\n        userBalances[msg.sender] = 0; // Set user balance to zero before making external call\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\"); // Make external call\n        require(success); // Check if external call was successful\n        locked[msg.sender] = false; // Unlock user account after external call is complete",
+          "message": "Reentrancy_secure.withdrawBalance (patch_5.sol#7-16) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender]); // Check if the user is already withdrawing funds\n        uint amountToWithdraw = userBalances[msg.sender];\n        locked[msg.sender] = true; // Lock the user account to prevent reentrancy\n        require(amountToWithdraw > 0); // Check if user has funds to withdraw\n        userBalances[msg.sender] = 0; // Set user balance to zero before making external call\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\"); // Make external call\n        require(success); // Check if external call was successful\n        locked[msg.sender] = false; // Unlock user account after external call is complete",
+          "message": "Low level call in Reentrancy_secure.withdrawBalance (patch_5.sol#7-16):\n\t-(success) = msg.sender.call.value(amountToWithdraw)() patch_5.sol#13\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 17,
+          "vulnerability_code": "contract Reentrancy_secure {\n    mapping (address => uint) private userBalances;\n    mapping (address => bool) private locked;\n\n    function withdrawBalance() public {\n        require(!locked[msg.sender]); // Check if the user is already withdrawing funds\n        uint amountToWithdraw = userBalances[msg.sender];\n        locked[msg.sender] = true; // Lock the user account to prevent reentrancy\n        require(amountToWithdraw > 0); // Check if user has funds to withdraw\n        userBalances[msg.sender] = 0; // Set user balance to zero before making external call\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\"); // Make external call\n        require(success); // Check if external call was successful\n        locked[msg.sender] = false; // Unlock user account after external call is complete\n    }",
+          "message": "Contract 'Reentrancy_secure' (patch_5.sol#3-17) is not in CapWords\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

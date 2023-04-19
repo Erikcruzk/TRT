@@ -1,0 +1,114 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.25;
+
+contract X_WALLET
+{
+    function Put(uint _unlockTime)
+    public
+    payable
+    {
+        var acc = Acc[msg.sender];
+        acc.balance += msg.value;
+        acc.unlockTime = _unlockTime>now?_unlockTime:now;
+        LogFile.AddMessage(msg.sender,msg.value,"Put");
+    }
+
+    function Collect(uint _am)
+    public
+    payable
+    {
+        var acc = Acc[msg.sender];
+        if( acc.balance>=MinSum && acc.balance>=_am && now>acc.unlockTime)
+        {
+            if(msg.sender.call.value(_am)())
+            {
+                acc.balance-=_am;
+                LogFile.AddMessage(msg.sender,_am,"Collect");
+            }
+        }
+    }
+
+    function() 
+    public 
+    payable
+    {
+        Put(0);
+    }
+
+    struct Holder   
+    {
+        uint unlockTime;
+        uint balance;
+    }
+
+    mapping (address => Holder) public Acc;
+
+    Log LogFile;
+
+    uint public MinSum = 1 ether;    
+
+    function X_WALLET(address log) public{
+        LogFile = Log(log);
+    }
+}
+
+
+contract Log 
+{
+    struct Message
+    {
+        address Sender;
+        string  Data;
+        uint Val;
+        uint  Time;
+    }
+
+    Message[] public History;
+
+    Message LastMsg;
+
+    function AddMessage(address _adr,uint _val,string _data)
+    public
+    {
+        LastMsg.Sender = _adr;
+        LastMsg.Time = now;
+        LastMsg.Val = _val;
+        LastMsg.Data = _data;
+        History.push(LastMsg);
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+/// 1. Slither Analysis Results
+/// 1.1. Vulnerability: reentrancy at Line 15-28:
+    function Collect(uint _am)
+    public
+    payable
+    {
+        var acc = Acc[msg.sender];
+        if( acc.balance>=MinSum && acc.balance>=_am && now>acc.unlockTime)
+        {
+            if(msg.sender.call.value(_am)())
+            {
+                acc.balance-=_am;
+                LogFile.AddMessage(msg.sender,_am,"Collect");
+            }
+        }
+///  Message:Reentrancy in X_WALLET.Collect (0x93c32845fae42c83a70e5f06214c8433665c2ab5.sol#15-28):
+///   	External calls:
+///   	- msg.sender.call.value(_am)() (0x93c32845fae42c83a70e5f06214c8433665c2ab5.sol#22-26)
+///   	State variables written after the call(s):
+///   	- Acc (0x93c32845fae42c83a70e5f06214c8433665c2ab5.sol#24)
+
+/// 2. Osiris Analysis Results
+/// 2.1. Vulnerability: integer_over-underflow at Line 1:
+pragma solidity ^0.4.25;/// 2.2. Vulnerability: integer_over-underflow at Line 76:
+        History.push(LastMsg);/// 2.3. Vulnerability: integer_over-underflow at Line 76:
+        History.push(LastMsg);/// 2.4. Vulnerability: reentrancy at Line 22:
+            if(msg.sender.call.value(_am)())/// 2.5. Vulnerability: reentrancy at Line 25:
+                LogFile.AddMessage(msg.sender,_am,"Collect");/// 2.6. Vulnerability: integer_over-underflow at Line 24:
+                acc.balance-=_am;
+
+
+/// Repaired Solidity Smart Contract

@@ -1,0 +1,214 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Re-Entrancy Vulnerability",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            if(msg.sender.call.value(_am)())",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_22"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "    function CashOut(uint _am)\n    public\n    payable\n    {\n        if(_am<=balances[msg.sender])\n        {\n            if(msg.sender.call.value(_am)())\n            {\n                balances[msg.sender]-=_am;\n                TransferLog.AddMessage(msg.sender,_am,\"CashOut\");\n            }\n        }",
+          "message": "Reentrancy in ETH_VAULT.CashOut (0x8c7777c45481dba411450c228cb692ac3d550344.sol#28-40):\n\tExternal calls:\n\t- msg.sender.call.value(_am)() (0x8c7777c45481dba411450c228cb692ac3d550344.sol#34-38)\n\tState variables written after the call(s):\n\t- balances (0x8c7777c45481dba411450c228cb692ac3d550344.sol#36)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinDeposit = 1 ether;",
+          "message": "ETH_VAULT.MinDeposit should be constant (0x8c7777c45481dba411450c228cb692ac3d550344.sol#9)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 26,
+          "vulnerability_code": "    function Deposit()\n    public\n    payable\n    {\n        if(msg.value > MinDeposit)\n        {\n            balances[msg.sender]+=msg.value;\n            TransferLog.AddMessage(msg.sender,msg.value,\"Deposit\");\n        }",
+          "message": "ETH_VAULT.Deposit (0x8c7777c45481dba411450c228cb692ac3d550344.sol#17-26) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "    function CashOut(uint _am)\n    public\n    payable\n    {\n        if(_am<=balances[msg.sender])\n        {\n            if(msg.sender.call.value(_am)())\n            {\n                balances[msg.sender]-=_am;\n                TransferLog.AddMessage(msg.sender,_am,\"CashOut\");\n            }\n        }",
+          "message": "ETH_VAULT.CashOut (0x8c7777c45481dba411450c228cb692ac3d550344.sol#28-40) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable{}    ",
+          "message": "ETH_VAULT.fallback (0x8c7777c45481dba411450c228cb692ac3d550344.sol#42) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": 69,
+          "vulnerability_code": "    function AddMessage(address _adr,uint _val,string _data)\n    public\n    {\n        LastMsg.Sender = _adr;\n        LastMsg.Time = now;\n        LastMsg.Val = _val;\n        LastMsg.Data = _data;\n        History.push(LastMsg);",
+          "message": "Log.AddMessage (0x8c7777c45481dba411450c228cb692ac3d550344.sol#61-69) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in 0x8c7777c45481dba411450c228cb692ac3d550344.sol:\n\t- pragma solidity^0.4.19 (0x8c7777c45481dba411450c228cb692ac3d550344.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "    function CashOut(uint _am)\n    public\n    payable\n    {\n        if(_am<=balances[msg.sender])\n        {\n            if(msg.sender.call.value(_am)())\n            {\n                balances[msg.sender]-=_am;\n                TransferLog.AddMessage(msg.sender,_am,\"CashOut\");\n            }\n        }",
+          "message": "Low level call in ETH_VAULT.CashOut (0x8c7777c45481dba411450c228cb692ac3d550344.sol#28-40):\n\t-msg.sender.call.value(_am)() 0x8c7777c45481dba411450c228cb692ac3d550344.sol#34-38\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 44,
+          "vulnerability_code": "contract ETH_VAULT\n{\n    mapping (address => uint) public balances;\n    \n    Log TransferLog;\n    \n    uint public MinDeposit = 1 ether;\n    \n    function ETH_VAULT(address _log)\n    public \n    {\n        TransferLog = Log(_log);\n    }\n    \n    function Deposit()\n    public\n    payable\n    {\n        if(msg.value > MinDeposit)\n        {\n            balances[msg.sender]+=msg.value;\n            TransferLog.AddMessage(msg.sender,msg.value,\"Deposit\");\n        }\n    }\n    \n    function CashOut(uint _am)\n    public\n    payable\n    {\n        if(_am<=balances[msg.sender])\n        {\n            if(msg.sender.call.value(_am)())\n            {\n                balances[msg.sender]-=_am;\n                TransferLog.AddMessage(msg.sender,_am,\"CashOut\");\n            }\n        }\n    }\n    \n    function() public payable{}    \n    ",
+          "message": "Contract 'ETH_VAULT' (0x8c7777c45481dba411450c228cb692ac3d550344.sol#3-44) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function ETH_VAULT(address _log)\n    public \n    {\n        TransferLog = Log(_log);",
+          "message": "Function 'ETH_VAULT.ETH_VAULT' (0x8c7777c45481dba411450c228cb692ac3d550344.sol#11-15) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function ETH_VAULT(address _log)",
+          "message": "Parameter '_log' of ETH_VAULT.ETH_VAULT (0x8c7777c45481dba411450c228cb692ac3d550344.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 26,
+          "vulnerability_code": "    function Deposit()\n    public\n    payable\n    {\n        if(msg.value > MinDeposit)\n        {\n            balances[msg.sender]+=msg.value;\n            TransferLog.AddMessage(msg.sender,msg.value,\"Deposit\");\n        }",
+          "message": "Function 'ETH_VAULT.Deposit' (0x8c7777c45481dba411450c228cb692ac3d550344.sol#17-26) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "    function CashOut(uint _am)\n    public\n    payable\n    {\n        if(_am<=balances[msg.sender])\n        {\n            if(msg.sender.call.value(_am)())\n            {\n                balances[msg.sender]-=_am;\n                TransferLog.AddMessage(msg.sender,_am,\"CashOut\");\n            }\n        }",
+          "message": "Function 'ETH_VAULT.CashOut' (0x8c7777c45481dba411450c228cb692ac3d550344.sol#28-40) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function CashOut(uint _am)",
+          "message": "Parameter '_am' of ETH_VAULT.CashOut (0x8c7777c45481dba411450c228cb692ac3d550344.sol#28) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Log TransferLog;",
+          "message": "Variable 'ETH_VAULT.TransferLog' (0x8c7777c45481dba411450c228cb692ac3d550344.sol#7) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinDeposit = 1 ether;",
+          "message": "Variable 'ETH_VAULT.MinDeposit' (0x8c7777c45481dba411450c228cb692ac3d550344.sol#9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": 69,
+          "vulnerability_code": "    function AddMessage(address _adr,uint _val,string _data)\n    public\n    {\n        LastMsg.Sender = _adr;\n        LastMsg.Time = now;\n        LastMsg.Val = _val;\n        LastMsg.Data = _data;\n        History.push(LastMsg);",
+          "message": "Function 'Log.AddMessage' (0x8c7777c45481dba411450c228cb692ac3d550344.sol#61-69) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function AddMessage(address _adr,uint _val,string _data)",
+          "message": "Parameter '_adr' of Log.AddMessage (0x8c7777c45481dba411450c228cb692ac3d550344.sol#61) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function AddMessage(address _adr,uint _val,string _data)",
+          "message": "Parameter '_val' of Log.AddMessage (0x8c7777c45481dba411450c228cb692ac3d550344.sol#61) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function AddMessage(address _adr,uint _val,string _data)",
+          "message": "Parameter '_data' of Log.AddMessage (0x8c7777c45481dba411450c228cb692ac3d550344.sol#61) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public History;",
+          "message": "Variable 'Log.History' (0x8c7777c45481dba411450c228cb692ac3d550344.sol#57) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message LastMsg;",
+          "message": "Variable 'Log.LastMsg' (0x8c7777c45481dba411450c228cb692ac3d550344.sol#59) is not in mixedCase\n"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            balances[msg.sender]+=msg.value;",
+          "message": null
+        },
+        {
+          "name": "Reentrancy bug",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            if(msg.sender.call.value(_am)())",
+          "message": null
+        },
+        {
+          "name": "Reentrancy bug",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                TransferLog.AddMessage(msg.sender,_am,\"CashOut\");",
+          "message": null
+        },
+        {
+          "name": "Underflow bugs",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                balances[msg.sender]-=_am;",
+          "message": null
+        }
+      ]
+    }
+  }
+}
