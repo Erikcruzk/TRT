@@ -29,13 +29,13 @@ class SmartContract:
 
         self.filename = os.path.basename(self.path)
         self.name, _ = os.path.splitext(self.filename)
-        self.language = 'Solidity' if self.filename.endswith('.sol') else 'Unknown'
-        self.source_code = open(self.path, 'r').read().strip()
+        self.language = "Solidity" if self.filename.endswith(".sol") else "Unknown"
+        self.source_code = open(self.path, "r").read().strip()
         self.hash = SmartContract.get_stripped_source_code_hash(self.source_code)
 
         vulnerabilities_file_path = os.path.join(self.results_dir, "vulnerabilities.json")
         try:
-            with open(vulnerabilities_file_path, 'r') as f:
+            with open(vulnerabilities_file_path, "r") as f:
                 self.vulnerabilities = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError):
             self.vulnerabilities = {}
@@ -74,18 +74,23 @@ class SmartContract:
     @staticmethod
     def get_vulnerability_aliases() -> dict:
         # Create aliases, fill if necessary
-        reentrancy_aliases = ['reentrancy', 'Re-Entrancy Vulnerability', 'DAO', 'Not destructible (no self-destruct)', 'Unprotected Ether Withdrawal', 'reentrance']
-        integer_aliases = ['overflow', 'underflow', 'integer overflow']
-        unhandled_exception_aliases = ['Unhandled Exception', 'unhandled', 'UnhandledException', 'Exception Disorder']
-        unchecked_call_aliases = ['Unchecked Low Level Call', 'Unchecked return value from external call', 'unchecked']
-        callstack_aliases = ['callstack', 'avoid-low-level-calls', 'avoid-call-value'] 
+        reentrancy_aliases = ["reentrancy", "reentrance"
+                              "Re-Entrancy Vulnerability", # Oyente
+                              "External Call To User-Supplied Address (SWC 107)", "State access after external call (SWC 107)", "SWC 107", # Mythril https://mythril-classic.readthedocs.io/en/master/module-list.html#external-calls
+                              "DAO", "ReentrancyNoETH", "ReentrancyBenign" # Securify https://github.com/eth-sri/securify2#supported-vulnerabilities
+                              "reentrancy-eth", "reentrancy-no-eth", "reentrancy-benign", "reentrancy-events", "reentrancy-unlimited-gas" # Slither https://github.com/crytic/slither#detectors
+                              "Unprotected Ether Withdrawal", "reentrance"]
+        integer_aliases = ["overflow", "underflow", "integer overflow"]
+        unhandled_exception_aliases = ["Unhandled Exception", "unhandled", "UnhandledException", "Exception Disorder"]
+        unchecked_call_aliases = ["Unchecked Low Level Call", "Unchecked return value from external call", "unchecked"]
+        callstack_aliases = ["callstack", "avoid-low-level-calls", "avoid-call-value"] 
 
         vulnerabilities_aliases = {}
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in reentrancy_aliases], 'reentrancy'))
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in integer_aliases], 'integer_over-underflow'))
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unhandled_exception_aliases], 'unhandled_exception'))
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unchecked_call_aliases], 'unchecked_low_level_call'))
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in callstack_aliases], 'callstack'))
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in reentrancy_aliases], "reentrancy"))
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in integer_aliases], "integer_over-underflow"))
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unhandled_exception_aliases], "unhandled_exception"))
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unchecked_call_aliases], "unchecked_low_level_call"))
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in callstack_aliases], "callstack"))
 
         return vulnerabilities_aliases
     
@@ -119,7 +124,7 @@ class SmartContract:
 
         for tool_name, tool_result in vulnerabilities["analyzer_results"].items():
             analyzer_results_for_summary[tool_name] = []
-            findings = tool_result['vulnerability_findings']
+            findings = tool_result["vulnerability_findings"]
             
             if not tool_result.get("successfull_analysis", False) == True:
                 analyzer_results_for_summary[tool_name].append("unsuccessfull_analysis")
@@ -166,11 +171,11 @@ class SmartContract:
         
         lines = self.source_code.split("\n")
         tool_vulnerabilities = {}
-        tool_vulnerabilities["successfull_analysis"] = False if (tool_result["errors"] or tool_result["fails"]) and not tool_result['findings'] else True
+        tool_vulnerabilities["successfull_analysis"] = False if (tool_result["errors"] or tool_result["fails"]) and not tool_result["findings"] else True
         tool_vulnerabilities["errors"] = tool_result["errors"] + tool_result.get("fails", [])
 
         vulnerability_findings = []
-        for finding in tool_result['findings']:
+        for finding in tool_result["findings"]:
             vulnerability = {}
             vulnerability["name"] = finding["name"]
 
@@ -180,7 +185,7 @@ class SmartContract:
             vulnerability["vulnerability_to_line"] = to_line
     
             if from_line and to_line:
-                code = '\n'.join(lines[from_line - 1 : to_line - 1])
+                code = "\n".join(lines[from_line - 1 : to_line - 1])
             elif from_line:
                 code = lines[from_line - 1]
             else:
@@ -227,8 +232,8 @@ class SmartContract:
         # Loop through all smartbugs_results
         for smartbugs_result_file in [os.path.join(smartbugs_results_dir, f) for f in os.listdir(smartbugs_results_dir) if os.path.isdir(os.path.join(smartbugs_results_dir, f))]:
             sb_result_dir = os.path.join(smartbugs_results_dir, smartbugs_result_file)
-            tool_name = os.path.basename(sb_result_dir).split('_', 1)[0]
-            tool_result = json.load(open(os.path.join(sb_result_dir, 'result.json'), 'r'))
+            tool_name = os.path.basename(sb_result_dir).split("_", 1)[0]
+            tool_result = json.load(open(os.path.join(sb_result_dir, "result.json"), "r"))
             self.create_vulnerabilities_from_sb_results(tool_name, tool_result)
         
         if not self.vulnerabilities["analyzer_results"] == {}:
@@ -247,19 +252,19 @@ class SmartContract:
             #### Create smartbugs config yaml file
             # set the fields that are not editable
             smartbugs_config = {
-                'runtime': False,
-                'runid': '${YEAR}${MONTH}${DAY}_${HOUR}${MIN}',
-                'json': True,
-                'tools': self.experiment_settings["smartbugs_tools"],
-                'results': os.path.join(smartbugs_results_dir, "${TOOL}_${RUNID}"),
-                'log': os.path.join(self.results_dir,'smartbugs_logs', '{RUNID}.log'),
-                'processes': self.experiment_settings["smartbugs_processes"],
-                'timeout': 60*7
+                "runtime": False,
+                "runid": "${YEAR}${MONTH}${DAY}_${HOUR}${MIN}",
+                "json": True,
+                "tools": self.experiment_settings["smartbugs_tools"],
+                "results": os.path.join(smartbugs_results_dir, "${TOOL}_${RUNID}"),
+                "log": os.path.join(self.results_dir,"smartbugs_logs", "{RUNID}.log"),
+                "processes": self.experiment_settings["smartbugs_processes"],
+                "timeout": 60*7
             }
 
             # write the data to a YAML file
-            smartbugs_config_path = os.path.join(self.results_dir,'smartbugs_config.yml')
-            with open(smartbugs_config_path, 'w') as f:
+            smartbugs_config_path = os.path.join(self.results_dir,"smartbugs_config.yml")
+            with open(smartbugs_config_path, "w") as f:
                 yaml.dump(smartbugs_config, f)
 
             # Run smartbugs
@@ -278,6 +283,6 @@ class SmartContract:
 
         except Exception as e:
             self.vulnerabilities["smartbugs_completed"] = str(e)
-            logging.critical(f'Smartbugs failure {self.results_dir} {str(e)}', exc_info=True)
+            logging.critical(f"Smartbugs failure {self.results_dir} {str(e)}", exc_info=True)
         
         self.write_vulnerabilities_to_results_dir()
