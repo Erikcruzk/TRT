@@ -35,3 +35,18 @@ Temperature 0.5 and 0.7. Top_p 0.95
 2. Json info from analyzers `analyzers_json_results`
 3. Natural language info from analyzers `analyzers_natural_language_results`
 
+#### Conclusions
+- Osiris may be flagging false positives (it is reporting all direct calls to external functions vulnerable to reentrancy. Probably expecting to add transfer or send instead)
+
+#### TODOs
+1.  experiment_results/smartbugs_reentrancy_short_no_comments_tools3_patches10_tmp0.7_topp0.95_gpt-3.5-turbo/analyzers_natural_language_results/reentrancy_cross_function/candidate_patches/patch_0/patch_0.sol
+
+- manticore, mythril, oyente, slither (have more discussions about what tools to use)
+- Check with all tools modifier_reentrancy contract
+  - Two ways to patch this SC
+  1. Look at email
+  2. Remove the external function call vulnerability and reentrancy vulnerability will dissapear too
+
+- Create tests chatGPT and Run tests on remix
+   
+- FLAG SOMEHOW IF ORIFINAL SC HAS NO BUG
