@@ -257,7 +257,7 @@ class TransformativeRepair:
                         patch_data["plausible_patch"] = is_plausible_patch
 
 
-                        for tool_name, tool_vulnerabilities in patch_analyzer_results_with_aliases.items():
+                        for tool_name, tool_vulnerabilities in sorted(patch_analyzer_results_with_aliases.items()):
                             original_status = 'Fix'
                             if target_vulnerability in original_analyzer_results_with_aliases[tool_name]:
                                 original_status = 'Bug'
