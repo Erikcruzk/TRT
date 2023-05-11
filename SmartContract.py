@@ -73,24 +73,82 @@ class SmartContract:
 
     @staticmethod
     def get_vulnerability_aliases() -> dict:
-        # Create aliases, fill if necessary
-        reentrancy_aliases = ["reentrancy", "reentrance"
-                              "Re-Entrancy Vulnerability", # Oyente
-                              "External Call To User-Supplied Address (SWC 107)", "State access after external call (SWC 107)", "SWC 107", # Mythril https://mythril-classic.readthedocs.io/en/master/module-list.html#external-calls
-                              "DAO", "ReentrancyNoETH", "ReentrancyBenign" # Securify https://github.com/eth-sri/securify2#supported-vulnerabilities
-                              "reentrancy-eth", "reentrancy-no-eth", "reentrancy-benign", "reentrancy-events", "reentrancy-unlimited-gas" # Slither https://github.com/crytic/slither#detectors
-                              "Unprotected Ether Withdrawal", "reentrance"]
-        integer_aliases = ["overflow", "underflow", "integer overflow"]
-        unhandled_exception_aliases = ["Unhandled Exception", "unhandled", "UnhandledException", "Exception Disorder"]
-        unchecked_call_aliases = ["Unchecked Low Level Call", "Unchecked return value from external call", "unchecked"]
-        callstack_aliases = ["callstack", "avoid-low-level-calls", "avoid-call-value"] 
-
         vulnerabilities_aliases = {}
+
+        # Sources
+        # SWC https://swcregistry.io/
+        # Oyente
+        # Mythril https://mythril-classic.readthedocs.io/en/master/module-list.html
+        # Slither https://github.com/crytic/slither#detectors  
+
+        # Access Control
+        access_control_aliases = ["access_control", "access control"
+                          "Unprotected Ether Withdrawal (SWC 105)", "Unprotected Selfdestruct (SWC 106)", "SWC 105", "SWC 106", # Mythril
+                          # Oyente
+                          "events-access" # Slither
+                          ]
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in access_control_aliases], "access_control"))
+        
+        # Arithmetic: integer over and underflow
+        arithmetic_aliases = ["overflow", "underflow", "integer overflow"
+                      "SWC 101",
+                     "Integer Arithmetic Bugs (SWC 101)", # Mythril
+                     "Integer Overflow", "Integer Underflow" # Oyente
+                      # Slither 
+                      ]
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in arithmetic_aliases], "arithmetic"))
+
+        # Bad randomness
+        bad_randomness_aliases = [] # TODO missing
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in bad_randomness_aliases], "bad_randomness"))
+
+        # Denial of service
+        denial_of_service_aliases = [
+            "SWC 113", "SWC 128"] # TODO No tools catch
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in denial_of_service_aliases], "denial_of_service"))
+
+        # TOD
+        transaction_order_dependence_aliases = [
+            "transaction order dependence", "tod",
+            "SWC 114", "SWC 115",
+            # Oyente
+            "Dependence on tx.origin (SWC 115)",  # Mythril
+            "tx-origin", # Slither
+            "SOLIDITY_TX_ORIGIN"# Smartcheck
+        ]
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in transaction_order_dependence_aliases], "transaction_order_dependence"))
+        
+        # Reentrancy
+        reentrancy_aliases = ["reentrancy", "reentrance",
+                              "SWC 107",
+                              "Re-Entrancy Vulnerability", # Oyente
+                              "External Call To User-Supplied Address (SWC 107)", "State access after external call (SWC 107)", # Mythril
+                              "DAO", "ReentrancyNoETH", "ReentrancyBenign", # Securify
+                              "reentrancy-eth", "reentrancy-no-eth", "reentrancy-benign", "reentrancy-events", "reentrancy-unlimited-gas", # Slither
+                              "Unprotected Ether Withdrawal", "reentrance"]
         vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in reentrancy_aliases], "reentrancy"))
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in integer_aliases], "integer_over-underflow"))
+
+        # Short Address
+        short_addresses_aliases = [] # TODO missing add smartcheck?
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in short_addresses_aliases], "short_addresses"))
+
+        # Time Manipulation
+        time_manipulation_aliases = []
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in time_manipulation_aliases], "time_manipulation"))
+
+        # unchecked low level call
+        unchecked_low_level_call_aliases = [
+            "SWC 104",
+            # Oyente
+            "Unchecked return value from external call. (SWC 104)",# Mythril
+            "unchecked-lowlevel", # Slither
+            "SOLIDITY_UNCHECKED_CALL" # Smartcheck
+        ]
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unchecked_low_level_call_aliases], "unchecked_low_level_call"))
+
+        # unhandled exception
+        unhandled_exception_aliases = ["Unhandled Exception", "unhandled", "UnhandledException", "Exception Disorder"]
         vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unhandled_exception_aliases], "unhandled_exception"))
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unchecked_call_aliases], "unchecked_low_level_call"))
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in callstack_aliases], "callstack"))
 
         return vulnerabilities_aliases
     
@@ -259,7 +317,7 @@ class SmartContract:
                 "results": os.path.join(smartbugs_results_dir, "${TOOL}_${RUNID}"),
                 "log": os.path.join(self.results_dir,"smartbugs_logs", "{RUNID}.log"),
                 "processes": self.experiment_settings["smartbugs_processes"],
-                "timeout": 60*7
+                "timeout": 60*20
             }
 
             # write the data to a YAML file

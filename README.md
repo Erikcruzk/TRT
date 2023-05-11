@@ -50,3 +50,11 @@ Temperature 0.5 and 0.7. Top_p 0.95
 - Create tests chatGPT and Run tests on remix
    
 - FLAG SOMEHOW IF ORIFINAL SC HAS NO BUG
+
+### meeting mojtaba
+- Fixed bug
+- Manticore too slow and not finding reentrancy
+
+
+*** Use mythril, oyente, slither
+*** Update smartbugs
