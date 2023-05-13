@@ -1,0 +1,67 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public minSum = 1 ether;",
+          "message": "X_WALLET.minSum should be constant (patch_2.sol#10)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function withdraw(uint _am) public {\n        require(balances[msg.sender] >= _am && _am > 0 && now >= unlockTimes[msg.sender]);\n        balances[msg.sender] -= _am;\n        msg.sender.transfer(_am);\n        emit LogWithdrawal(msg.sender, _am);",
+          "message": "X_WALLET.withdraw (patch_2.sol#19-24) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function() public payable {\n        deposit(0);",
+          "message": "X_WALLET.fallback (patch_2.sol#26-28) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "contract X_WALLET {\n    mapping(address => uint) public balances;\n    mapping(address => uint) public unlockTimes;\n\n    event LogDeposit(address indexed sender, uint value, uint unlockTime);\n    event LogWithdrawal(address indexed sender, uint value);\n\n    uint public minSum = 1 ether;\n\n    function deposit(uint _unlockTime) public payable {\n        require(msg.value > 0);\n        balances[msg.sender] += msg.value;\n        unlockTimes[msg.sender] = (_unlockTime > now) ? _unlockTime : now;\n        emit LogDeposit(msg.sender, msg.value, unlockTimes[msg.sender]);\n    }\n\n    function withdraw(uint _am) public {\n        require(balances[msg.sender] >= _am && _am > 0 && now >= unlockTimes[msg.sender]);\n        balances[msg.sender] -= _am;\n        msg.sender.transfer(_am);\n        emit LogWithdrawal(msg.sender, _am);\n    }\n\n    function() public payable {\n        deposit(0);\n    }",
+          "message": "Contract 'X_WALLET' (patch_2.sol#3-29) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function deposit(uint _unlockTime) public payable {",
+          "message": "Parameter '_unlockTime' of X_WALLET.deposit (patch_2.sol#12) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdraw(uint _am) public {",
+          "message": "Parameter '_am' of X_WALLET.withdraw (patch_2.sol#19) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}

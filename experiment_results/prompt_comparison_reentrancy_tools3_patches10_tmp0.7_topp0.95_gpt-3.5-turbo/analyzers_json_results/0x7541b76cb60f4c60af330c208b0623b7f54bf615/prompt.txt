@@ -1,0 +1,84 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.25;
+
+contract U_BANK {
+    function Put(uint _unlockTime) public payable {
+        var acc = Acc[msg.sender];
+        acc.balance += msg.value;
+        acc.unlockTime = _unlockTime > now ? _unlockTime : now;
+        LogFile.AddMessage(msg.sender, msg.value, "Put");
+    }
+
+    function Collect(uint _am) public payable {
+        var acc = Acc[msg.sender];
+        if (
+            acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime
+        ) {
+            if (msg.sender.call.value(_am)()) {
+                acc.balance -= _am;
+                LogFile.AddMessage(msg.sender, _am, "Collect");
+            }
+        }
+    }
+
+    function() public payable {
+        Put(0);
+    }
+
+    struct Holder {
+        uint unlockTime;
+        uint balance;
+    }
+
+    mapping(address => Holder) public Acc;
+
+    Log LogFile;
+
+    uint public MinSum = 2 ether;
+
+    function U_BANK(address log) public {
+        LogFile = Log(log);
+    }
+}
+
+contract Log {
+    struct Message {
+        address Sender;
+        string Data;
+        uint Val;
+        uint Time;
+    }
+
+    Message[] public History;
+
+    Message LastMsg;
+
+    function AddMessage(address _adr, uint _val, string _data) public {
+        LastMsg.Sender = _adr;
+        LastMsg.Time = now;
+        LastMsg.Val = _val;
+        LastMsg.Data = _data;
+        History.push(LastMsg);
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+{
+  "slither": {
+    "successfull_analysis": true,
+    "errors": [
+      "EXIT_CODE_21"
+    ],
+    "vulnerability_findings": [
+      {
+        "name": "reentrancy",
+        "vulnerability_from_line": 11,
+        "vulnerability_to_line": 21,
+        "vulnerability_code": "    function Collect(uint _am) public payable {\n        var acc = Acc[msg.sender];\n        if (\n            acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime\n        ) {\n            if (msg.sender.call.value(_am)()) {\n                acc.balance -= _am;\n                LogFile.AddMessage(msg.sender, _am, \"Collect\");\n            }\n        }",
+        "message": "Reentrancy in U_BANK.Collect (0x7541b76cb60f4c60af330c208b0623b7f54bf615.sol#11-21):\n\tExternal calls:\n\t- msg.sender.call.value(_am)() (0x7541b76cb60f4c60af330c208b0623b7f54bf615.sol#16-19)\n\tState variables written after the call(s):\n\t- Acc (0x7541b76cb60f4c60af330c208b0623b7f54bf615.sol#17)\n"
+      }
+    ]
+  }
+}
+
+/// Repaired Solidity Smart Contract

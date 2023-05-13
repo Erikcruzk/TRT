@@ -1,0 +1,179 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_22"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "uninitialized-local",
+          "vulnerability_from_line": 64,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        Message memory lastMsg;",
+          "message": "lastMsg in Log.addMessage (patch_3.sol#64) is a local variable never initialiazed\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function SetMinSum(uint _val) public {\n        require(!initialized);\n        MinSum = _val;",
+          "message": "MONEY_BOX.SetMinSum (patch_3.sol#17-20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function SetLogFile(address _log) public {\n        require(!initialized);\n        LogFile = Log(_log);",
+          "message": "MONEY_BOX.SetLogFile (patch_3.sol#22-25) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function initialize() public {\n        initialized = true;",
+          "message": "MONEY_BOX.initialize (patch_3.sol#27-29) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 46,
+          "vulnerability_code": "    function collect(uint _am) public {\n        require(initialized);\n        Holder storage acc = Acc[msg.sender];\n        require(acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime);\n        acc.balance -= _am;\n        require(msg.sender.call.value(_am)());\n        LogFile.addMessage(msg.sender, _am, \"Collect\");",
+          "message": "MONEY_BOX.collect (patch_3.sol#39-46) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": 50,
+          "vulnerability_code": "    function() public payable {\n        put(0);",
+          "message": "MONEY_BOX.fallback (patch_3.sol#48-50) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": 70,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {\n        Message memory lastMsg;\n        lastMsg.sender = _adr;\n        lastMsg.time = now;\n        lastMsg.val = _val;\n        lastMsg.data = _data;\n        history.push(lastMsg);",
+          "message": "Log.addMessage (patch_3.sol#63-70) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_3.sol:\n\t- pragma solidity^0.4.19 (patch_3.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 46,
+          "vulnerability_code": "    function collect(uint _am) public {\n        require(initialized);\n        Holder storage acc = Acc[msg.sender];\n        require(acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime);\n        acc.balance -= _am;\n        require(msg.sender.call.value(_am)());\n        LogFile.addMessage(msg.sender, _am, \"Collect\");",
+          "message": "Low level call in MONEY_BOX.collect (patch_3.sol#39-46):\n\t-require(bool)(msg.sender.call.value(_am)()) patch_3.sol#44\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 51,
+          "vulnerability_code": "contract MONEY_BOX {\n    struct Holder {\n        uint unlockTime;\n        uint balance;\n    }\n\n    mapping(address => Holder) public Acc;\n\n    uint public MinSum;\n\n    Log LogFile;\n\n    bool initialized;\n\n    function SetMinSum(uint _val) public {\n        require(!initialized);\n        MinSum = _val;\n    }\n\n    function SetLogFile(address _log) public {\n        require(!initialized);\n        LogFile = Log(_log);\n    }\n\n    function initialize() public {\n        initialized = true;\n    }\n\n    function put(uint _lockTime) public payable {\n        Acc[msg.sender].balance += msg.value;\n        if (now + _lockTime > Acc[msg.sender].unlockTime) {\n            Acc[msg.sender].unlockTime = now + _lockTime;\n        }\n        LogFile.addMessage(msg.sender, msg.value, \"Put\");\n    }\n\n    function collect(uint _am) public {\n        require(initialized);\n        Holder storage acc = Acc[msg.sender];\n        require(acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime);\n        acc.balance -= _am;\n        require(msg.sender.call.value(_am)());\n        LogFile.addMessage(msg.sender, _am, \"Collect\");\n    }\n\n    function() public payable {\n        put(0);\n    }",
+          "message": "Contract 'MONEY_BOX' (patch_3.sol#3-51) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function SetMinSum(uint _val) public {\n        require(!initialized);\n        MinSum = _val;",
+          "message": "Function 'MONEY_BOX.SetMinSum' (patch_3.sol#17-20) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function SetMinSum(uint _val) public {",
+          "message": "Parameter '_val' of MONEY_BOX.SetMinSum (patch_3.sol#17) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function SetLogFile(address _log) public {\n        require(!initialized);\n        LogFile = Log(_log);",
+          "message": "Function 'MONEY_BOX.SetLogFile' (patch_3.sol#22-25) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function SetLogFile(address _log) public {",
+          "message": "Parameter '_log' of MONEY_BOX.SetLogFile (patch_3.sol#22) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function put(uint _lockTime) public payable {",
+          "message": "Parameter '_lockTime' of MONEY_BOX.put (patch_3.sol#31) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function collect(uint _am) public {",
+          "message": "Parameter '_am' of MONEY_BOX.collect (patch_3.sol#39) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => Holder) public Acc;",
+          "message": "Variable 'MONEY_BOX.Acc' (patch_3.sol#9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum;",
+          "message": "Variable 'MONEY_BOX.MinSum' (patch_3.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Log LogFile;",
+          "message": "Variable 'MONEY_BOX.LogFile' (patch_3.sol#13) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of Log.addMessage (patch_3.sol#63) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of Log.addMessage (patch_3.sol#63) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of Log.addMessage (patch_3.sol#63) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

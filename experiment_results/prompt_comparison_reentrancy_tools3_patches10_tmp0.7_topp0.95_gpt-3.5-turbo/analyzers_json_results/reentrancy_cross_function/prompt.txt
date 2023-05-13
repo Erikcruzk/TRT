@@ -1,0 +1,42 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.0;
+
+contract Reentrancy_cross_function {
+    mapping(address => uint) private userBalances;
+
+    function transfer(address to, uint amount) {
+        if (userBalances[msg.sender] >= amount) {
+            userBalances[to] += amount;
+            userBalances[msg.sender] -= amount;
+        }
+    }
+
+    function withdrawBalance() public {
+        uint amountToWithdraw = userBalances[msg.sender];
+
+        (bool success, ) = msg.sender.call.value(amountToWithdraw)("");
+        require(success);
+        userBalances[msg.sender] = 0;
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+{
+  "slither": {
+    "successfull_analysis": true,
+    "errors": [
+      "EXIT_CODE_7"
+    ],
+    "vulnerability_findings": [
+      {
+        "name": "reentrancy",
+        "vulnerability_from_line": 13,
+        "vulnerability_to_line": 19,
+        "vulnerability_code": "    function withdrawBalance() public {\n        uint amountToWithdraw = userBalances[msg.sender];\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n        userBalances[msg.sender] = 0;",
+        "message": "Reentrancy in Reentrancy_cross_function.withdrawBalance (reentrancy_cross_function.sol#13-19):\n\tExternal calls:\n\t- (success) = msg.sender.call.value(amountToWithdraw)() (reentrancy_cross_function.sol#16)\n\tState variables written after the call(s):\n\t- userBalances (reentrancy_cross_function.sol#18)\n"
+      }
+    ]
+  }
+}
+
+/// Repaired Solidity Smart Contract
