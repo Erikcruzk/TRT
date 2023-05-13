@@ -1,0 +1,53 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function donate(address to) public payable {\n        credit[to] += msg.value;\n        emit Deposit(to, msg.value);",
+          "message": "SimpleDAO.donate (patch_18.sol#16-19) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 27,
+          "vulnerability_code": "    function withdraw(uint amount) public {\n        require(credit[msg.sender] >= amount);\n        require(!frozenAccount[msg.sender]);\n        credit[msg.sender] -= amount;\n        msg.sender.transfer(amount);\n        emit Withdraw(msg.sender, amount);",
+          "message": "SimpleDAO.withdraw (patch_18.sol#21-27) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 31,
+          "vulnerability_code": "    function queryCredit(address to) public view returns (uint) {\n        return credit[to];",
+          "message": "SimpleDAO.queryCredit (patch_18.sol#29-31) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function freezeAccount(address target, bool freeze) public {\n        require(msg.sender == owner);\n        frozenAccount[target] = freeze;\n        emit FrozenFunds(target, freeze);",
+          "message": "SimpleDAO.freezeAccount (patch_18.sol#33-37) should be declared external\n"
+        }
+      ]
+    }
+  }
+}

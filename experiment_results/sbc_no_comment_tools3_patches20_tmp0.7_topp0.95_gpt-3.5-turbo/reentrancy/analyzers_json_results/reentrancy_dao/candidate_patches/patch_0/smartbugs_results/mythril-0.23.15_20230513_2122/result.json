@@ -1,0 +1,68 @@
+{
+    "errors": [],
+    "fails": [],
+    "findings": [
+        {
+            "address": 315,
+            "contract": "ReentrancyDAO",
+            "exploit": {
+                "initialState": {
+                    "accounts": {
+                        "0xaffeaffeaffeaffeaffeaffeaffeaffeaffeaffe": {
+                            "balance": "0x0",
+                            "code": "",
+                            "nonce": 0,
+                            "storage": "{}"
+                        },
+                        "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef": {
+                            "balance": "0x8000000000000000",
+                            "code": "",
+                            "nonce": 0,
+                            "storage": "{}"
+                        }
+                    }
+                },
+                "steps": [
+                    {
+                        "address": "",
+                        "calldata": "",
+                        "input": "0x608060405234801561001057600080fd5b506101dc806100206000396000f30060806040526004361061004c576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063853828b614610051578063d0e30db014610068575b600080fd5b34801561005d57600080fd5b50610066610072565b005b610070610152565b005b6000806000803373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020549150600082111561014e5760008060003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002081905550816001600082825403925050819055503373ffffffffffffffffffffffffffffffffffffffff168260405160006040518083038185875af192505050905080151561014d57600080fd5b5b5050565b346000803373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282540192505081905550346001600082825401925050819055505600a165627a7a72305820afdb70b590e470138cce9cf465104e489b367d3e51075becac3e00ff1e078c750029",
+                        "name": "unknown",
+                        "origin": "0xaffeaffeaffeaffeaffeaffeaffeaffeaffeaffe",
+                        "value": "0x0"
+                    },
+                    {
+                        "address": "0x901d12ebe1b195e5aa8748e62bd7734ae19b51f",
+                        "calldata": "0xd0e30db0",
+                        "input": "0xd0e30db0",
+                        "name": "deposit()",
+                        "origin": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+                        "resolved_input": null,
+                        "value": "0x1"
+                    },
+                    {
+                        "address": "0x901d12ebe1b195e5aa8748e62bd7734ae19b51f",
+                        "calldata": "0x853828b6",
+                        "input": "0x853828b6",
+                        "name": "withdrawAll()",
+                        "origin": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+                        "resolved_input": null,
+                        "value": "0x0"
+                    }
+                ]
+            },
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/reentrancy/analyzers_json_results/reentrancy_dao/candidate_patches/patch_0/patch_0.sol",
+            "function": "withdrawAll()",
+            "line": 13,
+            "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107",
+            "name": "External Call To User-Supplied Address (SWC 107)",
+            "severity": "Low"
+        }
+    ],
+    "infos": [],
+    "parser": {
+        "id": "mythril-0.23.15",
+        "mode": "solidity",
+        "version": "2023/01/20"
+    }
+}

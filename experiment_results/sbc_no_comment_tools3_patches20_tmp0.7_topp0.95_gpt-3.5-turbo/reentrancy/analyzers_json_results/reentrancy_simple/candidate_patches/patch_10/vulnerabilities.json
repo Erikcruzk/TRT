@@ -1,0 +1,74 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 26,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked);\n        locked = true;\n        uint balance = userBalance[msg.sender];\n        userBalance[msg.sender] = 0;\n        if(msg.sender.call.value(balance)()) {\n            locked = false;\n        }\n        else {\n            throw;\n        }",
+          "message": "Reentrancy in Reentrance.withdrawBalance (patch_10.sol#15-26):\n\tExternal calls:\n\t- msg.sender.call.value(balance)() (patch_10.sol#20-25)\n\tState variables written after the call(s):\n\t- locked (patch_10.sol#21)\n"
+        },
+        {
+          "name": "deprecated-standards",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            throw;",
+          "message": "Deprecated standard detected @ patch_10.sol#24:\n\t- Usage of \"throw\" should be replaced with \"revert()\"\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function getBalance(address u) constant public returns (uint) {\n        return userBalance[u];",
+          "message": "Reentrance.getBalance (patch_10.sol#7-9) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function addToBalance() public payable {\n        userBalance[msg.sender] += msg.value;",
+          "message": "Reentrance.addToBalance (patch_10.sol#11-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 26,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked);\n        locked = true;\n        uint balance = userBalance[msg.sender];\n        userBalance[msg.sender] = 0;\n        if(msg.sender.call.value(balance)()) {\n            locked = false;\n        }\n        else {\n            throw;\n        }",
+          "message": "Reentrance.withdrawBalance (patch_10.sol#15-26) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;",
+          "message": "Detected issues with version pragma in patch_10.sol:\n\t- pragma solidity^0.4.15 (patch_10.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 26,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked);\n        locked = true;\n        uint balance = userBalance[msg.sender];\n        userBalance[msg.sender] = 0;\n        if(msg.sender.call.value(balance)()) {\n            locked = false;\n        }\n        else {\n            throw;\n        }",
+          "message": "Low level call in Reentrance.withdrawBalance (patch_10.sol#15-26):\n\t-msg.sender.call.value(balance)() patch_10.sol#20-25\n"
+        }
+      ]
+    }
+  }
+}

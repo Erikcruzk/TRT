@@ -1,0 +1,172 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_21"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function Collect(uint _am) public payable {\n        var acc = Acc[msg.sender];\n        if (\n            acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime\n        ) {\n            if (msg.sender.call.value(_am)()) {\n                acc.balance -= _am;\n                LogFile.AddMessage(msg.sender, _am, \"Collect\");\n            }\n        }",
+          "message": "Reentrancy in MY_BANK.Collect (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#11-21):\n\tExternal calls:\n\t- msg.sender.call.value(_am)() (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#16-19)\n\tState variables written after the call(s):\n\t- Acc (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#17)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum = 1 ether;",
+          "message": "MY_BANK.MinSum should be constant (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#36)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function Collect(uint _am) public payable {\n        var acc = Acc[msg.sender];\n        if (\n            acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime\n        ) {\n            if (msg.sender.call.value(_am)()) {\n                acc.balance -= _am;\n                LogFile.AddMessage(msg.sender, _am, \"Collect\");\n            }\n        }",
+          "message": "MY_BANK.Collect (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#11-21) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function() public payable {\n        Put(0);",
+          "message": "MY_BANK.fallback (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#23-25) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": 61,
+          "vulnerability_code": "    function AddMessage(address _adr, uint _val, string _data) public {\n        LastMsg.Sender = _adr;\n        LastMsg.Time = now;\n        LastMsg.Val = _val;\n        LastMsg.Data = _data;\n        History.push(LastMsg);",
+          "message": "Log.AddMessage (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#55-61) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function Collect(uint _am) public payable {\n        var acc = Acc[msg.sender];\n        if (\n            acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime\n        ) {\n            if (msg.sender.call.value(_am)()) {\n                acc.balance -= _am;\n                LogFile.AddMessage(msg.sender, _am, \"Collect\");\n            }\n        }",
+          "message": "Low level call in MY_BANK.Collect (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#11-21):\n\t-msg.sender.call.value(_am)() 0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#16-19\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 41,
+          "vulnerability_code": "contract MY_BANK {\n    function Put(uint _unlockTime) public payable {\n        var acc = Acc[msg.sender];\n        acc.balance += msg.value;\n        acc.unlockTime = _unlockTime > now ? _unlockTime : now;\n        LogFile.AddMessage(msg.sender, msg.value, \"Put\");\n    }\n\n    function Collect(uint _am) public payable {\n        var acc = Acc[msg.sender];\n        if (\n            acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime\n        ) {\n            if (msg.sender.call.value(_am)()) {\n                acc.balance -= _am;\n                LogFile.AddMessage(msg.sender, _am, \"Collect\");\n            }\n        }\n    }\n\n    function() public payable {\n        Put(0);\n    }\n\n    struct Holder {\n        uint unlockTime;\n        uint balance;\n    }\n\n    mapping(address => Holder) public Acc;\n\n    Log LogFile;\n\n    uint public MinSum = 1 ether;\n\n    function MY_BANK(address log) public {\n        LogFile = Log(log);\n    }",
+          "message": "Contract 'MY_BANK' (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#3-41) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function Put(uint _unlockTime) public payable {\n        var acc = Acc[msg.sender];\n        acc.balance += msg.value;\n        acc.unlockTime = _unlockTime > now ? _unlockTime : now;\n        LogFile.AddMessage(msg.sender, msg.value, \"Put\");",
+          "message": "Function 'MY_BANK.Put' (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#4-9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function Put(uint _unlockTime) public payable {",
+          "message": "Parameter '_unlockTime' of MY_BANK.Put (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#4) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function Collect(uint _am) public payable {\n        var acc = Acc[msg.sender];\n        if (\n            acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime\n        ) {\n            if (msg.sender.call.value(_am)()) {\n                acc.balance -= _am;\n                LogFile.AddMessage(msg.sender, _am, \"Collect\");\n            }\n        }",
+          "message": "Function 'MY_BANK.Collect' (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#11-21) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function Collect(uint _am) public payable {",
+          "message": "Parameter '_am' of MY_BANK.Collect (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "    function MY_BANK(address log) public {\n        LogFile = Log(log);",
+          "message": "Function 'MY_BANK.MY_BANK' (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#38-40) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => Holder) public Acc;",
+          "message": "Variable 'MY_BANK.Acc' (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#32) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Log LogFile;",
+          "message": "Variable 'MY_BANK.LogFile' (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#34) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum = 1 ether;",
+          "message": "Variable 'MY_BANK.MinSum' (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#36) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": 61,
+          "vulnerability_code": "    function AddMessage(address _adr, uint _val, string _data) public {\n        LastMsg.Sender = _adr;\n        LastMsg.Time = now;\n        LastMsg.Val = _val;\n        LastMsg.Data = _data;\n        History.push(LastMsg);",
+          "message": "Function 'Log.AddMessage' (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#55-61) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function AddMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of Log.AddMessage (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#55) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function AddMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of Log.AddMessage (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#55) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function AddMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of Log.AddMessage (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#55) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public History;",
+          "message": "Variable 'Log.History' (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#51) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message LastMsg;",
+          "message": "Variable 'Log.LastMsg' (0xf015c35649c82f5467c9c74b7f28ee67665aad68.sol#53) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}
