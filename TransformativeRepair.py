@@ -3,10 +3,12 @@ import datetime
 import json
 import logging
 import os
+import random
 import re
 import threading
 import time
 import networkx as nx
+import openai
 from pyvis.network import Network
 from SmartContract import SmartContract
 from PromptEngine import PromptEngine
@@ -400,7 +402,7 @@ class TransformativeRepair:
 
 
     @staticmethod
-    def repair_sc(experiment_settings:dict, llm_settings:dict, sc_path:Path, smartbugs_sc_queue:queue.Queue, progressbar:tqdm):
+    def repair_sc(experiment_settings:dict, llm_settings:dict, sc_path:Path, smartbugs_sc_queue:queue.Queue, progressbar:tqdm, repair_sc_queue:queue.Queue):
         
         candidate_patches_dir = Path(os.path.join(sc_path.parent.absolute(), "candidate_patches"))
         candidate_patches_dir.mkdir(parents=True, exist_ok=True)
@@ -471,11 +473,19 @@ class TransformativeRepair:
                 #print(progressbar.n) 
                 
             patches_results["unique_patches"] = unique_patches
-            patches_results["patch_generation_completed"] = True
-
+            patches_results["patch_generation_completed"] = True   
         except Exception as e:
             patches_results["patch_generation_completed"] = str(e)
-            logging.critical(f"An exception occurred for {sc_path}: {str(e)}", exc_info=True)
+            if isinstance(e, openai.error.RateLimitError):
+                sleep = 100 * random.random()
+                logging.info(f"RateLimit error sleep={sleep}s. Enqueueing for repair again {sc_path}: {str(e)}", exc_info=True)
+                time.sleep(sleep)
+                with open(patches_results_path, "w") as outfile:
+                    outfile.write(json.dumps(patches_results, indent=2))
+                repair_sc_queue.put(sc.path)
+                return
+            else:
+                logging.critical(f"An exception occurred for {sc_path}: {str(e)}", exc_info=True)
 
         # Write to patches_results.json
         with open(patches_results_path, "w") as outfile:
@@ -488,7 +498,7 @@ class TransformativeRepair:
         while not stop_event.is_set():
             try:
                 sc_path = repair_sc_queue.get(block=False)
-                TransformativeRepair.repair_sc(experiment_setting, llm_settings, sc_path, smartbugs_sc_queue, progressbar)
+                TransformativeRepair.repair_sc(experiment_setting, llm_settings, sc_path, smartbugs_sc_queue, progressbar, repair_sc_queue)
             except queue.Empty:
                 time.sleep(1)
     
