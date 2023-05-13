@@ -1,162 +1,155 @@
-/*
- * @source: https://github.com/etherpot/contract/blob/master/app/contracts/lotto.sol
- * @author: -
- * @vulnerable_at_lines: 109,141
- */
-
-//added pragma version
 pragma solidity ^0.4.0;
 
- contract Lotto {
+contract Lotto {
+    uint public constant blocksPerRound = 6800;
 
-     uint constant public blocksPerRound = 6800;
-     // there are an infinite number of rounds (just like a real lottery that takes place every week). `blocksPerRound` decides how many blocks each round will last. 6800 is around a day.
+    uint public constant ticketPrice = 100000000000000000;
 
-     uint constant public ticketPrice = 100000000000000000;
-     // the cost of each ticket is .1 ether.
+    uint public constant blockReward = 5000000000000000000;
 
-     uint constant public blockReward = 5000000000000000000;
+    function getBlocksPerRound() constant returns (uint) {
+        return blocksPerRound;
+    }
 
-     function getBlocksPerRound() constant returns(uint){ return blocksPerRound; }
-     function getTicketPrice() constant returns(uint){ return ticketPrice; }
-     //accessors for constants
+    function getTicketPrice() constant returns (uint) {
+        return ticketPrice;
+    }
 
-     struct Round {
-         address[] buyers;
-         uint pot;
-         uint ticketsCount;
-         mapping(uint=>bool) isCashed;
-         mapping(address=>uint) ticketsCountByBuyer;
-     }
-     mapping(uint => Round) rounds;
-     //the contract maintains a mapping of rounds. Each round maintains a list of tickets, the total amount of the pot, and whether or not the round was "cashed". "Cashing" is the act of paying out the pot to the winner.
+    struct Round {
+        address[] buyers;
+        uint pot;
+        uint ticketsCount;
+        mapping(uint => bool) isCashed;
+        mapping(address => uint) ticketsCountByBuyer;
+    }
+    mapping(uint => Round) rounds;
 
-     function getRoundIndex() constant returns (uint){
-         //The round index tells us which round we're on. For example if we're on block 24, we're on round 2. Division in Solidity automatically rounds down, so we don't need to worry about decimals.
+    function getRoundIndex() constant returns (uint) {
+        return block.number / blocksPerRound;
+    }
 
-         return block.number/blocksPerRound;
-     }
+    function getIsCashed(
+        uint roundIndex,
+        uint subpotIndex
+    ) constant returns (bool) {
+        return rounds[roundIndex].isCashed[subpotIndex];
+    }
 
-     function getIsCashed(uint roundIndex,uint subpotIndex) constant returns (bool){
-         //Determine if a given.
+    function calculateWinner(
+        uint roundIndex,
+        uint subpotIndex
+    ) constant returns (address) {
+        var decisionBlockNumber = getDecisionBlockNumber(
+            roundIndex,
+            subpotIndex
+        );
 
-         return rounds[roundIndex].isCashed[subpotIndex];
-     }
+        if (decisionBlockNumber > block.number) return;
 
+        var decisionBlockHash = getHashOfBlock(decisionBlockNumber);
+        var winningTicketIndex = decisionBlockHash %
+            rounds[roundIndex].ticketsCount;
 
-     function calculateWinner(uint roundIndex, uint subpotIndex) constant returns(address){
-         //note this function only calculates the winners. It does not do any state changes and therefore does not include various validitiy checks
+        var ticketIndex = uint256(0);
 
-         var decisionBlockNumber = getDecisionBlockNumber(roundIndex,subpotIndex);
+        for (
+            var buyerIndex = 0;
+            buyerIndex < rounds[roundIndex].buyers.length;
+            buyerIndex++
+        ) {
+            var buyer = rounds[roundIndex].buyers[buyerIndex];
+            ticketIndex += rounds[roundIndex].ticketsCountByBuyer[buyer];
 
-         if(decisionBlockNumber>block.number)
-             return;
-         //We can't decided the winner if the round isn't over yet
+            if (ticketIndex > winningTicketIndex) {
+                return buyer;
+            }
+        }
+    }
 
-         var decisionBlockHash = getHashOfBlock(decisionBlockNumber);
-         var winningTicketIndex = decisionBlockHash%rounds[roundIndex].ticketsCount;
-         //We perform a modulus of the blockhash to determine the winner
+    function getDecisionBlockNumber(
+        uint roundIndex,
+        uint subpotIndex
+    ) constant returns (uint) {
+        return ((roundIndex + 1) * blocksPerRound) + subpotIndex;
+    }
 
-         var ticketIndex = uint256(0);
+    function getSubpotsCount(uint roundIndex) constant returns (uint) {
+        var subpotsCount = rounds[roundIndex].pot / blockReward;
 
-         for(var buyerIndex = 0; buyerIndex<rounds[roundIndex].buyers.length; buyerIndex++){
-             var buyer = rounds[roundIndex].buyers[buyerIndex];
-             ticketIndex+=rounds[roundIndex].ticketsCountByBuyer[buyer];
+        if (rounds[roundIndex].pot % blockReward > 0) subpotsCount++;
 
-             if(ticketIndex>winningTicketIndex){
-                 return buyer;
-             }
-         }
-     }
+        return subpotsCount;
+    }
 
-     function getDecisionBlockNumber(uint roundIndex,uint subpotIndex) constant returns (uint){
-         return ((roundIndex+1)*blocksPerRound)+subpotIndex;
-     }
+    function getSubpot(uint roundIndex) constant returns (uint) {
+        return rounds[roundIndex].pot / getSubpotsCount(roundIndex);
+    }
 
-     function getSubpotsCount(uint roundIndex) constant returns(uint){
-         var subpotsCount = rounds[roundIndex].pot/blockReward;
+    function cash(uint roundIndex, uint subpotIndex) {
+        var subpotsCount = getSubpotsCount(roundIndex);
 
-         if(rounds[roundIndex].pot%blockReward>0)
-             subpotsCount++;
+        if (subpotIndex >= subpotsCount) return;
 
-         return subpotsCount;
-     }
+        var decisionBlockNumber = getDecisionBlockNumber(
+            roundIndex,
+            subpotIndex
+        );
 
-     function getSubpot(uint roundIndex) constant returns(uint){
-         return rounds[roundIndex].pot/getSubpotsCount(roundIndex);
-     }
+        if (decisionBlockNumber > block.number) return;
 
-     function cash(uint roundIndex, uint subpotIndex){
+        if (rounds[roundIndex].isCashed[subpotIndex]) return;
 
-         var subpotsCount = getSubpotsCount(roundIndex);
+        var winner = calculateWinner(roundIndex, subpotIndex);
+        var subpot = getSubpot(roundIndex);
 
-         if(subpotIndex>=subpotsCount)
-             return;
+        winner.send(subpot);
 
-         var decisionBlockNumber = getDecisionBlockNumber(roundIndex,subpotIndex);
+        rounds[roundIndex].isCashed[subpotIndex] = true;
+    }
 
-         if(decisionBlockNumber>block.number)
-             return;
+    function getHashOfBlock(uint blockIndex) constant returns (uint) {
+        return uint(block.blockhash(blockIndex));
+    }
 
-         if(rounds[roundIndex].isCashed[subpotIndex])
-             return;
-         //Subpots can only be cashed once. This is to prevent double payouts
+    function getBuyers(
+        uint roundIndex,
+        address buyer
+    ) constant returns (address[]) {
+        return rounds[roundIndex].buyers;
+    }
 
-         var winner = calculateWinner(roundIndex,subpotIndex);
-         var subpot = getSubpot(roundIndex);
+    function getTicketsCountByBuyer(
+        uint roundIndex,
+        address buyer
+    ) constant returns (uint) {
+        return rounds[roundIndex].ticketsCountByBuyer[buyer];
+    }
 
-         // <yes> <report> UNCHECKED_LL_CALLS
-         winner.send(subpot);
+    function getPot(uint roundIndex) constant returns (uint) {
+        return rounds[roundIndex].pot;
+    }
 
-         rounds[roundIndex].isCashed[subpotIndex] = true;
-         //Mark the round as cashed
-     }
+    function() {
+        var roundIndex = getRoundIndex();
+        var value = msg.value - (msg.value % ticketPrice);
 
-     function getHashOfBlock(uint blockIndex) constant returns(uint){
-         return uint(block.blockhash(blockIndex));
-     }
+        if (value == 0) return;
 
-     function getBuyers(uint roundIndex,address buyer) constant returns (address[]){
-         return rounds[roundIndex].buyers;
-     }
+        if (value < msg.value) {
+            msg.sender.send(msg.value - value);
+        }
 
-     function getTicketsCountByBuyer(uint roundIndex,address buyer) constant returns (uint){
-         return rounds[roundIndex].ticketsCountByBuyer[buyer];
-     }
+        var ticketsCount = value / ticketPrice;
+        rounds[roundIndex].ticketsCount += ticketsCount;
 
-     function getPot(uint roundIndex) constant returns(uint){
-         return rounds[roundIndex].pot;
-     }
+        if (rounds[roundIndex].ticketsCountByBuyer[msg.sender] == 0) {
+            var buyersLength = rounds[roundIndex].buyers.length++;
+            rounds[roundIndex].buyers[buyersLength] = msg.sender;
+        }
 
-     function() {
-         //this is the function that gets called when people send money to the contract.
+        rounds[roundIndex].ticketsCountByBuyer[msg.sender] += ticketsCount;
+        rounds[roundIndex].ticketsCount += ticketsCount;
 
-         var roundIndex = getRoundIndex();
-         var value = msg.value-(msg.value%ticketPrice);
-
-         if(value==0) return;
-
-         if(value<msg.value){
-             // <yes> <report> UNCHECKED_LL_CALLS
-             msg.sender.send(msg.value-value);
-         }
-         //no partial tickets, send a partial refund
-
-         var ticketsCount = value/ticketPrice;
-         rounds[roundIndex].ticketsCount+=ticketsCount;
-
-         if(rounds[roundIndex].ticketsCountByBuyer[msg.sender]==0){
-             var buyersLength = rounds[roundIndex].buyers.length++;
-             rounds[roundIndex].buyers[buyersLength] = msg.sender;
-         }
-
-         rounds[roundIndex].ticketsCountByBuyer[msg.sender]+=ticketsCount;
-         rounds[roundIndex].ticketsCount+=ticketsCount;
-         //keep track of the total tickets
-
-         rounds[roundIndex].pot+=value;
-         //keep track of the total pot
-
-     }
-
- }
+        rounds[roundIndex].pot += value;
+    }
+}

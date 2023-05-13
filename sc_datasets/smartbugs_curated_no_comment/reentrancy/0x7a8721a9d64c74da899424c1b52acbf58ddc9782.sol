@@ -1,84 +1,59 @@
-/*
- * @source: etherscan.io 
- * @author: -
- * @vulnerable_at_lines: 52
- */
-
 pragma solidity ^0.4.19;
 
-contract PrivateDeposit
-{
-    mapping (address => uint) public balances;
-        
+contract PrivateDeposit {
+    mapping(address => uint) public balances;
+
     uint public MinDeposit = 1 ether;
     address public owner;
-    
+
     Log TransferLog;
-    
+
     modifier onlyOwner() {
         require(tx.origin == owner);
         _;
-    }    
-    
-    function PrivateDeposit()
-    {
+    }
+
+    function PrivateDeposit() {
         owner = msg.sender;
         TransferLog = new Log();
     }
-    
-    
-    
-    function setLog(address _lib) onlyOwner
-    {
+
+    function setLog(address _lib) onlyOwner {
         TransferLog = Log(_lib);
-    }    
-    
-    function Deposit()
-    public
-    payable
-    {
-        if(msg.value >= MinDeposit)
-        {
-            balances[msg.sender]+=msg.value;
-            TransferLog.AddMessage(msg.sender,msg.value,"Deposit");
+    }
+
+    function Deposit() public payable {
+        if (msg.value >= MinDeposit) {
+            balances[msg.sender] += msg.value;
+            TransferLog.AddMessage(msg.sender, msg.value, "Deposit");
         }
     }
-    
-    function CashOut(uint _am)
-    {
-        if(_am<=balances[msg.sender])
-        {            
-            // <yes> <report> REENTRANCY
-            if(msg.sender.call.value(_am)())
-            {
-                balances[msg.sender]-=_am;
-                TransferLog.AddMessage(msg.sender,_am,"CashOut");
+
+    function CashOut(uint _am) {
+        if (_am <= balances[msg.sender]) {
+            if (msg.sender.call.value(_am)()) {
+                balances[msg.sender] -= _am;
+                TransferLog.AddMessage(msg.sender, _am, "CashOut");
             }
         }
     }
-    
-    function() public payable{}    
-    
+
+    function() public payable {}
 }
 
-contract Log 
-{
-   
-    struct Message
-    {
+contract Log {
+    struct Message {
         address Sender;
-        string  Data;
+        string Data;
         uint Val;
-        uint  Time;
+        uint Time;
     }
-    
+
     Message[] public History;
-    
+
     Message LastMsg;
-    
-    function AddMessage(address _adr,uint _val,string _data)
-    public
-    {
+
+    function AddMessage(address _adr, uint _val, string _data) public {
         LastMsg.Sender = _adr;
         LastMsg.Time = now;
         LastMsg.Val = _val;
