@@ -58,3 +58,15 @@ Temperature 0.5 and 0.7. Top_p 0.95
 
 *** Use mythril, oyente, slither
 *** Update smartbugs
+
+*** Generate new key for every experiment
+
+*** Look at c# runtime assertions
+
+
+### Improvements to Smartbugs
+- Allow for parsing to common vulnerability types Ä(labelled vulnerabilities)
+- Know what tools detect these different labels
+- Establish voting system between tools (vote in/out false positives)
+- Build k3s architecture for running docker containers on different machines. To scale execution horizontally.
+- Provide summary report of errors encountered
