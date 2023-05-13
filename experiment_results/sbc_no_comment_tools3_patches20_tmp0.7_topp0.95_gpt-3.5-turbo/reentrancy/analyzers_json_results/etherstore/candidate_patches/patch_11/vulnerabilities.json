@@ -1,0 +1,67 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function withdrawFunds(uint256 _weiToWithdraw) public {\n        require(!locked[msg.sender]); // Adding a lock to prevent reentrancy\n        require(balances[msg.sender] >= _weiToWithdraw);\n        require(_weiToWithdraw <= withdrawalLimit);\n        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);\n\n        locked[msg.sender] = true; // Locking the sender before transferring the funds\n        require(msg.sender.call.value(_weiToWithdraw)());\n        balances[msg.sender] -= _weiToWithdraw;\n        lastWithdrawTime[msg.sender] = now;\n        locked[msg.sender] = false; // Unlocking the sender after the transfer is complete",
+          "message": "Reentrancy in EtherStore.withdrawFunds (patch_11.sol#13-24):\n\tExternal calls:\n\t- require(bool)(msg.sender.call.value(_weiToWithdraw)()) (patch_11.sol#20)\n\tState variables written after the call(s):\n\t- balances (patch_11.sol#21)\n\t- lastWithdrawTime (patch_11.sol#22)\n\t- locked (patch_11.sol#23)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public withdrawalLimit = 1 ether;",
+          "message": "EtherStore.withdrawalLimit should be constant (patch_11.sol#4)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": 11,
+          "vulnerability_code": "    function depositFunds() public payable {\n        balances[msg.sender] += msg.value;",
+          "message": "EtherStore.depositFunds (patch_11.sol#9-11) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function withdrawFunds(uint256 _weiToWithdraw) public {\n        require(!locked[msg.sender]); // Adding a lock to prevent reentrancy\n        require(balances[msg.sender] >= _weiToWithdraw);\n        require(_weiToWithdraw <= withdrawalLimit);\n        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);\n\n        locked[msg.sender] = true; // Locking the sender before transferring the funds\n        require(msg.sender.call.value(_weiToWithdraw)());\n        balances[msg.sender] -= _weiToWithdraw;\n        lastWithdrawTime[msg.sender] = now;\n        locked[msg.sender] = false; // Unlocking the sender after the transfer is complete",
+          "message": "EtherStore.withdrawFunds (patch_11.sol#13-24) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function withdrawFunds(uint256 _weiToWithdraw) public {\n        require(!locked[msg.sender]); // Adding a lock to prevent reentrancy\n        require(balances[msg.sender] >= _weiToWithdraw);\n        require(_weiToWithdraw <= withdrawalLimit);\n        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);\n\n        locked[msg.sender] = true; // Locking the sender before transferring the funds\n        require(msg.sender.call.value(_weiToWithdraw)());\n        balances[msg.sender] -= _weiToWithdraw;\n        lastWithdrawTime[msg.sender] = now;\n        locked[msg.sender] = false; // Unlocking the sender after the transfer is complete",
+          "message": "Low level call in EtherStore.withdrawFunds (patch_11.sol#13-24):\n\t-require(bool)(msg.sender.call.value(_weiToWithdraw)()) patch_11.sol#20\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdrawFunds(uint256 _weiToWithdraw) public {",
+          "message": "Parameter '_weiToWithdraw' of EtherStore.withdrawFunds (patch_11.sol#13) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}

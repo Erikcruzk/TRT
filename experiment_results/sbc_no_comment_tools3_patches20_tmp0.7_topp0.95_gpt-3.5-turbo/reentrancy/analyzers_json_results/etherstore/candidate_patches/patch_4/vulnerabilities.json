@@ -1,0 +1,82 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        balances[msg.sender] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public withdrawalLimit = 1 ether;",
+          "message": "EtherStore.withdrawalLimit should be constant (patch_4.sol#4)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": 27,
+          "vulnerability_code": "    function depositFunds() public payable {\n        require(!stopped);\n        balances[msg.sender] += msg.value;",
+          "message": "EtherStore.depositFunds (patch_4.sol#24-27) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 36,
+          "vulnerability_code": "    function withdrawFunds(uint256 _weiToWithdraw) public onlyOwner stopInEmergency {\n        require(balances[msg.sender] >= _weiToWithdraw);\n        require(_weiToWithdraw <= withdrawalLimit);\n        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);\n        balances[msg.sender] -= _weiToWithdraw;\n        lastWithdrawTime[msg.sender] = now;\n        msg.sender.transfer(_weiToWithdraw);",
+          "message": "EtherStore.withdrawFunds (patch_4.sol#29-36) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "    function emergencyStop() public onlyOwner {\n        stopped = true;",
+          "message": "EtherStore.emergencyStop (patch_4.sol#38-40) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": 44,
+          "vulnerability_code": "    function release() public onlyOwner {\n        stopped = false;",
+          "message": "EtherStore.release (patch_4.sol#42-44) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": 48,
+          "vulnerability_code": "    function getContractBalance() public view returns (uint256) {\n        return address(this).balance;",
+          "message": "EtherStore.getContractBalance (patch_4.sol#46-48) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdrawFunds(uint256 _weiToWithdraw) public onlyOwner stopInEmergency {",
+          "message": "Parameter '_weiToWithdraw' of EtherStore.withdrawFunds (patch_4.sol#29) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}

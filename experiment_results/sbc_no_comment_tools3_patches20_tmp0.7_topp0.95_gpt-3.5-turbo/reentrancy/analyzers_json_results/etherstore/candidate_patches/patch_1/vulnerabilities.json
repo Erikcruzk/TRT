@@ -1,0 +1,67 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public withdrawalLimit = 1 ether;",
+          "message": "EtherStore.withdrawalLimit should be constant (patch_1.sol#4)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 10,
+          "vulnerability_code": "    function depositFunds() public payable {\n        balances[msg.sender] += msg.value;",
+          "message": "EtherStore.depositFunds (patch_1.sol#8-10) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function withdrawFunds(uint256 _weiToWithdraw) public {\n        require(balances[msg.sender] >= _weiToWithdraw);\n        require(_weiToWithdraw <= withdrawalLimit);\n        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);\n\n        balances[msg.sender] -= _weiToWithdraw;\n        lastWithdrawTime[msg.sender] = now;\n\n        require(msg.sender.call.value(_weiToWithdraw)());",
+          "message": "EtherStore.withdrawFunds (patch_1.sol#12-21) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;",
+          "message": "Detected issues with version pragma in patch_1.sol:\n\t- pragma solidity^0.4.0 (patch_1.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function withdrawFunds(uint256 _weiToWithdraw) public {\n        require(balances[msg.sender] >= _weiToWithdraw);\n        require(_weiToWithdraw <= withdrawalLimit);\n        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);\n\n        balances[msg.sender] -= _weiToWithdraw;\n        lastWithdrawTime[msg.sender] = now;\n\n        require(msg.sender.call.value(_weiToWithdraw)());",
+          "message": "Low level call in EtherStore.withdrawFunds (patch_1.sol#12-21):\n\t-require(bool)(msg.sender.call.value(_weiToWithdraw)()) patch_1.sol#20\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdrawFunds(uint256 _weiToWithdraw) public {",
+          "message": "Parameter '_weiToWithdraw' of EtherStore.withdrawFunds (patch_1.sol#12) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

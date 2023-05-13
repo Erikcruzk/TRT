@@ -1,0 +1,55 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.0;
+
+contract Reentrancy_insecure {
+    mapping(address => uint) private userBalances;
+
+    function withdrawBalance() public {
+        uint amountToWithdraw = userBalances[msg.sender];
+
+        (bool success, ) = msg.sender.call.value(amountToWithdraw)("");
+        require(success);
+        userBalances[msg.sender] = 0;
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+{
+  "mythril-0.23.15": {
+    "successfull_analysis": true,
+    "errors": [],
+    "vulnerability_findings": [
+      {
+        "name": "reentrancy",
+        "vulnerability_from_line": 9,
+        "vulnerability_to_line": null,
+        "vulnerability_code": "        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");",
+        "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+      },
+      {
+        "name": "reentrancy",
+        "vulnerability_from_line": 11,
+        "vulnerability_to_line": null,
+        "vulnerability_code": "        userBalances[msg.sender] = 0;",
+        "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+      }
+    ]
+  },
+  "slither": {
+    "successfull_analysis": true,
+    "errors": [
+      "EXIT_CODE_5"
+    ],
+    "vulnerability_findings": [
+      {
+        "name": "reentrancy",
+        "vulnerability_from_line": 6,
+        "vulnerability_to_line": 12,
+        "vulnerability_code": "    function withdrawBalance() public {\n        uint amountToWithdraw = userBalances[msg.sender];\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n        userBalances[msg.sender] = 0;",
+        "message": "Reentrancy in Reentrancy_insecure.withdrawBalance (reentrancy_insecure.sol#6-12):\n\tExternal calls:\n\t- (success) = msg.sender.call.value(amountToWithdraw)() (reentrancy_insecure.sol#9)\n\tState variables written after the call(s):\n\t- userBalances (reentrancy_insecure.sol#11)\n"
+      }
+    ]
+  }
+}
+
+/// Repaired Solidity Smart Contract
