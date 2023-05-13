@@ -1,25 +1,17 @@
-/*
- * @source: https://github.com/sigp/solidity-security-blog#storage-example
- * @vulnerable_at_lines: 21
- */
-// A Locked Name Registrar
-
 pragma solidity ^0.4.15;
+
 contract NameRegistrar {
+    bool public unlocked = false;
 
-    bool public unlocked = false;  // registrar locked, no name updates
-
-    struct NameRecord { // map hashes to addresses
+    struct NameRecord {
         bytes32 name;
         address mappedAddress;
     }
 
-    mapping(address => NameRecord) public registeredNameRecord; // records who registered names
-    mapping(bytes32 => address) public resolve; // resolves hashes to addresses
+    mapping(address => NameRecord) public registeredNameRecord;
+    mapping(bytes32 => address) public resolve;
 
     function register(bytes32 _name, address _mappedAddress) public {
-        // set up the new NameRecord
-        // <yes> <report> OTHER - uninitialized storage
         NameRecord newRecord;
         newRecord.name = _name;
         newRecord.mappedAddress = _mappedAddress;
@@ -27,6 +19,6 @@ contract NameRegistrar {
         resolve[_name] = _mappedAddress;
         registeredNameRecord[msg.sender] = newRecord;
 
-        require(unlocked); // only allow registrations if contract is unlocked
+        require(unlocked);
     }
 }

@@ -70,3 +70,4 @@ Temperature 0.5 and 0.7. Top_p 0.95
 - Establish voting system between tools (vote in/out false positives)
 - Build k3s architecture for running docker containers on different machines. To scale execution horizontally.
 - Provide summary report of errors encountered
+- Increase dataset. keep hidden from LLMs

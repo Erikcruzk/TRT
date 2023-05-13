@@ -1,12 +1,3 @@
-/*
- * @source: https://github.com/ConsenSys/evm-analyzer-benchmark-suite
- * @author: Suhabe Bugrara
- * @vulnerable_at_lines: 25
- */
-
-//Multi-transactional, multi-function
-//Arithmetic instruction reachable
-
 pragma solidity ^0.4.23;
 
 contract IntegerOverflowMultiTxMultiFuncFeasible {
@@ -21,7 +12,7 @@ contract IntegerOverflowMultiTxMultiFuncFeasible {
         if (initialized == 0) {
             return;
         }
-        // <yes> <report> ARITHMETIC
+
         count -= input;
     }
 }
