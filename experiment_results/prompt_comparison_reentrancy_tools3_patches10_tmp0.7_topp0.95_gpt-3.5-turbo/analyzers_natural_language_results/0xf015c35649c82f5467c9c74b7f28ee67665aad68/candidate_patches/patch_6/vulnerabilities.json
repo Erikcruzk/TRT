@@ -1,0 +1,151 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_18"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum = 1 ether;",
+          "message": "MY_BANK.MinSum should be constant (patch_6.sol#11)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function Collect(uint _am) public {\n        require(Acc[msg.sender].balance >= MinSum && Acc[msg.sender].balance >= _am && now > Acc[msg.sender].unlockTime);\n        Acc[msg.sender].balance -= _am;\n        LogFile.AddMessage(msg.sender, _am, \"Collect\");\n        msg.sender.transfer(_am);",
+          "message": "MY_BANK.Collect (patch_6.sol#23-28) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": 32,
+          "vulnerability_code": "    function() public payable {\n        Put(0);",
+          "message": "MY_BANK.fallback (patch_6.sol#30-32) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": 52,
+          "vulnerability_code": "    function AddMessage(address _adr, uint _val, string _data) public {\n        LastMsg.Sender = _adr;\n        LastMsg.Time = now;\n        LastMsg.Val = _val;\n        LastMsg.Data = _data;\n        History.push(LastMsg);",
+          "message": "Log.AddMessage (patch_6.sol#46-52) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 33,
+          "vulnerability_code": "contract MY_BANK {\n    struct Holder {\n        uint unlockTime;\n        uint balance;\n    }\n\n    mapping(address => Holder) public Acc;\n    Log LogFile;\n    uint public MinSum = 1 ether;\n\n    constructor(address log) public {\n        LogFile = Log(log);\n    }\n\n    function Put(uint _unlockTime) public payable {\n        Acc[msg.sender].balance += msg.value;\n        Acc[msg.sender].unlockTime = _unlockTime > now ? _unlockTime : now;\n        LogFile.AddMessage(msg.sender, msg.value, \"Put\");\n    }\n\n    function Collect(uint _am) public {\n        require(Acc[msg.sender].balance >= MinSum && Acc[msg.sender].balance >= _am && now > Acc[msg.sender].unlockTime);\n        Acc[msg.sender].balance -= _am;\n        LogFile.AddMessage(msg.sender, _am, \"Collect\");\n        msg.sender.transfer(_am);\n    }\n\n    function() public payable {\n        Put(0);\n    }",
+          "message": "Contract 'MY_BANK' (patch_6.sol#3-33) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function Put(uint _unlockTime) public payable {\n        Acc[msg.sender].balance += msg.value;\n        Acc[msg.sender].unlockTime = _unlockTime > now ? _unlockTime : now;\n        LogFile.AddMessage(msg.sender, msg.value, \"Put\");",
+          "message": "Function 'MY_BANK.Put' (patch_6.sol#17-21) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function Put(uint _unlockTime) public payable {",
+          "message": "Parameter '_unlockTime' of MY_BANK.Put (patch_6.sol#17) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function Collect(uint _am) public {\n        require(Acc[msg.sender].balance >= MinSum && Acc[msg.sender].balance >= _am && now > Acc[msg.sender].unlockTime);\n        Acc[msg.sender].balance -= _am;\n        LogFile.AddMessage(msg.sender, _am, \"Collect\");\n        msg.sender.transfer(_am);",
+          "message": "Function 'MY_BANK.Collect' (patch_6.sol#23-28) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function Collect(uint _am) public {",
+          "message": "Parameter '_am' of MY_BANK.Collect (patch_6.sol#23) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => Holder) public Acc;",
+          "message": "Variable 'MY_BANK.Acc' (patch_6.sol#9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Log LogFile;",
+          "message": "Variable 'MY_BANK.LogFile' (patch_6.sol#10) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum = 1 ether;",
+          "message": "Variable 'MY_BANK.MinSum' (patch_6.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": 52,
+          "vulnerability_code": "    function AddMessage(address _adr, uint _val, string _data) public {\n        LastMsg.Sender = _adr;\n        LastMsg.Time = now;\n        LastMsg.Val = _val;\n        LastMsg.Data = _data;\n        History.push(LastMsg);",
+          "message": "Function 'Log.AddMessage' (patch_6.sol#46-52) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function AddMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of Log.AddMessage (patch_6.sol#46) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function AddMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of Log.AddMessage (patch_6.sol#46) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function AddMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of Log.AddMessage (patch_6.sol#46) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public History;",
+          "message": "Variable 'Log.History' (patch_6.sol#43) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message LastMsg;",
+          "message": "Variable 'Log.LastMsg' (patch_6.sol#44) is not in mixedCase\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

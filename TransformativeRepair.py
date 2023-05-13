@@ -475,7 +475,7 @@ class TransformativeRepair:
 
         except Exception as e:
             patches_results["patch_generation_completed"] = str(e)
-            logging.critical("An exception occurred: %s", str(e), exc_info=True)
+            logging.critical(f"An exception occurred for {sc_path}: {str(e)}", exc_info=True)
 
         # Write to patches_results.json
         with open(patches_results_path, "w") as outfile:

@@ -1,0 +1,62 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public minDeposit = 1 ether;",
+          "message": "PrivateBank.minDeposit should be constant (patch_6.sol#6)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function deposit() public payable {\n        if (msg.value > minDeposit) {\n            balances[msg.sender] += msg.value;\n            emit Log(msg.sender, msg.value, \"Deposit\");\n        }",
+          "message": "PrivateBank.deposit (patch_6.sol#10-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 22,
+          "vulnerability_code": "    function cashOut(uint256 _amount) public {\n        require(_amount <= balances[msg.sender], \"Insufficient balance\");\n        balances[msg.sender] -= _amount;\n        msg.sender.transfer(_amount);\n        emit Log(msg.sender, _amount, \"CashOut\");",
+          "message": "PrivateBank.cashOut (patch_6.sol#17-22) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;",
+          "message": "Detected issues with version pragma in patch_6.sol:\n\t- pragma solidity^0.5.0 (patch_6.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function cashOut(uint256 _amount) public {",
+          "message": "Parameter '_amount' of PrivateBank.cashOut (patch_6.sol#17) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

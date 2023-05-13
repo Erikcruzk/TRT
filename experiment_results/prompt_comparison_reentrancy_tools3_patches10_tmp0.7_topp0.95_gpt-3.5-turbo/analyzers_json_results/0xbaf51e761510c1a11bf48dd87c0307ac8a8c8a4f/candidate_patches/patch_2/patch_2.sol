@@ -1,0 +1,55 @@
+pragma solidity ^0.4.19;
+
+contract ETH_VAULT {
+    mapping(address => uint) public balances;
+
+    uint public minDeposit = 1 ether;
+
+    Log transferLog;
+
+    function ETH_VAULT(address _log) public {
+        transferLog = Log(_log);
+    }
+
+    function deposit() public payable {
+        require(msg.value > minDeposit);
+        balances[msg.sender] += msg.value;
+        transferLog.addMessage(msg.sender, msg.value, "Deposit");
+    }
+
+    function cashOut(uint _am) public {
+        require(_am <= balances[msg.sender]);
+        balances[msg.sender] -= _am;
+        msg.sender.transfer(_am);
+        transferLog.addMessage(msg.sender, _am, "CashOut");
+    }
+
+    function() public payable {}
+
+}
+
+contract Log {
+    struct Message {
+        address sender;
+        string data;
+        uint val;
+        uint time;
+    }
+
+    Message[] public history;
+
+    function addMessage(address _adr, uint _val, string _data) public {
+        Message memory newMsg;
+        newMsg.sender = _adr;
+        newMsg.time = now;
+        newMsg.val = _val;
+        newMsg.data = _data;
+        history.push(newMsg);
+    }
+}
+
+// Changes Made
+// 1. Changed the name of the variables and functions to follow the camelCase naming convention.
+// 2. Added require statements to check for valid conditions.
+// 3. Replaced the unsafe call.value() with the secure transfer() function.
+// 4. Used a memory struct to create a new message in the Log contract instead of modifying the LastMsg struct directly.
