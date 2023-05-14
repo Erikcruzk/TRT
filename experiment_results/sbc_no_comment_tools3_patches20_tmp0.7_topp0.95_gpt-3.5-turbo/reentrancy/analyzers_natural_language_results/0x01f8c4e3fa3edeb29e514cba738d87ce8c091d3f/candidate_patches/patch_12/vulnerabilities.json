@@ -1,0 +1,151 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_18"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function setMinSum(uint _val) public {\n        require(!initialized);\n        MinSum = _val;",
+          "message": "PERSONAL_BANK.setMinSum (patch_12.sol#16-19) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function setLogFile(address _log) public {\n        require(!initialized);\n        Log = LogFile(_log);",
+          "message": "PERSONAL_BANK.setLogFile (patch_12.sol#21-24) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function initialize() public {\n        require(!initialized);\n        initialized = true;",
+          "message": "PERSONAL_BANK.initialize (patch_12.sol#26-29) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": 42,
+          "vulnerability_code": "    function collect(uint _am) public {\n        require(initialized);\n        require(balances[msg.sender] >= MinSum && balances[msg.sender] >= _am);\n        balances[msg.sender] -= _am;\n        Log.addMessage(msg.sender, _am, \"Collect\");\n        msg.sender.transfer(_am);",
+          "message": "PERSONAL_BANK.collect (patch_12.sol#36-42) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": 46,
+          "vulnerability_code": "    function() public payable {\n        deposit();",
+          "message": "PERSONAL_BANK.fallback (patch_12.sol#44-46) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": 62,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {\n        Message memory newMsg = Message(_adr, _data, _val, now);\n        history.push(newMsg);",
+          "message": "LogFile.addMessage (patch_12.sol#59-62) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_12.sol:\n\t- pragma solidity^0.4.19 (patch_12.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 47,
+          "vulnerability_code": "contract PERSONAL_BANK {\n    mapping(address => uint256) public balances;\n\n    uint public MinSum = 1 ether;\n\n    LogFile Log;\n\n    bool initialized;\n\n    function PERSONAL_BANK(address _log) public {\n        Log = LogFile(_log);\n    }\n\n    function setMinSum(uint _val) public {\n        require(!initialized);\n        MinSum = _val;\n    }\n\n    function setLogFile(address _log) public {\n        require(!initialized);\n        Log = LogFile(_log);\n    }\n\n    function initialize() public {\n        require(!initialized);\n        initialized = true;\n    }\n\n    function deposit() public payable {\n        balances[msg.sender] += msg.value;\n        Log.addMessage(msg.sender, msg.value, \"Put\");\n    }\n\n    function collect(uint _am) public {\n        require(initialized);\n        require(balances[msg.sender] >= MinSum && balances[msg.sender] >= _am);\n        balances[msg.sender] -= _am;\n        Log.addMessage(msg.sender, _am, \"Collect\");\n        msg.sender.transfer(_am);\n    }\n\n    function() public payable {\n        deposit();\n    }",
+          "message": "Contract 'PERSONAL_BANK' (patch_12.sol#3-47) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function PERSONAL_BANK(address _log) public {\n        Log = LogFile(_log);",
+          "message": "Function 'PERSONAL_BANK.PERSONAL_BANK' (patch_12.sol#12-14) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function PERSONAL_BANK(address _log) public {",
+          "message": "Parameter '_log' of PERSONAL_BANK.PERSONAL_BANK (patch_12.sol#12) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setMinSum(uint _val) public {",
+          "message": "Parameter '_val' of PERSONAL_BANK.setMinSum (patch_12.sol#16) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setLogFile(address _log) public {",
+          "message": "Parameter '_log' of PERSONAL_BANK.setLogFile (patch_12.sol#21) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function collect(uint _am) public {",
+          "message": "Parameter '_am' of PERSONAL_BANK.collect (patch_12.sol#36) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum = 1 ether;",
+          "message": "Variable 'PERSONAL_BANK.MinSum' (patch_12.sol#6) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    LogFile Log;",
+          "message": "Variable 'PERSONAL_BANK.Log' (patch_12.sol#8) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of LogFile.addMessage (patch_12.sol#59) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of LogFile.addMessage (patch_12.sol#59) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of LogFile.addMessage (patch_12.sol#59) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}
