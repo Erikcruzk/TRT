@@ -1,0 +1,186 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_23"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": 36,
+          "vulnerability_code": "    function CashOut(uint _am) public payable {\n        require(!locked);\n        require(_am <= balances[msg.sender]);\n        locked = true;\n        balances[msg.sender] -= _am;\n        if(msg.sender.call.value(_am)()){\n            TransferLog.AddMessage(msg.sender, _am, \"CashOut\");\n        }\n        locked = false;",
+          "message": "Reentrancy in ETH_VAULT.CashOut (patch_18.sol#27-36):\n\tExternal calls:\n\t- msg.sender.call.value(_am)() (patch_18.sol#32-34)\n\t- TransferLog.AddMessage(msg.sender,_am,CashOut) (patch_18.sol#33)\n\tExternal calls sending eth:\n\t- msg.sender.call.value(_am)() (patch_18.sol#32-34)\n\tState variables written after the call(s):\n\t- locked (patch_18.sol#35)\n"
+        },
+        {
+          "name": "reentrancy-no-eth",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function Deposit() public payable {\n        require(!locked);\n        if (msg.value >= MinDeposit) {\n            locked = true;\n            balances[msg.sender] += msg.value;\n            TransferLog.AddMessage(msg.sender, msg.value, \"Deposit\");\n            locked = false;\n        }",
+          "message": "Reentrancy in ETH_VAULT.Deposit (patch_18.sol#17-25):\n\tExternal calls:\n\t- TransferLog.AddMessage(msg.sender,msg.value,Deposit) (patch_18.sol#22)\n\tState variables written after the call(s):\n\t- locked (patch_18.sol#23)\n"
+        },
+        {
+          "name": "uninitialized-local",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        Message memory LastMsg;",
+          "message": "LastMsg in Log.AddMessage (patch_18.sol#53) is a local variable never initialiazed\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinDeposit = 1 ether;",
+          "message": "ETH_VAULT.MinDeposit should be constant (patch_18.sol#8)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function Deposit() public payable {\n        require(!locked);\n        if (msg.value >= MinDeposit) {\n            locked = true;\n            balances[msg.sender] += msg.value;\n            TransferLog.AddMessage(msg.sender, msg.value, \"Deposit\");\n            locked = false;\n        }",
+          "message": "ETH_VAULT.Deposit (patch_18.sol#17-25) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": 36,
+          "vulnerability_code": "    function CashOut(uint _am) public payable {\n        require(!locked);\n        require(_am <= balances[msg.sender]);\n        locked = true;\n        balances[msg.sender] -= _am;\n        if(msg.sender.call.value(_am)()){\n            TransferLog.AddMessage(msg.sender, _am, \"CashOut\");\n        }\n        locked = false;",
+          "message": "ETH_VAULT.CashOut (patch_18.sol#27-36) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "ETH_VAULT.fallback (patch_18.sol#38) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": 59,
+          "vulnerability_code": "    function AddMessage(address _adr, uint _val, string _data) public {\n        Message memory LastMsg;\n        LastMsg.Sender = _adr;\n        LastMsg.Time = now;\n        LastMsg.Val = _val;\n        LastMsg.Data = _data;\n        History.push(LastMsg);",
+          "message": "Log.AddMessage (patch_18.sol#52-59) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_18.sol:\n\t- pragma solidity^0.4.19 (patch_18.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": 36,
+          "vulnerability_code": "    function CashOut(uint _am) public payable {\n        require(!locked);\n        require(_am <= balances[msg.sender]);\n        locked = true;\n        balances[msg.sender] -= _am;\n        if(msg.sender.call.value(_am)()){\n            TransferLog.AddMessage(msg.sender, _am, \"CashOut\");\n        }\n        locked = false;",
+          "message": "Low level call in ETH_VAULT.CashOut (patch_18.sol#27-36):\n\t-msg.sender.call.value(_am)() patch_18.sol#32-34\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "contract ETH_VAULT {\n    mapping(address => uint) public balances;\n\n    Log TransferLog;\n\n    uint public MinDeposit = 1 ether;\n\n    bool private locked;\n\n    function ETH_VAULT(address _log) public {\n        TransferLog = Log(_log);\n        locked = false;\n    }\n\n    function Deposit() public payable {\n        require(!locked);\n        if (msg.value >= MinDeposit) {\n            locked = true;\n            balances[msg.sender] += msg.value;\n            TransferLog.AddMessage(msg.sender, msg.value, \"Deposit\");\n            locked = false;\n        }\n    }\n\n    function CashOut(uint _am) public payable {\n        require(!locked);\n        require(_am <= balances[msg.sender]);\n        locked = true;\n        balances[msg.sender] -= _am;\n        if(msg.sender.call.value(_am)()){\n            TransferLog.AddMessage(msg.sender, _am, \"CashOut\");\n        }\n        locked = false;\n    }\n\n    function() public payable {}\n",
+          "message": "Contract 'ETH_VAULT' (patch_18.sol#3-40) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function ETH_VAULT(address _log) public {\n        TransferLog = Log(_log);\n        locked = false;",
+          "message": "Function 'ETH_VAULT.ETH_VAULT' (patch_18.sol#12-15) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function ETH_VAULT(address _log) public {",
+          "message": "Parameter '_log' of ETH_VAULT.ETH_VAULT (patch_18.sol#12) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function Deposit() public payable {\n        require(!locked);\n        if (msg.value >= MinDeposit) {\n            locked = true;\n            balances[msg.sender] += msg.value;\n            TransferLog.AddMessage(msg.sender, msg.value, \"Deposit\");\n            locked = false;\n        }",
+          "message": "Function 'ETH_VAULT.Deposit' (patch_18.sol#17-25) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": 36,
+          "vulnerability_code": "    function CashOut(uint _am) public payable {\n        require(!locked);\n        require(_am <= balances[msg.sender]);\n        locked = true;\n        balances[msg.sender] -= _am;\n        if(msg.sender.call.value(_am)()){\n            TransferLog.AddMessage(msg.sender, _am, \"CashOut\");\n        }\n        locked = false;",
+          "message": "Function 'ETH_VAULT.CashOut' (patch_18.sol#27-36) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function CashOut(uint _am) public payable {",
+          "message": "Parameter '_am' of ETH_VAULT.CashOut (patch_18.sol#27) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Log TransferLog;",
+          "message": "Variable 'ETH_VAULT.TransferLog' (patch_18.sol#6) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinDeposit = 1 ether;",
+          "message": "Variable 'ETH_VAULT.MinDeposit' (patch_18.sol#8) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": 59,
+          "vulnerability_code": "    function AddMessage(address _adr, uint _val, string _data) public {\n        Message memory LastMsg;\n        LastMsg.Sender = _adr;\n        LastMsg.Time = now;\n        LastMsg.Val = _val;\n        LastMsg.Data = _data;\n        History.push(LastMsg);",
+          "message": "Function 'Log.AddMessage' (patch_18.sol#52-59) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function AddMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of Log.AddMessage (patch_18.sol#52) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function AddMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of Log.AddMessage (patch_18.sol#52) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function AddMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of Log.AddMessage (patch_18.sol#52) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public History;",
+          "message": "Variable 'Log.History' (patch_18.sol#50) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}
