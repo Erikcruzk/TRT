@@ -1,0 +1,144 @@
+{
+  "smartbugs_completed": "[Errno 2] No such file or directory: '/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/reentrancy/analyzers_natural_language_results/0x561eac93c92360949ab1f1403323e6db345cbf31/candidate_patches/patch_17/smartbugs_results/mythril-0.23.15_20230513_2349/result.json'",
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_18"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function SetMinSum(uint _val) public {\n        require(!initialized);\n        MinSum = _val;",
+          "message": "BANK_SAFE.SetMinSum (patch_17.sol#12-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function SetLogFile(address _log) public {\n        require(!initialized);\n        Log = LogFile(_log);",
+          "message": "BANK_SAFE.SetLogFile (patch_17.sol#17-20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function initialize() public {\n        initialized = true;",
+          "message": "BANK_SAFE.initialize (patch_17.sol#22-24) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function collect(uint _am) public {\n        require(initialized);\n        require(balances[msg.sender] >= MinSum && balances[msg.sender] >= _am);\n        balances[msg.sender] -= _am;\n        msg.sender.transfer(_am);\n        Log.addMessage(msg.sender, _am, \"Collect\");",
+          "message": "BANK_SAFE.collect (patch_17.sol#31-37) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 41,
+          "vulnerability_code": "    function() public payable {\n        deposit();",
+          "message": "BANK_SAFE.fallback (patch_17.sol#39-41) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": 62,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {\n        lastMsg.sender = _adr;\n        lastMsg.time = now;\n        lastMsg.val = _val;\n        lastMsg.data = _data;\n        history.push(lastMsg);",
+          "message": "LogFile.addMessage (patch_17.sol#56-62) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_17.sol:\n\t- pragma solidity^0.4.19 (patch_17.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 42,
+          "vulnerability_code": "contract BANK_SAFE {\n    mapping(address => uint256) public balances;\n\n    uint public MinSum;\n\n    LogFile Log;\n\n    bool initialized;\n\n    function SetMinSum(uint _val) public {\n        require(!initialized);\n        MinSum = _val;\n    }\n\n    function SetLogFile(address _log) public {\n        require(!initialized);\n        Log = LogFile(_log);\n    }\n\n    function initialize() public {\n        initialized = true;\n    }\n\n    function deposit() public payable {\n        balances[msg.sender] += msg.value;\n        Log.addMessage(msg.sender, msg.value, \"Put\");\n    }\n\n    function collect(uint _am) public {\n        require(initialized);\n        require(balances[msg.sender] >= MinSum && balances[msg.sender] >= _am);\n        balances[msg.sender] -= _am;\n        msg.sender.transfer(_am);\n        Log.addMessage(msg.sender, _am, \"Collect\");\n    }\n\n    function() public payable {\n        deposit();\n    }",
+          "message": "Contract 'BANK_SAFE' (patch_17.sol#3-42) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function SetMinSum(uint _val) public {\n        require(!initialized);\n        MinSum = _val;",
+          "message": "Function 'BANK_SAFE.SetMinSum' (patch_17.sol#12-15) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function SetMinSum(uint _val) public {",
+          "message": "Parameter '_val' of BANK_SAFE.SetMinSum (patch_17.sol#12) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function SetLogFile(address _log) public {\n        require(!initialized);\n        Log = LogFile(_log);",
+          "message": "Function 'BANK_SAFE.SetLogFile' (patch_17.sol#17-20) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function SetLogFile(address _log) public {",
+          "message": "Parameter '_log' of BANK_SAFE.SetLogFile (patch_17.sol#17) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function collect(uint _am) public {",
+          "message": "Parameter '_am' of BANK_SAFE.collect (patch_17.sol#31) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum;",
+          "message": "Variable 'BANK_SAFE.MinSum' (patch_17.sol#6) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    LogFile Log;",
+          "message": "Variable 'BANK_SAFE.Log' (patch_17.sol#8) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of LogFile.addMessage (patch_17.sol#56) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of LogFile.addMessage (patch_17.sol#56) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of LogFile.addMessage (patch_17.sol#56) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

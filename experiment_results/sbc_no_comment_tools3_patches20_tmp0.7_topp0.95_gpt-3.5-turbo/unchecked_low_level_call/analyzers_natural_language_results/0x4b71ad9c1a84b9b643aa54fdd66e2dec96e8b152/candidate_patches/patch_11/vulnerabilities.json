@@ -1,0 +1,53 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "calls-loop",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(caddress.call(id, from, _tos[i], v)); // added require statement to check the return value of the call",
+          "message": "AirPort.transfer has external calls inside a loop:\n\t- require(bool)(caddress.call(id,from,_tos[i],v)) (patch_11.sol#9)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "    function transfer(address from, address caddress, address[] _tos, uint v) public returns (bool){\n        require(_tos.length > 0);\n        bytes4 id = bytes4(keccak256(\"transferFrom(address,address,uint256)\"));\n        for(uint i=0; i<_tos.length; i++){\n            require(caddress.call(id, from, _tos[i], v)); // added require statement to check the return value of the call\n        }\n        return true;",
+          "message": "AirPort.transfer (patch_11.sol#5-12) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "    function transfer(address from, address caddress, address[] _tos, uint v) public returns (bool){\n        require(_tos.length > 0);\n        bytes4 id = bytes4(keccak256(\"transferFrom(address,address,uint256)\"));\n        for(uint i=0; i<_tos.length; i++){\n            require(caddress.call(id, from, _tos[i], v)); // added require statement to check the return value of the call\n        }\n        return true;",
+          "message": "Low level call in AirPort.transfer (patch_11.sol#5-12):\n\t-require(bool)(caddress.call(id,from,_tos[i],v)) patch_11.sol#9\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address from, address caddress, address[] _tos, uint v) public returns (bool){",
+          "message": "Parameter '_tos' of AirPort.transfer (patch_11.sol#5) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

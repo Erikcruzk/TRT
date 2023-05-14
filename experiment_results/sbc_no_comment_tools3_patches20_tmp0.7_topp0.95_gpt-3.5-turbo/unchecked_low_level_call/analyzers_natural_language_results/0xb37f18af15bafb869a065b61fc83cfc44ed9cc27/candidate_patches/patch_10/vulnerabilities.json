@@ -1,0 +1,81 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_8"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function() public payable {\n        depositsCount++;",
+          "message": "SimpleWallet.fallback (patch_10.sol#12-14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function withdrawAll() public onlyOwner {\n        require(address(this).balance > 0);\n        owner.transfer(address(this).balance);",
+          "message": "SimpleWallet.withdrawAll (patch_10.sol#16-19) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function withdraw(uint _value) public onlyOwner {\n        require(address(this).balance >= _value);\n        owner.transfer(_value);",
+          "message": "SimpleWallet.withdraw (patch_10.sol#21-24) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function sendMoney(address _target, uint _value) public onlyOwner {\n        require(address(this).balance >= _value);\n        require(_target.call.value(_value)());",
+          "message": "SimpleWallet.sendMoney (patch_10.sol#26-29) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function sendMoney(address _target, uint _value) public onlyOwner {\n        require(address(this).balance >= _value);\n        require(_target.call.value(_value)());",
+          "message": "Low level call in SimpleWallet.sendMoney (patch_10.sol#26-29):\n\t-require(bool)(_target.call.value(_value)()) patch_10.sol#28\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdraw(uint _value) public onlyOwner {",
+          "message": "Parameter '_value' of SimpleWallet.withdraw (patch_10.sol#21) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function sendMoney(address _target, uint _value) public onlyOwner {",
+          "message": "Parameter '_target' of SimpleWallet.sendMoney (patch_10.sol#26) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function sendMoney(address _target, uint _value) public onlyOwner {",
+          "message": "Parameter '_value' of SimpleWallet.sendMoney (patch_10.sol#26) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_8"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 17,
+          "vulnerability_code": "    function getFreebie() public payable {\n        if (msg.value > 1 ether) {\n            owner.transfer(this.balance);\n            msg.sender.transfer(this.balance);\n        }",
+          "message": "WhaleGiveaway2.getFreebie (patch_12.sol#12-17) sends eth to arbitrary user\n\tDangerous calls:\n\t- owner.transfer(this.balance) (patch_12.sol#14)\n\t- msg.sender.transfer(this.balance) (patch_12.sol#15)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "WhaleGiveaway2.fallback (patch_12.sol#10) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 17,
+          "vulnerability_code": "    function getFreebie() public payable {\n        if (msg.value > 1 ether) {\n            owner.transfer(this.balance);\n            msg.sender.transfer(this.balance);\n        }",
+          "message": "WhaleGiveaway2.getFreebie (patch_12.sol#12-17) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 22,
+          "vulnerability_code": "    function withdraw() public payable {\n        require(msg.sender == owner);\n        owner.transfer(this.balance);",
+          "message": "WhaleGiveaway2.withdraw (patch_12.sol#19-22) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function command(address adr, bytes data) public payable {\n        require(msg.sender == owner);\n\n        require(adr.call.value(msg.value)(data));",
+          "message": "WhaleGiveaway2.command (patch_12.sol#24-28) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_12.sol:\n\t- pragma solidity^0.4.19 (patch_12.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function command(address adr, bytes data) public payable {\n        require(msg.sender == owner);\n\n        require(adr.call.value(msg.value)(data));",
+          "message": "Low level call in WhaleGiveaway2.command (patch_12.sol#24-28):\n\t-require(bool)(adr.call.value(msg.value)(data)) patch_12.sol#27\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 8,
+          "vulnerability_code": "    function WhaleGiveaway2() public {\n        owner = msg.sender;",
+          "message": "Function 'WhaleGiveaway2.WhaleGiveaway2' (patch_12.sol#6-8) is not in mixedCase\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

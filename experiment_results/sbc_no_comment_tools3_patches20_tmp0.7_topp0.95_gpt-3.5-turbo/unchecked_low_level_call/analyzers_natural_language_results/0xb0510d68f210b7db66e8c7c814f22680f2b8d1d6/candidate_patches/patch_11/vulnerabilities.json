@@ -1,0 +1,109 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_12"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public master = 0x5C035Bb4Cb7dacbfeE076A5e61AA39a10da2E956;",
+          "message": "Puppet.master should be constant (patch_11.sol#55)\nPuppet.target should be constant (patch_11.sol#54)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function withdraw() public {\n        require(msg.sender == owner);\n        owner.transfer(address(this).balance);",
+          "message": "Splitter.withdraw (patch_11.sol#21-24) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function getPuppetCount() public view returns (uint256 puppetCount) {\n        return puppets.length;",
+          "message": "Splitter.getPuppetCount (patch_11.sol#26-28) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": 33,
+          "vulnerability_code": "    function newPuppet() public {\n        require(msg.sender == owner);\n        puppets.push(new Puppet());",
+          "message": "Splitter.newPuppet (patch_11.sol#30-33) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": 38,
+          "vulnerability_code": "    function setExtra(uint256 _id, address _newExtra) public {\n        require(_newExtra != address(0));\n        extra[_id] = _newExtra;",
+          "message": "Splitter.setExtra (patch_11.sol#35-38) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": 48,
+          "vulnerability_code": "    function fundPuppets() public payable {\n        require(msg.sender == owner);\n        _share = msg.value / 4;\n\n        extra[0].transfer(_share);\n        extra[1].transfer(_share);\n        extra[2].transfer(_share);\n        extra[3].transfer(_share);",
+          "message": "Splitter.fundPuppets (patch_11.sol#40-48) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "Splitter.fallback (patch_11.sol#50) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": 60,
+          "vulnerability_code": "    function() public payable {\n        require(msg.sender != target);\n        target.transfer(msg.value);",
+          "message": "Puppet.fallback (patch_11.sol#57-60) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "    function withdraw() public {\n        require(msg.sender == master);\n        master.transfer(address(this).balance);",
+          "message": "Puppet.withdraw (patch_11.sol#62-65) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;",
+          "message": "Detected issues with version pragma in patch_11.sol:\n\t- pragma solidity^0.4.23 (patch_11.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setExtra(uint256 _id, address _newExtra) public {",
+          "message": "Parameter '_id' of Splitter.setExtra (patch_11.sol#35) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setExtra(uint256 _id, address _newExtra) public {",
+          "message": "Parameter '_newExtra' of Splitter.setExtra (patch_11.sol#35) is not in mixedCase\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

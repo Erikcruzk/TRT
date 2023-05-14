@@ -1,0 +1,16 @@
+pragma solidity ^0.4.23;
+
+contract KeepMyEther {
+    mapping(address => uint256) public balances;
+
+    function() public payable {
+        balances[msg.sender] += msg.value;
+    }
+
+    function withdraw() public {
+        require(balances[msg.sender] > 0);
+        uint256 amount = balances[msg.sender];
+        balances[msg.sender] = 0;
+        msg.sender.transfer(amount);
+    }
+}

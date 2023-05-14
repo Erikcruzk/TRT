@@ -1,0 +1,104 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_11"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function withdraw() public {\n        require(msg.sender == owner, \"Only owner can withdraw.\");\n        owner.transfer(address(this).balance);",
+          "message": "Splitter.withdraw (patch_7.sol#21-24) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function getPuppetCount() public view returns (uint256 puppetCount) {\n        return puppets.length;",
+          "message": "Splitter.getPuppetCount (patch_7.sol#26-28) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": 35,
+          "vulnerability_code": "    function newPuppet() public returns (address payable) {\n        require(msg.sender == owner, \"Only owner can add puppet.\");\n        address payable puppet = address(uint160(address(new Puppet())));\n        puppets.push(puppet);\n        return puppet;",
+          "message": "Splitter.newPuppet (patch_7.sol#30-35) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "    function setExtra(uint256 _id, address payable _newExtra) public {\n        require(_newExtra != address(0), \"New extra address cannot be zero.\");\n        extra[_id] = _newExtra;",
+          "message": "Splitter.setExtra (patch_7.sol#37-40) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": 57,
+          "vulnerability_code": "    function fundPuppets() public payable {\n        require(msg.sender == owner, \"Only owner can fund puppets.\");\n        _share = msg.value / 4;\n\n        (bool success0, ) = extra[0].call.value(_share).gas(800000)(\"\");\n        require(success0, \"Failed to send ether to extra[0].\");\n\n        (bool success1, ) = extra[1].call.value(_share).gas(800000)(\"\");\n        require(success1, \"Failed to send ether to extra[1].\");\n\n        (bool success2, ) = extra[2].call.value(_share).gas(800000)(\"\");\n        require(success2, \"Failed to send ether to extra[2].\");\n\n        (bool success3, ) = extra[3].call.value(_share).gas(800000)(\"\");\n        require(success3, \"Failed to send ether to extra[3].\");",
+          "message": "Splitter.fundPuppets (patch_7.sol#42-57) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": 81,
+          "vulnerability_code": "    function withdraw() public {\n        require(msg.sender == master[0], \"Only master can withdraw.\");\n        master[0].transfer(address(this).balance);",
+          "message": "Puppet.withdraw (patch_7.sol#78-81) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;",
+          "message": "Detected issues with version pragma in patch_7.sol:\n\t- pragma solidity^0.5.16 (patch_7.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": 57,
+          "vulnerability_code": "    function fundPuppets() public payable {\n        require(msg.sender == owner, \"Only owner can fund puppets.\");\n        _share = msg.value / 4;\n\n        (bool success0, ) = extra[0].call.value(_share).gas(800000)(\"\");\n        require(success0, \"Failed to send ether to extra[0].\");\n\n        (bool success1, ) = extra[1].call.value(_share).gas(800000)(\"\");\n        require(success1, \"Failed to send ether to extra[1].\");\n\n        (bool success2, ) = extra[2].call.value(_share).gas(800000)(\"\");\n        require(success2, \"Failed to send ether to extra[2].\");\n\n        (bool success3, ) = extra[3].call.value(_share).gas(800000)(\"\");\n        require(success3, \"Failed to send ether to extra[3].\");",
+          "message": "Low level call in Splitter.fundPuppets (patch_7.sol#42-57):\n\t-(success0) = extra[0].call.value(_share).gas(800000)() patch_7.sol#46\n\t-(success1) = extra[1].call.value(_share).gas(800000)() patch_7.sol#49\n\t-(success2) = extra[2].call.value(_share).gas(800000)() patch_7.sol#52\n\t-(success3) = extra[3].call.value(_share).gas(800000)() patch_7.sol#55\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": 76,
+          "vulnerability_code": "    function() external payable {\n        if (msg.sender != target[0]) {\n            (bool success, ) = target[0].call.value(msg.value).gas(600000)(\"\");\n            require(success, \"Failed to send ether to target[0].\");\n        }",
+          "message": "Low level call in Puppet.fallback (patch_7.sol#71-76):\n\t-(success) = target[0].call.value(msg.value).gas(600000)() patch_7.sol#73\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setExtra(uint256 _id, address payable _newExtra) public {",
+          "message": "Parameter '_id' of Splitter.setExtra (patch_7.sol#37) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setExtra(uint256 _id, address payable _newExtra) public {",
+          "message": "Parameter '_newExtra' of Splitter.setExtra (patch_7.sol#37) is not in mixedCase\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

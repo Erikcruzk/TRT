@@ -1,0 +1,95 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_10"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "timestamp",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": 101,
+          "vulnerability_code": "    function claimThrone(string name) public payable {\n        uint valuePaid = msg.value;\n\n        require(valuePaid >= currentClaimPrice, \"Value paid is less than the current claim price.\");\n\n        if (valuePaid > currentClaimPrice) {\n            uint excessPaid = valuePaid - currentClaimPrice;\n            msg.sender.transfer(excessPaid);\n            valuePaid = currentClaimPrice;\n        }\n\n        uint wizardCommission = (valuePaid * wizardCommissionFractionNum) /\n            wizardCommissionFractionDen;\n\n        uint compensation = valuePaid - wizardCommission;\n\n        if (currentMonarch.etherAddress != wizardAddress) {\n            currentMonarch.etherAddress.transfer(compensation);\n        } \n\n        pastMonarchs.push(currentMonarch);\n        currentMonarch = Monarch(msg.sender, name, valuePaid, block.timestamp);\n\n        uint rawNewClaimPrice = (currentClaimPrice * claimPriceAdjustNum) /\n            claimPriceAdjustDen;\n\n        if (rawNewClaimPrice < 10 finney) {\n            currentClaimPrice = rawNewClaimPrice;\n        } else if (rawNewClaimPrice < 100 finney) {\n            currentClaimPrice = 100 szabo * (rawNewClaimPrice / 100 szabo);\n        } else if (rawNewClaimPrice < 1 ether) {\n            currentClaimPrice = 1 finney * (rawNewClaimPrice / 1 finney);\n        } else if (rawNewClaimPrice < 10 ether) {\n            currentClaimPrice = 10 finney * (rawNewClaimPrice / 10 finney);\n        } else if (rawNewClaimPrice < 100 ether) {\n            currentClaimPrice = 100 finney * (rawNewClaimPrice / 100 finney);\n        } else if (rawNewClaimPrice < 1000 ether) {\n            currentClaimPrice = 1 ether * (rawNewClaimPrice / 1 ether);\n        } else if (rawNewClaimPrice < 10000 ether) {\n            currentClaimPrice = 10 ether * (rawNewClaimPrice / 10 ether);\n        } else {\n            currentClaimPrice = rawNewClaimPrice;\n        }\n\n        emit ThroneClaimed(\n            currentMonarch.etherAddress,\n            currentMonarch.name,\n            currentClaimPrice\n        );",
+          "message": "KingOfTheEtherThrone.claimThrone (patch_13.sol#52-101) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- currentMonarch.etherAddress != wizardAddress (patch_13.sol#68-70)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "    function numberOfMonarchs() public view returns (uint n) {\n        return pastMonarchs.length;",
+          "message": "KingOfTheEtherThrone.numberOfMonarchs (patch_13.sol#38-40) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": 50,
+          "vulnerability_code": "    function() public payable {\n        claimThrone(string(msg.data));",
+          "message": "KingOfTheEtherThrone.fallback (patch_13.sol#48-50) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 103,
+          "vulnerability_to_line": 105,
+          "vulnerability_code": "    function sweepCommission(uint amount) public onlywizard {\n        wizardAddress.transfer(amount);",
+          "message": "KingOfTheEtherThrone.sweepCommission (patch_13.sol#103-105) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 107,
+          "vulnerability_to_line": 109,
+          "vulnerability_code": "    function transferOwnership(address newOwner) public onlywizard {\n        wizardAddress = newOwner;",
+          "message": "KingOfTheEtherThrone.transferOwnership (patch_13.sol#107-109) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public constant startingClaimPrice = 100 finney;",
+          "message": "Constant 'KingOfTheEtherThrone.startingClaimPrice' (patch_13.sol#18) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public constant claimPriceAdjustNum = 3;",
+          "message": "Constant 'KingOfTheEtherThrone.claimPriceAdjustNum' (patch_13.sol#20) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public constant claimPriceAdjustDen = 2;",
+          "message": "Constant 'KingOfTheEtherThrone.claimPriceAdjustDen' (patch_13.sol#21) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public constant wizardCommissionFractionNum = 1;",
+          "message": "Constant 'KingOfTheEtherThrone.wizardCommissionFractionNum' (patch_13.sol#23) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public constant wizardCommissionFractionDen = 100;",
+          "message": "Constant 'KingOfTheEtherThrone.wizardCommissionFractionDen' (patch_13.sol#24) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        }
+      ]
+    }
+  }
+}

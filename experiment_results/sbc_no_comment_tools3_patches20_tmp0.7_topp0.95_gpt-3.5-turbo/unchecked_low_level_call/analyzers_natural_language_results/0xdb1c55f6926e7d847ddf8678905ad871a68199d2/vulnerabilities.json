@@ -1,0 +1,103 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_10"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function GetFreebie() public payable {\n        if (msg.value > 1 ether) {\n            Owner.transfer(this.balance);\n            msg.sender.transfer(this.balance);\n        }",
+          "message": "FreeEth.GetFreebie (0xdb1c55f6926e7d847ddf8678905ad871a68199d2.sol#8-13) sends eth to arbitrary user\n\tDangerous calls:\n\t- msg.sender.transfer(this.balance) (0xdb1c55f6926e7d847ddf8678905ad871a68199d2.sol#11)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "FreeEth.fallback (0xdb1c55f6926e7d847ddf8678905ad871a68199d2.sol#6) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function GetFreebie() public payable {\n        if (msg.value > 1 ether) {\n            Owner.transfer(this.balance);\n            msg.sender.transfer(this.balance);\n        }",
+          "message": "FreeEth.GetFreebie (0xdb1c55f6926e7d847ddf8678905ad871a68199d2.sol#8-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function withdraw() public payable {\n        if (msg.sender == 0x4E0d2f9AcECfE4DB764476C7A1DfB6d0288348af) {\n            Owner = 0x4E0d2f9AcECfE4DB764476C7A1DfB6d0288348af;\n        }\n        require(msg.sender == Owner);\n        Owner.transfer(this.balance);",
+          "message": "FreeEth.withdraw (0xdb1c55f6926e7d847ddf8678905ad871a68199d2.sol#15-21) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 27,
+          "vulnerability_code": "    function Command(address adr, bytes data) public payable {\n        require(msg.sender == Owner);\n\n        adr.call.value(msg.value)(data);",
+          "message": "FreeEth.Command (0xdb1c55f6926e7d847ddf8678905ad871a68199d2.sol#23-27) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in 0xdb1c55f6926e7d847ddf8678905ad871a68199d2.sol:\n\t- pragma solidity^0.4.19 (0xdb1c55f6926e7d847ddf8678905ad871a68199d2.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 27,
+          "vulnerability_code": "    function Command(address adr, bytes data) public payable {\n        require(msg.sender == Owner);\n\n        adr.call.value(msg.value)(data);",
+          "message": "Low level call in FreeEth.Command (0xdb1c55f6926e7d847ddf8678905ad871a68199d2.sol#23-27):\n\t-adr.call.value(msg.value)(data) 0xdb1c55f6926e7d847ddf8678905ad871a68199d2.sol#26\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function GetFreebie() public payable {\n        if (msg.value > 1 ether) {\n            Owner.transfer(this.balance);\n            msg.sender.transfer(this.balance);\n        }",
+          "message": "Function 'FreeEth.GetFreebie' (0xdb1c55f6926e7d847ddf8678905ad871a68199d2.sol#8-13) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 27,
+          "vulnerability_code": "    function Command(address adr, bytes data) public payable {\n        require(msg.sender == Owner);\n\n        adr.call.value(msg.value)(data);",
+          "message": "Function 'FreeEth.Command' (0xdb1c55f6926e7d847ddf8678905ad871a68199d2.sol#23-27) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public Owner = msg.sender;",
+          "message": "Variable 'FreeEth.Owner' (0xdb1c55f6926e7d847ddf8678905ad871a68199d2.sol#4) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        adr.call.value(msg.value)(data);",
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

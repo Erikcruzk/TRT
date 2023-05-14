@@ -1,0 +1,95 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_10"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": 106,
+          "vulnerability_code": "    function cash(uint roundIndex, uint subpotIndex) public {\n        uint subpotsCount = getSubpotsCount(roundIndex);\n\n        if (subpotIndex >= subpotsCount) return;\n\n        uint decisionBlockNumber = getDecisionBlockNumber(\n            roundIndex,\n            subpotIndex\n        );\n\n        if (decisionBlockNumber > block.number) return;\n\n        if (rounds[roundIndex].isCashed[subpotIndex]) return;\n\n        address winner = calculateWinner(roundIndex, subpotIndex);\n        uint subpot = getSubpot(roundIndex);\n\n        winner.transfer(subpot);\n\n        rounds[roundIndex].isCashed[subpotIndex] = true;",
+          "message": "Lotto.cash (patch_9.sol#86-106) sends eth to arbitrary user\n\tDangerous calls:\n\t- winner.transfer(subpot) (patch_9.sol#103)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public blockReward = 5000000000000000000;",
+          "message": "Lotto.blockReward should be constant (patch_9.sol#6)\nLotto.blocksPerRound should be constant (patch_9.sol#4)\nLotto.ticketPrice should be constant (patch_9.sol#5)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 10,
+          "vulnerability_code": "    function getBlocksPerRound() public view returns (uint) {\n        return blocksPerRound;",
+          "message": "Lotto.getBlocksPerRound (patch_9.sol#8-10) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function getTicketPrice() public view returns (uint) {\n        return ticketPrice;",
+          "message": "Lotto.getTicketPrice (patch_9.sol#12-14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 34,
+          "vulnerability_code": "    function getIsCashed(\n        uint roundIndex,\n        uint subpotIndex\n    ) public view returns (bool) {\n        return rounds[roundIndex].isCashed[subpotIndex];",
+          "message": "Lotto.getIsCashed (patch_9.sol#29-34) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": 106,
+          "vulnerability_code": "    function cash(uint roundIndex, uint subpotIndex) public {\n        uint subpotsCount = getSubpotsCount(roundIndex);\n\n        if (subpotIndex >= subpotsCount) return;\n\n        uint decisionBlockNumber = getDecisionBlockNumber(\n            roundIndex,\n            subpotIndex\n        );\n\n        if (decisionBlockNumber > block.number) return;\n\n        if (rounds[roundIndex].isCashed[subpotIndex]) return;\n\n        address winner = calculateWinner(roundIndex, subpotIndex);\n        uint subpot = getSubpot(roundIndex);\n\n        winner.transfer(subpot);\n\n        rounds[roundIndex].isCashed[subpotIndex] = true;",
+          "message": "Lotto.cash (patch_9.sol#86-106) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": 113,
+          "vulnerability_code": "    function getBuyers(\n        uint roundIndex,\n        address buyer\n    ) public view returns (address[]) {\n        return rounds[roundIndex].buyers;",
+          "message": "Lotto.getBuyers (patch_9.sol#108-113) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": 120,
+          "vulnerability_code": "    function getTicketsCountByBuyer(\n        uint roundIndex,\n        address buyer\n    ) public view returns (uint) {\n        return rounds[roundIndex].ticketsCountByBuyer[buyer];",
+          "message": "Lotto.getTicketsCountByBuyer (patch_9.sol#115-120) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 122,
+          "vulnerability_to_line": 124,
+          "vulnerability_code": "    function getPot(uint roundIndex) public view returns (uint) {\n        return rounds[roundIndex].pot;",
+          "message": "Lotto.getPot (patch_9.sol#122-124) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 126,
+          "vulnerability_to_line": 147,
+          "vulnerability_code": "    function() public payable {\n        uint roundIndex = getRoundIndex();\n        uint value = msg.value - (msg.value % ticketPrice);\n\n        if (value == 0) return;\n\n        if (value < msg.value) {\n            msg.sender.transfer(msg.value - value);\n        }\n\n        uint ticketsCount = value / ticketPrice;\n        rounds[roundIndex].ticketsCount += ticketsCount;\n\n        if (rounds[roundIndex].ticketsCountByBuyer[msg.sender] == 0) {\n            rounds[roundIndex].buyers.push(msg.sender);\n        }\n\n        rounds[roundIndex].ticketsCountByBuyer[msg.sender] += ticketsCount;\n        rounds[roundIndex].ticketsCount += ticketsCount;\n\n        rounds[roundIndex].pot += value;",
+          "message": "Lotto.fallback (patch_9.sol#126-147) should be declared external\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

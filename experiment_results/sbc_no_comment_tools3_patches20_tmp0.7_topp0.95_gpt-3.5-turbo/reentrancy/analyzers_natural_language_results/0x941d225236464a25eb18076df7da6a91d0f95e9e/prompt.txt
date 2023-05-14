@@ -1,0 +1,94 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.19;
+
+contract ETH_FUND {
+    mapping(address => uint) public balances;
+
+    uint public MinDeposit = 1 ether;
+
+    Log TransferLog;
+
+    uint lastBlock;
+
+    function ETH_FUND(address _log) public {
+        TransferLog = Log(_log);
+    }
+
+    function Deposit() public payable {
+        if (msg.value > MinDeposit) {
+            balances[msg.sender] += msg.value;
+            TransferLog.AddMessage(msg.sender, msg.value, "Deposit");
+            lastBlock = block.number;
+        }
+    }
+
+    function CashOut(uint _am) public payable {
+        if (_am <= balances[msg.sender] && block.number > lastBlock) {
+            if (msg.sender.call.value(_am)()) {
+                balances[msg.sender] -= _am;
+                TransferLog.AddMessage(msg.sender, _am, "CashOut");
+            }
+        }
+    }
+
+    function() public payable {}
+}
+
+contract Log {
+    struct Message {
+        address Sender;
+        string Data;
+        uint Val;
+        uint Time;
+    }
+
+    Message[] public History;
+
+    Message LastMsg;
+
+    function AddMessage(address _adr, uint _val, string _data) public {
+        LastMsg.Sender = _adr;
+        LastMsg.Time = now;
+        LastMsg.Val = _val;
+        LastMsg.Data = _data;
+        History.push(LastMsg);
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+/// 1. Slither Analysis Results
+/// 1.1. Vulnerability: reentrancy at Line 24-31:
+    function CashOut(uint _am) public payable {
+        if (_am <= balances[msg.sender] && block.number > lastBlock) {
+            if (msg.sender.call.value(_am)()) {
+                balances[msg.sender] -= _am;
+                TransferLog.AddMessage(msg.sender, _am, "CashOut");
+            }
+        }
+///  Message:Reentrancy in ETH_FUND.CashOut (0x941d225236464a25eb18076df7da6a91d0f95e9e.sol#24-31):
+///   	External calls:
+///   	- msg.sender.call.value(_am)() (0x941d225236464a25eb18076df7da6a91d0f95e9e.sol#26-29)
+///   	State variables written after the call(s):
+///   	- balances (0x941d225236464a25eb18076df7da6a91d0f95e9e.sol#27)
+/// 1.2. Vulnerability: reentrancy at Line 16-22:
+    function Deposit() public payable {
+        if (msg.value > MinDeposit) {
+            balances[msg.sender] += msg.value;
+            TransferLog.AddMessage(msg.sender, msg.value, "Deposit");
+            lastBlock = block.number;
+        }
+///  Message:Reentrancy in ETH_FUND.Deposit (0x941d225236464a25eb18076df7da6a91d0f95e9e.sol#16-22):
+///   	External calls:
+///   	- TransferLog.AddMessage(msg.sender,msg.value,Deposit) (0x941d225236464a25eb18076df7da6a91d0f95e9e.sol#19)
+///   	State variables written after the call(s):
+///   	- lastBlock (0x941d225236464a25eb18076df7da6a91d0f95e9e.sol#20)
+
+
+/// 2. Oyente Analysis Results
+/// 2.1. Vulnerability: reentrancy at Line 26:
+            if (msg.sender.call.value(_am)()) {
+
+
+
+/// Repaired Solidity Smart Contract

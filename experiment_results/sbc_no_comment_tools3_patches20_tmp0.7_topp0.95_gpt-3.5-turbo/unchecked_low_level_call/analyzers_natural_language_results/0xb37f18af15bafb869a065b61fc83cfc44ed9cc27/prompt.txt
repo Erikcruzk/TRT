@@ -1,0 +1,41 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.24;
+
+contract SimpleWallet {
+    address public owner = msg.sender;
+    uint public depositsCount;
+
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+
+    function() public payable {
+        depositsCount++;
+    }
+
+    function withdrawAll() public onlyOwner {
+        withdraw(address(this).balance);
+    }
+
+    function withdraw(uint _value) public onlyOwner {
+        msg.sender.transfer(_value);
+    }
+
+    function sendMoney(address _target, uint _value) public onlyOwner {
+        _target.call.value(_value)();
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+/// 1. Slither Analysis Results
+/// 1.1. Vulnerability: unchecked_low_level_call at Line 24-26:
+    function sendMoney(address _target, uint _value) public onlyOwner {
+        _target.call.value(_value)();
+///  Message:Low level call in SimpleWallet.sendMoney (0xb37f18af15bafb869a065b61fc83cfc44ed9cc27.sol#24-26):
+///   	-_target.call.value(_value)() 0xb37f18af15bafb869a065b61fc83cfc44ed9cc27.sol#25
+
+
+
+/// Repaired Solidity Smart Contract

@@ -1,0 +1,67 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "MultiplicatorX3.fallback (patch_6.sol#6) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 11,
+          "vulnerability_code": "    function withdraw() public {\n        require(msg.sender == owner);\n        owner.transfer(this.balance);",
+          "message": "MultiplicatorX3.withdraw (patch_6.sol#8-11) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 17,
+          "vulnerability_code": "    function command(address adr, bytes data) public payable {\n        require(msg.sender == owner);\n\n        require(adr.call.value(msg.value)(data));",
+          "message": "MultiplicatorX3.command (patch_6.sol#13-17) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function multiplicate(address adr) public payable {\n        if (msg.value >= this.balance) {\n            require(adr.send(this.balance + msg.value));\n        }",
+          "message": "MultiplicatorX3.multiplicate (patch_6.sol#19-23) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;",
+          "message": "Detected issues with version pragma in patch_6.sol:\n\t- pragma solidity^0.4.18 (patch_6.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 17,
+          "vulnerability_code": "    function command(address adr, bytes data) public payable {\n        require(msg.sender == owner);\n\n        require(adr.call.value(msg.value)(data));",
+          "message": "Low level call in MultiplicatorX3.command (patch_6.sol#13-17):\n\t-require(bool)(adr.call.value(msg.value)(data)) patch_6.sol#16\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

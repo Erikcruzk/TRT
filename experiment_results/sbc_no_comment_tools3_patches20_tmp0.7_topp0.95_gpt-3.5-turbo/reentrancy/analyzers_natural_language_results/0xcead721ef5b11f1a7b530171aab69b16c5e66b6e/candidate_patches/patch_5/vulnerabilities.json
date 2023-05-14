@@ -1,0 +1,131 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Re-Entrancy Vulnerability",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        msg.sender.transfer(_am);",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_14"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "shadowing-builtin",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": 59,
+          "vulnerability_code": "        Message memory msg = Message({\n            Sender: _adr,\n            Time: now,\n            Val: _val,\n            Data: _data",
+          "message": "Log.addMessage.msg (local variable @ patch_5.sol#54-59) shadows built-in symbol \"msg\"\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum = 1 ether;",
+          "message": "WALLET.MinSum should be constant (patch_5.sol#13)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": 36,
+          "vulnerability_code": "    function collect(uint _am) public {\n        Holder storage acc = Acc[msg.sender];\n        require(acc.balance >= MinSum, \"Balance must be greater than MinSum.\");\n        require(acc.balance >= _am, \"Balance must be greater than amount to collect.\");\n        require(now > acc.unlockTime, \"Unlock time has not been reached yet.\");\n        require(_am > 0, \"Amount must be greater than 0.\");\n        acc.balance -= _am;\n        msg.sender.transfer(_am);\n        LogFile.addMessage(msg.sender, _am, \"Collect\");",
+          "message": "WALLET.collect (patch_5.sol#27-36) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "    function() public payable {\n        put(0);",
+          "message": "WALLET.fallback (patch_5.sol#38-40) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": 61,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {\n        Message memory msg = Message({\n            Sender: _adr,\n            Time: now,\n            Val: _val,\n            Data: _data\n        });\n        History.push(msg);",
+          "message": "Log.addMessage (patch_5.sol#53-61) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function put(uint _unlockTime) public payable {",
+          "message": "Parameter '_unlockTime' of WALLET.put (patch_5.sol#19) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function collect(uint _am) public {",
+          "message": "Parameter '_am' of WALLET.collect (patch_5.sol#27) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => Holder) public Acc;",
+          "message": "Variable 'WALLET.Acc' (patch_5.sol#9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Log LogFile;",
+          "message": "Variable 'WALLET.LogFile' (patch_5.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum = 1 ether;",
+          "message": "Variable 'WALLET.MinSum' (patch_5.sol#13) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of Log.addMessage (patch_5.sol#53) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of Log.addMessage (patch_5.sol#53) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of Log.addMessage (patch_5.sol#53) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public History;",
+          "message": "Variable 'Log.History' (patch_5.sol#51) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}

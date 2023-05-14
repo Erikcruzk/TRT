@@ -1,0 +1,145 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_16"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "incorrect-equality",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": 100,
+          "vulnerability_code": "    function play() public isOpenToPublic onlyRealPeople onlyPlayers {\n        uint256 blockNumber = timestamps[msg.sender];\n        if (blockNumber < block.number) {\n            timestamps[msg.sender] = 0;\n            uint256 wagerAmount = wagers[msg.sender];\n            wagers[msg.sender] = 0;\n\n            uint256 winningNumber = (uint256(\n                keccak256(abi.encodePacked(blockhash(blockNumber), msg.sender, randomSeed))\n            ) % difficulty) + 1;\n            randomSeed = winningNumber;\n\n            if (winningNumber == difficulty / 2) {\n                payout(msg.sender, wagerAmount);\n            } else {\n                loseWager(msg.sender, wagerAmount);\n            }\n        } else {\n            revert();\n        }",
+          "message": "PoCGame.play (patch_6.sol#80-100) uses a dangerous strict equality:\n\t- winningNumber == difficulty / 2\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": 54,
+          "vulnerability_code": "    function openToThePublic() public onlyOwner {\n        openToPublic = true;",
+          "message": "PoCGame.openToThePublic (patch_6.sol#52-54) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": 60,
+          "vulnerability_code": "    function adjustBetAmounts(uint256 amount) public onlyOwner {\n        betLimit = amount;\n\n        emit BetLimitChanged(betLimit);",
+          "message": "PoCGame.adjustBetAmounts (patch_6.sol#56-60) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": 66,
+          "vulnerability_code": "    function adjustDifficulty(uint256 amount) public onlyOwner {\n        difficulty = amount;\n\n        emit DifficultyChanged(difficulty);",
+          "message": "PoCGame.adjustDifficulty (patch_6.sol#62-66) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 68,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "PoCGame.fallback (patch_6.sol#68) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": 78,
+          "vulnerability_code": "    function wager() public payable isOpenToPublic onlyRealPeople {\n        require(msg.value == betLimit);\n\n        require(wagers[msg.sender] == 0);\n\n        timestamps[msg.sender] = block.number;\n        wagers[msg.sender] = msg.value;\n        emit Wager(msg.value, msg.sender);",
+          "message": "PoCGame.wager (patch_6.sol#70-78) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": 100,
+          "vulnerability_code": "    function play() public isOpenToPublic onlyRealPeople onlyPlayers {\n        uint256 blockNumber = timestamps[msg.sender];\n        if (blockNumber < block.number) {\n            timestamps[msg.sender] = 0;\n            uint256 wagerAmount = wagers[msg.sender];\n            wagers[msg.sender] = 0;\n\n            uint256 winningNumber = (uint256(\n                keccak256(abi.encodePacked(blockhash(blockNumber), msg.sender, randomSeed))\n            ) % difficulty) + 1;\n            randomSeed = winningNumber;\n\n            if (winningNumber == difficulty / 2) {\n                payout(msg.sender, wagerAmount);\n            } else {\n                loseWager(msg.sender, wagerAmount);\n            }\n        } else {\n            revert();\n        }",
+          "message": "PoCGame.play (patch_6.sol#80-100) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": 104,
+          "vulnerability_code": "    function donate() public payable isOpenToPublic {\n        donateToWhale(msg.value);",
+          "message": "PoCGame.donate (patch_6.sol#102-104) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 123,
+          "vulnerability_to_line": 125,
+          "vulnerability_code": "    function ethBalance() public view returns (uint256) {\n        return address(this).balance;",
+          "message": "PoCGame.ethBalance (patch_6.sol#123-125) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 127,
+          "vulnerability_to_line": 129,
+          "vulnerability_code": "    function currentDifficulty() public view returns (uint256) {\n        return difficulty;",
+          "message": "PoCGame.currentDifficulty (patch_6.sol#127-129) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 131,
+          "vulnerability_to_line": 133,
+          "vulnerability_code": "    function currentBetLimit() public view returns (uint256) {\n        return betLimit;",
+          "message": "PoCGame.currentBetLimit (patch_6.sol#131-133) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 135,
+          "vulnerability_to_line": 141,
+          "vulnerability_code": "    function hasPlayerWagered(address player) public view returns (bool) {\n        if (wagers[player] > 0) {\n            return true;\n        } else {\n            return false;\n        }",
+          "message": "PoCGame.hasPlayerWagered (patch_6.sol#135-141) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 143,
+          "vulnerability_to_line": 145,
+          "vulnerability_code": "    function winnersPot() public view returns (uint256) {\n        return address(this).balance / 2;",
+          "message": "PoCGame.winnersPot (patch_6.sol#143-145) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 147,
+          "vulnerability_to_line": 153,
+          "vulnerability_code": "    function transferAnyERC20Token(\n        address tokenAddress,\n        address tokenOwner,\n        uint tokens\n    ) public onlyOwner returns (bool success) {\n        return ERC20Interface(tokenAddress).transfer(tokenOwner, tokens);",
+          "message": "PoCGame.transferAnyERC20Token (patch_6.sol#147-153) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 157,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address to, uint256 tokens) public returns (bool success);",
+          "message": "ERC20Interface.transfer (patch_6.sol#157) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.21;",
+          "message": "Detected issues with version pragma in patch_6.sol:\n\t- pragma solidity^0.4.21 (patch_6.sol#1): it allows old versions\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                keccak256(abi.encodePacked(blockhash(blockNumber), msg.sender, randomSeed))",
+          "message": null
+        }
+      ]
+    }
+  }
+}
