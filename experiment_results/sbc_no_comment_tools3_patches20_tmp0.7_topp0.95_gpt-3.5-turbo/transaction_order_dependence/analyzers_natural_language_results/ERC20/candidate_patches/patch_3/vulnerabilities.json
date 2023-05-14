@@ -1,0 +1,74 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(uint256 totalSupply) public {",
+          "message": "ERC20.constructor.totalSupply (local variable @ patch_3.sol#47) shadows:\n\t- ERC20.totalSupply (function @ patch_3.sol#52-54)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": 54,
+          "vulnerability_code": "    function totalSupply() public view returns (uint256) {\n        return _totalSupply;",
+          "message": "ERC20.totalSupply (patch_3.sol#52-54) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": 58,
+          "vulnerability_code": "    function balanceOf(address owner) public view returns (uint256) {\n        return _balances[owner];",
+          "message": "ERC20.balanceOf (patch_3.sol#56-58) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": 62,
+          "vulnerability_code": "    function allowance(address owner, address spender) public view returns (uint256) {\n        return _allowed[owner][spender];",
+          "message": "ERC20.allowance (patch_3.sol#60-62) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 64,
+          "vulnerability_to_line": 73,
+          "vulnerability_code": "    function transfer(address to, uint256 value) public returns (bool) {\n        require(to != address(0));\n        require(value <= _balances[msg.sender]);\n\n        _balances[msg.sender] = _balances[msg.sender].sub(value);\n        _balances[to] = _balances[to].add(value);\n        emit Transfer(msg.sender, to, value);\n\n        return true;",
+          "message": "ERC20.transfer (patch_3.sol#64-73) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 75,
+          "vulnerability_to_line": 82,
+          "vulnerability_code": "    function approve(address spender, uint256 value) public returns (bool) {\n        require(spender != address(0));\n\n        _allowed[msg.sender][spender] = value;\n        emit Approval(msg.sender, spender, value);\n\n        return true;",
+          "message": "ERC20.approve (patch_3.sol#75-82) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 84,
+          "vulnerability_to_line": 96,
+          "vulnerability_code": "    function transferFrom(address from, address to, uint256 value) public returns (bool) {\n        require(to != address(0));\n        require(value <= _balances[from]);\n        require(value <= _allowed[from][msg.sender]);\n\n        _balances[from] = _balances[from].sub(value);\n        _balances[to] = _balances[to].add(value);\n        _allowed[from][msg.sender] = _allowed[from][msg.sender].sub(value);\n\n        emit Transfer(from, to, value);\n\n        return true;",
+          "message": "ERC20.transferFrom (patch_3.sol#84-96) should be declared external\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

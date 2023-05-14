@@ -1,0 +1,66 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function solve(string solution) public {",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "    function solve(string solution) public {\n        require(hash == sha3(solution));\n        msg.sender.transfer(1000 ether);",
+          "message": "FindThisHash.solve (FindThisHash.sol#9-12) sends eth to arbitrary user\n\tDangerous calls:\n\t- msg.sender.transfer(1000000000000000000000) (FindThisHash.sol#11)\n"
+        },
+        {
+          "name": "deprecated-standards",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(hash == sha3(solution));",
+          "message": "Deprecated standard detected @ FindThisHash.sol#10:\n\t- Usage of \"sha3()\" should be replaced with \"keccak256()\"\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "    function solve(string solution) public {\n        require(hash == sha3(solution));\n        msg.sender.transfer(1000 ether);",
+          "message": "FindThisHash.solve (FindThisHash.sol#9-12) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.22;",
+          "message": "Detected issues with version pragma in FindThisHash.sol:\n\t- pragma solidity^0.4.22 (FindThisHash.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": 5,
+          "vulnerability_code": "    bytes32 public constant hash =",
+          "message": "Constant 'FindThisHash.hash' (FindThisHash.sol#4-5) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        }
+      ]
+    }
+  }
+}
