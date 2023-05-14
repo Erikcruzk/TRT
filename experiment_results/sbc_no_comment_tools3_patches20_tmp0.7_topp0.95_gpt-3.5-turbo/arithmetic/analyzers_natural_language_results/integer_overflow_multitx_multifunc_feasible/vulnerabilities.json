@@ -1,0 +1,52 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function init() public {\n        initialized = 1;",
+          "message": "IntegerOverflowMultiTxMultiFuncFeasible.init (integer_overflow_multitx_multifunc_feasible.sol#7-9) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 17,
+          "vulnerability_code": "    function run(uint256 input) {\n        if (initialized == 0) {\n            return;\n        }\n\n        count -= input;",
+          "message": "IntegerOverflowMultiTxMultiFuncFeasible.run (integer_overflow_multitx_multifunc_feasible.sol#11-17) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;",
+          "message": "Detected issues with version pragma in integer_overflow_multitx_multifunc_feasible.sol:\n\t- pragma solidity^0.4.23 (integer_overflow_multitx_multifunc_feasible.sol#1): it allows old versions\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        count -= input;",
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        }
+      ]
+    }
+  }
+}

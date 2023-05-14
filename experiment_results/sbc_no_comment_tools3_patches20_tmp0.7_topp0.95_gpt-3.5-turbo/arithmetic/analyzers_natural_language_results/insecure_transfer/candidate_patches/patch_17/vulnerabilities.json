@@ -1,0 +1,53 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "erc20-interface",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "contract IntegerOverflowAdd {\n    mapping(address => uint256) public balanceOf;\n\n    function transfer(address _to, uint256 _value) public {\n        require(balanceOf[msg.sender] >= _value);\n        balanceOf[msg.sender] -= _value;\n\n        require(balanceOf[_to] + _value > balanceOf[_to]); // check for potential overflow\n        balanceOf[_to] += _value;\n    }",
+          "message": "IntegerOverflowAdd (patch_17.sol#3-13) has incorrect ERC20 function interface(s):\n\t-transfer (patch_17.sol#6-12)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public {\n        require(balanceOf[msg.sender] >= _value);\n        balanceOf[msg.sender] -= _value;\n\n        require(balanceOf[_to] + _value > balanceOf[_to]); // check for potential overflow\n        balanceOf[_to] += _value;",
+          "message": "IntegerOverflowAdd.transfer (patch_17.sol#6-12) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public {",
+          "message": "Parameter '_to' of IntegerOverflowAdd.transfer (patch_17.sol#6) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public {",
+          "message": "Parameter '_value' of IntegerOverflowAdd.transfer (patch_17.sol#6) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

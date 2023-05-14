@@ -1,0 +1,42 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.23;
+
+contract IntegerOverflowSingleTransaction {
+    uint public count = 1;
+
+    function overflowaddtostate(uint256 input) public {
+        count += input;
+    }
+
+    function overflowmultostate(uint256 input) public {
+        count *= input;
+    }
+
+    function underflowtostate(uint256 input) public {
+        count -= input;
+    }
+
+    function overflowlocalonly(uint256 input) public {
+        uint res = count + input;
+    }
+
+    function overflowmulocalonly(uint256 input) public {
+        uint res = count * input;
+    }
+
+    function underflowlocalonly(uint256 input) public {
+        uint res = count - input;
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+/// 1. Oyente Analysis Results
+/// 1.1. Vulnerability: arithmetic at Line 19:
+        uint res = count + input;
+/// 1.2. Vulnerability: arithmetic at Line 15:
+        count -= input;
+
+
+
+/// Repaired Solidity Smart Contract

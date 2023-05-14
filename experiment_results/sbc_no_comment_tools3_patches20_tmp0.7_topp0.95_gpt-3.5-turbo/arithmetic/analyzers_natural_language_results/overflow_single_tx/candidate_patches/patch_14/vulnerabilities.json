@@ -1,0 +1,82 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return count - input;",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function overflowAddToState(uint256 input) public {\n        require(count + input > count, \"Integer overflow detected\");\n        count += input;",
+          "message": "IntegerOverflowSingleTransaction.overflowAddToState (patch_14.sol#6-9) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function overflowMulToState(uint256 input) public {\n        require(count * input > count, \"Integer overflow detected\");\n        count *= input;",
+          "message": "IntegerOverflowSingleTransaction.overflowMulToState (patch_14.sol#11-14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function underflowToState(uint256 input) public {\n        require(count >= input, \"Integer underflow detected\");\n        count -= input;",
+          "message": "IntegerOverflowSingleTransaction.underflowToState (patch_14.sol#16-19) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function overflowLocalOnly(uint256 input) public view returns (uint256) {\n        return count + input;",
+          "message": "IntegerOverflowSingleTransaction.overflowLocalOnly (patch_14.sol#21-23) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 27,
+          "vulnerability_code": "    function overflowMulLocalOnly(uint256 input) public view returns (uint256) {\n        return count * input;",
+          "message": "IntegerOverflowSingleTransaction.overflowMulLocalOnly (patch_14.sol#25-27) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 31,
+          "vulnerability_code": "    function underflowLocalOnly(uint256 input) public view returns (uint256) {\n        return count - input;",
+          "message": "IntegerOverflowSingleTransaction.underflowLocalOnly (patch_14.sol#29-31) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;",
+          "message": "Detected issues with version pragma in patch_14.sol:\n\t- pragma solidity^0.4.23 (patch_14.sol#1): it allows old versions\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}
