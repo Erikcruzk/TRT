@@ -1,0 +1,82 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT",
+        "exception (z3.z3types.Z3Exception: b'Argument (concat (ite (bvsle |2_calldatasize|\\n                    #x0000000000000000000000000000000000000000000000000000000000000004)\\n             #x00\\n             (select |2_calldata|\\n                     #x0000000000000000000000000000000000000000000000000000000000000004))\\n        (ite (bvsle |2_calldatasize|\\n                    #x0000000000000000000000000000000000000000000000000000000000000005)\\n             #x00\\n             (select |2_calldata|\\n                     #x0000000000000000000000000000000000000000000000000000000000000005))\\n        (ite (bvsle |2_calldatasize|\\n                    #x0000000000000000000000000000000000000000000000000000000000000006)\\n             #x00\\n             (select |2_calldata|\\n                     #x0000000000000000000000000000000000000000000000000000000000000006))\\n        (ite (bvsle |2_calldatasize|\\n                    #x0000000000000000000000000000000000000000000000000000000000000007)\\n             #x00\\n             (select |2_calldata|\\n                     #x0000000000000000000000000000000000000000000000000000000000000007))\\n        (ite (bvsle |2_calldatasize|\\n                    #x0000000000000000000000000000000000000000000000000000000000000008)\\n             #x00\\n             (select |2_calldata|\\n                     #x0000000000000000000000000000000000000000000000000000000000000008))\\n        (ite (bvsle |2_calldatasize|\\n                    #x0000000000000000000000000000000000000000000000000000000000000009)\\n             #x00\\n             (select |2_calldata|\\n                     #x0000000000000000000000000000000000000000000000000000000000000009))\\n        (ite (bvsle |2_calldatasize|\\n                    #x000000000000000000000000000000000000000000000000000000000000000a)\\n             #x00\\n             (select |2_calldata|\\n                     #x000000000000000000000000000000000000000000000000000000000000000a))\\n        (ite (bvsle |2_calldatasize|\\n                    #x000000000000000000000000000000000000000000000000000000000000000b)\\n             #x00\\n             (select |2_calldata|\\n                     #x000000000000000000000000000000000000000000000000000000000000000b))\\n        (ite (bvsle |2_calldatasize|\\n                    #x000000000000000000000000000000000000000000000000000000000000000c)\\n             #x00\\n             (select |2_calldata|\\n                     #x000000000000000000000000000000000000000000000000000000000000000c))\\n        (ite (bvsle |2_calldatasize|\\n                    #x000000000000000000000000000000000000000000000000000000000000000d)\\n             #x00\\n             (select |2_calldata|\\n                     #x000000000000000000000000000000000000000000000000000000000000000d))\\n        (ite (bvsle |2_calldatasize|\\n                    #x000000000000000000000000000000000000000000000000000000000000000e)\\n             #x00\\n             (select |2_calldata|\\n                     #x000000000000000000000000000000000000000000000000000000000000000e))) at position 1 has sort (_ BitVec 88) it does does not match declaration (declare-fun bvand ((_ BitVec 256) (_ BitVec 256)) (_ BitVec 256))')"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_8"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function donate(address _to) public payable {\n        balances[_to] += msg.value;",
+          "message": "Reentrance.donate (patch_0.sol#7-9) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function balanceOf(address _who) public view returns (uint balance) {\n        return balances[_who];",
+          "message": "Reentrance.balanceOf (patch_0.sol#11-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdraw(uint _amount) public {\n        require(!locked[msg.sender]); // check if sender is not already locked\n        require(balances[msg.sender] >= _amount);\n\n        locked[msg.sender] = true; // lock sender to prevent reentrancy\n        balances[msg.sender] -= _amount;\n        msg.sender.transfer(_amount);\n        locked[msg.sender] = false; // unlock sender",
+          "message": "Reentrance.withdraw (patch_0.sol#15-23) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "Reentrance.fallback (patch_0.sol#25) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;",
+          "message": "Detected issues with version pragma in patch_0.sol:\n\t- pragma solidity^0.4.18 (patch_0.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function donate(address _to) public payable {",
+          "message": "Parameter '_to' of Reentrance.donate (patch_0.sol#7) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address _who) public view returns (uint balance) {",
+          "message": "Parameter '_who' of Reentrance.balanceOf (patch_0.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdraw(uint _amount) public {",
+          "message": "Parameter '_amount' of Reentrance.withdraw (patch_0.sol#15) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

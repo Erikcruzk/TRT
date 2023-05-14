@@ -1,0 +1,95 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_10"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function changeOwner(address addr) public onlyOwner {\n        require(addr != address(0));\n        newOwner = addr;",
+          "message": "Ownable.changeOwner (patch_13.sol#11-14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function confirmOwner() public {\n        require(msg.sender == newOwner);\n        owner = newOwner;\n        newOwner = address(0);",
+          "message": "Ownable.confirmOwner (patch_13.sol#16-20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 38,
+          "vulnerability_code": "    function withdrawToken(\n        address token,\n        uint256 amount,\n        address to\n    ) public onlyOwner {\n        require(token != address(0));\n        require(to != address(0));\n        require(amount > 0);\n        require(token.call(bytes4(keccak256(\"transfer(address,uint256)\")), to, amount));",
+          "message": "Token.withdrawToken (patch_13.sol#29-38) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": 51,
+          "vulnerability_code": "    function() payable public {\n        deposit();",
+          "message": "TokenBank.fallback (patch_13.sol#49-51) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": 69,
+          "vulnerability_code": "    function withdrawTokenToHolder(\n        address to,\n        address token,\n        uint amount\n    ) public onlyOwner {\n        require(to != address(0));\n        require(token != address(0));\n        require(amount > 0);\n        require(holders[to] > 0);\n        holders[to] = 0;\n        Token(token).withdrawToken(token, amount, to);",
+          "message": "TokenBank.withdrawTokenToHolder (patch_13.sol#58-69) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": 81,
+          "vulnerability_code": "    function withdrawToHolder(\n        address addr,\n        uint weiAmount\n    ) public onlyOwner {\n        require(addr != address(0));\n        require(weiAmount > 0);\n        require(holders[msg.sender] > 0);\n        require(holders[addr] >= weiAmount);\n        addr.transfer(weiAmount);\n        holders[addr] -= weiAmount;",
+          "message": "TokenBank.withdrawToHolder (patch_13.sol#71-81) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;",
+          "message": "Detected issues with version pragma in patch_13.sol:\n\t- pragma solidity^0.4.18 (patch_13.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 38,
+          "vulnerability_code": "    function withdrawToken(\n        address token,\n        uint256 amount,\n        address to\n    ) public onlyOwner {\n        require(token != address(0));\n        require(to != address(0));\n        require(amount > 0);\n        require(token.call(bytes4(keccak256(\"transfer(address,uint256)\")), to, amount));",
+          "message": "Low level call in Token.withdrawToken (patch_13.sol#29-38):\n\t-require(bool)(token.call(bytes4(keccak256()(transfer(address,uint256))),to,amount)) patch_13.sol#37\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function Ownable() public {\n        owner = msg.sender;",
+          "message": "Function 'Ownable.Ownable' (patch_13.sol#7-9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": 47,
+          "vulnerability_code": "    function TokenBank() public {\n        minDeposit = 1 ether;",
+          "message": "Function 'TokenBank.TokenBank' (patch_13.sol#45-47) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

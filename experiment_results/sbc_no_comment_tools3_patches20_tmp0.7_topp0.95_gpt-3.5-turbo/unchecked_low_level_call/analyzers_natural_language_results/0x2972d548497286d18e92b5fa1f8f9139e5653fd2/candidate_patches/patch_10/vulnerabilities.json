@@ -1,0 +1,67 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "calls-loop",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(ERC20(_token).transferFrom(_from, _tos[i], _values[i]));",
+          "message": "Demo.transfer has external calls inside a loop:\n\t- require(bool)(ERC20(_token).transferFrom(_from,_tos[i],_values[i])) (patch_10.sol#16)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function transfer(\n        address _from,\n        address _token,\n        address[] _tos,\n        uint[] _values\n    ) public returns (bool) {\n        require(_tos.length > 0 && _tos.length == _values.length);\n\n        for (uint i = 0; i < _tos.length; i++) {\n            require(_tos[i] != address(0));\n            require(_values[i] > 0);\n\n            require(ERC20(_token).transferFrom(_from, _tos[i], _values[i]));\n        }\n\n        return true;",
+          "message": "Demo.transfer (patch_10.sol#4-20) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _from,",
+          "message": "Parameter '_from' of Demo.transfer (patch_10.sol#5) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _token,",
+          "message": "Parameter '_token' of Demo.transfer (patch_10.sol#6) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address[] _tos,",
+          "message": "Parameter '_tos' of Demo.transfer (patch_10.sol#7) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint[] _values",
+          "message": "Parameter '_values' of Demo.transfer (patch_10.sol#8) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}

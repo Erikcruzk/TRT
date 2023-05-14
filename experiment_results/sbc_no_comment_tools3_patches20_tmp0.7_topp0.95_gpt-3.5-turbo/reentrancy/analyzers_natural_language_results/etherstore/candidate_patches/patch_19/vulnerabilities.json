@@ -1,0 +1,74 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdrawFunds(uint256 _weiToWithdraw) public {\n        require(!locked);\n        require(balances[msg.sender] >= _weiToWithdraw);\n        require(_weiToWithdraw <= withdrawalLimit);\n        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);\n        locked = true;\n        require(msg.sender.call.value(_weiToWithdraw)());\n        balances[msg.sender] -= _weiToWithdraw;\n        lastWithdrawTime[msg.sender] = now;\n        locked = false;",
+          "message": "Reentrancy in EtherStore.withdrawFunds (patch_19.sol#13-23):\n\tExternal calls:\n\t- require(bool)(msg.sender.call.value(_weiToWithdraw)()) (patch_19.sol#19)\n\tState variables written after the call(s):\n\t- balances (patch_19.sol#20)\n\t- lastWithdrawTime (patch_19.sol#21)\n\t- locked (patch_19.sol#22)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public withdrawalLimit = 1 ether;",
+          "message": "EtherStore.withdrawalLimit should be constant (patch_19.sol#4)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": 11,
+          "vulnerability_code": "    function depositFunds() public payable {\n        balances[msg.sender] += msg.value;",
+          "message": "EtherStore.depositFunds (patch_19.sol#9-11) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdrawFunds(uint256 _weiToWithdraw) public {\n        require(!locked);\n        require(balances[msg.sender] >= _weiToWithdraw);\n        require(_weiToWithdraw <= withdrawalLimit);\n        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);\n        locked = true;\n        require(msg.sender.call.value(_weiToWithdraw)());\n        balances[msg.sender] -= _weiToWithdraw;\n        lastWithdrawTime[msg.sender] = now;\n        locked = false;",
+          "message": "EtherStore.withdrawFunds (patch_19.sol#13-23) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;",
+          "message": "Detected issues with version pragma in patch_19.sol:\n\t- pragma solidity^0.4.0 (patch_19.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdrawFunds(uint256 _weiToWithdraw) public {\n        require(!locked);\n        require(balances[msg.sender] >= _weiToWithdraw);\n        require(_weiToWithdraw <= withdrawalLimit);\n        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);\n        locked = true;\n        require(msg.sender.call.value(_weiToWithdraw)());\n        balances[msg.sender] -= _weiToWithdraw;\n        lastWithdrawTime[msg.sender] = now;\n        locked = false;",
+          "message": "Low level call in EtherStore.withdrawFunds (patch_19.sol#13-23):\n\t-require(bool)(msg.sender.call.value(_weiToWithdraw)()) patch_19.sol#19\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdrawFunds(uint256 _weiToWithdraw) public {",
+          "message": "Parameter '_weiToWithdraw' of EtherStore.withdrawFunds (patch_19.sol#13) is not in mixedCase\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_10"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "    function transferOwner(address _owner) public onlyOwner {\n        Owner = _owner;",
+          "message": "Proxy.transferOwner (patch_13.sol#10-12) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function proxy(address target, bytes data) public payable {\n        require(target.call.value(msg.value)(data));",
+          "message": "Proxy.proxy (patch_13.sol#14-16) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "VaultProxy.fallback (patch_13.sol#26) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": 33,
+          "vulnerability_code": "    function Vault() public payable {\n        if (msg.sender == tx.origin) {\n            Owner = msg.sender;\n            deposit();\n        }",
+          "message": "VaultProxy.Vault (patch_13.sol#28-33) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function withdraw(uint256 amount) public onlyOwner {\n        if (amount > 0 && Deposits[msg.sender] >= amount) {\n            msg.sender.transfer(amount);\n        }",
+          "message": "VaultProxy.withdraw (patch_13.sol#41-45) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function proxy(address target, bytes data) public payable {\n        require(target.call.value(msg.value)(data));",
+          "message": "Low level call in Proxy.proxy (patch_13.sol#14-16):\n\t-require(bool)(target.call.value(msg.value)(data)) patch_13.sol#15\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferOwner(address _owner) public onlyOwner {",
+          "message": "Parameter '_owner' of Proxy.transferOwner (patch_13.sol#10) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address Owner;",
+          "message": "Variable 'Proxy.Owner' (patch_13.sol#8) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": 33,
+          "vulnerability_code": "    function Vault() public payable {\n        if (msg.sender == tx.origin) {\n            Owner = msg.sender;\n            deposit();\n        }",
+          "message": "Function 'VaultProxy.Vault' (patch_13.sol#28-33) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => uint256) public Deposits;",
+          "message": "Variable 'VaultProxy.Deposits' (patch_13.sol#24) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

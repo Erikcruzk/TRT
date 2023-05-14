@@ -1,0 +1,222 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solc experienced a fatal error"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_26"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": 100,
+          "vulnerability_code": "    function gas() internal constant returns (uint _gas) {\n        assembly {\n            _gas := gas\n        }",
+          "message": "TokenSender.gas (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#96-100) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "calls-loop",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                if (!token.transfer(addr, transfers[mNext].amount)) throw;",
+          "message": "TokenSender.run has external calls inside a loop:\n\t- ! token.transfer(addr,transfers[mNext].amount) (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#78)\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": 100,
+          "vulnerability_code": "    function gas() internal constant returns (uint _gas) {\n        assembly {\n            _gas := gas\n        }",
+          "message": "TokenSender.gas uses assembly (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#96-100)\n\t- 0xec329ffc97d75fe03428ae155fc7793431487f63.sol#97-100\n"
+        },
+        {
+          "name": "deprecated-standards",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (next > 0) throw;",
+          "message": "Deprecated standard detected @ 0xec329ffc97d75fe03428ae155fc7793431487f63.sol#49:\n\t- Usage of \"throw\" should be replaced with \"revert()\"\n"
+        },
+        {
+          "name": "deprecated-standards",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if ((mNext == 0) && (token.balanceOf(this) != totalToDistribute)) throw;",
+          "message": "Deprecated standard detected @ 0xec329ffc97d75fe03428ae155fc7793431487f63.sol#72:\n\t- Usage of \"throw\" should be replaced with \"revert()\"\n"
+        },
+        {
+          "name": "deprecated-standards",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                if (!token.transfer(addr, transfers[mNext].amount)) throw;",
+          "message": "Deprecated standard detected @ 0xec329ffc97d75fe03428ae155fc7793431487f63.sol#78:\n\t- Usage of \"throw\" should be replaced with \"revert()\"\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function changeOwner(address _newOwner) onlyOwner {\n        owner = _newOwner;",
+          "message": "Owned.changeOwner (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#14-16) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function execute(address _dst, uint _value, bytes _data) onlyOwner {\n        _dst.call.value(_value)(_data);",
+          "message": "Owned.execute (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#18-20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address, uint) returns (bool);",
+          "message": "Token.transfer (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#24) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address) constant returns (uint);",
+          "message": "Token.balanceOf (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#26) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": 63,
+          "vulnerability_code": "    function fill(uint[] data) onlyOwner {\n        if (next > 0) throw;\n\n        uint acc;\n        uint offset = transfers.length;\n        transfers.length = transfers.length + data.length;\n        for (uint i = 0; i < data.length; i++) {\n            address addr = address(data[i] & (D160 - 1));\n            uint amount = data[i] / D160;\n\n            transfers[offset + i].addr = addr;\n            transfers[offset + i].amount = amount;\n            acc += amount;\n        }\n        totalToDistribute += acc;",
+          "message": "TokenSender.fill (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#48-63) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": 84,
+          "vulnerability_code": "    function run() onlyOwner {\n        if (transfers.length == 0) return;\n\n        uint mNext = next;\n\n        next = transfers.length;\n\n        if ((mNext == 0) && (token.balanceOf(this) != totalToDistribute)) throw;\n\n        while ((mNext < transfers.length) && (gas() > 150000)) {\n            uint amount = transfers[mNext].amount;\n            address addr = transfers[mNext].addr;\n            if (amount > 0) {\n                if (!token.transfer(addr, transfers[mNext].amount)) throw;\n            }\n            mNext++;\n        }\n\n        next = mNext;",
+          "message": "TokenSender.run (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#65-84) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": 90,
+          "vulnerability_code": "    function hasTerminated() constant returns (bool) {\n        if (transfers.length == 0) return false;\n        if (next < transfers.length) return false;\n        return true;",
+          "message": "TokenSender.hasTerminated (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#86-90) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 92,
+          "vulnerability_to_line": 94,
+          "vulnerability_code": "    function nTransfers() constant returns (uint) {\n        return transfers.length;",
+          "message": "TokenSender.nTransfers (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#92-94) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.4.11;",
+          "message": "Detected issues with version pragma in 0xec329ffc97d75fe03428ae155fc7793431487f63.sol:\n\t- pragma solidity>=0.4.11 (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function execute(address _dst, uint _value, bytes _data) onlyOwner {\n        _dst.call.value(_value)(_data);",
+          "message": "Low level call in Owned.execute (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#18-20):\n\t-_dst.call.value(_value)(_data) 0xec329ffc97d75fe03428ae155fc7793431487f63.sol#19\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": 6,
+          "vulnerability_code": "    function Owned() {\n        owner = msg.sender;",
+          "message": "Function 'Owned.Owned' (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#4-6) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function changeOwner(address _newOwner) onlyOwner {",
+          "message": "Parameter '_newOwner' of Owned.changeOwner (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#14) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function execute(address _dst, uint _value, bytes _data) onlyOwner {",
+          "message": "Parameter '_dst' of Owned.execute (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#18) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function execute(address _dst, uint _value, bytes _data) onlyOwner {",
+          "message": "Parameter '_value' of Owned.execute (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#18) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function execute(address _dst, uint _value, bytes _data) onlyOwner {",
+          "message": "Parameter '_data' of Owned.execute (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#18) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address, uint) returns (bool);",
+          "message": "Parameter '' of Token.transfer (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#24) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address, uint) returns (bool);",
+          "message": "Parameter '_scope_0' of Token.transfer (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#24) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address) constant returns (uint);",
+          "message": "Parameter '' of Token.balanceOf (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#26) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": 44,
+          "vulnerability_code": "    function TokenSender(address _token) {\n        token = Token(_token);",
+          "message": "Function 'TokenSender.TokenSender' (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#42-44) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function TokenSender(address _token) {",
+          "message": "Parameter '_token' of TokenSender.TokenSender (0xec329ffc97d75fe03428ae155fc7793431487f63.sol#42) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _dst.call.value(_value)(_data);",
+          "message": null
+        },
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _dst.call.value(_value)(_data);",
+          "message": null
+        }
+      ]
+    }
+  }
+}

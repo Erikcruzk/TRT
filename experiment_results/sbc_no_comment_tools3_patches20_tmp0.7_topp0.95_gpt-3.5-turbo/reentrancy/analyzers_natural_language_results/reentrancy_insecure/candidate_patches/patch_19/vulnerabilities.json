@@ -1,0 +1,75 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(reentrancyGuard[msg.sender] == false); // check if reentrancy guard is active\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0); // check if user has balance to withdraw\n        userBalances[msg.sender] = 0; // set balance to 0 before external call\n        reentrancyGuard[msg.sender] = true; // activate reentrancy guard\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success); // check if external call succeeded\n        reentrancyGuard[msg.sender] = false; // deactivate reentrancy guard",
+          "message": "Reentrancy in Reentrancy_secure.withdrawBalance (patch_19.sol#7-16):\n\tExternal calls:\n\t- (success) = msg.sender.call.value(amountToWithdraw)() (patch_19.sol#13)\n\tState variables written after the call(s):\n\t- reentrancyGuard (patch_19.sol#15)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(reentrancyGuard[msg.sender] == false); // check if reentrancy guard is active\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0); // check if user has balance to withdraw\n        userBalances[msg.sender] = 0; // set balance to 0 before external call\n        reentrancyGuard[msg.sender] = true; // activate reentrancy guard\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success); // check if external call succeeded\n        reentrancyGuard[msg.sender] = false; // deactivate reentrancy guard",
+          "message": "Reentrancy_secure.withdrawBalance (patch_19.sol#7-16) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function getBalance() public view returns (uint) {\n        return userBalances[msg.sender];",
+          "message": "Reentrancy_secure.getBalance (patch_19.sol#18-20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function deposit() public payable {\n        userBalances[msg.sender] += msg.value;",
+          "message": "Reentrancy_secure.deposit (patch_19.sol#22-24) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(reentrancyGuard[msg.sender] == false); // check if reentrancy guard is active\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0); // check if user has balance to withdraw\n        userBalances[msg.sender] = 0; // set balance to 0 before external call\n        reentrancyGuard[msg.sender] = true; // activate reentrancy guard\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success); // check if external call succeeded\n        reentrancyGuard[msg.sender] = false; // deactivate reentrancy guard",
+          "message": "Low level call in Reentrancy_secure.withdrawBalance (patch_19.sol#7-16):\n\t-(success) = msg.sender.call.value(amountToWithdraw)() patch_19.sol#13\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "contract Reentrancy_secure {\n    mapping(address => uint) private userBalances;\n    mapping(address => bool) private reentrancyGuard;\n\n    function withdrawBalance() public {\n        require(reentrancyGuard[msg.sender] == false); // check if reentrancy guard is active\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0); // check if user has balance to withdraw\n        userBalances[msg.sender] = 0; // set balance to 0 before external call\n        reentrancyGuard[msg.sender] = true; // activate reentrancy guard\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success); // check if external call succeeded\n        reentrancyGuard[msg.sender] = false; // deactivate reentrancy guard\n    }\n\n    function getBalance() public view returns (uint) {\n        return userBalances[msg.sender];\n    }\n\n    function deposit() public payable {\n        userBalances[msg.sender] += msg.value;\n    }",
+          "message": "Contract 'Reentrancy_secure' (patch_19.sol#3-25) is not in CapWords\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

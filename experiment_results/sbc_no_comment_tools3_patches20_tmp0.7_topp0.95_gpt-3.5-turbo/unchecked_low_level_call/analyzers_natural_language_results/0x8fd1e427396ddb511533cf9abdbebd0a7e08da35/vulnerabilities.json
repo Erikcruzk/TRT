@@ -1,0 +1,208 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_24"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "shadowing-state",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address owner = msg.sender;",
+          "message": "Token.owner (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#23) shadows:\n\t- Ownable.owner (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#5)\n"
+        },
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function() payable {\n        Deposit();",
+          "message": "Contract locking ether found in 0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol:\n\tContract TokenBank has payable functions:\n\t - fallback (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#43-45)\n\t - Deposit (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#47-51)\n\t - WithdrawToHolder (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#64-74)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "deprecated-standards",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        token.call(bytes4(sha3(\"transfer(address,uint256)\")), to, amount);",
+          "message": "Deprecated standard detected @ 0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#30:\n\t- Usage of \"sha3()\" should be replaced with \"keccak256()\"\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function changeOwner(address addr) public onlyOwner {\n        newOwner = addr;",
+          "message": "Ownable.changeOwner (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#7-9) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function confirmOwner() public {\n        if (msg.sender == newOwner) {\n            owner = newOwner;\n        }",
+          "message": "Ownable.confirmOwner (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#11-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": 41,
+          "vulnerability_code": "    function initTokenBank() public {\n        owner = msg.sender;\n        MinDeposit = 1 ether;",
+          "message": "TokenBank.initTokenBank (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#38-41) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function() payable {\n        Deposit();",
+          "message": "TokenBank.fallback (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#43-45) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": 62,
+          "vulnerability_code": "    function WitdrawTokenToHolder(\n        address _to,\n        address _token,\n        uint _amount\n    ) public onlyOwner {\n        if (Holders[_to] > 0) {\n            Holders[_to] = 0;\n            WithdrawToken(_token, _amount, _to);\n        }",
+          "message": "TokenBank.WitdrawTokenToHolder (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#53-62) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 64,
+          "vulnerability_to_line": 74,
+          "vulnerability_code": "    function WithdrawToHolder(\n        address _addr,\n        uint _wei\n    ) public payable onlyOwner {\n        if (Holders[msg.sender] > 0) {\n            if (Holders[_addr] >= _wei) {\n                _addr.call.value(_wei);\n                Holders[_addr] -= _wei;\n            }\n        }",
+          "message": "TokenBank.WithdrawToHolder (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#64-74) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": 78,
+          "vulnerability_code": "    function Bal() public constant returns (uint) {\n        return this.balance;",
+          "message": "TokenBank.Bal (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#76-78) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;",
+          "message": "Detected issues with version pragma in 0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol:\n\t- pragma solidity^0.4.18 (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 31,
+          "vulnerability_code": "    function WithdrawToken(\n        address token,\n        uint256 amount,\n        address to\n    ) public onlyOwner {\n        token.call(bytes4(sha3(\"transfer(address,uint256)\")), to, amount);",
+          "message": "Low level call in Token.WithdrawToken (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#25-31):\n\t-token.call(bytes4(sha3()(transfer(address,uint256))),to,amount) 0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#30\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 31,
+          "vulnerability_code": "    function WithdrawToken(\n        address token,\n        uint256 amount,\n        address to\n    ) public onlyOwner {\n        token.call(bytes4(sha3(\"transfer(address,uint256)\")), to, amount);",
+          "message": "Function 'Token.WithdrawToken' (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#25-31) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": 51,
+          "vulnerability_code": "    function Deposit() payable {\n        if (msg.value >= MinDeposit) {\n            Holders[msg.sender] += msg.value;\n        }",
+          "message": "Function 'TokenBank.Deposit' (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#47-51) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": 62,
+          "vulnerability_code": "    function WitdrawTokenToHolder(\n        address _to,\n        address _token,\n        uint _amount\n    ) public onlyOwner {\n        if (Holders[_to] > 0) {\n            Holders[_to] = 0;\n            WithdrawToken(_token, _amount, _to);\n        }",
+          "message": "Function 'TokenBank.WitdrawTokenToHolder' (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#53-62) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _to,",
+          "message": "Parameter '_to' of TokenBank.WitdrawTokenToHolder (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#54) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _token,",
+          "message": "Parameter '_token' of TokenBank.WitdrawTokenToHolder (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#55) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint _amount",
+          "message": "Parameter '_amount' of TokenBank.WitdrawTokenToHolder (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#56) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 64,
+          "vulnerability_to_line": 74,
+          "vulnerability_code": "    function WithdrawToHolder(\n        address _addr,\n        uint _wei\n    ) public payable onlyOwner {\n        if (Holders[msg.sender] > 0) {\n            if (Holders[_addr] >= _wei) {\n                _addr.call.value(_wei);\n                Holders[_addr] -= _wei;\n            }\n        }",
+          "message": "Function 'TokenBank.WithdrawToHolder' (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#64-74) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _addr,",
+          "message": "Parameter '_addr' of TokenBank.WithdrawToHolder (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#65) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint _wei",
+          "message": "Parameter '_wei' of TokenBank.WithdrawToHolder (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#66) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": 78,
+          "vulnerability_code": "    function Bal() public constant returns (uint) {\n        return this.balance;",
+          "message": "Function 'TokenBank.Bal' (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#76-78) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinDeposit;",
+          "message": "Variable 'TokenBank.MinDeposit' (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#35) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => uint) public Holders;",
+          "message": "Variable 'TokenBank.Holders' (0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol#36) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        token.call(bytes4(sha3(\"transfer(address,uint256)\")), to, amount);",
+          "message": null
+        },
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        token.call(bytes4(sha3(\"transfer(address,uint256)\")), to, amount);",
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

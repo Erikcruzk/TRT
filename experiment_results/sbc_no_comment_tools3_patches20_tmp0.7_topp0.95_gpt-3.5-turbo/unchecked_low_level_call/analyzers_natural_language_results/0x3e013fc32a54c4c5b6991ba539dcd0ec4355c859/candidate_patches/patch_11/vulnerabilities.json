@@ -1,0 +1,103 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_10"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function multiply(address _adr) public payable {\n        require(msg.value >= this.balance);\n        require(_adr != address(0));\n        _adr.transfer(this.balance * 4);",
+          "message": "MultiplicatorX4.multiply (patch_11.sol#20-24) sends eth to arbitrary user\n\tDangerous calls:\n\t- _adr.transfer(this.balance * 4) (patch_11.sol#23)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "MultiplicatorX4.fallback (patch_11.sol#6) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 11,
+          "vulnerability_code": "    function withdraw() public {\n        require(msg.sender == owner);\n        owner.transfer(this.balance);",
+          "message": "MultiplicatorX4.withdraw (patch_11.sol#8-11) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "    function command(address _adr, bytes _data) public payable {\n        require(msg.sender == owner);\n        require(_adr != address(0));\n        require(_data.length > 0);\n        _adr.call.value(msg.value)(_data);",
+          "message": "MultiplicatorX4.command (patch_11.sol#13-18) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function multiply(address _adr) public payable {\n        require(msg.value >= this.balance);\n        require(_adr != address(0));\n        _adr.transfer(this.balance * 4);",
+          "message": "MultiplicatorX4.multiply (patch_11.sol#20-24) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;",
+          "message": "Detected issues with version pragma in patch_11.sol:\n\t- pragma solidity^0.4.18 (patch_11.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "    function command(address _adr, bytes _data) public payable {\n        require(msg.sender == owner);\n        require(_adr != address(0));\n        require(_data.length > 0);\n        _adr.call.value(msg.value)(_data);",
+          "message": "Low level call in MultiplicatorX4.command (patch_11.sol#13-18):\n\t-_adr.call.value(msg.value)(_data) patch_11.sol#17\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function command(address _adr, bytes _data) public payable {",
+          "message": "Parameter '_adr' of MultiplicatorX4.command (patch_11.sol#13) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function command(address _adr, bytes _data) public payable {",
+          "message": "Parameter '_data' of MultiplicatorX4.command (patch_11.sol#13) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function multiply(address _adr) public payable {",
+          "message": "Parameter '_adr' of MultiplicatorX4.multiply (patch_11.sol#20) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _adr.call.value(msg.value)(_data);",
+          "message": null
+        }
+      ]
+    }
+  }
+}

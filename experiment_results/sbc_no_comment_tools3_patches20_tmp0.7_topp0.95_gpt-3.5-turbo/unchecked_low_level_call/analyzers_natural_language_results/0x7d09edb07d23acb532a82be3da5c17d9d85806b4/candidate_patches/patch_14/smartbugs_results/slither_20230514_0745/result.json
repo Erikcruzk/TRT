@@ -1,0 +1,278 @@
+{
+    "errors": [
+        "EXIT_CODE_25"
+    ],
+    "fails": [],
+    "findings": [
+        {
+            "confidence": "Medium",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "payout",
+            "impact": "High",
+            "line": 99,
+            "line_end": 103,
+            "message": "PoCGame.payout (patch_14.sol#99-103) sends eth to arbitrary user\n\tDangerous calls:\n\t- winner.transfer(ethToTransfer) (patch_14.sol#101)\n",
+            "name": "arbitrary-send"
+        },
+        {
+            "confidence": "Medium",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "loseWager",
+            "impact": "High",
+            "line": 113,
+            "line_end": 119,
+            "message": "PoCGame.loseWager (patch_14.sol#113-119) sends eth to arbitrary user\n\tDangerous calls:\n\t- success = whale.call.value(amount)(bytes4(keccak256()(donate()))) (patch_14.sol#115)\n",
+            "name": "arbitrary-send"
+        },
+        {
+            "confidence": "Medium",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "play",
+            "impact": "High",
+            "line": 76,
+            "line_end": 93,
+            "message": "Reentrancy in PoCGame.play (patch_14.sol#76-93):\n\tExternal calls:\n\t- loseWager(betLimit / 2) (patch_14.sol#87)\n\tExternal calls sending eth:\n\t- payout(msg.sender) (patch_14.sol#85)\n\t- loseWager(betLimit / 2) (patch_14.sol#87)\n\tState variables written after the call(s):\n\t- randomSeed (patch_14.sol#89)\n",
+            "name": "reentrancy-eth"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "play",
+            "impact": "Medium",
+            "line": 76,
+            "line_end": 93,
+            "message": "PoCGame.play (patch_14.sol#76-93) uses a dangerous strict equality:\n\t- winningNumber == difficulty / 2\n",
+            "name": "incorrect-equality"
+        },
+        {
+            "confidence": "Medium",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "donateToWhale",
+            "impact": "Low",
+            "line": 105,
+            "line_end": 111,
+            "message": "Reentrancy in PoCGame.donateToWhale (patch_14.sol#105-111):\n\tExternal calls:\n\t- success = whale.call.value(amount)(bytes4(keccak256()(donate()))) (patch_14.sol#107)\n\tState variables written after the call(s):\n\t- totalDonated (patch_14.sol#109)\n",
+            "name": "reentrancy-benign"
+        },
+        {
+            "confidence": "Medium",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "loseWager",
+            "impact": "Low",
+            "line": 113,
+            "line_end": 119,
+            "message": "Reentrancy in PoCGame.loseWager (patch_14.sol#113-119):\n\tExternal calls:\n\t- success = whale.call.value(amount)(bytes4(keccak256()(donate()))) (patch_14.sol#115)\n\tState variables written after the call(s):\n\t- totalDonated (patch_14.sol#117)\n",
+            "name": "reentrancy-benign"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "openToThePublic",
+            "impact": "Informational",
+            "line": 53,
+            "line_end": 55,
+            "message": "PoCGame.openToThePublic (patch_14.sol#53-55) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "adjustBetAmounts",
+            "impact": "Informational",
+            "line": 57,
+            "line_end": 60,
+            "message": "PoCGame.adjustBetAmounts (patch_14.sol#57-60) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "adjustDifficulty",
+            "impact": "Informational",
+            "line": 62,
+            "line_end": 65,
+            "message": "PoCGame.adjustDifficulty (patch_14.sol#62-65) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "fallback",
+            "impact": "Informational",
+            "line": 67,
+            "message": "PoCGame.fallback (patch_14.sol#67) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "wager",
+            "impact": "Informational",
+            "line": 69,
+            "line_end": 74,
+            "message": "PoCGame.wager (patch_14.sol#69-74) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "play",
+            "impact": "Informational",
+            "line": 76,
+            "line_end": 93,
+            "message": "PoCGame.play (patch_14.sol#76-93) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "donate",
+            "impact": "Informational",
+            "line": 95,
+            "line_end": 97,
+            "message": "PoCGame.donate (patch_14.sol#95-97) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "ethBalance",
+            "impact": "Informational",
+            "line": 121,
+            "line_end": 123,
+            "message": "PoCGame.ethBalance (patch_14.sol#121-123) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "currentDifficulty",
+            "impact": "Informational",
+            "line": 125,
+            "line_end": 127,
+            "message": "PoCGame.currentDifficulty (patch_14.sol#125-127) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "currentBetLimit",
+            "impact": "Informational",
+            "line": 129,
+            "line_end": 131,
+            "message": "PoCGame.currentBetLimit (patch_14.sol#129-131) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "hasPlayerWagered",
+            "impact": "Informational",
+            "line": 133,
+            "line_end": 135,
+            "message": "PoCGame.hasPlayerWagered (patch_14.sol#133-135) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "winnersPot",
+            "impact": "Informational",
+            "line": 137,
+            "line_end": 139,
+            "message": "PoCGame.winnersPot (patch_14.sol#137-139) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "transferAnyERC20Token",
+            "impact": "Informational",
+            "line": 141,
+            "line_end": 147,
+            "message": "PoCGame.transferAnyERC20Token (patch_14.sol#141-147) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "ERC20Interface",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "transfer",
+            "impact": "Informational",
+            "line": 151,
+            "message": "ERC20Interface.transfer (patch_14.sol#151) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "impact": "Informational",
+            "line": 1,
+            "message": "Detected issues with version pragma in patch_14.sol:\n\t- pragma solidity^0.4.21 (patch_14.sol#1): it allows old versions\n",
+            "name": "solc-version"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "donateToWhale",
+            "impact": "Informational",
+            "line": 105,
+            "line_end": 111,
+            "message": "Low level call in PoCGame.donateToWhale (patch_14.sol#105-111):\n\t-success = whale.call.value(amount)(bytes4(keccak256()(donate()))) patch_14.sol#107\n",
+            "name": "low-level-calls"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "function": "loseWager",
+            "impact": "Informational",
+            "line": 113,
+            "line_end": 119,
+            "message": "Low level call in PoCGame.loseWager (patch_14.sol#113-119):\n\t-success = whale.call.value(amount)(bytes4(keccak256()(donate()))) patch_14.sol#115\n",
+            "name": "low-level-calls"
+        },
+        {
+            "confidence": "High",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "impact": "Informational",
+            "line": 42,
+            "message": "Parameter '_whaleAddress' of PoCGame. (patch_14.sol#42) is not in mixedCase\n",
+            "name": "naming-convention"
+        },
+        {
+            "confidence": "High",
+            "filename": "/Users/erikcruz/Documents/thesis_repos/transformative_smart_contract_repair/experiment_results/sbc_no_comment_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x7d09edb07d23acb532a82be3da5c17d9d85806b4/candidate_patches/patch_14/patch_14.sol",
+            "impact": "Informational",
+            "line": 43,
+            "message": "Parameter '_wagerLimit' of PoCGame. (patch_14.sol#43) is not in mixedCase\n",
+            "name": "naming-convention"
+        }
+    ],
+    "infos": [],
+    "parser": {
+        "id": "slither",
+        "mode": "solidity",
+        "version": "2022/11/14"
+    }
+}

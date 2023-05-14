@@ -1,0 +1,46 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 11,
+          "vulnerability_code": "    function go() public payable {\n        address target = 0xC8A60C51967F4022BF9424C337e9c6F0bD220E1C;\n\n        target.call.value(msg.value)();\n        owner.transfer(address(this).balance);",
+          "message": "B.go (0xf29ebe930a539a60279ace72c707cba851a57707.sol#6-11) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "B.fallback (0xf29ebe930a539a60279ace72c707cba851a57707.sol#13) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 11,
+          "vulnerability_code": "    function go() public payable {\n        address target = 0xC8A60C51967F4022BF9424C337e9c6F0bD220E1C;\n\n        target.call.value(msg.value)();\n        owner.transfer(address(this).balance);",
+          "message": "Low level call in B.go (0xf29ebe930a539a60279ace72c707cba851a57707.sol#6-11):\n\t-target.call.value(msg.value)() 0xf29ebe930a539a60279ace72c707cba851a57707.sol#9\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_26"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "incorrect-equality",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": 74,
+          "vulnerability_code": "    function unlockSecret() private returns (bool) {\n        bytes32 hash = keccak256(abi.encodePacked(blockhash(block.number - 1)));\n        uint256 secret = uint256(hash);\n        if (secret % 5 == 0) {\n            winner = msg.sender;\n            return true;\n        } else {\n            return false;\n        }",
+          "message": "DrainMe.unlockSecret (patch_14.sol#65-74) uses a dangerous strict equality:\n\t- secret % 5 == 0\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 secret = uint256(hash);",
+          "message": "DrainMe.unlockSecret.secret (local variable @ patch_14.sol#67) shadows:\n\t- DrainMe.secret (state variable @ patch_14.sol#12)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public firstTarget = 0x461ec7309F187dd4650EE6b4D25D93c922d7D56b;",
+          "message": "DrainMe.firstTarget should be constant (patch_14.sol#6)\nDrainMe.secondTarget should be constant (patch_14.sol#7)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function getLength() public view returns (uint256) {\n        return seed.length;",
+          "message": "DrainMe.getLength (patch_14.sol#35-37) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 41,
+          "vulnerability_code": "    function setSecret(uint256 _secret) public payable onlyOwner {\n        secret = _secret;",
+          "message": "DrainMe.setSecret (patch_14.sol#39-41) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function getPlayerCount() public view returns (uint256) {\n        return players.length;",
+          "message": "DrainMe.getPlayerCount (patch_14.sol#43-45) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": 49,
+          "vulnerability_code": "    function getPrize() public view returns (uint256) {\n        return address(this).balance;",
+          "message": "DrainMe.getPrize (patch_14.sol#47-49) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": 55,
+          "vulnerability_code": "    function becomePlayer() public payable {\n        require(msg.value >= 0.02 ether);\n        players.push(msg.sender);\n        approvedPlayers[msg.sender] = true;",
+          "message": "DrainMe.becomePlayer (patch_14.sol#51-55) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": 63,
+          "vulnerability_code": "    function manipulateSecret() public payable onlyPlayers {\n        require(msg.value >= 0.01 ether);\n        if (msg.sender != owner || unlockSecret()) {\n            uint256 amount = 0;\n            msg.sender.transfer(amount);\n        }",
+          "message": "DrainMe.manipulateSecret (patch_14.sol#57-63) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": 81,
+          "vulnerability_code": "    function callFirstTarget() public payable onlyPlayers {\n        require(msg.value >= 0.005 ether);\n\n        require(address(this).balance >= msg.value);\n        require(address(firstTarget).call.value(msg.value)());",
+          "message": "DrainMe.callFirstTarget (patch_14.sol#76-81) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": 88,
+          "vulnerability_code": "    function callSecondTarget() public payable onlyPlayers {\n        require(msg.value >= 0.005 ether);\n\n        require(address(this).balance >= msg.value);\n        require(address(secondTarget).call.value(msg.value)());",
+          "message": "DrainMe.callSecondTarget (patch_14.sol#83-88) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": 95,
+          "vulnerability_code": "    function setSeed(\n        uint256 _index,\n        uint256 _value\n    ) public payable onlyPlayers {\n        seed[_index] = _value;",
+          "message": "DrainMe.setSeed (patch_14.sol#90-95) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": 99,
+          "vulnerability_code": "    function addSeed(uint256 _add) public payable onlyPlayers {\n        seed.length += _add;",
+          "message": "DrainMe.addSeed (patch_14.sol#97-99) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": 107,
+          "vulnerability_code": "    function guessSeed(\n        uint256 _seed\n    ) public payable onlyPlayers returns (bool) {\n        require(_seed / (seed[0] * seed[1]) == secret);\n        owner = winner;\n        return true;",
+          "message": "DrainMe.guessSeed (patch_14.sol#101-107) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 109,
+          "vulnerability_to_line": 114,
+          "vulnerability_code": "    function checkSecret() public payable onlyPlayers returns (bool) {\n        require(msg.value >= 0.01 ether);\n        if (msg.value == secret) {\n            return true;\n        }",
+          "message": "DrainMe.checkSecret (patch_14.sol#109-114) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 116,
+          "vulnerability_to_line": 119,
+          "vulnerability_code": "    function winPrize() public payable onlyOwner {\n        require(address(this).balance >= 1 wei);\n        owner.transfer(1 wei);",
+          "message": "DrainMe.winPrize (patch_14.sol#116-119) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 121,
+          "vulnerability_to_line": 124,
+          "vulnerability_code": "    function claimPrize() public payable onlyWinner {\n        require(address(this).balance > 0);\n        winner.transfer(address(this).balance);",
+          "message": "DrainMe.claimPrize (patch_14.sol#121-124) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 126,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "DrainMe.fallback (patch_14.sol#126) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;",
+          "message": "Detected issues with version pragma in patch_14.sol:\n\t- pragma solidity^0.4.23 (patch_14.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": 81,
+          "vulnerability_code": "    function callFirstTarget() public payable onlyPlayers {\n        require(msg.value >= 0.005 ether);\n\n        require(address(this).balance >= msg.value);\n        require(address(firstTarget).call.value(msg.value)());",
+          "message": "Low level call in DrainMe.callFirstTarget (patch_14.sol#76-81):\n\t-require(bool)(address(firstTarget).call.value(msg.value)()) patch_14.sol#80\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": 88,
+          "vulnerability_code": "    function callSecondTarget() public payable onlyPlayers {\n        require(msg.value >= 0.005 ether);\n\n        require(address(this).balance >= msg.value);\n        require(address(secondTarget).call.value(msg.value)());",
+          "message": "Low level call in DrainMe.callSecondTarget (patch_14.sol#83-88):\n\t-require(bool)(address(secondTarget).call.value(msg.value)()) patch_14.sol#87\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setSecret(uint256 _secret) public payable onlyOwner {",
+          "message": "Parameter '_secret' of DrainMe.setSecret (patch_14.sol#39) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _index,",
+          "message": "Parameter '_index' of DrainMe.setSeed (patch_14.sol#91) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 92,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _value",
+          "message": "Parameter '_value' of DrainMe.setSeed (patch_14.sol#92) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addSeed(uint256 _add) public payable onlyPlayers {",
+          "message": "Parameter '_add' of DrainMe.addSeed (patch_14.sol#97) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _seed",
+          "message": "Parameter '_seed' of DrainMe.guessSeed (patch_14.sol#102) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}

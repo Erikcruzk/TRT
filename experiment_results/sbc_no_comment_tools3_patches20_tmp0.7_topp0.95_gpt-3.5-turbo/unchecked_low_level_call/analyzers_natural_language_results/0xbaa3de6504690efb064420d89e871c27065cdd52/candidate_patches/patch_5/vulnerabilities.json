@@ -1,0 +1,88 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_9"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function transferOwner(address _owner) public onlyOwner {\n        require(_owner != address(0), \"New owner address cannot be zero.\");\n        owner = _owner;",
+          "message": "Proxy.transferOwner (patch_5.sol#11-14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function proxy(address target, bytes data) public payable {\n        require(target != address(0), \"Target address cannot be zero.\");\n        require(msg.value > 0, \"Value must be greater than zero.\");\n        require(target.call.value(msg.value)(data), \"Low-level call failed.\");",
+          "message": "Proxy.proxy (patch_5.sol#16-20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "VaultProxy.fallback (patch_5.sol#26) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": 32,
+          "vulnerability_code": "    function Vault() public payable {\n        require(msg.sender == tx.origin, \"Vault can only be called by an external account.\");\n        owner = msg.sender;\n        deposit();",
+          "message": "VaultProxy.Vault (patch_5.sol#28-32) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 44,
+          "vulnerability_code": "    function withdraw(uint256 amount) public onlyOwner {\n        require(amount > 0, \"Withdrawal amount must be greater than zero.\");\n        require(amount <= deposits[msg.sender], \"Insufficient balance.\");\n        deposits[msg.sender] -= amount;\n        msg.sender.transfer(amount);",
+          "message": "VaultProxy.withdraw (patch_5.sol#39-44) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;",
+          "message": "Detected issues with version pragma in patch_5.sol:\n\t- pragma solidity^0.4.23 (patch_5.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function proxy(address target, bytes data) public payable {\n        require(target != address(0), \"Target address cannot be zero.\");\n        require(msg.value > 0, \"Value must be greater than zero.\");\n        require(target.call.value(msg.value)(data), \"Low-level call failed.\");",
+          "message": "Low level call in Proxy.proxy (patch_5.sol#16-20):\n\t-require(bool,string)(target.call.value(msg.value)(data),Low-level call failed.) patch_5.sol#19\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferOwner(address _owner) public onlyOwner {",
+          "message": "Parameter '_owner' of Proxy.transferOwner (patch_5.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": 32,
+          "vulnerability_code": "    function Vault() public payable {\n        require(msg.sender == tx.origin, \"Vault can only be called by an external account.\");\n        owner = msg.sender;\n        deposit();",
+          "message": "Function 'VaultProxy.Vault' (patch_5.sol#28-32) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}

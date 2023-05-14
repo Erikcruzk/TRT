@@ -1,0 +1,95 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_10"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": 95,
+          "vulnerability_code": "    function cash(uint roundIndex, uint subpotIndex) public {\n        uint subpotsCount = getSubpotsCount(roundIndex);\n\n        if (subpotIndex >= subpotsCount) {\n            return;\n        }\n\n        uint decisionBlockNumber = getDecisionBlockNumber(roundIndex, subpotIndex);\n\n        if (decisionBlockNumber > block.number) {\n            return;\n        }\n\n        if (rounds[roundIndex].isCashed[subpotIndex]) {\n            return;\n        }\n\n        address winner = calculateWinner(roundIndex, subpotIndex);\n        uint subpot = getSubpot(roundIndex);\n\n        winner.transfer(subpot);\n\n        rounds[roundIndex].isCashed[subpotIndex] = true;",
+          "message": "Lotto.cash (patch_1.sol#72-95) sends eth to arbitrary user\n\tDangerous calls:\n\t- winner.transfer(subpot) (patch_1.sol#92)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public blockReward = 5000000000000000000;",
+          "message": "Lotto.blockReward should be constant (patch_1.sol#6)\nLotto.blocksPerRound should be constant (patch_1.sol#4)\nLotto.ticketPrice should be constant (patch_1.sol#5)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 10,
+          "vulnerability_code": "    function getBlocksPerRound() public view returns (uint) {\n        return blocksPerRound;",
+          "message": "Lotto.getBlocksPerRound (patch_1.sol#8-10) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function getTicketPrice() public view returns (uint) {\n        return ticketPrice;",
+          "message": "Lotto.getTicketPrice (patch_1.sol#12-14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 31,
+          "vulnerability_code": "    function getIsCashed(uint roundIndex, uint subpotIndex) public view returns (bool) {\n        return rounds[roundIndex].isCashed[subpotIndex];",
+          "message": "Lotto.getIsCashed (patch_1.sol#29-31) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": 95,
+          "vulnerability_code": "    function cash(uint roundIndex, uint subpotIndex) public {\n        uint subpotsCount = getSubpotsCount(roundIndex);\n\n        if (subpotIndex >= subpotsCount) {\n            return;\n        }\n\n        uint decisionBlockNumber = getDecisionBlockNumber(roundIndex, subpotIndex);\n\n        if (decisionBlockNumber > block.number) {\n            return;\n        }\n\n        if (rounds[roundIndex].isCashed[subpotIndex]) {\n            return;\n        }\n\n        address winner = calculateWinner(roundIndex, subpotIndex);\n        uint subpot = getSubpot(roundIndex);\n\n        winner.transfer(subpot);\n\n        rounds[roundIndex].isCashed[subpotIndex] = true;",
+          "message": "Lotto.cash (patch_1.sol#72-95) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": 99,
+          "vulnerability_code": "    function getBuyers(uint roundIndex) public view returns (address[]) {\n        return rounds[roundIndex].buyers;",
+          "message": "Lotto.getBuyers (patch_1.sol#97-99) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": 103,
+          "vulnerability_code": "    function getTicketsCountByBuyer(uint roundIndex, address buyer) public view returns (uint) {\n        return rounds[roundIndex].ticketsCountByBuyer[buyer];",
+          "message": "Lotto.getTicketsCountByBuyer (patch_1.sol#101-103) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 105,
+          "vulnerability_to_line": 107,
+          "vulnerability_code": "    function getPot(uint roundIndex) public view returns (uint) {\n        return rounds[roundIndex].pot;",
+          "message": "Lotto.getPot (patch_1.sol#105-107) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 109,
+          "vulnerability_to_line": 135,
+          "vulnerability_code": "    function () public payable {\n        uint roundIndex = getRoundIndex();\n        uint value = msg.value - (msg.value % ticketPrice);\n\n        if (value == 0) {\n            if (msg.value > 0) {\n                msg.sender.transfer(msg.value);\n            }\n            return;\n        }\n\n        if (value < msg.value) {\n            msg.sender.transfer(msg.value - value);\n        }\n\n        uint ticketsCount = value / ticketPrice;\n        rounds[roundIndex].ticketsCount += ticketsCount;\n\n        if (rounds[roundIndex].ticketsCountByBuyer[msg.sender] == 0) {\n            rounds[roundIndex].buyers.push(msg.sender);\n        }\n\n        rounds[roundIndex].ticketsCountByBuyer[msg.sender] += ticketsCount;\n        rounds[roundIndex].ticketsCount += ticketsCount;\n\n        rounds[roundIndex].pot += value;",
+          "message": "Lotto.fallback (patch_1.sol#109-135) should be declared external\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

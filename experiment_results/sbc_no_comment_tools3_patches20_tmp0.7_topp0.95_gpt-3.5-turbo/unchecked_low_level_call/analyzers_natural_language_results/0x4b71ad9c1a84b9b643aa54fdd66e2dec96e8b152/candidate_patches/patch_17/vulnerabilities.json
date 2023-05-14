@@ -1,0 +1,74 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "calls-loop",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(_tokenContract.call(transferFromSelector, _from, _tos[i], _value));",
+          "message": "AirPort.transfer has external calls inside a loop:\n\t- require(bool)(_tokenContract.call(transferFromSelector,_from,_tos[i],_value)) (patch_17.sol#9)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function transfer(address _from, address _tokenContract, address[] _tos, uint256 _value) public returns (bool) {\n        require(_tos.length > 0);\n\n        bytes4 transferFromSelector = bytes4(keccak256(\"transferFrom(address,address,uint256)\"));\n        for (uint256 i = 0; i < _tos.length; i++) {\n            require(_tokenContract.call(transferFromSelector, _from, _tos[i], _value));\n        }\n\n        return true;",
+          "message": "AirPort.transfer (patch_17.sol#4-13) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function transfer(address _from, address _tokenContract, address[] _tos, uint256 _value) public returns (bool) {\n        require(_tos.length > 0);\n\n        bytes4 transferFromSelector = bytes4(keccak256(\"transferFrom(address,address,uint256)\"));\n        for (uint256 i = 0; i < _tos.length; i++) {\n            require(_tokenContract.call(transferFromSelector, _from, _tos[i], _value));\n        }\n\n        return true;",
+          "message": "Low level call in AirPort.transfer (patch_17.sol#4-13):\n\t-require(bool)(_tokenContract.call(transferFromSelector,_from,_tos[i],_value)) patch_17.sol#9\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _from, address _tokenContract, address[] _tos, uint256 _value) public returns (bool) {",
+          "message": "Parameter '_from' of AirPort.transfer (patch_17.sol#4) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _from, address _tokenContract, address[] _tos, uint256 _value) public returns (bool) {",
+          "message": "Parameter '_tokenContract' of AirPort.transfer (patch_17.sol#4) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _from, address _tokenContract, address[] _tos, uint256 _value) public returns (bool) {",
+          "message": "Parameter '_tos' of AirPort.transfer (patch_17.sol#4) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _from, address _tokenContract, address[] _tos, uint256 _value) public returns (bool) {",
+          "message": "Parameter '_value' of AirPort.transfer (patch_17.sol#4) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

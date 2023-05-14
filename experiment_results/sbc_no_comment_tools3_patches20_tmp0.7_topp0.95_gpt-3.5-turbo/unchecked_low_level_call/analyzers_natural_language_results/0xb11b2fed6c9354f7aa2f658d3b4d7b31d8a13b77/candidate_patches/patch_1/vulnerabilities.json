@@ -1,0 +1,82 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Re-Entrancy Vulnerability",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            msg.sender.transfer(amount);",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function transferOwner(address _owner) public onlyOwner {\n        owner = _owner;",
+          "message": "Proxy.transferOwner (patch_1.sol#14-16) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function proxy(address target, bytes data) public payable onlyOwner {\n        require(address(this).balance >= msg.value);\n        require(target.call.value(msg.value)(data));",
+          "message": "Proxy.proxy (patch_1.sol#18-21) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "DepositProxy.fallback (patch_1.sol#27) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 34,
+          "vulnerability_code": "    function vault() public payable {\n        if (msg.sender == tx.origin) {\n            owner = msg.sender;\n            deposit();\n        }",
+          "message": "DepositProxy.vault (patch_1.sol#29-34) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": 47,
+          "vulnerability_code": "    function withdraw(uint256 amount) public onlyOwner {\n        if (amount > 0 && deposits[msg.sender] >= amount) {\n            deposits[msg.sender] -= amount;\n            msg.sender.transfer(amount);\n        }",
+          "message": "DepositProxy.withdraw (patch_1.sol#42-47) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function proxy(address target, bytes data) public payable onlyOwner {\n        require(address(this).balance >= msg.value);\n        require(target.call.value(msg.value)(data));",
+          "message": "Low level call in Proxy.proxy (patch_1.sol#18-21):\n\t-require(bool)(target.call.value(msg.value)(data)) patch_1.sol#20\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferOwner(address _owner) public onlyOwner {",
+          "message": "Parameter '_owner' of Proxy.transferOwner (patch_1.sol#14) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}

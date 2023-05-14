@@ -1,0 +1,144 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_17"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint indexdate,",
+          "message": "WedIndex.writeIndex.indexdate (local variable @ patch_13.sol#54) shadows:\n\t- WedIndex.indexdate (state variable @ patch_13.sol#35)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        string wedaddress,",
+          "message": "WedIndex.writeIndex.wedaddress (local variable @ patch_13.sol#55) shadows:\n\t- WedIndex.wedaddress (state variable @ patch_13.sol#33)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        string partnernames,",
+          "message": "WedIndex.writeIndex.partnernames (local variable @ patch_13.sol#56) shadows:\n\t- WedIndex.partnernames (state variable @ patch_13.sol#34)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint weddingdate,",
+          "message": "WedIndex.writeIndex.weddingdate (local variable @ patch_13.sol#57) shadows:\n\t- WedIndex.weddingdate (state variable @ patch_13.sol#36)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint displaymultisig",
+          "message": "WedIndex.writeIndex.displaymultisig (local variable @ patch_13.sol#58) shadows:\n\t- WedIndex.displaymultisig (state variable @ patch_13.sol#37)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public displaymultisig;",
+          "message": "WedIndex.displaymultisig should be constant (patch_13.sol#37)\nWedIndex.indexdate should be constant (patch_13.sol#35)\nWedIndex.partnernames should be constant (patch_13.sol#34)\nWedIndex.wedaddress should be constant (patch_13.sol#33)\nWedIndex.weddingdate should be constant (patch_13.sol#36)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function changeOwner(address _newOwner) onlyOwner public {\n        newOwner = _newOwner;",
+          "message": "Owned.changeOwner (patch_13.sol#17-19) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function acceptOwnership() public {\n        if (msg.sender == newOwner) {\n            owner = newOwner;\n        }",
+          "message": "Owned.acceptOwnership (patch_13.sol#21-25) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function execute(address _dst, uint _value, bytes _data) onlyOwner public {\n        require(_dst.call.value(_value)(_data));",
+          "message": "Owned.execute (patch_13.sol#27-29) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": 51,
+          "vulnerability_code": "    function numberOfIndex() public view returns (uint) {\n        return indexarray.length;",
+          "message": "WedIndex.numberOfIndex (patch_13.sol#49-51) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": 76,
+          "vulnerability_code": "    function writeIndex(\n        uint indexdate,\n        string wedaddress,\n        string partnernames,\n        uint weddingdate,\n        uint displaymultisig\n    ) public {\n        indexarray.push(\n            IndexArray(\n                now,\n                wedaddress,\n                partnernames,\n                weddingdate,\n                displaymultisig\n            )\n        );\n        emit IndexWritten(\n            now,\n            wedaddress,\n            partnernames,\n            weddingdate,\n            displaymultisig\n        );",
+          "message": "WedIndex.writeIndex (patch_13.sol#53-76) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.16;",
+          "message": "Detected issues with version pragma in patch_13.sol:\n\t- pragma solidity^0.4.16 (patch_13.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function execute(address _dst, uint _value, bytes _data) onlyOwner public {\n        require(_dst.call.value(_value)(_data));",
+          "message": "Low level call in Owned.execute (patch_13.sol#27-29):\n\t-require(bool)(_dst.call.value(_value)(_data)) patch_13.sol#28\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function changeOwner(address _newOwner) onlyOwner public {",
+          "message": "Parameter '_newOwner' of Owned.changeOwner (patch_13.sol#17) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function execute(address _dst, uint _value, bytes _data) onlyOwner public {",
+          "message": "Parameter '_dst' of Owned.execute (patch_13.sol#27) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function execute(address _dst, uint _value, bytes _data) onlyOwner public {",
+          "message": "Parameter '_value' of Owned.execute (patch_13.sol#27) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function execute(address _dst, uint _value, bytes _data) onlyOwner public {",
+          "message": "Parameter '_data' of Owned.execute (patch_13.sol#27) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

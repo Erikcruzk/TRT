@@ -1,0 +1,166 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_19"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function changeOwner(address addr) public onlyOwner {\n        newOwner = addr;",
+          "message": "Ownable.changeOwner (patch_11.sol#11-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function confirmOwner() public {\n        if (msg.sender == newOwner) {\n            owner = newOwner;\n            newOwner = address(0);\n        }",
+          "message": "Ownable.confirmOwner (patch_11.sol#15-20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": 49,
+          "vulnerability_code": "    function() payable public {\n        deposit();",
+          "message": "TokenBank.fallback (patch_11.sol#47-49) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": 66,
+          "vulnerability_code": "    function withdrawTokenToHolder(\n        address _to,\n        address _token,\n        uint _amount\n    ) public onlyOwner {\n        if (Holders[_to] > 0) {\n            Holders[_to] = 0;\n            require(withdrawToken(_token, _amount, _to));\n        }",
+          "message": "TokenBank.withdrawTokenToHolder (patch_11.sol#57-66) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 68,
+          "vulnerability_to_line": 78,
+          "vulnerability_code": "    function withdrawToHolder(\n        address _addr,\n        uint _wei\n    ) public onlyOwner {\n        if (Holders[msg.sender] > 0) {\n            if (Holders[_addr] >= _wei) {\n                _addr.transfer(_wei);\n                Holders[_addr] -= _wei;\n            }\n        }",
+          "message": "TokenBank.withdrawToHolder (patch_11.sol#68-78) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;",
+          "message": "Detected issues with version pragma in patch_11.sol:\n\t- pragma solidity^0.4.18 (patch_11.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 35,
+          "vulnerability_code": "    function withdrawToken(\n        address _token,\n        uint256 _amount,\n        address _to\n    ) public onlyOwner returns (bool) {\n        return _token.call(bytes4(keccak256(\"transfer(address,uint256)\")), _to, _amount);",
+          "message": "Low level call in Token.withdrawToken (patch_11.sol#29-35):\n\t-_token.call(bytes4(keccak256()(transfer(address,uint256))),_to,_amount) patch_11.sol#34\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function Ownable() public {\n        owner = msg.sender;",
+          "message": "Function 'Ownable.Ownable' (patch_11.sol#7-9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _token,",
+          "message": "Parameter '_token' of Token.withdrawToken (patch_11.sol#30) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _amount,",
+          "message": "Parameter '_amount' of Token.withdrawToken (patch_11.sol#31) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _to",
+          "message": "Parameter '_to' of Token.withdrawToken (patch_11.sol#32) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function TokenBank() public {\n        owner = msg.sender;\n        MinDeposit = 1 ether;",
+          "message": "Function 'TokenBank.TokenBank' (patch_11.sol#42-45) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _to,",
+          "message": "Parameter '_to' of TokenBank.withdrawTokenToHolder (patch_11.sol#58) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _token,",
+          "message": "Parameter '_token' of TokenBank.withdrawTokenToHolder (patch_11.sol#59) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint _amount",
+          "message": "Parameter '_amount' of TokenBank.withdrawTokenToHolder (patch_11.sol#60) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _addr,",
+          "message": "Parameter '_addr' of TokenBank.withdrawToHolder (patch_11.sol#69) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint _wei",
+          "message": "Parameter '_wei' of TokenBank.withdrawToHolder (patch_11.sol#70) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinDeposit;",
+          "message": "Variable 'TokenBank.MinDeposit' (patch_11.sol#39) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => uint) public Holders;",
+          "message": "Variable 'TokenBank.Holders' (patch_11.sol#40) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return _token.call(bytes4(keccak256(\"transfer(address,uint256)\")), _to, _amount);",
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

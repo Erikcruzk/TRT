@@ -1,0 +1,45 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.0;
+
+contract Reentrancy_bonus {
+    mapping(address => uint) private userBalances;
+    mapping(address => bool) private claimedBonus;
+    mapping(address => uint) private rewardsForA;
+
+    function withdrawReward(address recipient) public {
+        uint amountToWithdraw = rewardsForA[recipient];
+        rewardsForA[recipient] = 0;
+        (bool success, ) = recipient.call.value(amountToWithdraw)("");
+        require(success);
+    }
+
+    function getFirstWithdrawalBonus(address recipient) public {
+        require(!claimedBonus[recipient]);
+
+        rewardsForA[recipient] += 100;
+
+        withdrawReward(recipient);
+        claimedBonus[recipient] = true;
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+/// 1. Slither Analysis Results
+/// 1.1. Vulnerability: reentrancy at Line 15-22:
+    function getFirstWithdrawalBonus(address recipient) public {
+        require(!claimedBonus[recipient]);
+
+        rewardsForA[recipient] += 100;
+
+        withdrawReward(recipient);
+        claimedBonus[recipient] = true;
+///  Message:Reentrancy in Reentrancy_bonus.getFirstWithdrawalBonus (reentrancy_bonus.sol#15-22):
+///   	External calls:
+///   	- withdrawReward(recipient) (reentrancy_bonus.sol#20)
+///   	State variables written after the call(s):
+///   	- claimedBonus (reentrancy_bonus.sol#21)
+
+
+
+/// Repaired Solidity Smart Contract

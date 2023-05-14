@@ -1,0 +1,60 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function go(address _target) public payable {\n        require(_target != address(0)); // Ensure target address is not empty\n\n        require(_target.call.value(msg.value)()); // Use require to check if low-level call was successful\n        owner.transfer(address(this).balance);",
+          "message": "B.go (patch_7.sol#10-15) sends eth to arbitrary user\n\tDangerous calls:\n\t- owner.transfer(address(this).balance) (patch_7.sol#14)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function go(address _target) public payable {\n        require(_target != address(0)); // Ensure target address is not empty\n\n        require(_target.call.value(msg.value)()); // Use require to check if low-level call was successful\n        owner.transfer(address(this).balance);",
+          "message": "B.go (patch_7.sol#10-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "B.fallback (patch_7.sol#17) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function go(address _target) public payable {\n        require(_target != address(0)); // Ensure target address is not empty\n\n        require(_target.call.value(msg.value)()); // Use require to check if low-level call was successful\n        owner.transfer(address(this).balance);",
+          "message": "Low level call in B.go (patch_7.sol#10-15):\n\t-require(bool)(_target.call.value(msg.value)()) patch_7.sol#13\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function go(address _target) public payable {",
+          "message": "Parameter '_target' of B.go (patch_7.sol#10) is not in mixedCase\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}
