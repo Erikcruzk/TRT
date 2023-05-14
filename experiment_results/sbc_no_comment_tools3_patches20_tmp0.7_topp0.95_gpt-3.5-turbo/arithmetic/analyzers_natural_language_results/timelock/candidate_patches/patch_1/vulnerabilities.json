@@ -1,0 +1,60 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 10,
+          "vulnerability_code": "    function deposit() public payable {\n        balances[msg.sender] += msg.value;\n        lockTime[msg.sender] = now + 1 weeks;",
+          "message": "TimeLock.deposit (patch_1.sol#7-10) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function increaseLockTime(uint _secondsToIncrease) public {\n        require(lockTime[msg.sender] + _secondsToIncrease > lockTime[msg.sender]); // check for overflow\n        lockTime[msg.sender] += _secondsToIncrease;",
+          "message": "TimeLock.increaseLockTime (patch_1.sol#12-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdraw() public {\n        require(balances[msg.sender] > 0);\n        require(now > lockTime[msg.sender]);\n        uint transferValue = balances[msg.sender];\n        balances[msg.sender] = 0;\n        msg.sender.transfer(transferValue);",
+          "message": "TimeLock.withdraw (patch_1.sol#17-23) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;",
+          "message": "Detected issues with version pragma in patch_1.sol:\n\t- pragma solidity^0.4.0 (patch_1.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function increaseLockTime(uint _secondsToIncrease) public {",
+          "message": "Parameter '_secondsToIncrease' of TimeLock.increaseLockTime (patch_1.sol#12) is not in mixedCase\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}
