@@ -1,0 +1,46 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function deposit() public payable {\n        require(balances[msg.sender] + msg.value >= balances[msg.sender]); // Changed assert to require\n        balances[msg.sender] += msg.value;",
+          "message": "Wallet.deposit (patch_19.sol#12-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function withdraw(uint256 amount) public {\n        require(balances[msg.sender] >= amount); // Changed condition\n        balances[msg.sender] -= amount;\n        msg.sender.transfer(amount);",
+          "message": "Wallet.withdraw (patch_19.sol#17-21) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 26,
+          "vulnerability_code": "    function migrateTo(address to) public {\n        require(creator == msg.sender);\n        to.transfer(address(this).balance); // Made balance retrieval explicit",
+          "message": "Wallet.migrateTo (patch_19.sol#23-26) should be declared external\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

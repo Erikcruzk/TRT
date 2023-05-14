@@ -1,0 +1,123 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_14"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdraw() public {\n        withdrawalCounter += 1;\n\n        bool success = fibonacciLibrary.delegatecall(fibSig, withdrawalCounter);\n        require(success);\n\n        msg.sender.transfer(calculatedFibNumber * 1 ether);",
+          "message": "FibonacciBalance.withdraw (patch_6.sol#16-23) sends eth to arbitrary user\n\tDangerous calls:\n\t- msg.sender.transfer(calculatedFibNumber * 1000000000000000000) (patch_6.sol#22)\n"
+        },
+        {
+          "name": "controlled-delegatecall",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdraw() public {\n        withdrawalCounter += 1;\n\n        bool success = fibonacciLibrary.delegatecall(fibSig, withdrawalCounter);\n        require(success);\n\n        msg.sender.transfer(calculatedFibNumber * 1 ether);",
+          "message": "FibonacciBalance.withdraw (patch_6.sol#16-23) uses delegatecall to a input-controlled function id\n\tsuccess = fibonacciLibrary.delegatecall(fibSig,withdrawalCounter) (patch_6.sol#19)\n"
+        },
+        {
+          "name": "controlled-delegatecall",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function() public {\n        bool success = fibonacciLibrary.delegatecall(msg.data);\n        require(success);",
+          "message": "FibonacciBalance.fallback (patch_6.sol#25-28) uses delegatecall to a input-controlled function id\n\tsuccess = fibonacciLibrary.delegatecall(msg.data) (patch_6.sol#26)\n"
+        },
+        {
+          "name": "uninitialized-state",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public calculatedFibNumber;",
+          "message": "FibonacciBalance.calculatedFibNumber (patch_6.sol#6) is never initialized. It is used in:\n\t- withdraw (patch_6.sol#16-23)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public calculatedFibNumber;",
+          "message": "FibonacciBalance.calculatedFibNumber should be constant (patch_6.sol#6)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdraw() public {\n        withdrawalCounter += 1;\n\n        bool success = fibonacciLibrary.delegatecall(fibSig, withdrawalCounter);\n        require(success);\n\n        msg.sender.transfer(calculatedFibNumber * 1 ether);",
+          "message": "FibonacciBalance.withdraw (patch_6.sol#16-23) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function() public {\n        bool success = fibonacciLibrary.delegatecall(msg.data);\n        require(success);",
+          "message": "FibonacciBalance.fallback (patch_6.sol#25-28) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function setStart(uint _start) public {\n        start = _start;",
+          "message": "FibonacciLib.setStart (patch_6.sol#35-37) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 41,
+          "vulnerability_code": "    function setFibonacci(uint n) public {\n        calculatedFibNumber = fibonacci(n);",
+          "message": "FibonacciLib.setFibonacci (patch_6.sol#39-41) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdraw() public {\n        withdrawalCounter += 1;\n\n        bool success = fibonacciLibrary.delegatecall(fibSig, withdrawalCounter);\n        require(success);\n\n        msg.sender.transfer(calculatedFibNumber * 1 ether);",
+          "message": "Low level call in FibonacciBalance.withdraw (patch_6.sol#16-23):\n\t-success = fibonacciLibrary.delegatecall(fibSig,withdrawalCounter) patch_6.sol#19\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function() public {\n        bool success = fibonacciLibrary.delegatecall(msg.data);\n        require(success);",
+          "message": "Low level call in FibonacciBalance.fallback (patch_6.sol#25-28):\n\t-success = fibonacciLibrary.delegatecall(msg.data) patch_6.sol#26\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _fibonacciLibrary) public payable {",
+          "message": "Parameter '_fibonacciLibrary' of FibonacciBalance. (patch_6.sol#12) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes4 constant fibSig = bytes4(keccak256(\"setFibonacci(uint256)\"));",
+          "message": "Constant 'FibonacciBalance.fibSig' (patch_6.sol#10) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setStart(uint _start) public {",
+          "message": "Parameter '_start' of FibonacciLib.setStart (patch_6.sol#35) is not in mixedCase\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

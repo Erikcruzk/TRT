@@ -1,0 +1,67 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 31,
+          "vulnerability_code": "    function withdrawAll() public onlyOwner {\n        msg.sender.transfer(address(this).balance);",
+          "message": "TestContract.withdrawAll (patch_18.sol#29-31) sends eth to arbitrary user\n\tDangerous calls:\n\t- msg.sender.transfer(address(this).balance) (patch_18.sol#30)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 31,
+          "vulnerability_code": "    function withdrawAll() public onlyOwner {\n        msg.sender.transfer(address(this).balance);",
+          "message": "TestContract.withdrawAll (patch_18.sol#29-31) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "TestContract.fallback (patch_18.sol#33) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;",
+          "message": "Detected issues with version pragma in patch_18.sol:\n\t- pragma solidity^0.4.23 (patch_18.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addOwner(address _owner) external onlyOwner {",
+          "message": "Parameter '_owner' of MultiOwnable.addOwner (patch_18.sol#17) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function removeOwner(address _owner) external onlyOwner {",
+          "message": "Parameter '_owner' of MultiOwnable.removeOwner (patch_18.sol#22) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}
