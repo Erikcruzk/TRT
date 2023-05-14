@@ -1,0 +1,74 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function withdrawAll(address _recipient) public {\n        require(tx.origin == owner);\n        _recipient.transfer(this.balance);",
+          "message": "Phishable.withdrawAll (phishable.sol#12-15) sends eth to arbitrary user\n\tDangerous calls:\n\t- _recipient.transfer(this.balance) (phishable.sol#14)\n"
+        },
+        {
+          "name": "tx-origin",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(tx.origin == owner);",
+          "message": "Phishable.withdrawAll uses tx.origin for authorization:\n\t- require(bool)(tx.origin == owner) (phishable.sol#13)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "Phishable.fallback (phishable.sol#10) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function withdrawAll(address _recipient) public {\n        require(tx.origin == owner);\n        _recipient.transfer(this.balance);",
+          "message": "Phishable.withdrawAll (phishable.sol#12-15) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.22;",
+          "message": "Detected issues with version pragma in phishable.sol:\n\t- pragma solidity^0.4.22 (phishable.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _owner) {",
+          "message": "Parameter '_owner' of Phishable. (phishable.sol#6) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdrawAll(address _recipient) public {",
+          "message": "Parameter '_recipient' of Phishable.withdrawAll (phishable.sol#12) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

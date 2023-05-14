@@ -1,0 +1,68 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function deposit() public payable {\n        assert(balances[msg.sender] + msg.value > balances[msg.sender]);\n        balances[msg.sender] += msg.value;",
+          "message": "Wallet.deposit (wallet_02_refund_nosub.sol#12-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function withdraw(uint256 amount) public {\n        require(amount <= balances[msg.sender]);\n        msg.sender.transfer(amount);\n        balances[msg.sender] -= amount;",
+          "message": "Wallet.withdraw (wallet_02_refund_nosub.sol#17-21) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function refund() public {\n        msg.sender.transfer(balances[msg.sender]);",
+          "message": "Wallet.refund (wallet_02_refund_nosub.sol#23-25) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": 30,
+          "vulnerability_code": "    function migrateTo(address to) public {\n        require(creator == msg.sender);\n        to.transfer(this.balance);",
+          "message": "Wallet.migrateTo (wallet_02_refund_nosub.sol#27-30) should be declared external\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assert(balances[msg.sender] + msg.value > balances[msg.sender]);",
+          "message": null
+        },
+        {
+          "name": "Transaction-Ordering Dependence (TOD)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

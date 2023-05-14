@@ -1,0 +1,52 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "suicidal",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": 6,
+          "vulnerability_code": "    function sudicideAnyone() {\n        selfdestruct(msg.sender);",
+          "message": "SimpleSuicide.sudicideAnyone (simple_suicide.sol#4-6) allows anyone to destruct the contract\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": 6,
+          "vulnerability_code": "    function sudicideAnyone() {\n        selfdestruct(msg.sender);",
+          "message": "SimpleSuicide.sudicideAnyone (simple_suicide.sol#4-6) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;",
+          "message": "Detected issues with version pragma in simple_suicide.sol:\n\t- pragma solidity^0.4.0 (simple_suicide.sol#1): it allows old versions\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Unprotected Selfdestruct (SWC 106)",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        selfdestruct(msg.sender);",
+          "message": "Any sender can cause the contract to self-destruct.\nAny sender can trigger execution of the SELFDESTRUCT instruction to destroy this contract account and withdraw its balance to an arbitrary address. Review the transaction trace generated for this issue and make sure that appropriate security controls are in place to prevent unrestricted access.\nClassification: SWC-106"
+        }
+      ]
+    }
+  }
+}

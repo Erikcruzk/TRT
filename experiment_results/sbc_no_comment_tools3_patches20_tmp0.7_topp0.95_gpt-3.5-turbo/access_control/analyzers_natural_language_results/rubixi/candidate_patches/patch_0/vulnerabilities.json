@@ -1,0 +1,193 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_24"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "calls-loop",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            participants[payoutOrder].etherAddress.transfer(payoutToSend);",
+          "message": "Rubixi.addPayout has external calls inside a loop:\n\t- participants[payoutOrder].etherAddress.transfer(payoutToSend) (patch_0.sol#63)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": 30,
+          "vulnerability_code": "    function() public payable {\n        init();",
+          "message": "Rubixi.fallback (patch_0.sol#28-30) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": 75,
+          "vulnerability_code": "    function collectAllFees() public onlyOwner {\n        require(collectedFees > 0);\n\n        creator.transfer(collectedFees);\n        collectedFees = 0;",
+          "message": "Rubixi.collectAllFees (patch_0.sol#70-75) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": 87,
+          "vulnerability_code": "    function collectFeesInEther(uint _amt) public onlyOwner {\n        _amt *= 1 ether;\n        require(_amt <= collectedFees);\n\n        if (collectedFees == 0) {\n            return;\n        }\n\n        creator.transfer(_amt);\n        collectedFees -= _amt;",
+          "message": "Rubixi.collectFeesInEther (patch_0.sol#77-87) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": 95,
+          "vulnerability_code": "    function collectPercentOfFees(uint _pcent) public onlyOwner {\n        require(collectedFees > 0 && _pcent <= 100);\n\n        uint feesToCollect = (collectedFees * _pcent) / 100;\n        creator.transfer(feesToCollect);\n        collectedFees -= feesToCollect;",
+          "message": "Rubixi.collectPercentOfFees (patch_0.sol#89-95) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": 99,
+          "vulnerability_code": "    function changeOwner(address _owner) public onlyOwner {\n        creator = _owner;",
+          "message": "Rubixi.changeOwner (patch_0.sol#97-99) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": 105,
+          "vulnerability_code": "    function changeMultiplier(uint _mult) public onlyOwner {\n        require(_mult <= 300 && _mult >= 120);\n\n        pyramidMultiplier = _mult;",
+          "message": "Rubixi.changeMultiplier (patch_0.sol#101-105) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 107,
+          "vulnerability_to_line": 111,
+          "vulnerability_code": "    function changeFeePercentage(uint _fee) public onlyOwner {\n        require(_fee <= 10);\n\n        feePercent = _fee;",
+          "message": "Rubixi.changeFeePercentage (patch_0.sol#107-111) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": 115,
+          "vulnerability_code": "    function currentMultiplier() public view returns (uint, string) {\n        return (pyramidMultiplier, \"This multiplier applies to you as soon as transaction is received, may be lowered to hasten payouts or increased if payouts are fast enough. Due to no float or decimals, multiplier is x100 for a fractional multiplier e.g. 250 is actually a 2.5x multiplier. Capped at 3x max and 1.2x min.\");",
+          "message": "Rubixi.currentMultiplier (patch_0.sol#113-115) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 117,
+          "vulnerability_to_line": 119,
+          "vulnerability_code": "    function currentFeePercentage() public view returns (uint, string) {\n        return (feePercent, \"Shown in % form. Fee is halved(50%) for amounts equal or greater than 50 ethers. (Fee may change, but is capped to a maximum of 10%)\");",
+          "message": "Rubixi.currentFeePercentage (patch_0.sol#117-119) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 121,
+          "vulnerability_to_line": 123,
+          "vulnerability_code": "    function currentPyramidBalanceApproximately() public view returns (uint, string) {\n        return (balance / 1 ether, \"All balance values are measured in Ethers, note that due to no decimal placing, these values show up as integers only, within the contract itself you will get the exact decimal value you are supposed to\");",
+          "message": "Rubixi.currentPyramidBalanceApproximately (patch_0.sol#121-123) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": 127,
+          "vulnerability_code": "    function nextPayoutWhenPyramidBalanceTotalsApproximately() public view returns (uint) {\n        return participants[payoutOrder].payout / 1 ether;",
+          "message": "Rubixi.nextPayoutWhenPyramidBalanceTotalsApproximately (patch_0.sol#125-127) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": 131,
+          "vulnerability_code": "    function feesSeperateFromBalanceApproximately() public view returns (uint) {\n        return collectedFees / 1 ether;",
+          "message": "Rubixi.feesSeperateFromBalanceApproximately (patch_0.sol#129-131) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 133,
+          "vulnerability_to_line": 135,
+          "vulnerability_code": "    function totalParticipants() public view returns (uint) {\n        return participants.length;",
+          "message": "Rubixi.totalParticipants (patch_0.sol#133-135) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 137,
+          "vulnerability_to_line": 139,
+          "vulnerability_code": "    function numberOfParticipantsWaitingForPayout() public view returns (uint) {\n        return participants.length - payoutOrder;",
+          "message": "Rubixi.numberOfParticipantsWaitingForPayout (patch_0.sol#137-139) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": 145,
+          "vulnerability_code": "    function participantDetails(uint _orderInPyramid) public view returns (address, uint) {\n        if (_orderInPyramid <= participants.length) {\n            return (participants[_orderInPyramid].etherAddress, participants[_orderInPyramid].payout / 1 ether);\n        }",
+          "message": "Rubixi.participantDetails (patch_0.sol#141-145) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;",
+          "message": "Detected issues with version pragma in patch_0.sol:\n\t- pragma solidity^0.4.15 (patch_0.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addPayout(uint _fee) private {",
+          "message": "Parameter '_fee' of Rubixi.addPayout (patch_0.sol#47) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function collectFeesInEther(uint _amt) public onlyOwner {",
+          "message": "Parameter '_amt' of Rubixi.collectFeesInEther (patch_0.sol#77) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function collectPercentOfFees(uint _pcent) public onlyOwner {",
+          "message": "Parameter '_pcent' of Rubixi.collectPercentOfFees (patch_0.sol#89) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function changeOwner(address _owner) public onlyOwner {",
+          "message": "Parameter '_owner' of Rubixi.changeOwner (patch_0.sol#97) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function changeMultiplier(uint _mult) public onlyOwner {",
+          "message": "Parameter '_mult' of Rubixi.changeMultiplier (patch_0.sol#101) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 107,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function changeFeePercentage(uint _fee) public onlyOwner {",
+          "message": "Parameter '_fee' of Rubixi.changeFeePercentage (patch_0.sol#107) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function participantDetails(uint _orderInPyramid) public view returns (address, uint) {",
+          "message": "Parameter '_orderInPyramid' of Rubixi.participantDetails (patch_0.sol#141) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

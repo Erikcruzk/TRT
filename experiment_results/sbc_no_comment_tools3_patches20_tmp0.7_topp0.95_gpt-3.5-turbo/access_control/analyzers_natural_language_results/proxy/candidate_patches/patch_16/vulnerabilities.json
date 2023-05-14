@@ -1,0 +1,53 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "controlled-delegatecall",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function forward(address callee, bytes _data) public returns (bool success) {\n        require(callee.delegatecall(_data));\n        return true;",
+          "message": "Proxy.forward (patch_16.sol#10-13) uses delegatecall to a input-controlled function id\n\trequire(bool)(callee.delegatecall(_data)) (patch_16.sol#11)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function forward(address callee, bytes _data) public returns (bool success) {\n        require(callee.delegatecall(_data));\n        return true;",
+          "message": "Proxy.forward (patch_16.sol#10-13) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function forward(address callee, bytes _data) public returns (bool success) {\n        require(callee.delegatecall(_data));\n        return true;",
+          "message": "Low level call in Proxy.forward (patch_16.sol#10-13):\n\t-require(bool)(callee.delegatecall(_data)) patch_16.sol#11\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function forward(address callee, bytes _data) public returns (bool success) {",
+          "message": "Parameter '_data' of Proxy.forward (patch_16.sol#10) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}
