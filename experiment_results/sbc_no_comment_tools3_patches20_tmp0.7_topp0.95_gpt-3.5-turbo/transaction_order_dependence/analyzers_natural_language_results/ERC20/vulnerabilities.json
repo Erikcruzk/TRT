@@ -1,0 +1,72 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 private _totalSupply;",
+          "message": "ERC20._totalSupply should be constant (ERC20.sol#55)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": 63,
+          "vulnerability_code": "    function balanceOf(address owner) public view returns (uint256) {\n        return _balances[owner];",
+          "message": "ERC20.balanceOf (ERC20.sol#61-63) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": 70,
+          "vulnerability_code": "    function allowance(\n        address owner,\n        address spender\n    ) public view returns (uint256) {\n        return _allowed[owner][spender];",
+          "message": "ERC20.allowance (ERC20.sol#65-70) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": 80,
+          "vulnerability_code": "    function transfer(address to, uint256 value) public returns (bool) {\n        require(value <= _balances[msg.sender]);\n        require(to != address(0));\n\n        _balances[msg.sender] = _balances[msg.sender].sub(value);\n        _balances[to] = _balances[to].add(value);\n        emit Transfer(msg.sender, to, value);\n        return true;",
+          "message": "ERC20.transfer (ERC20.sol#72-80) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": 88,
+          "vulnerability_code": "    function approve(address spender, uint256 value) public returns (bool) {\n        require(spender != address(0));\n\n        _allowed[msg.sender][spender] = value;\n        emit Approval(msg.sender, spender, value);\n        return true;",
+          "message": "ERC20.approve (ERC20.sol#82-88) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": 104,
+          "vulnerability_code": "    function transferFrom(\n        address from,\n        address to,\n        uint256 value\n    ) public returns (bool) {\n        require(value <= _balances[from]);\n        require(value <= _allowed[from][msg.sender]);\n        require(to != address(0));\n\n        _balances[from] = _balances[from].sub(value);\n        _balances[to] = _balances[to].add(value);\n        _allowed[from][msg.sender] = _allowed[from][msg.sender].sub(value);\n        emit Transfer(from, to, value);\n        return true;",
+          "message": "ERC20.transferFrom (ERC20.sol#90-104) should be declared external\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 private _totalSupply;",
+          "message": "ERC20._totalSupply (ERC20.sol#55) is never used in ERC20\n"
+        }
+      ]
+    }
+  }
+}
