@@ -1,0 +1,123 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_14"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "uninitialized-local",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        Message memory newMsg;",
+          "message": "newMsg in Log.addMessage (patch_13.sol#54) is a local variable never initialiazed\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public minDeposit = 1 ether;",
+          "message": "PrivateDeposit.minDeposit should be constant (patch_13.sol#6)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function setLog(address _lib) public onlyOwner {\n        transferLog = Log(_lib);",
+          "message": "PrivateDeposit.setLog (patch_13.sol#21-23) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 30,
+          "vulnerability_code": "    function deposit() public payable {\n        if (msg.value >= minDeposit) {\n            balances[msg.sender] += msg.value;\n            transferLog.addMessage(msg.sender, msg.value, \"Deposit\");\n        }",
+          "message": "PrivateDeposit.deposit (patch_13.sol#25-30) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function cashOut(uint _am) public {\n        require(_am <= balances[msg.sender]);\n        balances[msg.sender] -= _am;\n        transferLog.addMessage(msg.sender, _am, \"CashOut\");\n        msg.sender.transfer(_am);",
+          "message": "PrivateDeposit.cashOut (patch_13.sol#32-37) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "PrivateDeposit.fallback (patch_13.sol#39) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": 60,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {\n        Message memory newMsg;\n        newMsg.sender = _adr;\n        newMsg.time = now;\n        newMsg.val = _val;\n        newMsg.data = _data;\n        history.push(newMsg);",
+          "message": "Log.addMessage (patch_13.sol#53-60) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_13.sol:\n\t- pragma solidity^0.4.19 (patch_13.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function PrivateDeposit() public {\n        owner = msg.sender;\n        transferLog = new Log();",
+          "message": "Function 'PrivateDeposit.PrivateDeposit' (patch_13.sol#16-19) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setLog(address _lib) public onlyOwner {",
+          "message": "Parameter '_lib' of PrivateDeposit.setLog (patch_13.sol#21) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function cashOut(uint _am) public {",
+          "message": "Parameter '_am' of PrivateDeposit.cashOut (patch_13.sol#32) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of Log.addMessage (patch_13.sol#53) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of Log.addMessage (patch_13.sol#53) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of Log.addMessage (patch_13.sol#53) is not in mixedCase\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}
