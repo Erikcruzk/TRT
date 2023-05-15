@@ -1,0 +1,67 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (z3.z3types.Z3Exception: b'Argument (let ((a!1 (= (keccak256_512 (concat #x000000000000000000000000\\n                                     ((_ extract 159 0) sender_2)\\n                                     #x0000000000000000000000000000000000000000000000000000000000000000))\\n              #x0000000000000000000000000000000000000000000000000000000000000001)))\\n  (ite a!1\\n       #x0000000000000000000000000000000000000000000000000de0b6b3a7640000\\n       #x0000000000000000000000000000000000000000000000000000000000000000)) at position 1 has sort (_ BitVec 256) it does does not match declaration (declare-fun bvugt ((_ BitVec 168) (_ BitVec 168)) Bool)')"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public minDeposit = 1 ether;",
+          "message": "PrivateBank.minDeposit should be constant (patch_0.sol#6)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function deposit() public payable {\n        if (msg.value >= minDeposit) {\n            balances[msg.sender] += msg.value;\n            emit TransferLog(msg.sender, msg.value, \"Deposit\");\n        }",
+          "message": "PrivateBank.deposit (patch_0.sol#10-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 22,
+          "vulnerability_code": "    function cashOut(uint _amount) public {\n        require(_amount <= balances[msg.sender]);\n        balances[msg.sender] -= _amount;\n        msg.sender.transfer(_amount);\n        emit TransferLog(msg.sender, _amount, \"CashOut\");",
+          "message": "PrivateBank.cashOut (patch_0.sol#17-22) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "PrivateBank.fallback (patch_0.sol#24) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_0.sol:\n\t- pragma solidity^0.4.19 (patch_0.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function cashOut(uint _amount) public {",
+          "message": "Parameter '_amount' of PrivateBank.cashOut (patch_0.sol#17) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}
