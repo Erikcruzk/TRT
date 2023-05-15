@@ -317,7 +317,7 @@ class SmartContract:
                 "results": os.path.join(smartbugs_results_dir, "${TOOL}_${RUNID}"),
                 "log": os.path.join(self.results_dir,"smartbugs_logs", "{RUNID}.log"),
                 "processes": self.experiment_settings["smartbugs_processes"],
-                "timeout": 60*3
+                "timeout": 60*60
             }
 
             # write the data to a YAML file
