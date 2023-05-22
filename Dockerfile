@@ -40,7 +40,7 @@ COPY . .
 
 # Install smartbugs
 RUN git clone https://github.com/smartbugs/smartbugs
-RUN ./smartbugs/install/setup-venv.sh
+RUN cd smartbugs && install/setup-venv.sh
 
 # Set the entry point command to Shell
 ENTRYPOINT ["/bin/bash"]
