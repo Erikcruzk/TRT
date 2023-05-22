@@ -21,14 +21,15 @@ install/setup-venv.sh
 ```
 
 #### Run in Docker
-1. docker build --pull --rm -f "Dockerfile" -t trt:c0ec3 "."
+1. docker build --pull --rm -f "Dockerfile" -t trt:1f8be "."
 2. Start container
 ```
 docker run -tid\
   --volume $(pwd)/config.yml:/app/config.yml \
   --volume $(pwd)/experiment_results:/app/experiment_results \
+  -v /var/run/docker.sock:/var/run/docker.sock \
   --name trt_container \
-  trt:c0ec3
+  trt:1f8be
 ```
 3. Enter Container
 ```
