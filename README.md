@@ -20,7 +20,20 @@ cd smartbugs
 install/setup-venv.sh
 ```
 
-#### Start docker
+#### Run in Docker
+1. docker build --pull --rm -f "Dockerfile" -t trt:f77bc "."
+2. Start container
+```
+docker run -tid\
+  --volume $(pwd)/config.yml:/app/config.yml \
+  --volume $(pwd)/experiment_results:/app/experiment_results \
+  --name trt_container \
+  trt:f77bc
+```
+3. Stop container
+```
+docker stop trt_container
+```
 
 #### Add the API Key for OpenAI
 

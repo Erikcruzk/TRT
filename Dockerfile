@@ -7,7 +7,8 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     curl \
     gnupg \
-    lsb-release
+    lsb-release \
+    vim
 
 # Import the Docker GPG key and add the Docker repository by adding the following lines:
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -31,6 +32,7 @@ WORKDIR /app
 
 # install pip requirements
 COPY requirements.txt requirements.txt
+RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 
 # Copy the entire project directory to the container
@@ -38,8 +40,7 @@ COPY . .
 
 # Install smartbugs
 RUN git clone https://github.com/smartbugs/smartbugs
-RUN cd smartbugs
-RUN install/setup-venv.sh
+RUN ./smartbugs/install/setup-venv.sh
 
 # Set the entry point command to Shell
 ENTRYPOINT ["/bin/bash"]
