@@ -30,7 +30,11 @@ docker run -tid\
   --name trt_container \
   trt:f77bc
 ```
-3. Stop container
+3. Enter Container
+```
+docker exec -it trt_container bash
+```
+4. Stop container
 ```
 docker stop trt_container
 ```
