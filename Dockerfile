@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 # Import the Docker GPG key and add the Docker repository by adding the following lines:
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
-RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
+RUN echo "deb [arch="$(dpkg --print-architecture)" signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
     $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 
@@ -39,6 +39,7 @@ RUN pip3 install -r requirements.txt
 COPY . .
 
 # Install smartbugs
+RUN rm -rf smartbugs
 RUN git clone https://github.com/smartbugs/smartbugs
 RUN cd smartbugs && install/setup-venv.sh
 
