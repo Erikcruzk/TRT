@@ -30,7 +30,7 @@ docker run -tid\
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /tmp:/tmp \
   --name trt_container \
-  trt:1f8be
+  trt:1669e
 ```
 3. Enter Container
 ```
