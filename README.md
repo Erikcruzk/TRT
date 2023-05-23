@@ -29,12 +29,12 @@ docker run -tid\
   -v $(pwd)/experiment_results:/app/experiment_results \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /tmp:/tmp \
-  --name trt_container \
+  --name trt_container_unchecked \
   trt:1669e
 ```
 3. Enter Container
 ```
-docker exec -it trt_container bash
+docker exec -it trt_container_unchecked bash
 ```
 4. Stop container
 ```
