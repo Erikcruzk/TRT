@@ -25,9 +25,10 @@ install/setup-venv.sh
 2. Start container
 ```
 docker run -tid\
-  --volume $(pwd)/config.yml:/app/config.yml \
-  --volume $(pwd)/experiment_results:/app/experiment_results \
+  -v $(pwd)/config.yml:/app/config.yml \
+  -v $(pwd)/experiment_results:/app/experiment_results \
   -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /tmp:/tmp \
   --name trt_container \
   trt:1f8be
 ```
