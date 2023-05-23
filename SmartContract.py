@@ -141,7 +141,7 @@ class SmartContract:
             "SWC 104",
             # Oyente
             "Unchecked return value from external call. (SWC 104)",# Mythril
-            "unchecked-lowlevel", "low-level-calls", "unused-return" # Slither
+            "unchecked-lowlevel", "low-level-calls", "unused-return", # Slither
             "SOLIDITY_UNCHECKED_CALL" # Smartcheck
         ]
         vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unchecked_low_level_call_aliases], "unchecked_low_level_call"))
