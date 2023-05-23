@@ -21,7 +21,7 @@ install/setup-venv.sh
 ```
 
 #### Run in Docker
-1. docker build --pull --rm -f "Dockerfile" -t trt:1f8be "."
+1. docker build --pull --rm -f "Dockerfile" -t trt:1669e "."
 2. Start container
 ```
 docker run -tid\
