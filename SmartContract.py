@@ -25,7 +25,7 @@ class SmartContract:
     def __init__(self, experiment_settings:dict, sc_path:Path):
         self.experiment_settings:dict = experiment_settings
         self.path:Path = sc_path
-        self.results_dir:Path = self.path.parent.absolute()
+        self.results_dir:Path = self.path.parent.absolute().relative_to(Path.cwd())
 
         self.filename = os.path.basename(self.path)
         self.name, _ = os.path.splitext(self.filename)
@@ -283,15 +283,14 @@ class SmartContract:
                     shutil.rmtree(os.path.join(smartbugs_results_dir, d))
 
     def set_vulnerabilities(self):
-        smartbugs_results_dir = Path(os.path.join(self.results_dir, "smartbugs_results"))
+        smartbugs_results_dirs = Path(os.path.join(self.results_dir, "smartbugs_results"))
         self.vulnerabilities["smartbugs_completed"] = False
         self.vulnerabilities["analyzer_results"] = {}        
 
         # Loop through all smartbugs_results
-        for smartbugs_result_file in [os.path.join(smartbugs_results_dir, f) for f in os.listdir(smartbugs_results_dir) if os.path.isdir(os.path.join(smartbugs_results_dir, f))]:
-            sb_result_dir = os.path.join(smartbugs_results_dir, smartbugs_result_file)
-            tool_name = os.path.basename(sb_result_dir).split("_", 1)[0]
-            tool_result = json.load(open(os.path.join(sb_result_dir, "result.json"), "r"))
+        for smartbugs_result_dir in [os.path.join(smartbugs_results_dirs, f) for f in os.listdir(smartbugs_results_dirs) if os.path.isdir(os.path.join(smartbugs_results_dirs, f))]:
+            tool_name = os.path.basename(smartbugs_result_dir).split("_", 1)[0]
+            tool_result = json.load(open(os.path.join(smartbugs_result_dir, "result.json"), "r"))
             self.create_vulnerabilities_from_sb_results(tool_name, tool_result)
         
         if not self.vulnerabilities["analyzer_results"] == {}:
