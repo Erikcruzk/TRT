@@ -1,0 +1,77 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.0;
+
+contract EtherStore {
+    uint256 public withdrawalLimit = 1 ether;
+    mapping(address => uint256) public lastWithdrawTime;
+    mapping(address => uint256) public balances;
+
+    function depositFunds() public payable {
+        balances[msg.sender] += msg.value;
+    }
+
+    function withdrawFunds(uint256 _weiToWithdraw) public {
+        require(balances[msg.sender] >= _weiToWithdraw);
+
+        require(_weiToWithdraw <= withdrawalLimit);
+
+        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);
+
+        require(msg.sender.call.value(_weiToWithdraw)());
+        balances[msg.sender] -= _weiToWithdraw;
+        lastWithdrawTime[msg.sender] = now;
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+/// 1. Mythril-0.23.15 Analysis Results
+/// 1.1. Vulnerability: reentrancy at Line 19:
+        require(msg.sender.call.value(_weiToWithdraw)());
+///  Message:A call to a user-supplied address is executed.
+///   An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+///   Classification: SWC-107
+/// 1.2. Vulnerability: reentrancy at Line 20:
+        balances[msg.sender] -= _weiToWithdraw;
+///  Message:Read of persistent state following external call
+///   The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+///   Classification: SWC-107
+/// 1.3. Vulnerability: reentrancy at Line 20:
+        balances[msg.sender] -= _weiToWithdraw;
+///  Message:Write to persistent state following external call
+///   The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+///   Classification: SWC-107
+/// 1.4. Vulnerability: reentrancy at Line 21:
+        lastWithdrawTime[msg.sender] = now;
+///  Message:Write to persistent state following external call
+///   The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+///   Classification: SWC-107
+
+
+/// 2. Slither Analysis Results
+/// 2.1. Vulnerability: reentrancy at Line 12-22:
+    function withdrawFunds(uint256 _weiToWithdraw) public {
+        require(balances[msg.sender] >= _weiToWithdraw);
+
+        require(_weiToWithdraw <= withdrawalLimit);
+
+        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);
+
+        require(msg.sender.call.value(_weiToWithdraw)());
+        balances[msg.sender] -= _weiToWithdraw;
+        lastWithdrawTime[msg.sender] = now;
+///  Message:Reentrancy in EtherStore.withdrawFunds (etherstore.sol#12-22):
+///   	External calls:
+///   	- require(bool)(msg.sender.call.value(_weiToWithdraw)()) (etherstore.sol#19)
+///   	State variables written after the call(s):
+///   	- balances (etherstore.sol#20)
+///   	- lastWithdrawTime (etherstore.sol#21)
+
+
+/// 3. Oyente Analysis Results
+/// 3.1. Vulnerability: reentrancy at Line 19:
+        require(msg.sender.call.value(_weiToWithdraw)());
+
+
+
+/// Repaired Solidity Smart Contract

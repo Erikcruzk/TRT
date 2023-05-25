@@ -1,0 +1,129 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_14"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint tokens_buy = (msg.value * 10 ** 18) / token_price;",
+          "message": "Delta.tokens_buy.tokens_buy (local variable @ patch_7.sol#19) shadows:\n\t- Delta.tokens_buy (function @ patch_7.sol#15-31)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public owner = 0x788c45dd60ae4dbe5055b5ac02384d5dc84677b0;",
+          "message": "Delta.owner should be constant (patch_7.sol#5)\nDelta.owner2 should be constant (patch_7.sol#6)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function() public payable {\n        tokens_buy();",
+          "message": "Delta.fallback (patch_7.sol#11-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "    function withdraw(uint256 _amount) public onlyOwner returns (bool result) {\n        uint256 balance;\n        balance = address(this).balance;\n        if (_amount > 0) balance = _amount;\n\n        owner.transfer(balance);\n        return true;",
+          "message": "Delta.withdraw (patch_7.sol#33-40) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": 47,
+          "vulnerability_code": "    function change_token_price(\n        uint256 _token_price\n    ) public onlyOwner returns (bool result) {\n        token_price = _token_price;\n        return true;",
+          "message": "Delta.change_token_price (patch_7.sol#42-47) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": 52,
+          "vulnerability_code": "    function change_active(uint256 _active) public onlyOwner returns (bool result) {\n        active = _active;\n        return true;",
+          "message": "Delta.change_active (patch_7.sol#49-52) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;",
+          "message": "Detected issues with version pragma in patch_7.sol:\n\t- pragma solidity^0.4.23 (patch_7.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 31,
+          "vulnerability_code": "    function tokens_buy() public payable returns (bool) {\n        require(active > 0);\n        require(msg.value >= token_price);\n\n        uint tokens_buy = (msg.value * 10 ** 18) / token_price;\n\n        require(tokens_buy > 0);\n\n        bool success = c.transferFrom(owner, msg.sender, tokens_buy);\n        require(success);\n\n        uint sum2 = (msg.value * 3) / 10;\n\n        owner2.transfer(sum2);\n\n        return true;",
+          "message": "Function 'Delta.tokens_buy' (patch_7.sol#15-31) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdraw(uint256 _amount) public onlyOwner returns (bool result) {",
+          "message": "Parameter '_amount' of Delta.withdraw (patch_7.sol#33) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": 47,
+          "vulnerability_code": "    function change_token_price(\n        uint256 _token_price\n    ) public onlyOwner returns (bool result) {\n        token_price = _token_price;\n        return true;",
+          "message": "Function 'Delta.change_token_price' (patch_7.sol#42-47) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _token_price",
+          "message": "Parameter '_token_price' of Delta.change_token_price (patch_7.sol#43) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": 52,
+          "vulnerability_code": "    function change_active(uint256 _active) public onlyOwner returns (bool result) {\n        active = _active;\n        return true;",
+          "message": "Function 'Delta.change_active' (patch_7.sol#49-52) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function change_active(uint256 _active) public onlyOwner returns (bool result) {",
+          "message": "Parameter '_active' of Delta.change_active (patch_7.sol#49) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public token_price = (10 ** 18 * 1) / 1000;",
+          "message": "Variable 'Delta.token_price' (patch_7.sol#9) is not in mixedCase\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Transaction-Ordering Dependence (TOD)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    }
+  }
+}

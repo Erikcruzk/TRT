@@ -1,0 +1,171 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Delegatecall to user-supplied address (SWC 112)",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(fibonacciLibrary.delegatecall(msg.data));",
+          "message": "The contract delegates execution to another contract with a user-supplied address.\nThe smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.\nClassification: SWC-112"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        else if (n == 1) return start + 1;",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        else return fibonacci(n - 1) + fibonacci(n - 2);",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Delegatecall to user-supplied address (SWC 112)",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(fibonacciLibrary.delegatecall(fibSig, withdrawalCounter));",
+          "message": "The contract delegates execution to another contract with a user-supplied address.\nThe smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.\nClassification: SWC-112"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        msg.sender.transfer(calculatedFibNumber * 1 ether);",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        msg.sender.transfer(calculatedFibNumber * 1 ether);",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        msg.sender.transfer(calculatedFibNumber * 1 ether);",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_14"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 22,
+          "vulnerability_code": "    function withdraw() public {\n        withdrawalCounter += 1;\n\n        require(fibonacciLibrary.delegatecall(fibSig, withdrawalCounter));\n        msg.sender.transfer(calculatedFibNumber * 1 ether);",
+          "message": "FibonacciBalance.withdraw (patch_19.sol#17-22) sends eth to arbitrary user\n\tDangerous calls:\n\t- msg.sender.transfer(calculatedFibNumber * 1000000000000000000) (patch_19.sol#21)\n"
+        },
+        {
+          "name": "controlled-delegatecall",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 22,
+          "vulnerability_code": "    function withdraw() public {\n        withdrawalCounter += 1;\n\n        require(fibonacciLibrary.delegatecall(fibSig, withdrawalCounter));\n        msg.sender.transfer(calculatedFibNumber * 1 ether);",
+          "message": "FibonacciBalance.withdraw (patch_19.sol#17-22) uses delegatecall to a input-controlled function id\n\trequire(bool)(fibonacciLibrary.delegatecall(fibSig,withdrawalCounter)) (patch_19.sol#20)\n"
+        },
+        {
+          "name": "controlled-delegatecall",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": 26,
+          "vulnerability_code": "    function() public {\n        require(fibonacciLibrary.delegatecall(msg.data));",
+          "message": "FibonacciBalance.fallback (patch_19.sol#24-26) uses delegatecall to a input-controlled function id\n\trequire(bool)(fibonacciLibrary.delegatecall(msg.data)) (patch_19.sol#25)\n"
+        },
+        {
+          "name": "uninitialized-state",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public calculatedFibNumber;",
+          "message": "FibonacciBalance.calculatedFibNumber (patch_19.sol#6) is never initialized. It is used in:\n\t- withdraw (patch_19.sol#17-22)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public calculatedFibNumber;",
+          "message": "FibonacciBalance.calculatedFibNumber should be constant (patch_19.sol#6)\nFibonacciBalance.start should be constant (patch_19.sol#8)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 22,
+          "vulnerability_code": "    function withdraw() public {\n        withdrawalCounter += 1;\n\n        require(fibonacciLibrary.delegatecall(fibSig, withdrawalCounter));\n        msg.sender.transfer(calculatedFibNumber * 1 ether);",
+          "message": "FibonacciBalance.withdraw (patch_19.sol#17-22) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": 26,
+          "vulnerability_code": "    function() public {\n        require(fibonacciLibrary.delegatecall(msg.data));",
+          "message": "FibonacciBalance.fallback (patch_19.sol#24-26) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": 35,
+          "vulnerability_code": "    function setStart(uint _start) public {\n        start = _start;",
+          "message": "FibonacciLib.setStart (patch_19.sol#33-35) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function setFibonacci(uint n) public {\n        calculatedFibNumber = fibonacci(n);",
+          "message": "FibonacciLib.setFibonacci (patch_19.sol#43-45) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 22,
+          "vulnerability_code": "    function withdraw() public {\n        withdrawalCounter += 1;\n\n        require(fibonacciLibrary.delegatecall(fibSig, withdrawalCounter));\n        msg.sender.transfer(calculatedFibNumber * 1 ether);",
+          "message": "Low level call in FibonacciBalance.withdraw (patch_19.sol#17-22):\n\t-require(bool)(fibonacciLibrary.delegatecall(fibSig,withdrawalCounter)) patch_19.sol#20\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": 26,
+          "vulnerability_code": "    function() public {\n        require(fibonacciLibrary.delegatecall(msg.data));",
+          "message": "Low level call in FibonacciBalance.fallback (patch_19.sol#24-26):\n\t-require(bool)(fibonacciLibrary.delegatecall(msg.data)) patch_19.sol#25\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _fibonacciLibrary) public payable {",
+          "message": "Parameter '_fibonacciLibrary' of FibonacciBalance. (patch_19.sol#13) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes4 constant fibSig = bytes4(keccak256(\"setFibonacci(uint256)\"));",
+          "message": "Constant 'FibonacciBalance.fibSig' (patch_19.sol#11) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setStart(uint _start) public {",
+          "message": "Parameter '_start' of FibonacciLib.setStart (patch_19.sol#33) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}

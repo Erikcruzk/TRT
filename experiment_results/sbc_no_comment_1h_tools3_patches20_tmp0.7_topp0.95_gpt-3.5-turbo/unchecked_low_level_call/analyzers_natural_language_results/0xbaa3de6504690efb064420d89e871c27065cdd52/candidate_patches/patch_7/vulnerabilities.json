@@ -1,0 +1,75 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        deposits[msg.sender] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "    function transferOwner(address newOwner) public onlyOwner {\n        require(newOwner != address(0), \"Invalid new owner address\");\n        owner = newOwner;",
+          "message": "Proxy.transferOwner (patch_7.sol#15-18) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function proxy(address target, bytes data) public payable {\n        require(target != address(0), \"Invalid target address\");\n        require(target.call.value(msg.value)(data), \"External call failed\");",
+          "message": "Proxy.proxy (patch_7.sol#20-23) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function() public payable {\n        deposit();",
+          "message": "VaultProxy.fallback (patch_7.sol#35-37) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": 49,
+          "vulnerability_code": "    function withdraw(uint256 amount) public onlyOwner {\n        require(amount > 0, \"Withdrawal amount must be greater than 0\");\n        require(deposits[msg.sender] >= amount, \"Insufficient balance\");\n        deposits[msg.sender] -= amount;\n        msg.sender.transfer(amount);",
+          "message": "VaultProxy.withdraw (patch_7.sol#44-49) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;",
+          "message": "Detected issues with version pragma in patch_7.sol:\n\t- pragma solidity^0.4.23 (patch_7.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function proxy(address target, bytes data) public payable {\n        require(target != address(0), \"Invalid target address\");\n        require(target.call.value(msg.value)(data), \"External call failed\");",
+          "message": "Low level call in Proxy.proxy (patch_7.sol#20-23):\n\t-require(bool,string)(target.call.value(msg.value)(data),External call failed) patch_7.sol#22\n"
+        }
+      ]
+    }
+  }
+}

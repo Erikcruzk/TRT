@@ -1,0 +1,59 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": 6,
+          "vulnerability_code": "    function callAddress(address a) {\n        a.call();",
+          "message": "Caller.callAddress (0x0cbe050f75bc8f8c2d6c0d249fea125fd6e1acc9.sol#4-6) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.10;",
+          "message": "Detected issues with version pragma in 0x0cbe050f75bc8f8c2d6c0d249fea125fd6e1acc9.sol:\n\t- pragma solidity^0.4.10 (0x0cbe050f75bc8f8c2d6c0d249fea125fd6e1acc9.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": 6,
+          "vulnerability_code": "    function callAddress(address a) {\n        a.call();",
+          "message": "Low level call in Caller.callAddress (0x0cbe050f75bc8f8c2d6c0d249fea125fd6e1acc9.sol#4-6):\n\t-a.call() 0x0cbe050f75bc8f8c2d6c0d249fea125fd6e1acc9.sol#5\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        a.call();",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Unchecked return value from external call. (SWC 104)",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        a.call();",
+          "message": "The return value of a message call is not checked.\nExternal calls return a boolean value. If the callee halts with an exception, 'false' is returned and execution continues in the caller. The caller should check whether an exception happened and react accordingly to avoid unexpected behavior. For example it is often desirable to wrap external calls in require() so the transaction is reverted if the call fails.\nClassification: SWC-104"
+        }
+      ]
+    }
+  }
+}

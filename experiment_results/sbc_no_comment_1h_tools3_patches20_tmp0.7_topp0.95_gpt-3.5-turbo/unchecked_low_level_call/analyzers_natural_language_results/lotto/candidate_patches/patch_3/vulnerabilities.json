@@ -1,0 +1,80 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Transaction-Ordering Dependence (TOD)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function withdrawLeftOver() public {\n        require(payedOut);\n\n        require(msg.sender.send(this.balance));",
+          "message": "Lotto.withdrawLeftOver (patch_3.sol#15-19) sends eth to arbitrary user\n\tDangerous calls:\n\t- require(bool)(msg.sender.send(this.balance)) (patch_3.sol#18)\n"
+        },
+        {
+          "name": "uninitialized-state",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public winner;",
+          "message": "Lotto.winner (patch_3.sol#5) is never initialized. It is used in:\n\t- sendToWinner (patch_3.sol#8-13)\n"
+        },
+        {
+          "name": "uninitialized-state",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public winAmount;",
+          "message": "Lotto.winAmount (patch_3.sol#6) is never initialized. It is used in:\n\t- sendToWinner (patch_3.sol#8-13)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public winAmount;",
+          "message": "Lotto.winAmount should be constant (patch_3.sol#6)\nLotto.winner should be constant (patch_3.sol#5)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function sendToWinner() public {\n        require(!payedOut);\n\n        require(winner.send(winAmount));\n        payedOut = true;",
+          "message": "Lotto.sendToWinner (patch_3.sol#8-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function withdrawLeftOver() public {\n        require(payedOut);\n\n        require(msg.sender.send(this.balance));",
+          "message": "Lotto.withdrawLeftOver (patch_3.sol#15-19) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;",
+          "message": "Detected issues with version pragma in patch_3.sol:\n\t- pragma solidity^0.4.18 (patch_3.sol#1): it allows old versions\n"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,289 @@
+{
+    "errors": [
+        "EXIT_CODE_26"
+    ],
+    "fails": [],
+    "findings": [
+        {
+            "confidence": "Medium",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "payout",
+            "impact": "High",
+            "line": 105,
+            "line_end": 110,
+            "message": "PoCGame.payout (patch_16.sol#105-110) sends eth to arbitrary user\n\tDangerous calls:\n\t- winner.transfer(ethToTransfer) (patch_16.sol#108)\n",
+            "name": "arbitrary-send"
+        },
+        {
+            "confidence": "Medium",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "loseWager",
+            "impact": "High",
+            "line": 118,
+            "line_end": 122,
+            "message": "PoCGame.loseWager (patch_16.sol#118-122) sends eth to arbitrary user\n\tDangerous calls:\n\t- require(bool)(address(whale).call.value(amount)(bytes4(keccak256()(donate())))) (patch_16.sol#119)\n",
+            "name": "arbitrary-send"
+        },
+        {
+            "confidence": "Medium",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "play",
+            "impact": "High",
+            "line": 80,
+            "line_end": 99,
+            "message": "Reentrancy in PoCGame.play (patch_16.sol#80-99):\n\tExternal calls:\n\t- loseWager(betLimit / 2) (patch_16.sol#93)\n\tExternal calls sending eth:\n\t- payout(msg.sender) (patch_16.sol#91)\n\t- loseWager(betLimit / 2) (patch_16.sol#93)\n\tState variables written after the call(s):\n\t- randomSeed (patch_16.sol#95)\n",
+            "name": "reentrancy-eth"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "play",
+            "impact": "Medium",
+            "line": 80,
+            "line_end": 99,
+            "message": "PoCGame.play (patch_16.sol#80-99) uses a dangerous strict equality:\n\t- winningNumber == difficulty / 2\n",
+            "name": "incorrect-equality"
+        },
+        {
+            "confidence": "Medium",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "donateToWhale",
+            "impact": "Low",
+            "line": 112,
+            "line_end": 116,
+            "message": "Reentrancy in PoCGame.donateToWhale (patch_16.sol#112-116):\n\tExternal calls:\n\t- require(bool)(address(whale).call.value(amount)(bytes4(keccak256()(donate())))) (patch_16.sol#113)\n\tState variables written after the call(s):\n\t- totalDonated (patch_16.sol#114)\n",
+            "name": "reentrancy-benign"
+        },
+        {
+            "confidence": "Medium",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "loseWager",
+            "impact": "Low",
+            "line": 118,
+            "line_end": 122,
+            "message": "Reentrancy in PoCGame.loseWager (patch_16.sol#118-122):\n\tExternal calls:\n\t- require(bool)(address(whale).call.value(amount)(bytes4(keccak256()(donate())))) (patch_16.sol#119)\n\tState variables written after the call(s):\n\t- totalDonated (patch_16.sol#120)\n",
+            "name": "reentrancy-benign"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "OpenToThePublic",
+            "impact": "Informational",
+            "line": 52,
+            "line_end": 54,
+            "message": "PoCGame.OpenToThePublic (patch_16.sol#52-54) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "AdjustBetAmounts",
+            "impact": "Informational",
+            "line": 56,
+            "line_end": 60,
+            "message": "PoCGame.AdjustBetAmounts (patch_16.sol#56-60) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "AdjustDifficulty",
+            "impact": "Informational",
+            "line": 62,
+            "line_end": 66,
+            "message": "PoCGame.AdjustDifficulty (patch_16.sol#62-66) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "fallback",
+            "impact": "Informational",
+            "line": 68,
+            "message": "PoCGame.fallback (patch_16.sol#68) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "wager",
+            "impact": "Informational",
+            "line": 70,
+            "line_end": 78,
+            "message": "PoCGame.wager (patch_16.sol#70-78) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "play",
+            "impact": "Informational",
+            "line": 80,
+            "line_end": 99,
+            "message": "PoCGame.play (patch_16.sol#80-99) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "donate",
+            "impact": "Informational",
+            "line": 101,
+            "line_end": 103,
+            "message": "PoCGame.donate (patch_16.sol#101-103) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "ethBalance",
+            "impact": "Informational",
+            "line": 124,
+            "line_end": 126,
+            "message": "PoCGame.ethBalance (patch_16.sol#124-126) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "currentDifficulty",
+            "impact": "Informational",
+            "line": 128,
+            "line_end": 130,
+            "message": "PoCGame.currentDifficulty (patch_16.sol#128-130) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "currentBetLimit",
+            "impact": "Informational",
+            "line": 132,
+            "line_end": 134,
+            "message": "PoCGame.currentBetLimit (patch_16.sol#132-134) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "hasPlayerWagered",
+            "impact": "Informational",
+            "line": 136,
+            "line_end": 142,
+            "message": "PoCGame.hasPlayerWagered (patch_16.sol#136-142) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "winnersPot",
+            "impact": "Informational",
+            "line": 144,
+            "line_end": 146,
+            "message": "PoCGame.winnersPot (patch_16.sol#144-146) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "transferAnyERC20Token",
+            "impact": "Informational",
+            "line": 148,
+            "line_end": 154,
+            "message": "PoCGame.transferAnyERC20Token (patch_16.sol#148-154) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "contract": "ERC20Interface",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "transfer",
+            "impact": "Informational",
+            "line": 158,
+            "message": "ERC20Interface.transfer (patch_16.sol#158) should be declared external\n",
+            "name": "external-function"
+        },
+        {
+            "confidence": "High",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "impact": "Informational",
+            "line": 1,
+            "message": "Detected issues with version pragma in patch_16.sol:\n\t- pragma solidity^0.4.21 (patch_16.sol#1): it allows old versions\n",
+            "name": "solc-version"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "donateToWhale",
+            "impact": "Informational",
+            "line": 112,
+            "line_end": 116,
+            "message": "Low level call in PoCGame.donateToWhale (patch_16.sol#112-116):\n\t-require(bool)(address(whale).call.value(amount)(bytes4(keccak256()(donate())))) patch_16.sol#113\n",
+            "name": "low-level-calls"
+        },
+        {
+            "confidence": "High",
+            "contract": "PoCGame",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "function": "loseWager",
+            "impact": "Informational",
+            "line": 118,
+            "line_end": 122,
+            "message": "Low level call in PoCGame.loseWager (patch_16.sol#118-122):\n\t-require(bool)(address(whale).call.value(amount)(bytes4(keccak256()(donate())))) patch_16.sol#119\n",
+            "name": "low-level-calls"
+        },
+        {
+            "confidence": "High",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "impact": "Informational",
+            "line": 52,
+            "line_end": 54,
+            "message": "Function 'PoCGame.OpenToThePublic' (patch_16.sol#52-54) is not in mixedCase\n",
+            "name": "naming-convention"
+        },
+        {
+            "confidence": "High",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "impact": "Informational",
+            "line": 56,
+            "line_end": 60,
+            "message": "Function 'PoCGame.AdjustBetAmounts' (patch_16.sol#56-60) is not in mixedCase\n",
+            "name": "naming-convention"
+        },
+        {
+            "confidence": "High",
+            "filename": "experiment_results/sbc_no_comment_1h_tools3_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_call/analyzers_natural_language_results/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e/candidate_patches/patch_16/patch_16.sol",
+            "impact": "Informational",
+            "line": 62,
+            "line_end": 66,
+            "message": "Function 'PoCGame.AdjustDifficulty' (patch_16.sol#62-66) is not in mixedCase\n",
+            "name": "naming-convention"
+        }
+    ],
+    "infos": [],
+    "parser": {
+        "id": "slither",
+        "mode": "solidity",
+        "version": "2022/11/14"
+    }
+}

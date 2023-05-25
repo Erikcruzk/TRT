@@ -1,0 +1,129 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_10"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdrawEther() public {\n        owner.transfer(address(this).balance);",
+          "message": "EtherGet.withdrawEther (patch_17.sol#21-23) sends eth to arbitrary user\n\tDangerous calls:\n\t- owner.transfer(address(this).balance) (patch_17.sol#22)\n"
+        },
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function getTokens(uint num, address addr) public {\n        for (uint i = 0; i < num; i++) {\n            require(addr.call.value(0)(), \"Low level call failed\");\n        }",
+          "message": "EtherGet.getTokens (patch_17.sol#25-29) sends eth to arbitrary user\n\tDangerous calls:\n\t- require(bool,string)(addr.call.value(0)(),Low level call failed) (patch_17.sol#27)\n"
+        },
+        {
+          "name": "calls-loop",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(addr.call.value(0)(), \"Low level call failed\");",
+          "message": "EtherGet.getTokens has external calls inside a loop:\n\t- require(bool,string)(addr.call.value(0)(),Low level call failed) (patch_17.sol#27)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint _value) public returns (bool success);",
+          "message": "Token.transfer (patch_17.sol#4) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address _owner) public constant returns (uint balance);",
+          "message": "Token.balanceOf (patch_17.sol#6) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function withdrawTokens(address tokenContract) public {\n        Token tc = Token(tokenContract);\n        require(tc.transfer(owner, tc.balanceOf(this)), \"Token transfer failed\");",
+          "message": "EtherGet.withdrawTokens (patch_17.sol#16-19) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdrawEther() public {\n        owner.transfer(address(this).balance);",
+          "message": "EtherGet.withdrawEther (patch_17.sol#21-23) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function getTokens(uint num, address addr) public {\n        for (uint i = 0; i < num; i++) {\n            require(addr.call.value(0)(), \"Low level call failed\");\n        }",
+          "message": "EtherGet.getTokens (patch_17.sol#25-29) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_17.sol:\n\t- pragma solidity^0.4.19 (patch_17.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function getTokens(uint num, address addr) public {\n        for (uint i = 0; i < num; i++) {\n            require(addr.call.value(0)(), \"Low level call failed\");\n        }",
+          "message": "Low level call in EtherGet.getTokens (patch_17.sol#25-29):\n\t-require(bool,string)(addr.call.value(0)(),Low level call failed) patch_17.sol#27\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(addr.call.value(0)(), \"Low level call failed\");",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(addr.call.value(0)(), \"Low level call failed\");",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(tc.transfer(owner, tc.balanceOf(this)), \"Token transfer failed\");",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(tc.transfer(owner, tc.balanceOf(this)), \"Token transfer failed\");",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(tc.transfer(owner, tc.balanceOf(this)), \"Token transfer failed\");",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        }
+      ]
+    }
+  }
+}
