@@ -18,6 +18,7 @@ from pathlib import Path
 import queue
 import shutil
 from tqdm import tqdm
+import difflib
 
 def clear_queue(queue:queue.Queue):
     while not queue.empty():
@@ -147,6 +148,28 @@ class TransformativeRepair:
         with open(os.path.join(results_dir, f'{summary["experiment_name"]}_summary.md'), 'w') as f:
             f.write(markdown)
 
+    @staticmethod
+    def save_best_patch_and_diff(target_vulnerability, original_sc_path:Path, best_patch_path:Path):
+        original_sc_dir = os.path.dirname(original_sc_path)
+        original_sc_name, _ = os.path.splitext(os.path.basename(original_sc_path))
+        bect_patch_name, _ = os.path.splitext(os.path.basename(best_patch_path))
+
+        # Copy over best patch
+        best_patch_copy_location = Path(os.path.join(original_sc_dir, f'{original_sc_name}_best_patch_{target_vulnerability}_{bect_patch_name}.sol'))
+        shutil.copy2(best_patch_path, best_patch_copy_location)
+
+        # Save diff of original path and best patch        
+        with open(original_sc_path, 'r') as file1, open(best_patch_path, 'r') as file2:
+            file1_lines = file1.readlines()
+            file2_lines = file2.readlines()
+
+        #diff = difflib.unified_diff(file1_lines, file2_lines, fromfile=f'{original_sc_path}', tofile=f'{best_patch_path}')
+        diff = difflib.ndiff(file1_lines, file2_lines)
+        #diff = difflib.context_diff(file1_lines, file2_lines, fromfile=f'{original_sc_path}', tofile=f'{best_patch_path}')
+
+        with open(os.path.join(original_sc_dir, f'{original_sc_name}_best_patch_{target_vulnerability}_{bect_patch_name}_diff.txt'), 'w') as output_file:
+            for line in diff:
+                output_file.write(line)
 
     @staticmethod
     def create_targets_summary_and_graphs(experiment_settings:dict, llm_settings:dict) -> dict:
@@ -282,7 +305,10 @@ class TransformativeRepair:
                 target_summaries[target_vulnerability]["summary"]["unique_patches"] += n_unique_paches
                 target_summaries[target_vulnerability]["summary"]["n_unique_paches_that_compile"] += n_unique_patches_that_compile
 
-
+                original_sc_path = Path(os.path.join(sc_dir, f'{sc_name}.sol'))
+                best_patch_name = target_summaries[target_vulnerability]["contracts"][sc_name]["best_patch"]
+                best_patch_path = Path(os.path.join(candidate_patches_dir, best_patch_name, f'{best_patch_name}.sol'))
+                TransformativeRepair.save_best_patch_and_diff(target_vulnerability, original_sc_path, best_patch_path)
         
         # Create pyvis graphs for results
         base_graph_name = os.path.join(extended_experiment_name, child_dirs).replace("/", "_")
