@@ -33,6 +33,8 @@ class SmartContract:
         self.source_code = open(self.path, "r").read().strip()
         self.hash = SmartContract.get_stripped_source_code_hash(self.source_code)
 
+        self.smartbugs_tools = SmartContract.get_smartbugs_tools(self.experiment_settings["smartbugs_tools"])
+
         vulnerabilities_file_path = os.path.join(self.results_dir, "vulnerabilities.json")
         try:
             with open(vulnerabilities_file_path, "r") as f:
@@ -69,32 +71,63 @@ class SmartContract:
         hash_object = hashlib.sha256(stripped_source_code.encode())
         return hash_object.hexdigest()
 
+    @staticmethod
+    def get_smartbugs_tools(smartbugs_tools:List[str]):
+        tools = smartbugs_tools
 
+        if "access_control_tools" in smartbugs_tools:
+            tools.extend(["maian", "manticore", "mythril", "oyente", "securify", "slither"])
+        
+        if "arithmetic_tools" in smartbugs_tools:
+            tools.extend(["manticore", "mythril", "osiris", "oyente", "smartcheck"])
+        
+        if "reentrancy_tools" in smartbugs_tools:
+            tools.extend(["manticore", "mythril", "oyente", "securify", "slither"])
+        
+        if "unchecked_calls_tools" in smartbugs_tools:
+            tools.extend(["manticore", "mythril", "securify", "smartcheck"])
+        
+        if "transaction_order_dependence_tools" in smartbugs_tools:
+            tools.extend(["securify"])
+
+        tools = list(set(tools))
+
+        return tools
 
     @staticmethod
     def get_vulnerability_aliases() -> dict:
         vulnerabilities_aliases = {}
+        # Mapping of vulnerabilities
+        # https://github.com/smartbugs/smartbugs/wiki/Vulnerabilities-mapping
 
         # Sources
         # SWC https://swcregistry.io/
         # Oyente
+        # Maian https://github.com/ivicanikolicsg/MAIAN
+        # Manticore https://github.com/trailofbits/manticore/wiki
         # Mythril https://mythril-classic.readthedocs.io/en/master/module-list.html
         # Slither https://github.com/crytic/slither#detectors  
 
         # Access Control
-        access_control_aliases = ["access_control", "access control"
-                          "Unprotected Ether Withdrawal (SWC 105)", "Unprotected Selfdestruct (SWC 106)", "SWC 105", "SWC 106", # Mythril
-                          # Oyente
-                          "events-access" # Slither
+        access_control_aliases = ["access_control", "access control",
+                            "SWC 105", "SWC 106", "SWC 112", "SWC 115", # SWC
+                           "No Ether leak (no send)", "Destructible (verified)", #Maian
+                           "Delegatecall to user controlled address", "Delegatecall to user controlled function", "Reachable ether leak to sender", "Reachable ether leak to sender via argument", "Reachable external call to sender", "Reachable external call to sender via argument", "Reachable SELFDESTRUCT", "Warning ORIGIN instruction used", # Manticore
+                           "Unprotected Ether Withdrawal (SWC 105)", "Unprotected Selfdestruct (SWC 106)", "Delegatecall to user-supplied address (SWC 112)", "Dependence on tx.origin (SWC 115)", # Mythril
+                           "Parity Multisig Bug 2" # Oyente
+                           "UnrestrictedEtherFlow",  #Securify
+                          "arbitrary-send", "controlled-delegatecall", "suicidal", "tx-origin", "events-access" # Slither
                           ]
         vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in access_control_aliases], "access_control"))
         
         # Arithmetic: integer over and underflow
         arithmetic_aliases = ["overflow", "underflow", "integer overflow"
-                      "SWC 101",
+                      "SWC 101", # SWC
+                      "Unsigned integer overflow at ADD instruction", "Unsigned integer overflow at MUL instruction", "Unsigned integer overflow at SUB instruction", # Manticore
                      "Integer Arithmetic Bugs (SWC 101)", # Mythril
-                     "Integer Overflow", "Integer Underflow" # Oyente
-                      # Slither 
+                     "Division bugs", "Overflow bugs", "Signedness bugs", "Truncation bugs", "Underflow bugs", "Modulo bugs",# Osiris
+                     "Integer Overflow", "Integer Underflow",  # Oyente
+                     "SOLIDITY_ARRAY_LENGTH_MANIPULATION", "SOLIDITY_DIV_MUL", "SOLIDITY_UINT_CANT_BE_NEGATIVE", "SOLIDITY_VAR", "SOLIDITY_VAR_IN_LOOP_FOR"# Smartcheck
                       ]
         vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in arithmetic_aliases], "arithmetic"))
 
@@ -110,11 +143,9 @@ class SmartContract:
         # TOD
         transaction_order_dependence_aliases = [
             "transaction order dependence", "tod",
-            "SWC 114", "SWC 115",
+            "SWC 114",
             # Oyente
-            "Dependence on tx.origin (SWC 115)",  # Mythril
-            "tx-origin", # Slither
-            "SOLIDITY_TX_ORIGIN"# Smartcheck
+            "TODAmount", "TODReceiver", "TODTransfer" # Securify
         ]
         vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in transaction_order_dependence_aliases], "transaction_order_dependence"))
         
@@ -137,14 +168,15 @@ class SmartContract:
         vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in time_manipulation_aliases], "time_manipulation"))
 
         # unchecked low level call
-        unchecked_low_level_call_aliases = [
+        unchecked_low_level_calls_aliases = [
             "SWC 104",
-            # Oyente
+            "Returned value at CALL instruction is not used", "Returned value at CALL instruction is not used"# Manticore
             "Unchecked return value from external call. (SWC 104)",# Mythril
-            "unchecked-lowlevel", "low-level-calls", # Slither
-            "SOLIDITY_UNCHECKED_CALL" # Smartcheck
+            "UnhandledException", # Securify
+            "unchecked-lowlevel", "low-level-calls", "unused-return", # Slither
+            "SOLIDITY_SEND", "SOLIDITY_UNCHECKED_CALL" # Smartcheck
         ]
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unchecked_low_level_call_aliases], "unchecked_low_level_call"))
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unchecked_low_level_calls_aliases], "unchecked_low_level_calls"))
 
         # unhandled exception
         unhandled_exception_aliases = ["Unhandled Exception", "unhandled", "UnhandledException", "Exception Disorder"]
@@ -312,7 +344,7 @@ class SmartContract:
                 "runtime": False,
                 "runid": "${YEAR}${MONTH}${DAY}_${HOUR}${MIN}",
                 "json": True,
-                "tools": self.experiment_settings["smartbugs_tools"],
+                "tools": self.smartbugs_tools,
                 "results": os.path.join(smartbugs_results_dir, "${TOOL}_${RUNID}"),
                 "log": os.path.join(self.results_dir,"smartbugs_logs", "{RUNID}.log"),
                 "processes": self.experiment_settings["smartbugs_processes"],
