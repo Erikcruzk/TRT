@@ -1,0 +1,102 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function withdrawAll() public {\n        require(!locked);\n        uint oCredit = credit[msg.sender];\n        if (oCredit > 0) {\n            locked = true;\n            balance -= oCredit;\n\n            bool callResult = msg.sender.call.value(oCredit)();\n            require(callResult);\n\n            locked = false;\n            credit[msg.sender] = 0;\n        }",
+          "message": "Reentrancy in ReentrancyDAO.withdrawAll (patch_10.sol#8-21):\n\tExternal calls:\n\t- callResult = msg.sender.call.value(oCredit)() (patch_10.sol#15)\n\tState variables written after the call(s):\n\t- credit (patch_10.sol#19)\n\t- locked (patch_10.sol#18)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function withdrawAll() public {\n        require(!locked);\n        uint oCredit = credit[msg.sender];\n        if (oCredit > 0) {\n            locked = true;\n            balance -= oCredit;\n\n            bool callResult = msg.sender.call.value(oCredit)();\n            require(callResult);\n\n            locked = false;\n            credit[msg.sender] = 0;\n        }",
+          "message": "ReentrancyDAO.withdrawAll (patch_10.sol#8-21) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 26,
+          "vulnerability_code": "    function deposit() public payable {\n        credit[msg.sender] += msg.value;\n        balance += msg.value;",
+          "message": "ReentrancyDAO.deposit (patch_10.sol#23-26) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_10.sol:\n\t- pragma solidity^0.4.19 (patch_10.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function withdrawAll() public {\n        require(!locked);\n        uint oCredit = credit[msg.sender];\n        if (oCredit > 0) {\n            locked = true;\n            balance -= oCredit;\n\n            bool callResult = msg.sender.call.value(oCredit)();\n            require(callResult);\n\n            locked = false;\n            credit[msg.sender] = 0;\n        }",
+          "message": "Low level call in ReentrancyDAO.withdrawAll (patch_10.sol#8-21):\n\t-callResult = msg.sender.call.value(oCredit)() patch_10.sol#15\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            bool callResult = msg.sender.call.value(oCredit)();",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            locked = false;",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            locked = false;",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            credit[msg.sender] = 0;",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            bool callResult = msg.sender.call.value(oCredit)();",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        credit[msg.sender] += msg.value;",
+          "message": null
+        }
+      ]
+    }
+  }
+}

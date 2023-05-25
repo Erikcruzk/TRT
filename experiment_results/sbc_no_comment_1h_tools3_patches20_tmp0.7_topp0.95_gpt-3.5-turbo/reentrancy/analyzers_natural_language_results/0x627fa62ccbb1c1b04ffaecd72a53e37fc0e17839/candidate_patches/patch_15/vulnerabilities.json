@@ -1,0 +1,193 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            holders[msg.sender] += msg.value;",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 74,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            holders[addr] -= etherToWithdraw;",
+          "message": null
+        },
+        {
+          "name": "Re-Entrancy Vulnerability",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(addr.call.value(etherToWithdraw)());",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_14"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": 76,
+          "vulnerability_code": "    function withdrawToHolder(\n        address addr,\n        uint weiAmount\n    ) public onlyOwner {\n        if (holders[addr] > 0) {\n            uint256 etherToWithdraw = weiAmount;\n            require(addr.call.value(etherToWithdraw)());\n            holders[addr] -= etherToWithdraw;\n        }",
+          "message": "Reentrancy in TokenBank.withdrawToHolder (patch_15.sol#67-76):\n\tExternal calls:\n\t- require(bool)(addr.call.value(etherToWithdraw)()) (patch_15.sol#73)\n\tState variables written after the call(s):\n\t- holders (patch_15.sol#74)\n"
+        },
+        {
+          "name": "reentrancy-no-eth",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "    function withdrawTokenToHolder(\n        address to,\n        address token,\n        uint amount\n    ) public onlyOwner {\n        if (holders[to] > 0) {\n            uint256 tokensToWithdraw = amount;\n            require(token.call(bytes4(keccak256(\"transfer(address,uint256)\")), to, tokensToWithdraw));\n            holders[to] = 0;\n        }",
+          "message": "Reentrancy in TokenBank.withdrawTokenToHolder (patch_15.sol#55-65):\n\tExternal calls:\n\t- require(bool)(token.call(bytes4(keccak256()(transfer(address,uint256))),to,tokensToWithdraw)) (patch_15.sol#62)\n\tState variables written after the call(s):\n\t- holders (patch_15.sol#63)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function changeOwner(address addr) public onlyOwner {\n        newOwner = addr;",
+          "message": "Ownable.changeOwner (patch_15.sol#11-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "    function confirmOwner() public {\n        require(msg.sender == newOwner);\n        owner = newOwner;",
+          "message": "Ownable.confirmOwner (patch_15.sol#15-18) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": 33,
+          "vulnerability_code": "    function withdrawToken(\n        address token,\n        uint256 amount,\n        address to\n    ) public onlyOwner {\n        require(token.call(bytes4(keccak256(\"transfer(address,uint256)\")), to, amount));",
+          "message": "Token.withdrawToken (patch_15.sol#27-33) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": 47,
+          "vulnerability_code": "    function() public payable {\n        deposit();",
+          "message": "TokenBank.fallback (patch_15.sol#45-47) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "    function withdrawTokenToHolder(\n        address to,\n        address token,\n        uint amount\n    ) public onlyOwner {\n        if (holders[to] > 0) {\n            uint256 tokensToWithdraw = amount;\n            require(token.call(bytes4(keccak256(\"transfer(address,uint256)\")), to, tokensToWithdraw));\n            holders[to] = 0;\n        }",
+          "message": "TokenBank.withdrawTokenToHolder (patch_15.sol#55-65) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": 76,
+          "vulnerability_code": "    function withdrawToHolder(\n        address addr,\n        uint weiAmount\n    ) public onlyOwner {\n        if (holders[addr] > 0) {\n            uint256 etherToWithdraw = weiAmount;\n            require(addr.call.value(etherToWithdraw)());\n            holders[addr] -= etherToWithdraw;\n        }",
+          "message": "TokenBank.withdrawToHolder (patch_15.sol#67-76) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_15.sol:\n\t- pragma solidity^0.4.19 (patch_15.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": 33,
+          "vulnerability_code": "    function withdrawToken(\n        address token,\n        uint256 amount,\n        address to\n    ) public onlyOwner {\n        require(token.call(bytes4(keccak256(\"transfer(address,uint256)\")), to, amount));",
+          "message": "Low level call in Token.withdrawToken (patch_15.sol#27-33):\n\t-require(bool)(token.call(bytes4(keccak256()(transfer(address,uint256))),to,amount)) patch_15.sol#32\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "    function withdrawTokenToHolder(\n        address to,\n        address token,\n        uint amount\n    ) public onlyOwner {\n        if (holders[to] > 0) {\n            uint256 tokensToWithdraw = amount;\n            require(token.call(bytes4(keccak256(\"transfer(address,uint256)\")), to, tokensToWithdraw));\n            holders[to] = 0;\n        }",
+          "message": "Low level call in TokenBank.withdrawTokenToHolder (patch_15.sol#55-65):\n\t-require(bool)(token.call(bytes4(keccak256()(transfer(address,uint256))),to,tokensToWithdraw)) patch_15.sol#62\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": 76,
+          "vulnerability_code": "    function withdrawToHolder(\n        address addr,\n        uint weiAmount\n    ) public onlyOwner {\n        if (holders[addr] > 0) {\n            uint256 etherToWithdraw = weiAmount;\n            require(addr.call.value(etherToWithdraw)());\n            holders[addr] -= etherToWithdraw;\n        }",
+          "message": "Low level call in TokenBank.withdrawToHolder (patch_15.sol#67-76):\n\t-require(bool)(addr.call.value(etherToWithdraw)()) patch_15.sol#73\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function Ownable() public {\n        owner = msg.sender;",
+          "message": "Function 'Ownable.Ownable' (patch_15.sol#7-9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": 43,
+          "vulnerability_code": "    function TokenBank() public {\n        owner = msg.sender;\n        minDeposit = 1 ether;",
+          "message": "Function 'TokenBank.TokenBank' (patch_15.sol#40-43) is not in mixedCase\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(token.call(bytes4(keccak256(\"transfer(address,uint256)\")), to, amount));",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(addr.call.value(etherToWithdraw)());",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 74,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            holders[addr] -= etherToWithdraw;",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 74,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            holders[addr] -= etherToWithdraw;",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(token.call(bytes4(keccak256(\"transfer(address,uint256)\")), to, amount));",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(token.call(bytes4(keccak256(\"transfer(address,uint256)\")), to, tokensToWithdraw));",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            holders[to] = 0;",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_9"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "Wallet.fallback (arbitrary_location_write_simple.sol#9) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "    function PushBonusCode(uint c) public {\n        bonusCodes.push(c);",
+          "message": "Wallet.PushBonusCode (arbitrary_location_write_simple.sol#10-12) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function PopBonusCode() public {\n        require(0 <= bonusCodes.length);\n        bonusCodes.length--;",
+          "message": "Wallet.PopBonusCode (arbitrary_location_write_simple.sol#13-16) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function UpdateBonusCodeAt(uint idx, uint c) public {\n        require(idx < bonusCodes.length);\n        bonusCodes[idx] = c;",
+          "message": "Wallet.UpdateBonusCodeAt (arbitrary_location_write_simple.sol#17-20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function Destroy() public {\n        require(msg.sender == owner);\n        selfdestruct(msg.sender);",
+          "message": "Wallet.Destroy (arbitrary_location_write_simple.sol#21-24) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "    function PushBonusCode(uint c) public {\n        bonusCodes.push(c);",
+          "message": "Function 'Wallet.PushBonusCode' (arbitrary_location_write_simple.sol#10-12) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function PopBonusCode() public {\n        require(0 <= bonusCodes.length);\n        bonusCodes.length--;",
+          "message": "Function 'Wallet.PopBonusCode' (arbitrary_location_write_simple.sol#13-16) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function UpdateBonusCodeAt(uint idx, uint c) public {\n        require(idx < bonusCodes.length);\n        bonusCodes[idx] = c;",
+          "message": "Function 'Wallet.UpdateBonusCodeAt' (arbitrary_location_write_simple.sol#17-20) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function Destroy() public {\n        require(msg.sender == owner);\n        selfdestruct(msg.sender);",
+          "message": "Function 'Wallet.Destroy' (arbitrary_location_write_simple.sol#21-24) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 2,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Wallet {",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bonusCodes.length--;",
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Write to an arbitrary storage location (SWC 124)",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bonusCodes[idx] = c;",
+          "message": "The caller can write to arbitrary storage locations.\nIt is possible to write to arbitrary storage locations. By modifying the values of storage variables, attackers may bypass security controls or manipulate the business logic of the smart contract.\nClassification: SWC-124"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bonusCodes.length--;",
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.\nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.\nClassification: SWC-101"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Transaction-Ordering Dependence (TOD)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(adr.call.value(msg.value)(data), \"External call failed\");",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_8"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "MultiplicatorX4.fallback (patch_3.sol#6) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 11,
+          "vulnerability_code": "    function withdraw() public payable {\n        require(msg.sender == Owner);\n        Owner.transfer(this.balance);",
+          "message": "MultiplicatorX4.withdraw (patch_3.sol#8-11) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 17,
+          "vulnerability_code": "    function Command(address adr, bytes data) public payable {\n        require(msg.sender == Owner);\n\n        require(adr.call.value(msg.value)(data), \"External call failed\");",
+          "message": "MultiplicatorX4.Command (patch_3.sol#13-17) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function multiplicate(address adr) public payable {\n        if (msg.value >= this.balance) {\n            require(adr.send(this.balance + msg.value), \"Transfer failed\");\n        }",
+          "message": "MultiplicatorX4.multiplicate (patch_3.sol#19-23) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;",
+          "message": "Detected issues with version pragma in patch_3.sol:\n\t- pragma solidity^0.4.18 (patch_3.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 17,
+          "vulnerability_code": "    function Command(address adr, bytes data) public payable {\n        require(msg.sender == Owner);\n\n        require(adr.call.value(msg.value)(data), \"External call failed\");",
+          "message": "Low level call in MultiplicatorX4.Command (patch_3.sol#13-17):\n\t-require(bool,string)(adr.call.value(msg.value)(data),External call failed) patch_3.sol#16\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 17,
+          "vulnerability_code": "    function Command(address adr, bytes data) public payable {\n        require(msg.sender == Owner);\n\n        require(adr.call.value(msg.value)(data), \"External call failed\");",
+          "message": "Function 'MultiplicatorX4.Command' (patch_3.sol#13-17) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public Owner = msg.sender;",
+          "message": "Variable 'MultiplicatorX4.Owner' (patch_3.sol#4) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}

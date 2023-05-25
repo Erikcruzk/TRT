@@ -1,0 +1,291 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                keccak256(abi.encodePacked(blockhash(blockNumber), msg.sender, randomSeed))",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_26"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": 100,
+          "vulnerability_code": "    function play() public isOpenToPublic onlyRealPeople onlyPlayers {\n        uint256 blockNumber = timestamps[msg.sender];\n        if (blockNumber < block.number) {\n            timestamps[msg.sender] = 0;\n            uint256 wager = wagers[msg.sender];\n            wagers[msg.sender] = 0;\n\n            uint256 winningNumber = (uint256(\n                keccak256(abi.encodePacked(blockhash(blockNumber), msg.sender, randomSeed))\n            ) % difficulty) + 1;\n\n            if (winningNumber == difficulty / 2) {\n                payout(msg.sender, wager);\n            } else {\n                loseWager(wager / 2);\n            }\n            randomSeed = uint256(keccak256(abi.encodePacked(blockhash(block.number), randomSeed, msg.sender)));\n        } else {\n            revert();\n        }",
+          "message": "Reentrancy in PoCGame.play (patch_1.sol#80-100):\n\tExternal calls:\n\t- loseWager(wager / 2) (patch_1.sol#94)\n\tExternal calls sending eth:\n\t- payout(msg.sender,wager) (patch_1.sol#92)\n\t- loseWager(wager / 2) (patch_1.sol#94)\n\tState variables written after the call(s):\n\t- randomSeed (patch_1.sol#96)\n"
+        },
+        {
+          "name": "incorrect-equality",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": 100,
+          "vulnerability_code": "    function play() public isOpenToPublic onlyRealPeople onlyPlayers {\n        uint256 blockNumber = timestamps[msg.sender];\n        if (blockNumber < block.number) {\n            timestamps[msg.sender] = 0;\n            uint256 wager = wagers[msg.sender];\n            wagers[msg.sender] = 0;\n\n            uint256 winningNumber = (uint256(\n                keccak256(abi.encodePacked(blockhash(blockNumber), msg.sender, randomSeed))\n            ) % difficulty) + 1;\n\n            if (winningNumber == difficulty / 2) {\n                payout(msg.sender, wager);\n            } else {\n                loseWager(wager / 2);\n            }\n            randomSeed = uint256(keccak256(abi.encodePacked(blockhash(block.number), randomSeed, msg.sender)));\n        } else {\n            revert();\n        }",
+          "message": "PoCGame.play (patch_1.sol#80-100) uses a dangerous strict equality:\n\t- winningNumber == difficulty / 2\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 84,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            uint256 wager = wagers[msg.sender];",
+          "message": "PoCGame.play.wager (local variable @ patch_1.sol#84) shadows:\n\t- PoCGame.wager (function @ patch_1.sol#70-78)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 106,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function payout(address winner, uint256 wager) internal {",
+          "message": "PoCGame.payout.wager (local variable @ patch_1.sol#106) shadows:\n\t- PoCGame.wager (function @ patch_1.sol#70-78)\n"
+        },
+        {
+          "name": "reentrancy-benign",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": 117,
+          "vulnerability_code": "    function donateToWhale(uint256 amount) internal {\n        require(whale.call.value(amount)(bytes4(keccak256(\"donate()\"))));\n        totalDonated += amount;\n        emit Donate(amount, whale, msg.sender);",
+          "message": "Reentrancy in PoCGame.donateToWhale (patch_1.sol#113-117):\n\tExternal calls:\n\t- require(bool)(whale.call.value(amount)(bytes4(keccak256()(donate())))) (patch_1.sol#114)\n\tState variables written after the call(s):\n\t- totalDonated (patch_1.sol#115)\n"
+        },
+        {
+          "name": "reentrancy-benign",
+          "vulnerability_from_line": 119,
+          "vulnerability_to_line": 123,
+          "vulnerability_code": "    function loseWager(uint256 amount) internal {\n        require(whale.call.value(amount)(bytes4(keccak256(\"donate()\"))));\n        totalDonated += amount;\n        emit Lose(amount, msg.sender);",
+          "message": "Reentrancy in PoCGame.loseWager (patch_1.sol#119-123):\n\tExternal calls:\n\t- require(bool)(whale.call.value(amount)(bytes4(keccak256()(donate())))) (patch_1.sol#120)\n\tState variables written after the call(s):\n\t- totalDonated (patch_1.sol#121)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": 54,
+          "vulnerability_code": "    function OpenToThePublic() public onlyOwner {\n        openToPublic = true;",
+          "message": "PoCGame.OpenToThePublic (patch_1.sol#52-54) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": 60,
+          "vulnerability_code": "    function AdjustBetAmounts(uint256 amount) public onlyOwner {\n        betLimit = amount;\n\n        emit BetLimitChanged(betLimit);",
+          "message": "PoCGame.AdjustBetAmounts (patch_1.sol#56-60) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": 66,
+          "vulnerability_code": "    function AdjustDifficulty(uint256 amount) public onlyOwner {\n        difficulty = amount;\n\n        emit DifficultyChanged(difficulty);",
+          "message": "PoCGame.AdjustDifficulty (patch_1.sol#62-66) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 68,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "PoCGame.fallback (patch_1.sol#68) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": 78,
+          "vulnerability_code": "    function wager() public payable isOpenToPublic onlyRealPeople {\n        require(msg.value == betLimit);\n\n        require(wagers[msg.sender] == 0);\n\n        timestamps[msg.sender] = block.number;\n        wagers[msg.sender] = msg.value;\n        emit Wager(msg.value, msg.sender);",
+          "message": "PoCGame.wager (patch_1.sol#70-78) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": 100,
+          "vulnerability_code": "    function play() public isOpenToPublic onlyRealPeople onlyPlayers {\n        uint256 blockNumber = timestamps[msg.sender];\n        if (blockNumber < block.number) {\n            timestamps[msg.sender] = 0;\n            uint256 wager = wagers[msg.sender];\n            wagers[msg.sender] = 0;\n\n            uint256 winningNumber = (uint256(\n                keccak256(abi.encodePacked(blockhash(blockNumber), msg.sender, randomSeed))\n            ) % difficulty) + 1;\n\n            if (winningNumber == difficulty / 2) {\n                payout(msg.sender, wager);\n            } else {\n                loseWager(wager / 2);\n            }\n            randomSeed = uint256(keccak256(abi.encodePacked(blockhash(block.number), randomSeed, msg.sender)));\n        } else {\n            revert();\n        }",
+          "message": "PoCGame.play (patch_1.sol#80-100) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": 104,
+          "vulnerability_code": "    function donate() public payable isOpenToPublic {\n        donateToWhale(msg.value);",
+          "message": "PoCGame.donate (patch_1.sol#102-104) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": 127,
+          "vulnerability_code": "    function ethBalance() public view returns (uint256) {\n        return address(this).balance;",
+          "message": "PoCGame.ethBalance (patch_1.sol#125-127) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": 131,
+          "vulnerability_code": "    function currentDifficulty() public view returns (uint256) {\n        return difficulty;",
+          "message": "PoCGame.currentDifficulty (patch_1.sol#129-131) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 133,
+          "vulnerability_to_line": 135,
+          "vulnerability_code": "    function currentBetLimit() public view returns (uint256) {\n        return betLimit;",
+          "message": "PoCGame.currentBetLimit (patch_1.sol#133-135) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 137,
+          "vulnerability_to_line": 143,
+          "vulnerability_code": "    function hasPlayerWagered(address player) public view returns (bool) {\n        if (wagers[player] > 0) {\n            return true;\n        } else {\n            return false;\n        }",
+          "message": "PoCGame.hasPlayerWagered (patch_1.sol#137-143) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": 147,
+          "vulnerability_code": "    function winnersPot() public view returns (uint256) {\n        return address(this).balance / 2;",
+          "message": "PoCGame.winnersPot (patch_1.sol#145-147) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 149,
+          "vulnerability_to_line": 155,
+          "vulnerability_code": "    function transferAnyERC20Token(\n        address tokenAddress,\n        address tokenOwner,\n        uint tokens\n    ) public onlyOwner returns (bool success) {\n        return ERC20Interface(tokenAddress).transfer(tokenOwner, tokens);",
+          "message": "PoCGame.transferAnyERC20Token (patch_1.sol#149-155) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 159,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address to, uint256 tokens) public returns (bool success);",
+          "message": "ERC20Interface.transfer (patch_1.sol#159) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.21;",
+          "message": "Detected issues with version pragma in patch_1.sol:\n\t- pragma solidity^0.4.21 (patch_1.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": 117,
+          "vulnerability_code": "    function donateToWhale(uint256 amount) internal {\n        require(whale.call.value(amount)(bytes4(keccak256(\"donate()\"))));\n        totalDonated += amount;\n        emit Donate(amount, whale, msg.sender);",
+          "message": "Low level call in PoCGame.donateToWhale (patch_1.sol#113-117):\n\t-require(bool)(whale.call.value(amount)(bytes4(keccak256()(donate())))) patch_1.sol#114\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 119,
+          "vulnerability_to_line": 123,
+          "vulnerability_code": "    function loseWager(uint256 amount) internal {\n        require(whale.call.value(amount)(bytes4(keccak256(\"donate()\"))));\n        totalDonated += amount;\n        emit Lose(amount, msg.sender);",
+          "message": "Low level call in PoCGame.loseWager (patch_1.sol#119-123):\n\t-require(bool)(whale.call.value(amount)(bytes4(keccak256()(donate())))) patch_1.sol#120\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": 54,
+          "vulnerability_code": "    function OpenToThePublic() public onlyOwner {\n        openToPublic = true;",
+          "message": "Function 'PoCGame.OpenToThePublic' (patch_1.sol#52-54) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": 60,
+          "vulnerability_code": "    function AdjustBetAmounts(uint256 amount) public onlyOwner {\n        betLimit = amount;\n\n        emit BetLimitChanged(betLimit);",
+          "message": "Function 'PoCGame.AdjustBetAmounts' (patch_1.sol#56-60) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": 66,
+          "vulnerability_code": "    function AdjustDifficulty(uint256 amount) public onlyOwner {\n        difficulty = amount;\n\n        emit DifficultyChanged(difficulty);",
+          "message": "Function 'PoCGame.AdjustDifficulty' (patch_1.sol#62-66) is not in mixedCase\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Dependence on tx.origin (SWC 115)",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == tx.origin);",
+          "message": "Use of tx.origin as a part of authorization control.\nThe tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.\nClassification: SWC-115"
+        },
+        {
+          "name": "Dependence on tx.origin (SWC 115)",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == owner);",
+          "message": "Use of tx.origin as a part of authorization control.\nThe tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.\nClassification: SWC-115"
+        },
+        {
+          "name": "Dependence on tx.origin (SWC 115)",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == tx.origin);",
+          "message": "Use of tx.origin as a part of authorization control.\nThe tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.\nClassification: SWC-115"
+        },
+        {
+          "name": "Dependence on tx.origin (SWC 115)",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == tx.origin);",
+          "message": "Use of tx.origin as a part of authorization control.\nThe tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.\nClassification: SWC-115"
+        },
+        {
+          "name": "Dependence on tx.origin (SWC 115)",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == owner);",
+          "message": "Use of tx.origin as a part of authorization control.\nThe tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.\nClassification: SWC-115"
+        },
+        {
+          "name": "Dependence on tx.origin (SWC 115)",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == owner);",
+          "message": "Use of tx.origin as a part of authorization control.\nThe tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.\nClassification: SWC-115"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return ERC20Interface(tokenAddress).transfer(tokenOwner, tokens);",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 114,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(whale.call.value(amount)(bytes4(keccak256(\"donate()\"))));",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        totalDonated += amount;",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        totalDonated += amount;",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 116,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        emit Donate(amount, whale, msg.sender);",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        balanceOf[_to] += _value;",
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "erc20-interface",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "contract IntegerOverflowAdd {\n    mapping(address => uint256) public balanceOf;\n\n    function transfer(address _to, uint256 _value) public {\n        require(balanceOf[msg.sender] >= _value);\n        balanceOf[msg.sender] -= _value;\n\n        balanceOf[_to] += _value;\n    }",
+          "message": "IntegerOverflowAdd (insecure_transfer.sol#3-12) has incorrect ERC20 function interface(s):\n\t-transfer (insecure_transfer.sol#6-11)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 11,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public {\n        require(balanceOf[msg.sender] >= _value);\n        balanceOf[msg.sender] -= _value;\n\n        balanceOf[_to] += _value;",
+          "message": "IntegerOverflowAdd.transfer (insecure_transfer.sol#6-11) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;",
+          "message": "Detected issues with version pragma in insecure_transfer.sol:\n\t- pragma solidity^0.4.0 (insecure_transfer.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public {",
+          "message": "Parameter '_to' of IntegerOverflowAdd.transfer (insecure_transfer.sol#6) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public {",
+          "message": "Parameter '_value' of IntegerOverflowAdd.transfer (insecure_transfer.sol#6) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}

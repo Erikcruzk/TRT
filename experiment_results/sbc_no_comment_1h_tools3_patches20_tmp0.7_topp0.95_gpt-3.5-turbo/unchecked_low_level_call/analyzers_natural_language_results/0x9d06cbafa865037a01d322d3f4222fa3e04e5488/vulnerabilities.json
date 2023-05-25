@@ -1,0 +1,200 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner2.send(sum2);",
+          "message": null
+        },
+        {
+          "name": "Transaction-Ordering Dependence (TOD)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_17"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint tokens_buy = (msg.value * 10 ** 18) / token_price;",
+          "message": "Delta.tokens_buy.tokens_buy (local variable @ 0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#19) shadows:\n\t- Delta.tokens_buy (function @ 0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#15-39)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public c = 0xF85A2E95FA30d005F629cBe6c6d2887D979ffF2A;",
+          "message": "Delta.c should be constant (0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#4)\nDelta.owner should be constant (0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#5)\nDelta.owner2 should be constant (0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#6)\n"
+        },
+        {
+          "name": "deprecated-standards",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 32,
+          "vulnerability_code": "        if (\n            !c.call(\n                bytes4(sha3(\"transferFrom(address,address,uint256)\")),\n                owner,\n                msg.sender,\n                tokens_buy\n            )\n        ) {\n            return false;",
+          "message": "Deprecated standard detected @ 0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#23-32:\n\t- Usage of \"sha3()\" should be replaced with \"keccak256()\"\n"
+        },
+        {
+          "name": "deprecated-standards",
+          "vulnerability_from_line": 64,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            throw;",
+          "message": "Deprecated standard detected @ 0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#64:\n\t- Usage of \"throw\" should be replaced with \"revert()\"\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function() payable {\n        tokens_buy();",
+          "message": "Delta.fallback (0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#11-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": 48,
+          "vulnerability_code": "    function withdraw(uint256 _amount) onlyOwner returns (bool result) {\n        uint256 balance;\n        balance = this.balance;\n        if (_amount > 0) balance = _amount;\n\n        owner.send(balance);\n        return true;",
+          "message": "Delta.withdraw (0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#41-48) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": 55,
+          "vulnerability_code": "    function change_token_price(\n        uint256 _token_price\n    ) onlyOwner returns (bool result) {\n        token_price = _token_price;\n        return true;",
+          "message": "Delta.change_token_price (0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#50-55) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": 60,
+          "vulnerability_code": "    function change_active(uint256 _active) onlyOwner returns (bool result) {\n        active = _active;\n        return true;",
+          "message": "Delta.change_active (0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#57-60) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;",
+          "message": "Detected issues with version pragma in 0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol:\n\t- pragma solidity^0.4.23 (0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 39,
+          "vulnerability_code": "    function tokens_buy() payable returns (bool) {\n        require(active > 0);\n        require(msg.value >= token_price);\n\n        uint tokens_buy = (msg.value * 10 ** 18) / token_price;\n\n        require(tokens_buy > 0);\n\n        if (\n            !c.call(\n                bytes4(sha3(\"transferFrom(address,address,uint256)\")),\n                owner,\n                msg.sender,\n                tokens_buy\n            )\n        ) {\n            return false;\n        }\n\n        uint sum2 = (msg.value * 3) / 10;\n\n        owner2.send(sum2);\n\n        return true;",
+          "message": "Low level call in Delta.tokens_buy (0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#15-39):\n\t-! c.call(bytes4(sha3()(transferFrom(address,address,uint256))),owner,msg.sender,tokens_buy) 0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#23-32\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 39,
+          "vulnerability_code": "    function tokens_buy() payable returns (bool) {\n        require(active > 0);\n        require(msg.value >= token_price);\n\n        uint tokens_buy = (msg.value * 10 ** 18) / token_price;\n\n        require(tokens_buy > 0);\n\n        if (\n            !c.call(\n                bytes4(sha3(\"transferFrom(address,address,uint256)\")),\n                owner,\n                msg.sender,\n                tokens_buy\n            )\n        ) {\n            return false;\n        }\n\n        uint sum2 = (msg.value * 3) / 10;\n\n        owner2.send(sum2);\n\n        return true;",
+          "message": "Function 'Delta.tokens_buy' (0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#15-39) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdraw(uint256 _amount) onlyOwner returns (bool result) {",
+          "message": "Parameter '_amount' of Delta.withdraw (0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#41) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": 55,
+          "vulnerability_code": "    function change_token_price(\n        uint256 _token_price\n    ) onlyOwner returns (bool result) {\n        token_price = _token_price;\n        return true;",
+          "message": "Function 'Delta.change_token_price' (0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#50-55) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _token_price",
+          "message": "Parameter '_token_price' of Delta.change_token_price (0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#51) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": 60,
+          "vulnerability_code": "    function change_active(uint256 _active) onlyOwner returns (bool result) {\n        active = _active;\n        return true;",
+          "message": "Function 'Delta.change_active' (0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#57-60) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function change_active(uint256 _active) onlyOwner returns (bool result) {",
+          "message": "Parameter '_active' of Delta.change_active (0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#57) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public token_price = (10 ** 18 * 1) / 1000;",
+          "message": "Variable 'Delta.token_price' (0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol#9) is not in mixedCase\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner2.send(sum2);",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner2.send(sum2);",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner2.send(sum2);",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner2.send(sum2);",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner2.send(sum2);",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "Unchecked return value from external call. (SWC 104)",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner2.send(sum2);",
+          "message": "The return value of a message call is not checked.\nExternal calls return a boolean value. If the callee halts with an exception, 'false' is returned and execution continues in the caller. The caller should check whether an exception happened and react accordingly to avoid unexpected behavior. For example it is often desirable to wrap external calls in require() so the transaction is reverted if the call fails.\nClassification: SWC-104"
+        }
+      ]
+    }
+  }
+}

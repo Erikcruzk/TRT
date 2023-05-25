@@ -1,0 +1,80 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(fuck.call(bytes4(keccak256(\"giveBlockReward()\"))));",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(fuck.call(bytes4(keccak256(\"giveBlockReward()\"))));",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(fuck.call(bytes4(keccak256(\"giveBlockReward()\"))));",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "calls-loop",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(fuck.call(bytes4(keccak256(\"giveBlockReward()\"))));",
+          "message": "RealOldFuckMaker.makeOldFucks has external calls inside a loop:\n\t- require(bool)(fuck.call(bytes4(keccak256()(giveBlockReward())))) (patch_17.sol#9)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address fuck = 0xc63e7b1DEcE63A77eD7E4Aeef5efb3b05C81438D;",
+          "message": "RealOldFuckMaker.fuck should be constant (patch_17.sol#4)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 11,
+          "vulnerability_code": "    function makeOldFucks(uint32 number) {\n        uint32 i;\n        for (i = 0; i < number; i++) {\n            require(fuck.call(bytes4(keccak256(\"giveBlockReward()\"))));\n        }",
+          "message": "RealOldFuckMaker.makeOldFucks (patch_17.sol#6-11) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.16;",
+          "message": "Detected issues with version pragma in patch_17.sol:\n\t- pragma solidity^0.4.16 (patch_17.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 11,
+          "vulnerability_code": "    function makeOldFucks(uint32 number) {\n        uint32 i;\n        for (i = 0; i < number; i++) {\n            require(fuck.call(bytes4(keccak256(\"giveBlockReward()\"))));\n        }",
+          "message": "Low level call in RealOldFuckMaker.makeOldFucks (patch_17.sol#6-11):\n\t-require(bool)(fuck.call(bytes4(keccak256()(giveBlockReward())))) patch_17.sol#9\n"
+        }
+      ]
+    }
+  }
+}

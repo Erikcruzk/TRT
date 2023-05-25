@@ -1,0 +1,58 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.15;
+
+contract Reentrance {
+    mapping(address => uint) userBalance;
+
+    function getBalance(address u) constant returns (uint) {
+        return userBalance[u];
+    }
+
+    function addToBalance() payable {
+        userBalance[msg.sender] += msg.value;
+    }
+
+    function withdrawBalance() {
+        if (!(msg.sender.call.value(userBalance[msg.sender])())) {
+            throw;
+        }
+        userBalance[msg.sender] = 0;
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+/// 1. Mythril-0.23.15 Analysis Results
+/// 1.1. Vulnerability: reentrancy at Line 15:
+        if (!(msg.sender.call.value(userBalance[msg.sender])())) {
+///  Message:A call to a user-supplied address is executed.
+///   An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+///   Classification: SWC-107
+/// 1.2. Vulnerability: reentrancy at Line 18:
+        userBalance[msg.sender] = 0;
+///  Message:Write to persistent state following external call
+///   The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+///   Classification: SWC-107
+
+
+/// 2. Slither Analysis Results
+/// 2.1. Vulnerability: reentrancy at Line 14-19:
+    function withdrawBalance() {
+        if (!(msg.sender.call.value(userBalance[msg.sender])())) {
+            throw;
+        }
+        userBalance[msg.sender] = 0;
+///  Message:Reentrancy in Reentrance.withdrawBalance (reentrancy_simple.sol#14-19):
+///   	External calls:
+///   	- ! (msg.sender.call.value(userBalance[msg.sender])()) (reentrancy_simple.sol#15-17)
+///   	State variables written after the call(s):
+///   	- userBalance (reentrancy_simple.sol#18)
+
+
+/// 3. Oyente Analysis Results
+/// 3.1. Vulnerability: reentrancy at Line 15:
+        if (!(msg.sender.call.value(userBalance[msg.sender])())) {
+
+
+
+/// Repaired Solidity Smart Contract
