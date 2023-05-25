@@ -395,7 +395,7 @@ class TransformativeRepair:
 
     
     @staticmethod
-    def find_vulnerabilities(experiment_settings:dict, sc_path:Path, do_repair_sc:bool, repair_sc_queue:queue.Queue) -> None:
+    def find_vulnerabilities(experiment_settings:dict, sc_path:Path, do_repair_sc:bool, repair_sc_queue:queue.Queue, progressbar:tqdm) -> None:
 
         try:
             #### Step 1: Initialize SC
@@ -410,6 +410,9 @@ class TransformativeRepair:
             #### Step 3: Enqueue to repair queue
             if do_repair_sc:
                 repair_sc_queue.put(sc.path)
+            
+            if sc.vulnerabilities.get("smartbugs_completed", False) == True:
+                progressbar.update(1)
         except Exception as e:
             logging.critical(f'An exception occurred when finding vulnerabilities for contract={sc_path}: {str(e)}', exc_info=True)            
 
@@ -421,8 +424,7 @@ class TransformativeRepair:
         while not stop_event.is_set():
             try:
                 sc_path, do_repair_sc = smartbugs_sc_queue.get(block=False)
-                TransformativeRepair.find_vulnerabilities(experiment_setting, sc_path, do_repair_sc, repair_sc_queue)
-                progressbar.update(1)
+                TransformativeRepair.find_vulnerabilities(experiment_setting, sc_path, do_repair_sc, repair_sc_queue, progressbar)
                 # print(progressbar.n) 
             except queue.Empty:
                 time.sleep(1)
