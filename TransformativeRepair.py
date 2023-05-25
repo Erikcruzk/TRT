@@ -251,18 +251,19 @@ class TransformativeRepair:
                     # New best patch
                     if repairs_of_target > current_max:
                         target_max_repair[target_vulnerability] = repairs_of_target   
-                        patch_data["sc_name"] = sc_name                    
+                        patch_data["sc_name"] = sc_name   
+                        patch_data["vuln_detected"] = False               
                         patch_data["n_patches"] = n_patches
                         patch_data["unique_paches_that_compile"] =  None
                         patch_data["best_patch"] =  patch_name
                         patch_data["compiles"] = compiles
                         patch_data["plausible_patch"] = is_plausible_patch
 
-
                         for tool_name, tool_vulnerabilities in sorted(patch_analyzer_results_with_aliases.items()):
                             original_status = 'Fix'
                             if target_vulnerability in original_analyzer_results_with_aliases[tool_name]:
                                 original_status = 'Bug'
+                                patch_data["vuln_detected"] = True 
                             
                             repaired_status = "Fix"
                             if target_vulnerability in tool_vulnerabilities or not compiles:
