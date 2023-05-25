@@ -91,3 +91,4 @@ Temperature 0.5 and 0.7. Top_p 0.95
 - Provide summary report of errors encountered
 - Increase dataset. keep hidden from LLMs
 - Create test harness for all contracts
+- Get tools depending on vulnerability

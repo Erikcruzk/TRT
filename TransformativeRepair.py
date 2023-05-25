@@ -18,6 +18,7 @@ from pathlib import Path
 import queue
 import shutil
 from tqdm import tqdm
+import difflib
 
 def clear_queue(queue:queue.Queue):
     while not queue.empty():
@@ -37,7 +38,8 @@ class TransformativeRepair:
         self.llm_model_name:str = experiment_settings["llm_model_name"]
 
         # Add more info to dir
-        extended_experiment_name = os.path.join(f'{Path(experiment_settings["experiment_name"]).parts[0]}_tools{len(self.experiment_settings["smartbugs_tools"])}_patches{self.llm_settings[self.llm_model_name]["num_candidate_patches"]}_tmp{self.llm_settings[self.llm_model_name]["temperature"]}_topp{self.llm_settings[self.llm_model_name]["top_p"]}_{self.llm_model_name}')
+        self.smartbugs_tools:List[str] = SmartContract.get_smartbugs_tools(self.experiment_settings["smartbugs_tools"])
+        extended_experiment_name = os.path.join(f'{Path(experiment_settings["experiment_name"]).parts[0]}_tools{len(self.smartbugs_tools)}_patches{self.llm_settings[self.llm_model_name]["num_candidate_patches"]}_tmp{self.llm_settings[self.llm_model_name]["temperature"]}_topp{self.llm_settings[self.llm_model_name]["top_p"]}_{self.llm_model_name}')
         child_dirs = os.path.join(*(Path(experiment_settings.get("experiment_name", "")).parts[1:])) if len(Path(experiment_settings.get("experiment_name", "")).parts) > 1 else ""
         self.experiment_results_dir:Path = Path(os.path.join("experiment_results", 
             extended_experiment_name, 
@@ -50,7 +52,6 @@ class TransformativeRepair:
         self.vulnerable_contracts_dir:str = experiment_settings["vulnerable_contracts_directory"]
         self.target_vulnerabilities:List[str] = experiment_settings["target_vulnerabilities"]
         self.patch_examples_dir:str = experiment_settings["patch_examples_directory"]
-        self.smartbugs_tools:List[str] = experiment_settings["smartbugs_tools"]
         
         self.prompt_style:str = experiment_settings["prompt_style"]
 
@@ -58,7 +59,7 @@ class TransformativeRepair:
         self.repair_sc_queue = queue.Queue()
         atexit.register(clear_queue, self.smartbugs_sc_queue)
         atexit.register(clear_queue, self.repair_sc_queue)
-    
+
     # Visualize
     @staticmethod
     def save_graph(G:nx.DiGraph, results_dir:Path, name:str):
@@ -147,11 +148,33 @@ class TransformativeRepair:
         with open(os.path.join(results_dir, f'{summary["experiment_name"]}_summary.md'), 'w') as f:
             f.write(markdown)
 
+    @staticmethod
+    def save_best_patch_and_diff(target_vulnerability, original_sc_path:Path, best_patch_path:Path):
+        original_sc_dir = os.path.dirname(original_sc_path)
+        original_sc_name, _ = os.path.splitext(os.path.basename(original_sc_path))
+        bect_patch_name, _ = os.path.splitext(os.path.basename(best_patch_path))
+
+        # Copy over best patch
+        best_patch_copy_location = Path(os.path.join(original_sc_dir, f'{original_sc_name}_best_patch_{target_vulnerability}_{bect_patch_name}.sol'))
+        shutil.copy2(best_patch_path, best_patch_copy_location)
+
+        # Save diff of original path and best patch        
+        with open(original_sc_path, 'r') as file1, open(best_patch_path, 'r') as file2:
+            file1_lines = file1.readlines()
+            file2_lines = file2.readlines()
+
+        #diff = difflib.unified_diff(file1_lines, file2_lines, fromfile=f'{original_sc_path}', tofile=f'{best_patch_path}')
+        diff = difflib.ndiff(file1_lines, file2_lines)
+        #diff = difflib.context_diff(file1_lines, file2_lines, fromfile=f'{original_sc_path}', tofile=f'{best_patch_path}')
+
+        with open(os.path.join(original_sc_dir, f'{original_sc_name}_best_patch_{target_vulnerability}_{bect_patch_name}_diff.txt'), 'w') as output_file:
+            for line in diff:
+                output_file.write(line)
 
     @staticmethod
     def create_targets_summary_and_graphs(experiment_settings:dict, llm_settings:dict) -> dict:
         # Add more info to dir
-        extended_experiment_name = os.path.join(f'{Path(experiment_settings["experiment_name"]).parts[0]}_tools{len(experiment_settings["smartbugs_tools"])}_patches{llm_settings[experiment_settings["llm_model_name"]]["num_candidate_patches"]}_tmp{llm_settings[experiment_settings["llm_model_name"]]["temperature"]}_topp{llm_settings[experiment_settings["llm_model_name"]]["top_p"]}_{experiment_settings["llm_model_name"]}')
+        extended_experiment_name = os.path.join(f'{Path(experiment_settings["experiment_name"]).parts[0]}_tools{len(SmartContract.get_smartbugs_tools(experiment_settings["smartbugs_tools"]))}_patches{llm_settings[experiment_settings["llm_model_name"]]["num_candidate_patches"]}_tmp{llm_settings[experiment_settings["llm_model_name"]]["temperature"]}_topp{llm_settings[experiment_settings["llm_model_name"]]["top_p"]}_{experiment_settings["llm_model_name"]}')
         child_dirs = os.path.join(*(Path(experiment_settings.get("experiment_name", "")).parts[1:])) if len(Path(experiment_settings.get("experiment_name", "")).parts) > 1 else ""
         results_dir:Path = Path(os.path.join("experiment_results", 
             extended_experiment_name, 
@@ -251,18 +274,19 @@ class TransformativeRepair:
                     # New best patch
                     if repairs_of_target > current_max:
                         target_max_repair[target_vulnerability] = repairs_of_target   
-                        patch_data["sc_name"] = sc_name                    
+                        patch_data["sc_name"] = sc_name   
+                        patch_data["vuln_detected"] = False               
                         patch_data["n_patches"] = n_patches
                         patch_data["unique_paches_that_compile"] =  None
                         patch_data["best_patch"] =  patch_name
                         patch_data["compiles"] = compiles
                         patch_data["plausible_patch"] = is_plausible_patch
 
-
                         for tool_name, tool_vulnerabilities in sorted(patch_analyzer_results_with_aliases.items()):
                             original_status = 'Fix'
                             if target_vulnerability in original_analyzer_results_with_aliases[tool_name]:
                                 original_status = 'Bug'
+                                patch_data["vuln_detected"] = True 
                             
                             repaired_status = "Fix"
                             if target_vulnerability in tool_vulnerabilities or not compiles:
@@ -281,7 +305,10 @@ class TransformativeRepair:
                 target_summaries[target_vulnerability]["summary"]["unique_patches"] += n_unique_paches
                 target_summaries[target_vulnerability]["summary"]["n_unique_paches_that_compile"] += n_unique_patches_that_compile
 
-
+                original_sc_path = Path(os.path.join(sc_dir, f'{sc_name}.sol'))
+                best_patch_name = target_summaries[target_vulnerability]["contracts"][sc_name]["best_patch"]
+                best_patch_path = Path(os.path.join(candidate_patches_dir, best_patch_name, f'{best_patch_name}.sol'))
+                TransformativeRepair.save_best_patch_and_diff(target_vulnerability, original_sc_path, best_patch_path)
         
         # Create pyvis graphs for results
         base_graph_name = os.path.join(extended_experiment_name, child_dirs).replace("/", "_")
@@ -296,7 +323,7 @@ class TransformativeRepair:
     @staticmethod
     def create_summary(experiment_settings:dict, llm_settings:dict, start_time:datetime) -> None:        
         # Add more info to dir
-        extended_experiment_name = os.path.join(f'{Path(experiment_settings["experiment_name"]).parts[0]}_tools{len(experiment_settings["smartbugs_tools"])}_patches{llm_settings[experiment_settings["llm_model_name"]]["num_candidate_patches"]}_tmp{llm_settings[experiment_settings["llm_model_name"]]["temperature"]}_topp{llm_settings[experiment_settings["llm_model_name"]]["top_p"]}_{experiment_settings["llm_model_name"]}')
+        extended_experiment_name = os.path.join(f'{Path(experiment_settings["experiment_name"]).parts[0]}_tools{len(SmartContract.get_smartbugs_tools(experiment_settings["smartbugs_tools"]))}_patches{llm_settings[experiment_settings["llm_model_name"]]["num_candidate_patches"]}_tmp{llm_settings[experiment_settings["llm_model_name"]]["temperature"]}_topp{llm_settings[experiment_settings["llm_model_name"]]["top_p"]}_{experiment_settings["llm_model_name"]}')
         child_dirs = os.path.join(*(Path(experiment_settings.get("experiment_name", "")).parts[1:])) if len(Path(experiment_settings.get("experiment_name", "")).parts) > 1 else ""
         results_dir:Path = Path(os.path.join("experiment_results", 
             extended_experiment_name, 
@@ -306,7 +333,7 @@ class TransformativeRepair:
         summary = {}
         summary["experiment_name"] = os.path.join(extended_experiment_name, child_dirs).replace("/", "_")
         summary["dataset"] = experiment_settings["vulnerable_contracts_directory"]
-        summary["smartbugs_tools"] = experiment_settings["smartbugs_tools"]
+        summary["smartbugs_tools"] = SmartContract.get_smartbugs_tools(experiment_settings["smartbugs_tools"])
         summary["prompt_style"] = experiment_settings["prompt_style"]
         summary["n_threads"] = f'sb_threads={experiment_settings["n_smartbugs_threads"]} llm_rapair_threads={experiment_settings["n_repair_threads"]}'
         summary["llm_settings"] = llm_settings[experiment_settings["llm_model_name"]]
@@ -327,7 +354,7 @@ class TransformativeRepair:
         start_time = datetime.datetime.utcnow()
 
         # Add more info to dir
-        extended_experiment_name = os.path.join(f'{Path(experiment_settings["experiment_name"]).parts[0]}_tools{len(experiment_settings["smartbugs_tools"])}_patches{llm_settings[experiment_settings["llm_model_name"]]["num_candidate_patches"]}_tmp{llm_settings[experiment_settings["llm_model_name"]]["temperature"]}_topp{llm_settings[experiment_settings["llm_model_name"]]["top_p"]}_{experiment_settings["llm_model_name"]}')
+        extended_experiment_name = os.path.join(f'{Path(experiment_settings["experiment_name"]).parts[0]}_tools{len(SmartContract.get_smartbugs_tools(experiment_settings["smartbugs_tools"]))}_patches{llm_settings[experiment_settings["llm_model_name"]]["num_candidate_patches"]}_tmp{llm_settings[experiment_settings["llm_model_name"]]["temperature"]}_topp{llm_settings[experiment_settings["llm_model_name"]]["top_p"]}_{experiment_settings["llm_model_name"]}')
         child_dirs = os.path.join(*(Path(experiment_settings.get("experiment_name", "")).parts[1:])) if len(Path(experiment_settings.get("experiment_name", "")).parts) > 1 else ""
         results_dir:Path = Path(os.path.join("experiment_results", 
             extended_experiment_name, 
