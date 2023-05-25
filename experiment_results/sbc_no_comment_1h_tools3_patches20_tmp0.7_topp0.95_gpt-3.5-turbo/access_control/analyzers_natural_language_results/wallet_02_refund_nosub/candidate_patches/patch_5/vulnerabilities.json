@@ -1,0 +1,59 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Transaction-Ordering Dependence (TOD)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function deposit() public payable {\n        require(balances[msg.sender] + msg.value >= balances[msg.sender]);\n        balances[msg.sender] += msg.value;",
+          "message": "Wallet.deposit (patch_5.sol#12-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function withdraw(uint256 amount) public {\n        require(amount <= balances[msg.sender]);\n        balances[msg.sender] -= amount;\n        msg.sender.transfer(amount);",
+          "message": "Wallet.withdraw (patch_5.sol#17-21) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function refund() public {\n        uint256 balance = balances[msg.sender];\n        require(balance > 0);\n        balances[msg.sender] = 0;\n        msg.sender.transfer(balance);",
+          "message": "Wallet.refund (patch_5.sol#23-28) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": 33,
+          "vulnerability_code": "    function migrateTo(address to) public {\n        require(msg.sender == creator);\n        to.transfer(address(this).balance);",
+          "message": "Wallet.migrateTo (patch_5.sol#30-33) should be declared external\n"
+        }
+      ]
+    }
+  }
+}

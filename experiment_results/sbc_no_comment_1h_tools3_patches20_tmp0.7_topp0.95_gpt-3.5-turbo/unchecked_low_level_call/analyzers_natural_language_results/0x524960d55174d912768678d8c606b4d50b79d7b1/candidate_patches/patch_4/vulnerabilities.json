@@ -1,0 +1,52 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function transfer() public returns (bool) {\n        address contract_address = 0x96a65609a7b84e8842732deb08f56c3e21ac6f8a;\n        address c2 = 0xaa27f8c1160886aacba64b2319d8d5469ef2af79;\n        uint256 k = 1;\n\n        require(contract_address.call(bytes4(keccak256(\"register(string)\")), \"CentraToken\"));\n        require(contract_address.call(bytes4(keccak256(\"transfer(address,uint256)\")), c2, k));\n\n        return true;",
+          "message": "Centra4.transfer (patch_4.sol#4-13) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.13;",
+          "message": "Detected issues with version pragma in patch_4.sol:\n\t- pragma solidity^0.4.13 (patch_4.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function transfer() public returns (bool) {\n        address contract_address = 0x96a65609a7b84e8842732deb08f56c3e21ac6f8a;\n        address c2 = 0xaa27f8c1160886aacba64b2319d8d5469ef2af79;\n        uint256 k = 1;\n\n        require(contract_address.call(bytes4(keccak256(\"register(string)\")), \"CentraToken\"));\n        require(contract_address.call(bytes4(keccak256(\"transfer(address,uint256)\")), c2, k));\n\n        return true;",
+          "message": "Low level call in Centra4.transfer (patch_4.sol#4-13):\n\t-require(bool)(contract_address.call(bytes4(keccak256()(register(string))),CentraToken)) patch_4.sol#9\n\t-require(bool)(contract_address.call(bytes4(keccak256()(transfer(address,uint256))),c2,k)) patch_4.sol#10\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(contract_address.call(bytes4(keccak256(\"transfer(address,uint256)\")), c2, k));",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        }
+      ]
+    }
+  }
+}

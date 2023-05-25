@@ -1,0 +1,44 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function set(uint256 key, uint256 value) public {\n        require(msg.sender == owner); // Only owner can set values\n        map[key] = value;",
+          "message": "Map.set (patch_6.sol#11-14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "    function get(uint256 key) public view returns (uint256) {\n        return map[key];",
+          "message": "Map.get (patch_6.sol#16-18) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdraw() public {\n        require(msg.sender == owner);\n        msg.sender.transfer(address(this).balance);",
+          "message": "Map.withdraw (patch_6.sol#20-23) should be declared external\n"
+        }
+      ]
+    }
+  }
+}

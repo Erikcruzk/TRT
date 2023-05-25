@@ -1,0 +1,143 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_15"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint tokens_buy = (msg.value * 10 ** 18) / token_price;",
+          "message": "Delta.tokens_buy.tokens_buy (local variable @ patch_15.sol#19) shadows:\n\t- Delta.tokens_buy (function @ patch_15.sol#15-34)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public c = 0xF85A2E95FA30d005F629cBe6c6d2887D979ffF2A;",
+          "message": "Delta.c should be constant (patch_15.sol#4)\nDelta.owner should be constant (patch_15.sol#5)\nDelta.owner2 should be constant (patch_15.sol#6)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function() payable {\n        tokens_buy();",
+          "message": "Delta.fallback (patch_15.sol#11-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": 46,
+          "vulnerability_code": "    function withdraw(uint256 _amount) onlyOwner returns (bool result) {\n        uint256 balance;\n        balance = this.balance;\n        if (_amount > 0) balance = _amount;\n\n        // Check if send() function call is successful\n        bool sendSuccess = owner.send(balance);\n        require(sendSuccess);\n\n        return true;",
+          "message": "Delta.withdraw (patch_15.sol#36-46) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": 51,
+          "vulnerability_code": "    function change_token_price(uint256 _token_price) onlyOwner returns (bool result) {\n        token_price = _token_price;\n        return true;",
+          "message": "Delta.change_token_price (patch_15.sol#48-51) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": 56,
+          "vulnerability_code": "    function change_active(uint256 _active) onlyOwner returns (bool result) {\n        active = _active;\n        return true;",
+          "message": "Delta.change_active (patch_15.sol#53-56) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;",
+          "message": "Detected issues with version pragma in patch_15.sol:\n\t- pragma solidity^0.4.23 (patch_15.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 34,
+          "vulnerability_code": "    function tokens_buy() payable returns (bool) {\n        require(active > 0);\n        require(msg.value >= token_price);\n\n        uint tokens_buy = (msg.value * 10 ** 18) / token_price;\n\n        require(tokens_buy > 0);\n\n        // Check if transferFrom() function call is successful\n        bool transferSuccess = c.call(bytes4(keccak256(\"transferFrom(address,address,uint256)\")), owner, msg.sender, tokens_buy);\n        require(transferSuccess);\n\n        uint sum2 = (msg.value * 3) / 10;\n\n        // Check if send() function call is successful\n        bool sendSuccess = owner2.send(sum2);\n        require(sendSuccess);\n\n        return true;",
+          "message": "Low level call in Delta.tokens_buy (patch_15.sol#15-34):\n\t-transferSuccess = c.call(bytes4(keccak256()(transferFrom(address,address,uint256))),owner,msg.sender,tokens_buy) patch_15.sol#24\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 34,
+          "vulnerability_code": "    function tokens_buy() payable returns (bool) {\n        require(active > 0);\n        require(msg.value >= token_price);\n\n        uint tokens_buy = (msg.value * 10 ** 18) / token_price;\n\n        require(tokens_buy > 0);\n\n        // Check if transferFrom() function call is successful\n        bool transferSuccess = c.call(bytes4(keccak256(\"transferFrom(address,address,uint256)\")), owner, msg.sender, tokens_buy);\n        require(transferSuccess);\n\n        uint sum2 = (msg.value * 3) / 10;\n\n        // Check if send() function call is successful\n        bool sendSuccess = owner2.send(sum2);\n        require(sendSuccess);\n\n        return true;",
+          "message": "Function 'Delta.tokens_buy' (patch_15.sol#15-34) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdraw(uint256 _amount) onlyOwner returns (bool result) {",
+          "message": "Parameter '_amount' of Delta.withdraw (patch_15.sol#36) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": 51,
+          "vulnerability_code": "    function change_token_price(uint256 _token_price) onlyOwner returns (bool result) {\n        token_price = _token_price;\n        return true;",
+          "message": "Function 'Delta.change_token_price' (patch_15.sol#48-51) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function change_token_price(uint256 _token_price) onlyOwner returns (bool result) {",
+          "message": "Parameter '_token_price' of Delta.change_token_price (patch_15.sol#48) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": 56,
+          "vulnerability_code": "    function change_active(uint256 _active) onlyOwner returns (bool result) {\n        active = _active;\n        return true;",
+          "message": "Function 'Delta.change_active' (patch_15.sol#53-56) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function change_active(uint256 _active) onlyOwner returns (bool result) {",
+          "message": "Parameter '_active' of Delta.change_active (patch_15.sol#53) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public token_price = (10 ** 18 * 1) / 1000;",
+          "message": "Variable 'Delta.token_price' (patch_15.sol#9) is not in mixedCase\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bool transferSuccess = c.call(bytes4(keccak256(\"transferFrom(address,address,uint256)\")), owner, msg.sender, tokens_buy);",
+          "message": null
+        },
+        {
+          "name": "Transaction-Ordering Dependence (TOD)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    }
+  }
+}

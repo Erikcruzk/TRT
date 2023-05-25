@@ -1,0 +1,73 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Unprotected Ether Withdrawal (SWC 105)",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        msg.sender.transfer(address(this).balance);",
+          "message": "Any sender can withdraw Ether from the contract account.\nArbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.\nClassification: SWC-105"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": 35,
+          "vulnerability_code": "    function withdrawAll() public onlyOwner {\n        msg.sender.transfer(address(this).balance);",
+          "message": "TestContract.withdrawAll (patch_17.sol#33-35) sends eth to arbitrary user\n\tDangerous calls:\n\t- msg.sender.transfer(address(this).balance) (patch_17.sol#34)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": 35,
+          "vulnerability_code": "    function withdrawAll() public onlyOwner {\n        msg.sender.transfer(address(this).balance);",
+          "message": "TestContract.withdrawAll (patch_17.sol#33-35) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "TestContract.fallback (patch_17.sol#37) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;",
+          "message": "Detected issues with version pragma in patch_17.sol:\n\t- pragma solidity^0.4.23 (patch_17.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addOwner(address _owner) external onlyOwner returns (bool) {",
+          "message": "Parameter '_owner' of MultiOwnable.addOwner (patch_17.sol#17) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function removeOwner(address _owner) external onlyOwner returns (bool) {",
+          "message": "Parameter '_owner' of MultiOwnable.removeOwner (patch_17.sol#23) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}

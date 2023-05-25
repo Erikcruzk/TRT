@@ -1,0 +1,88 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "uninitialized-state",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public owner;",
+          "message": "Map.owner (mapping_write.sol#4) is never initialized. It is used in:\n\t- withdraw (mapping_write.sol#19-22)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public owner;",
+          "message": "Map.owner should be constant (mapping_write.sol#4)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function set(uint256 key, uint256 value) public {\n        if (map.length <= key) {\n            map.length = key + 1;\n        }\n\n        map[key] = value;",
+          "message": "Map.set (mapping_write.sol#7-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 17,
+          "vulnerability_code": "    function get(uint256 key) public view returns (uint256) {\n        return map[key];",
+          "message": "Map.get (mapping_write.sol#15-17) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 22,
+          "vulnerability_code": "    function withdraw() public {\n        require(msg.sender == owner);\n        msg.sender.transfer(address(this).balance);",
+          "message": "Map.withdraw (mapping_write.sol#19-22) should be declared external\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        map[key] = value;",
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values). This issue is reported for internal compiler generated code.\nClassification: SWC-110"
+        },
+        {
+          "name": "Write to an arbitrary storage location (SWC 124)",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        map[key] = value;",
+          "message": "The caller can write to arbitrary storage locations.\nIt is possible to write to arbitrary storage locations. By modifying the values of storage variables, attackers may bypass security controls or manipulate the business logic of the smart contract.\nClassification: SWC-124"
+        },
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function get(uint256 key) public view returns (uint256) {",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        }
+      ]
+    }
+  }
+}
