@@ -76,22 +76,26 @@ class SmartContract:
         tools = smartbugs_tools
 
         if "access_control_tools" in smartbugs_tools:
+            tools.remove("access_control_tools")
             tools.extend(["maian", "manticore", "mythril", "oyente", "securify", "slither"])
         
         if "arithmetic_tools" in smartbugs_tools:
+            tools.remove("arithmetic_tools")
             tools.extend(["manticore", "mythril", "osiris", "oyente", "smartcheck"])
         
         if "reentrancy_tools" in smartbugs_tools:
+            tools.remove("reentrancy_tools")
             tools.extend(["manticore", "mythril", "oyente", "securify", "slither"])
         
         if "unchecked_calls_tools" in smartbugs_tools:
+            tools.remove("unchecked_calls_tools")
             tools.extend(["manticore", "mythril", "securify", "smartcheck"])
         
         if "transaction_order_dependence_tools" in smartbugs_tools:
+            tools.remove("transaction_order_dependence_tools")
             tools.extend(["securify"])
 
         tools = list(set(tools))
-
         return tools
 
     @staticmethod
