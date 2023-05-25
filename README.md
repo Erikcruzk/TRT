@@ -21,7 +21,7 @@ install/setup-venv.sh
 ```
 
 #### Run in Docker
-1. docker build --pull --rm -f "Dockerfile" -t trt:1669e "."
+1. docker build --pull --rm -f "Dockerfile" -t trt:4d5bf "."
 2. Start container
 ```
 docker run -tid\
@@ -29,12 +29,12 @@ docker run -tid\
   -v $(pwd)/experiment_results:/app/experiment_results \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /tmp:/tmp \
-  --name trt_container \
-  trt:1669e
+  --name trt_container_reentrancy \
+  trt:4d5bf
 ```
 3. Enter Container
 ```
-docker exec -it trt_container bash
+docker exec -it trt_container_reentrancy bash
 ```
 4. Stop container
 ```
