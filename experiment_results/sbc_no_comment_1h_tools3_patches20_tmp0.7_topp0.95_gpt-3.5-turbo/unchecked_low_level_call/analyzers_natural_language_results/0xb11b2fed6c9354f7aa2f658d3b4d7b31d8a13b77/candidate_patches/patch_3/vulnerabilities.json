@@ -1,0 +1,130 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function proxy(address target, bytes data) public payable onlyOwner {",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function proxy(address target, bytes data) public payable onlyOwner {",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 17,
+          "vulnerability_code": "    function transferOwner(address _owner) public onlyOwner {\n        owner = _owner;",
+          "message": "Proxy.transferOwner (patch_3.sol#15-17) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function proxy(address target, bytes data) public payable onlyOwner {\n        require(address(target).call.value(msg.value)(data), \"Failed to execute the external call.\");",
+          "message": "Proxy.proxy (patch_3.sol#19-21) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "DepositProxy.fallback (patch_3.sol#27) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 34,
+          "vulnerability_code": "    function vault() public payable {\n        if (msg.sender == tx.origin) {\n            owner = msg.sender;\n            deposit();\n        }",
+          "message": "DepositProxy.vault (patch_3.sol#29-34) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": 46,
+          "vulnerability_code": "    function withdraw(uint256 amount) public onlyOwner {\n        require(amount > 0 && deposits[msg.sender] >= amount, \"Invalid withdrawal amount or insufficient funds.\");\n        msg.sender.transfer(amount);\n        deposits[msg.sender] -= amount;",
+          "message": "DepositProxy.withdraw (patch_3.sol#42-46) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function proxy(address target, bytes data) public payable onlyOwner {\n        require(address(target).call.value(msg.value)(data), \"Failed to execute the external call.\");",
+          "message": "Low level call in Proxy.proxy (patch_3.sol#19-21):\n\t-require(bool,string)(address(target).call.value(msg.value)(data),Failed to execute the external call.) patch_3.sol#20\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferOwner(address _owner) public onlyOwner {",
+          "message": "Parameter '_owner' of Proxy.transferOwner (patch_3.sol#15) is not in mixedCase\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Dependence on tx.origin (SWC 115)",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == owner, \"Only the owner can call this function.\");",
+          "message": "Use of tx.origin as a part of authorization control.\nThe tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.\nClassification: SWC-115"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(address(target).call.value(msg.value)(data), \"Failed to execute the external call.\");",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Dependence on tx.origin (SWC 115)",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == owner, \"Only the owner can call this function.\");",
+          "message": "Use of tx.origin as a part of authorization control.\nThe tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.\nClassification: SWC-115"
+        },
+        {
+          "name": "Dependence on tx.origin (SWC 115)",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == owner, \"Only the owner can call this function.\");",
+          "message": "Use of tx.origin as a part of authorization control.\nThe tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.\nClassification: SWC-115"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(address(target).call.value(msg.value)(data), \"Failed to execute the external call.\");",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Dependence on tx.origin (SWC 115)",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (msg.sender == tx.origin) {",
+          "message": "Use of tx.origin as a part of authorization control.\nThe tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.\nClassification: SWC-115"
+        }
+      ]
+    }
+  }
+}

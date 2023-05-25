@@ -1,0 +1,95 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function command(address adr, bytes data) public payable {",
+          "message": null
+        },
+        {
+          "name": "Transaction-Ordering Dependence (TOD)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "MultiplicatorX3.fallback (patch_18.sol#10) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function withdraw() public {\n        require(msg.sender == owner);\n        owner.transfer(this.balance);",
+          "message": "MultiplicatorX3.withdraw (patch_18.sol#12-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function command(address adr, bytes data) public payable {\n        require(msg.sender == owner);\n        require(adr.call.value(msg.value)(data));",
+          "message": "MultiplicatorX3.command (patch_18.sol#17-20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": 27,
+          "vulnerability_code": "    function multiplicate(address adr) public payable {\n        require(msg.value > 0);\n        if (this.balance >= msg.value) {\n            require(adr.send(msg.value * 3));\n        }",
+          "message": "MultiplicatorX3.multiplicate (patch_18.sol#22-27) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;",
+          "message": "Detected issues with version pragma in patch_18.sol:\n\t- pragma solidity^0.4.18 (patch_18.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function command(address adr, bytes data) public payable {\n        require(msg.sender == owner);\n        require(adr.call.value(msg.value)(data));",
+          "message": "Low level call in MultiplicatorX3.command (patch_18.sol#17-20):\n\t-require(bool)(adr.call.value(msg.value)(data)) patch_18.sol#19\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 8,
+          "vulnerability_code": "    function MultiplicatorX3() public {\n        owner = msg.sender;",
+          "message": "Function 'MultiplicatorX3.MultiplicatorX3' (patch_18.sol#6-8) is not in mixedCase\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(adr.call.value(msg.value)(data));",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        }
+      ]
+    }
+  }
+}

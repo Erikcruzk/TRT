@@ -1,0 +1,65 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function isComplete() public view returns (bool) {\n        return address(this).balance >= 1 ether;",
+          "message": "TokenSaleChallenge.isComplete (patch_0.sol#12-14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function buy(uint256 numTokens) public payable {\n        require(msg.value == numTokens * PRICE_PER_TOKEN && numTokens > 0); // check for overflow and require numTokens to be greater than 0\n\n        uint256 totalCost = numTokens * PRICE_PER_TOKEN;\n        require(totalCost / numTokens == PRICE_PER_TOKEN); // check for overflow\n\n        balanceOf[msg.sender] += numTokens;",
+          "message": "TokenSaleChallenge.buy (patch_0.sol#16-23) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 33,
+          "vulnerability_code": "    function sell(uint256 numTokens) public {\n        require(balanceOf[msg.sender] >= numTokens && numTokens > 0); // require numTokens to be greater than 0\n\n        balanceOf[msg.sender] -= numTokens;\n        uint256 totalCost = numTokens * PRICE_PER_TOKEN;\n        require(totalCost / numTokens == PRICE_PER_TOKEN); // check for overflow\n\n        msg.sender.transfer(totalCost);",
+          "message": "TokenSaleChallenge.sell (patch_0.sol#25-33) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.21;",
+          "message": "Detected issues with version pragma in patch_0.sol:\n\t- pragma solidity^0.4.21 (patch_0.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 10,
+          "vulnerability_code": "    function TokenSaleChallenge(address _player) public payable {\n        require(msg.value == 1 ether);\n        balanceOf[_player] = 0; // initialize balance to 0",
+          "message": "Function 'TokenSaleChallenge.TokenSaleChallenge' (patch_0.sol#7-10) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function TokenSaleChallenge(address _player) public payable {",
+          "message": "Parameter '_player' of TokenSaleChallenge.TokenSaleChallenge (patch_0.sol#7) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}

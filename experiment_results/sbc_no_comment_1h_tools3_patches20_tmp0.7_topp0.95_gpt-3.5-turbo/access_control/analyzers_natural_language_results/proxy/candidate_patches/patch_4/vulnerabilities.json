@@ -1,0 +1,74 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "controlled-delegatecall",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "    function forward(address _callee, bytes _data) public {\n        require(_callee.delegatecall(_data));",
+          "message": "Proxy.forward (patch_4.sol#10-12) uses delegatecall to a input-controlled function id\n\trequire(bool)(_callee.delegatecall(_data)) (patch_4.sol#11)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "    function forward(address _callee, bytes _data) public {\n        require(_callee.delegatecall(_data));",
+          "message": "Proxy.forward (patch_4.sol#10-12) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "    function forward(address _callee, bytes _data) public {\n        require(_callee.delegatecall(_data));",
+          "message": "Low level call in Proxy.forward (patch_4.sol#10-12):\n\t-require(bool)(_callee.delegatecall(_data)) patch_4.sol#11\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function forward(address _callee, bytes _data) public {",
+          "message": "Parameter '_callee' of Proxy.forward (patch_4.sol#10) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function forward(address _callee, bytes _data) public {",
+          "message": "Parameter '_data' of Proxy.forward (patch_4.sol#10) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function forward(address _callee, bytes _data) public {",
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Delegatecall to user-supplied address (SWC 112)",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_callee.delegatecall(_data));",
+          "message": "The contract delegates execution to another contract with a user-supplied address.\nThe smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.\nClassification: SWC-112"
+        }
+      ]
+    }
+  }
+}

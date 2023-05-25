@@ -1,0 +1,235 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_token.call(bytes4(keccak256(\"transfer(address,uint256)\")), _to, _amount));",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_token.call(bytes4(keccak256(\"transfer(address,uint256)\")), _to, _amount));",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 74,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_addr.call.value(_wei)());",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            Holders[msg.sender] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_26"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function changeOwner(address addr) public onlyOwner {\n        newOwner = addr;",
+          "message": "Ownable.changeOwner (patch_9.sol#11-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function confirmOwner() public {\n        if (msg.sender == newOwner) {\n            owner = newOwner;\n            newOwner = address(0);\n        }",
+          "message": "Ownable.confirmOwner (patch_9.sol#15-20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": 46,
+          "vulnerability_code": "    function initTokenBank() public {\n        owner = msg.sender;\n        MinDeposit = 1 ether;",
+          "message": "TokenBank.initTokenBank (patch_9.sol#43-46) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": 50,
+          "vulnerability_code": "    function() payable {\n        Deposit();",
+          "message": "TokenBank.fallback (patch_9.sol#48-50) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": 66,
+          "vulnerability_code": "    function WithdrawTokenToHolder(\n        address _to,\n        address _token,\n        uint _amount\n    ) public onlyOwner {\n        require(Holders[_to] > 0);\n        Holders[_to] = 0;\n        WithdrawToken(_token, _amount, _to);",
+          "message": "TokenBank.WithdrawTokenToHolder (patch_9.sol#58-66) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 68,
+          "vulnerability_to_line": 75,
+          "vulnerability_code": "    function WithdrawToHolder(\n        address _addr,\n        uint _wei\n    ) public onlyOwner {\n        require(Holders[_addr] >= _wei);\n        Holders[_addr] -= _wei;\n        require(_addr.call.value(_wei)());",
+          "message": "TokenBank.WithdrawToHolder (patch_9.sol#68-75) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": 79,
+          "vulnerability_code": "    function Bal() public constant returns (uint) {\n        return this.balance;",
+          "message": "TokenBank.Bal (patch_9.sol#77-79) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;",
+          "message": "Detected issues with version pragma in patch_9.sol:\n\t- pragma solidity^0.4.18 (patch_9.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 36,
+          "vulnerability_code": "    function WithdrawToken(\n        address _token,\n        uint256 _amount,\n        address _to\n    ) public onlyOwner {\n        require(_to != address(0));\n        require(_token.call(bytes4(keccak256(\"transfer(address,uint256)\")), _to, _amount));",
+          "message": "Low level call in Token.WithdrawToken (patch_9.sol#29-36):\n\t-require(bool)(_token.call(bytes4(keccak256()(transfer(address,uint256))),_to,_amount)) patch_9.sol#35\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 68,
+          "vulnerability_to_line": 75,
+          "vulnerability_code": "    function WithdrawToHolder(\n        address _addr,\n        uint _wei\n    ) public onlyOwner {\n        require(Holders[_addr] >= _wei);\n        Holders[_addr] -= _wei;\n        require(_addr.call.value(_wei)());",
+          "message": "Low level call in TokenBank.WithdrawToHolder (patch_9.sol#68-75):\n\t-require(bool)(_addr.call.value(_wei)()) patch_9.sol#74\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function Ownable() public {\n        owner = msg.sender;",
+          "message": "Function 'Ownable.Ownable' (patch_9.sol#7-9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 36,
+          "vulnerability_code": "    function WithdrawToken(\n        address _token,\n        uint256 _amount,\n        address _to\n    ) public onlyOwner {\n        require(_to != address(0));\n        require(_token.call(bytes4(keccak256(\"transfer(address,uint256)\")), _to, _amount));",
+          "message": "Function 'Token.WithdrawToken' (patch_9.sol#29-36) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _token,",
+          "message": "Parameter '_token' of Token.WithdrawToken (patch_9.sol#30) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _amount,",
+          "message": "Parameter '_amount' of Token.WithdrawToken (patch_9.sol#31) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _to",
+          "message": "Parameter '_to' of Token.WithdrawToken (patch_9.sol#32) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": 56,
+          "vulnerability_code": "    function Deposit() public payable {\n        if (msg.value >= MinDeposit) {\n            Holders[msg.sender] += msg.value;\n        }",
+          "message": "Function 'TokenBank.Deposit' (patch_9.sol#52-56) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": 66,
+          "vulnerability_code": "    function WithdrawTokenToHolder(\n        address _to,\n        address _token,\n        uint _amount\n    ) public onlyOwner {\n        require(Holders[_to] > 0);\n        Holders[_to] = 0;\n        WithdrawToken(_token, _amount, _to);",
+          "message": "Function 'TokenBank.WithdrawTokenToHolder' (patch_9.sol#58-66) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _to,",
+          "message": "Parameter '_to' of TokenBank.WithdrawTokenToHolder (patch_9.sol#59) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _token,",
+          "message": "Parameter '_token' of TokenBank.WithdrawTokenToHolder (patch_9.sol#60) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint _amount",
+          "message": "Parameter '_amount' of TokenBank.WithdrawTokenToHolder (patch_9.sol#61) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 68,
+          "vulnerability_to_line": 75,
+          "vulnerability_code": "    function WithdrawToHolder(\n        address _addr,\n        uint _wei\n    ) public onlyOwner {\n        require(Holders[_addr] >= _wei);\n        Holders[_addr] -= _wei;\n        require(_addr.call.value(_wei)());",
+          "message": "Function 'TokenBank.WithdrawToHolder' (patch_9.sol#68-75) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _addr,",
+          "message": "Parameter '_addr' of TokenBank.WithdrawToHolder (patch_9.sol#69) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint _wei",
+          "message": "Parameter '_wei' of TokenBank.WithdrawToHolder (patch_9.sol#70) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": 79,
+          "vulnerability_code": "    function Bal() public constant returns (uint) {\n        return this.balance;",
+          "message": "Function 'TokenBank.Bal' (patch_9.sol#77-79) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinDeposit;",
+          "message": "Variable 'TokenBank.MinDeposit' (patch_9.sol#40) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => uint) public Holders;",
+          "message": "Variable 'TokenBank.Holders' (patch_9.sol#41) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}
