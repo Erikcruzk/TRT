@@ -1,0 +1,73 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "manticore-0.3.7": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (manticore.core.state.Concretize)",
+        "exception (manticore.exceptions.ManticoreError: Forking on unfeasible constraint set)"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        userBalances[msg.sender] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 8,
+          "vulnerability_code": "    function getBalance(address user) public view returns (uint) {\n        return userBalances[user];",
+          "message": "EtherBank.getBalance (patch_18.sol#6-8) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function addToBalance() public payable {\n        require(msg.value > 0, \"Amount should be greater than 0\");\n        userBalances[msg.sender] += msg.value;",
+          "message": "EtherBank.addToBalance (patch_18.sol#10-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function withdrawBalance() public {\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0, \"Insufficient balance\");\n\n        userBalances[msg.sender] = 0;\n        msg.sender.transfer(amountToWithdraw);",
+          "message": "EtherBank.withdrawBalance (patch_18.sol#15-21) should be declared external\n"
+        }
+      ]
+    }
+  }
+}

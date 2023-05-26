@@ -1,0 +1,92 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        userBalances[to] += amount;",
+          "message": null
+        }
+      ]
+    },
+    "manticore-0.3.7": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "erc20-interface",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "contract Reentrancy_cross_function {\n    mapping(address => uint) private userBalances;\n    mapping(address => bool) private locked;\n\n    function transfer(address to, uint amount) public {\n        require(userBalances[msg.sender] >= amount, \"Insufficient balance\");\n        userBalances[to] += amount;\n        userBalances[msg.sender] -= amount;\n    }\n\n    function withdrawBalance() public {\n        require(!locked[msg.sender], \"Already locked\");\n\n        locked[msg.sender] = true;\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        locked[msg.sender] = false;\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success, \"Withdrawal failed\");\n    }",
+          "message": "Reentrancy_cross_function (patch_3.sol#3-24) has incorrect ERC20 function interface(s):\n\t-transfer (patch_3.sol#7-11)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 11,
+          "vulnerability_code": "    function transfer(address to, uint amount) public {\n        require(userBalances[msg.sender] >= amount, \"Insufficient balance\");\n        userBalances[to] += amount;\n        userBalances[msg.sender] -= amount;",
+          "message": "Reentrancy_cross_function.transfer (patch_3.sol#7-11) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender], \"Already locked\");\n\n        locked[msg.sender] = true;\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        locked[msg.sender] = false;\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success, \"Withdrawal failed\");",
+          "message": "Reentrancy_cross_function.withdrawBalance (patch_3.sol#13-23) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender], \"Already locked\");\n\n        locked[msg.sender] = true;\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        locked[msg.sender] = false;\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success, \"Withdrawal failed\");",
+          "message": "Low level call in Reentrancy_cross_function.withdrawBalance (patch_3.sol#13-23):\n\t-(success) = msg.sender.call.value(amountToWithdraw)() patch_3.sol#21\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "contract Reentrancy_cross_function {\n    mapping(address => uint) private userBalances;\n    mapping(address => bool) private locked;\n\n    function transfer(address to, uint amount) public {\n        require(userBalances[msg.sender] >= amount, \"Insufficient balance\");\n        userBalances[to] += amount;\n        userBalances[msg.sender] -= amount;\n    }\n\n    function withdrawBalance() public {\n        require(!locked[msg.sender], \"Already locked\");\n\n        locked[msg.sender] = true;\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        locked[msg.sender] = false;\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success, \"Withdrawal failed\");\n    }",
+          "message": "Contract 'Reentrancy_cross_function' (patch_3.sol#3-24) is not in CapWords\n"
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_10"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function donate(address _to) public payable {\n        require(!frozenAccount[_to], \"Account is frozen\");\n        credit[_to] += msg.value;\n        emit Donation(_to, msg.value);",
+          "message": "SimpleDAO.donate (patch_3.sol#10-14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdraw(uint _amount) public {\n        require(!frozenAccount[msg.sender], \"Account is frozen\");\n        require(credit[msg.sender] >= _amount, \"Insufficient balance\");\n        credit[msg.sender] -= _amount;\n        emit Withdrawal(msg.sender, _amount);\n        bool success = msg.sender.send(_amount);\n        require(success, \"Withdrawal failed\");",
+          "message": "SimpleDAO.withdraw (patch_3.sol#16-23) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 27,
+          "vulnerability_code": "    function queryCredit(address _to) public view returns (uint) {\n        return credit[_to];",
+          "message": "SimpleDAO.queryCredit (patch_3.sol#25-27) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 32,
+          "vulnerability_code": "    function freezeAccount(address _to) public {\n        require(msg.sender == address(0x123), \"Only owner can freeze accounts\");\n        frozenAccount[_to] = true;",
+          "message": "SimpleDAO.freezeAccount (patch_3.sol#29-32) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function unfreezeAccount(address _to) public {\n        require(msg.sender == address(0x123), \"Only owner can unfreeze accounts\");\n        frozenAccount[_to] = false;",
+          "message": "SimpleDAO.unfreezeAccount (patch_3.sol#34-37) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function donate(address _to) public payable {",
+          "message": "Parameter '_to' of SimpleDAO.donate (patch_3.sol#10) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdraw(uint _amount) public {",
+          "message": "Parameter '_amount' of SimpleDAO.withdraw (patch_3.sol#16) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function queryCredit(address _to) public view returns (uint) {",
+          "message": "Parameter '_to' of SimpleDAO.queryCredit (patch_3.sol#25) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function freezeAccount(address _to) public {",
+          "message": "Parameter '_to' of SimpleDAO.freezeAccount (patch_3.sol#29) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function unfreezeAccount(address _to) public {",
+          "message": "Parameter '_to' of SimpleDAO.unfreezeAccount (patch_3.sol#34) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        credit[_to] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Unprotected Ether Withdrawal (SWC 105)",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bool success = msg.sender.send(_amount);",
+          "message": "Any sender can withdraw Ether from the contract account.\nArbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.\nClassification: SWC-105"
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "manticore-0.3.7": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

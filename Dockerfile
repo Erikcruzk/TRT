@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     gnupg \
     lsb-release \
-    vim
+    vim \
+    tmux
 
 # Import the Docker GPG key and add the Docker repository by adding the following lines:
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
