@@ -147,4 +147,6 @@ Temperature 0.5 and 0.7. Top_p 0.95
 
 docker ps -a | grep -E 'smartbugs/mythril:0.23.15|smartbugs/smartcheck|smartbugs/security:usolc|smartbugs/manticore:0.3.7|smartbugs/oyente:480e725|smartbugs/slither|smartbugs/maian:solc5.10|smartbugs/osiris:d1ecc37|trt:latest' | awk '{print $1}' | xargs docker rm -f
 
+docker ps -a | grep trt:latest | awk '{print $1}' | xargs docker rm -f
+
 docker ps --format "{{.ID}}" | wc -l
