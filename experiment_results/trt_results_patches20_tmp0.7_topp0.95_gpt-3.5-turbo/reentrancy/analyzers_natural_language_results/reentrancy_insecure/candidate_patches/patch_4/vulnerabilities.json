@@ -1,0 +1,77 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "DAO",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!isLocked[msg.sender]); // check if the user is already in a transaction\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0); // check if the user has any balance\n\n        isLocked[msg.sender] = true; // lock the user to prevent reentrancy\n\n        userBalances[msg.sender] = 0;\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success); // check if the transfer was successful\n\n        isLocked[msg.sender] = false; // unlock the user",
+          "message": "Reentrancy in Reentrancy_secure.withdrawBalance (patch_4.sol#7-19):\n\tExternal calls:\n\t- (success) = msg.sender.call.value(amountToWithdraw)() (patch_4.sol#15)\n\tState variables written after the call(s):\n\t- isLocked (patch_4.sol#18)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!isLocked[msg.sender]); // check if the user is already in a transaction\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0); // check if the user has any balance\n\n        isLocked[msg.sender] = true; // lock the user to prevent reentrancy\n\n        userBalances[msg.sender] = 0;\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success); // check if the transfer was successful\n\n        isLocked[msg.sender] = false; // unlock the user",
+          "message": "Reentrancy_secure.withdrawBalance (patch_4.sol#7-19) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!isLocked[msg.sender]); // check if the user is already in a transaction\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0); // check if the user has any balance\n\n        isLocked[msg.sender] = true; // lock the user to prevent reentrancy\n\n        userBalances[msg.sender] = 0;\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success); // check if the transfer was successful\n\n        isLocked[msg.sender] = false; // unlock the user",
+          "message": "Low level call in Reentrancy_secure.withdrawBalance (patch_4.sol#7-19):\n\t-(success) = msg.sender.call.value(amountToWithdraw)() patch_4.sol#15\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "contract Reentrancy_secure {\n    mapping(address => uint) private userBalances;\n    mapping(address => bool) private isLocked;\n\n    function withdrawBalance() public {\n        require(!isLocked[msg.sender]); // check if the user is already in a transaction\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0); // check if the user has any balance\n\n        isLocked[msg.sender] = true; // lock the user to prevent reentrancy\n\n        userBalances[msg.sender] = 0;\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success); // check if the transfer was successful\n\n        isLocked[msg.sender] = false; // unlock the user\n    }",
+          "message": "Contract 'Reentrancy_secure' (patch_4.sol#3-20) is not in CapWords\n"
+        }
+      ]
+    },
+    "manticore-0.3.7": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");",
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

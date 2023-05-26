@@ -1,0 +1,77 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "DAO",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender]); // Check if the sender is not already in a withdrawal process\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0); // Check if the sender has any balance to withdraw\n\n        locked[msg.sender] = true; // Lock the sender to prevent reentrancy\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n\n        userBalances[msg.sender] = 0;\n\n        locked[msg.sender] = false; // Unlock the sender after the withdrawal is complete",
+          "message": "Reentrancy in Reentrancy_secure.withdrawBalance (patch_6.sol#7-20):\n\tExternal calls:\n\t- (success) = msg.sender.call.value(amountToWithdraw)() (patch_6.sol#14)\n\tState variables written after the call(s):\n\t- locked (patch_6.sol#19)\n\t- userBalances (patch_6.sol#17)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender]); // Check if the sender is not already in a withdrawal process\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0); // Check if the sender has any balance to withdraw\n\n        locked[msg.sender] = true; // Lock the sender to prevent reentrancy\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n\n        userBalances[msg.sender] = 0;\n\n        locked[msg.sender] = false; // Unlock the sender after the withdrawal is complete",
+          "message": "Reentrancy_secure.withdrawBalance (patch_6.sol#7-20) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender]); // Check if the sender is not already in a withdrawal process\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0); // Check if the sender has any balance to withdraw\n\n        locked[msg.sender] = true; // Lock the sender to prevent reentrancy\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n\n        userBalances[msg.sender] = 0;\n\n        locked[msg.sender] = false; // Unlock the sender after the withdrawal is complete",
+          "message": "Low level call in Reentrancy_secure.withdrawBalance (patch_6.sol#7-20):\n\t-(success) = msg.sender.call.value(amountToWithdraw)() patch_6.sol#14\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "contract Reentrancy_secure {\n    mapping(address => uint) private userBalances;\n    mapping(address => bool) private locked;\n\n    function withdrawBalance() public {\n        require(!locked[msg.sender]); // Check if the sender is not already in a withdrawal process\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0); // Check if the sender has any balance to withdraw\n\n        locked[msg.sender] = true; // Lock the sender to prevent reentrancy\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n\n        userBalances[msg.sender] = 0;\n\n        locked[msg.sender] = false; // Unlock the sender after the withdrawal is complete\n    }",
+          "message": "Contract 'Reentrancy_secure' (patch_6.sol#3-21) is not in CapWords\n"
+        }
+      ]
+    },
+    "manticore-0.3.7": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");",
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

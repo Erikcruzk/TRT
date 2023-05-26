@@ -1,0 +1,77 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "manticore-0.3.7": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "erc20-interface",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "contract Reentrancy_cross_function {\n    mapping(address => uint) private userBalances;\n    mapping(address => bool) private locked;\n\n    function transfer(address to, uint amount) public {\n        require(userBalances[msg.sender] >= amount, \"Insufficient balance\");\n        userBalances[to] += amount;\n        userBalances[msg.sender] -= amount;\n    }\n\n    function withdrawBalance() public {\n        require(!locked[msg.sender], \"Reentrancy protection\");\n        locked[msg.sender] = true;\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        locked[msg.sender] = false;\n        msg.sender.transfer(amountToWithdraw);\n    }",
+          "message": "Reentrancy_cross_function (patch_4.sol#3-21) has incorrect ERC20 function interface(s):\n\t-transfer (patch_4.sol#7-11)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 11,
+          "vulnerability_code": "    function transfer(address to, uint amount) public {\n        require(userBalances[msg.sender] >= amount, \"Insufficient balance\");\n        userBalances[to] += amount;\n        userBalances[msg.sender] -= amount;",
+          "message": "Reentrancy_cross_function.transfer (patch_4.sol#7-11) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender], \"Reentrancy protection\");\n        locked[msg.sender] = true;\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        locked[msg.sender] = false;\n        msg.sender.transfer(amountToWithdraw);",
+          "message": "Reentrancy_cross_function.withdrawBalance (patch_4.sol#13-20) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "contract Reentrancy_cross_function {\n    mapping(address => uint) private userBalances;\n    mapping(address => bool) private locked;\n\n    function transfer(address to, uint amount) public {\n        require(userBalances[msg.sender] >= amount, \"Insufficient balance\");\n        userBalances[to] += amount;\n        userBalances[msg.sender] -= amount;\n    }\n\n    function withdrawBalance() public {\n        require(!locked[msg.sender], \"Reentrancy protection\");\n        locked[msg.sender] = true;\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        locked[msg.sender] = false;\n        msg.sender.transfer(amountToWithdraw);\n    }",
+          "message": "Contract 'Reentrancy_cross_function' (patch_4.sol#3-21) is not in CapWords\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        userBalances[to] += amount;",
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

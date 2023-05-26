@@ -1,0 +1,121 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.19;
+
+contract ETH_VAULT {
+    mapping(address => uint) public balances;
+
+    Log TransferLog;
+
+    uint public MinDeposit = 1 ether;
+
+    function ETH_VAULT(address _log) public {
+        TransferLog = Log(_log);
+    }
+
+    function Deposit() public payable {
+        if (msg.value > MinDeposit) {
+            balances[msg.sender] += msg.value;
+            TransferLog.AddMessage(msg.sender, msg.value, "Deposit");
+        }
+    }
+
+    function CashOut(uint _am) public payable {
+        if (_am <= balances[msg.sender]) {
+            if (msg.sender.call.value(_am)()) {
+                balances[msg.sender] -= _am;
+                TransferLog.AddMessage(msg.sender, _am, "CashOut");
+            }
+        }
+    }
+
+    function() public payable {}
+}
+
+contract Log {
+    struct Message {
+        address Sender;
+        string Data;
+        uint Val;
+        uint Time;
+    }
+
+    Message[] public History;
+
+    Message LastMsg;
+
+    function AddMessage(address _adr, uint _val, string _data) public {
+        LastMsg.Sender = _adr;
+        LastMsg.Time = now;
+        LastMsg.Val = _val;
+        LastMsg.Data = _data;
+        History.push(LastMsg);
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+/// 1. Oyente Analysis Results
+/// 1.1. Vulnerability: reentrancy at Line 23:
+            if (msg.sender.call.value(_am)()) {
+
+
+/// 2. Slither Analysis Results
+/// 2.1. Vulnerability: reentrancy at Line 21-28:
+    function CashOut(uint _am) public payable {
+        if (_am <= balances[msg.sender]) {
+            if (msg.sender.call.value(_am)()) {
+                balances[msg.sender] -= _am;
+                TransferLog.AddMessage(msg.sender, _am, "CashOut");
+            }
+        }
+///  Message:Reentrancy in ETH_VAULT.CashOut (0x8c7777c45481dba411450c228cb692ac3d550344.sol#21-28):
+///   	External calls:
+///   	- msg.sender.call.value(_am)() (0x8c7777c45481dba411450c228cb692ac3d550344.sol#23-26)
+///   	State variables written after the call(s):
+///   	- balances (0x8c7777c45481dba411450c228cb692ac3d550344.sol#24)
+
+
+/// 3. Securify Analysis Results
+/// 3.1. Vulnerability: reentrancy
+
+
+/// 4. Mythril-0.23.15 Analysis Results
+/// 4.1. Vulnerability: reentrancy at Line 23:
+            if (msg.sender.call.value(_am)()) {
+///  Message:A call to a user-supplied address is executed.
+///   An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+///   Classification: SWC-107
+/// 4.2. Vulnerability: reentrancy at Line 24:
+                balances[msg.sender] -= _am;
+///  Message:Read of persistent state following external call
+///   The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+///   Classification: SWC-107
+/// 4.3. Vulnerability: reentrancy at Line 24:
+                balances[msg.sender] -= _am;
+///  Message:Write to persistent state following external call
+///   The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+///   Classification: SWC-107
+/// 4.4. Vulnerability: reentrancy at Line 25:
+                TransferLog.AddMessage(msg.sender, _am, "CashOut");
+///  Message:Read of persistent state following external call
+///   The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+///   Classification: SWC-107
+/// 4.5. Vulnerability: reentrancy at Line 25:
+                TransferLog.AddMessage(msg.sender, _am, "CashOut");
+///  Message:A call to a user-supplied address is executed.
+///   An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+///   Classification: SWC-107
+/// 4.6. Vulnerability: reentrancy at Line 25:
+                TransferLog.AddMessage(msg.sender, _am, "CashOut");
+///  Message:Write to persistent state following external call
+///   The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+///   Classification: SWC-107
+/// 4.7. Vulnerability: reentrancy at Line 17:
+            TransferLog.AddMessage(msg.sender, msg.value, "Deposit");
+///  Message:A call to a user-supplied address is executed.
+///   An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+///   Classification: SWC-107
+
+
+
+/// Repaired Solidity Smart Contract

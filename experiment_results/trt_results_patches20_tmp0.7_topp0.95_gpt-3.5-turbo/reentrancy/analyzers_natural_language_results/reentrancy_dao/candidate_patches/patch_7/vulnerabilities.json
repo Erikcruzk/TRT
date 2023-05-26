@@ -1,0 +1,77 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "manticore-0.3.7": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bool callResult = msg.sender.call.value(oCredit)();",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        credit[msg.sender] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function withdrawAll() public {\n        uint oCredit = credit[msg.sender];\n        require(oCredit > 0); // Check if there is any credit to withdraw\n        credit[msg.sender] = 0; // Set the credit to zero before sending funds\n        balance -= oCredit;\n\n        bool callResult = msg.sender.call.value(oCredit)();\n        require(callResult); // Ensure the external call succeeded",
+          "message": "ReentrancyDAO.withdrawAll (patch_7.sol#7-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function deposit() public payable {\n        credit[msg.sender] += msg.value;\n        balance += msg.value;",
+          "message": "ReentrancyDAO.deposit (patch_7.sol#17-20) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_7.sol:\n\t- pragma solidity^0.4.19 (patch_7.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function withdrawAll() public {\n        uint oCredit = credit[msg.sender];\n        require(oCredit > 0); // Check if there is any credit to withdraw\n        credit[msg.sender] = 0; // Set the credit to zero before sending funds\n        balance -= oCredit;\n\n        bool callResult = msg.sender.call.value(oCredit)();\n        require(callResult); // Ensure the external call succeeded",
+          "message": "Low level call in ReentrancyDAO.withdrawAll (patch_7.sol#7-15):\n\t-callResult = msg.sender.call.value(oCredit)() patch_7.sol#13\n"
+        }
+      ]
+    }
+  }
+}

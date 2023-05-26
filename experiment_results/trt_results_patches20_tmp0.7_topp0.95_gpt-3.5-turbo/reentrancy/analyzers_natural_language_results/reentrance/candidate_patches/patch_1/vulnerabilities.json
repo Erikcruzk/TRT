@@ -1,0 +1,169 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_10"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdraw(uint _amount) public {\n        require(!locked[msg.sender]);\n        require(balances[msg.sender] >= _amount);\n        locked[msg.sender] = true;\n        if (msg.sender.call.value(_amount)()) {\n            balances[msg.sender] -= _amount;\n        }\n        locked[msg.sender] = false;",
+          "message": "Reentrancy in Reentrance.withdraw (patch_1.sol#15-23):\n\tExternal calls:\n\t- msg.sender.call.value(_amount)() (patch_1.sol#19-21)\n\tState variables written after the call(s):\n\t- balances (patch_1.sol#20)\n\t- locked (patch_1.sol#22)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function donate(address _to) public payable {\n        balances[_to] += msg.value;",
+          "message": "Reentrance.donate (patch_1.sol#7-9) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function balanceOf(address _who) public view returns (uint balance) {\n        return balances[_who];",
+          "message": "Reentrance.balanceOf (patch_1.sol#11-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdraw(uint _amount) public {\n        require(!locked[msg.sender]);\n        require(balances[msg.sender] >= _amount);\n        locked[msg.sender] = true;\n        if (msg.sender.call.value(_amount)()) {\n            balances[msg.sender] -= _amount;\n        }\n        locked[msg.sender] = false;",
+          "message": "Reentrance.withdraw (patch_1.sol#15-23) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "Reentrance.fallback (patch_1.sol#25) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;",
+          "message": "Detected issues with version pragma in patch_1.sol:\n\t- pragma solidity^0.4.18 (patch_1.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdraw(uint _amount) public {\n        require(!locked[msg.sender]);\n        require(balances[msg.sender] >= _amount);\n        locked[msg.sender] = true;\n        if (msg.sender.call.value(_amount)()) {\n            balances[msg.sender] -= _amount;\n        }\n        locked[msg.sender] = false;",
+          "message": "Low level call in Reentrance.withdraw (patch_1.sol#15-23):\n\t-msg.sender.call.value(_amount)() patch_1.sol#19-21\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function donate(address _to) public payable {",
+          "message": "Parameter '_to' of Reentrance.donate (patch_1.sol#7) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address _who) public view returns (uint balance) {",
+          "message": "Parameter '_who' of Reentrance.balanceOf (patch_1.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdraw(uint _amount) public {",
+          "message": "Parameter '_amount' of Reentrance.withdraw (patch_1.sol#15) is not in mixedCase\n"
+        }
+      ]
+    },
+    "manticore-0.3.7": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        balances[_to] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "DAO",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (msg.sender.call.value(_amount)()) {",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Unprotected Ether Withdrawal (SWC 105)",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (msg.sender.call.value(_amount)()) {",
+          "message": "Any sender can withdraw Ether from the contract account.\nArbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.\nClassification: SWC-105"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            balances[msg.sender] -= _amount;",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            balances[msg.sender] -= _amount;",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        locked[msg.sender] = false;",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        locked[msg.sender] = false;",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        }
+      ]
+    }
+  }
+}

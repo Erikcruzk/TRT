@@ -1,0 +1,146 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_9"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function changeOwner(address addr) public onlyOwner {\n        newOwner = addr;",
+          "message": "Ownable.changeOwner (patch_2.sol#7-9) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function confirmOwner() public {\n        require(msg.sender == newOwner);\n        owner = newOwner;",
+          "message": "Ownable.confirmOwner (patch_2.sol#11-14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": 39,
+          "vulnerability_code": "    function initTokenBank() public {\n        owner = msg.sender;\n        minDeposit = 1 ether;",
+          "message": "TokenBank.initTokenBank (patch_2.sol#36-39) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": 43,
+          "vulnerability_code": "    function() payable {\n        deposit();",
+          "message": "TokenBank.fallback (patch_2.sol#41-43) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": 59,
+          "vulnerability_code": "    function withdrawTokenToHolder(\n        address to,\n        address token,\n        uint amount\n    ) public onlyOwner {\n        require(holders[to] > 0);\n        holders[to] = 0;\n        withdrawToken(token, amount, to);",
+          "message": "TokenBank.withdrawTokenToHolder (patch_2.sol#51-59) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": 68,
+          "vulnerability_code": "    function withdrawToHolder(\n        address addr,\n        uint weiAmount\n    ) public onlyOwner {\n        require(holders[addr] > 0);\n        holders[addr] -= weiAmount;\n        require(addr.call.value(weiAmount)());",
+          "message": "TokenBank.withdrawToHolder (patch_2.sol#61-68) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_2.sol:\n\t- pragma solidity^0.4.19 (patch_2.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function withdrawToken(\n        address token,\n        uint256 amount,\n        address to\n    ) public onlyOwner {\n        require(token.call(bytes4(keccak256(\"transfer(address,uint256)\")), to, amount));",
+          "message": "Low level call in Token.withdrawToken (patch_2.sol#23-29):\n\t-require(bool)(token.call(bytes4(keccak256()(transfer(address,uint256))),to,amount)) patch_2.sol#28\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": 68,
+          "vulnerability_code": "    function withdrawToHolder(\n        address addr,\n        uint weiAmount\n    ) public onlyOwner {\n        require(holders[addr] > 0);\n        holders[addr] -= weiAmount;\n        require(addr.call.value(weiAmount)());",
+          "message": "Low level call in TokenBank.withdrawToHolder (patch_2.sol#61-68):\n\t-require(bool)(addr.call.value(weiAmount)()) patch_2.sol#67\n"
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "TODTransfer",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "manticore-0.3.7": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT",
+        "exception (manticore.core.state.Concretize)",
+        "exception (manticore.exceptions.ManticoreError: Forking on unfeasible constraint set)",
+        "exception (manticore.exceptions.SolverUnknown: unsat)"
+      ],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            holders[msg.sender] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(token.call(bytes4(keccak256(\"transfer(address,uint256)\")), to, amount));",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(addr.call.value(weiAmount)());",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(token.call(bytes4(keccak256(\"transfer(address,uint256)\")), to, amount));",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        }
+      ]
+    }
+  }
+}

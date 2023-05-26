@@ -1,0 +1,130 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bool res = msg.sender.call.value(amount)();",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        credit[to] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function withdraw(uint amount) public {\n        require(!locked[msg.sender]);\n        require(credit[msg.sender] >= amount);\n        credit[msg.sender] -= amount;\n        locked[msg.sender] = true;\n        bool res = msg.sender.call.value(amount)();\n        require(res);\n        locked[msg.sender] = false;",
+          "message": "Reentrancy in SimpleDAO.withdraw (patch_5.sol#11-19):\n\tExternal calls:\n\t- res = msg.sender.call.value(amount)() (patch_5.sol#16)\n\tState variables written after the call(s):\n\t- locked (patch_5.sol#18)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function donate(address to) public payable {\n        credit[to] += msg.value;",
+          "message": "SimpleDAO.donate (patch_5.sol#7-9) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function withdraw(uint amount) public {\n        require(!locked[msg.sender]);\n        require(credit[msg.sender] >= amount);\n        credit[msg.sender] -= amount;\n        locked[msg.sender] = true;\n        bool res = msg.sender.call.value(amount)();\n        require(res);\n        locked[msg.sender] = false;",
+          "message": "SimpleDAO.withdraw (patch_5.sol#11-19) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function queryCredit(address to) public view returns (uint) {\n        return credit[to];",
+          "message": "SimpleDAO.queryCredit (patch_5.sol#21-23) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function withdraw(uint amount) public {\n        require(!locked[msg.sender]);\n        require(credit[msg.sender] >= amount);\n        credit[msg.sender] -= amount;\n        locked[msg.sender] = true;\n        bool res = msg.sender.call.value(amount)();\n        require(res);\n        locked[msg.sender] = false;",
+          "message": "Low level call in SimpleDAO.withdraw (patch_5.sol#11-19):\n\t-res = msg.sender.call.value(amount)() patch_5.sol#16\n"
+        }
+      ]
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bool res = msg.sender.call.value(amount)();",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Unprotected Ether Withdrawal (SWC 105)",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bool res = msg.sender.call.value(amount)();",
+          "message": "Any sender can withdraw Ether from the contract account.\nArbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.\nClassification: SWC-105"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        locked[msg.sender] = false;",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        locked[msg.sender] = false;",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "manticore-0.3.7": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (manticore.core.state.Concretize)",
+        "exception (manticore.exceptions.ManticoreError: Forking on unfeasible constraint set)"
+      ],
+      "vulnerability_findings": []
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "DAO",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    }
+  }
+}
