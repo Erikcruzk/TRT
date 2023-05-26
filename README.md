@@ -21,7 +21,7 @@ install/setup-venv.sh
 ```
 
 #### Run in Docker
-1. docker build --pull --rm -f "Dockerfile" -t trt:54acf "."
+1. docker build --pull --rm -f "Dockerfile" -t trt:2902d "."
 2. Start container
 ```
 docker run -tid\
@@ -30,7 +30,7 @@ docker run -tid\
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /tmp:/tmp \
   --name trt_container_<name> \
-  trt:54acf
+  trt:2902d
 ```
 3. Enter Container
 ```
