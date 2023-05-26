@@ -21,16 +21,67 @@ install/setup-venv.sh
 ```
 
 #### Run in Docker
-1. docker build --pull --rm -f "Dockerfile" -t trt:a94ca "."
-2. Start container
+1. docker build --pull --rm -f "Dockerfile" -t trt:latest "."
+2. Start containera
+
+- access_control
 ```
 docker run -tid\
-  -v $(pwd)/config.yml:/app/config.yml \
+  -v $(pwd)/config_access_control.yml:/app/config.yml \
+  -v $(pwd)/experiment_results:/app/experiment_results \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /tmp:/tmp \
+  --name trt_container_access_control \
+  trt:latest
+docker exec -it trt_container_access_control bash
+```
+
+- arithmetic
+```
+docker run -tid\
+  -v $(pwd)/config_arithmetic.yml:/app/config.yml \
+  -v $(pwd)/experiment_results:/app/experiment_results \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /tmp:/tmp \
+  --name trt_container_arithmetic \
+  trt:latest
+  docker exec -it trt_container_arithmetic bash
+```
+
+- reentrancy
+```
+docker run -tid\
+  -v $(pwd)/config_reentrancy.yml:/app/config.yml \
+  -v $(pwd)/experiment_results:/app/experiment_results \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /tmp:/tmp \
+  --name trt_container_reentrancy \
+  trt:latest
+  docker exec -it trt_container_reentrancy bash
+```
+
+- tod
+```
+docker run -tid\
+  -v $(pwd)/config_tod.yml:/app/config.yml \
+  -v $(pwd)/experiment_results:/app/experiment_results \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /tmp:/tmp \
+  --name trt_container_tod \
+  trt:latest
+  docker exec -it trt_container_tod bash
+```
+
+- unchecked
+```
+docker run -tid\
+  -v $(pwd)/config_unchecked.yml:/app/config.yml \
   -v $(pwd)/experiment_results:/app/experiment_results \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /tmp:/tmp \
   --name trt_container_<name> \
-  trt:a94ca
+  trt:latest
+  docker exec -it trt_container_unchecked bash
 ```
 3. Enter Container
 ```
@@ -38,7 +89,7 @@ docker exec -it trt_container_<name> bash
 ```
 4. Stop container
 ```
-docker stop trt_container
+docker stop trt_container_<name>
 ```
 
 #### Add the API Key for OpenAI
