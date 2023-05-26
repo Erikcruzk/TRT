@@ -79,7 +79,7 @@ docker run -tid\
   -v $(pwd)/experiment_results:/app/experiment_results \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /tmp:/tmp \
-  --name trt_container_<name> \
+  --name trt_container_unchecked \
   trt:latest
   docker exec -it trt_container_unchecked bash
 ```
