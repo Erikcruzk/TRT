@@ -1,0 +1,228 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_21"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function collect(uint _am) public {\n        Holder storage acc = Acc[msg.sender];\n        if (acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime) {\n            require(msg.sender.call.value(_am)());\n            acc.balance -= _am;\n            Log.addMessage(msg.sender, _am, \"Collect\");\n        }",
+          "message": "Reentrancy in PENNY_BY_PENNY.collect (patch_4.sol#38-45):\n\tExternal calls:\n\t- require(bool)(msg.sender.call.value(_am)()) (patch_4.sol#41)\n\tState variables written after the call(s):\n\t- Acc (patch_4.sol#42)\n"
+        },
+        {
+          "name": "uninitialized-local",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        Message memory lastMsg;",
+          "message": "lastMsg in LogFile.addMessage (patch_4.sol#63) is a local variable never initialiazed\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function setMinSum(uint _val) public {\n        require(!initialized);\n        MinSum = _val;",
+          "message": "PENNY_BY_PENNY.setMinSum (patch_4.sol#17-20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function setLogFile(address _log) public {\n        require(!initialized);\n        Log = LogFile(_log);",
+          "message": "PENNY_BY_PENNY.setLogFile (patch_4.sol#22-25) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function initialize() public {\n        initialized = true;",
+          "message": "PENNY_BY_PENNY.initialize (patch_4.sol#27-29) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function collect(uint _am) public {\n        Holder storage acc = Acc[msg.sender];\n        if (acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime) {\n            require(msg.sender.call.value(_am)());\n            acc.balance -= _am;\n            Log.addMessage(msg.sender, _am, \"Collect\");\n        }",
+          "message": "PENNY_BY_PENNY.collect (patch_4.sol#38-45) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": 49,
+          "vulnerability_code": "    function() public payable {\n        put(0);",
+          "message": "PENNY_BY_PENNY.fallback (patch_4.sol#47-49) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": 69,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {\n        Message memory lastMsg;\n        lastMsg.sender = _adr;\n        lastMsg.time = now;\n        lastMsg.val = _val;\n        lastMsg.data = _data;\n        history.push(lastMsg);",
+          "message": "LogFile.addMessage (patch_4.sol#62-69) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_4.sol:\n\t- pragma solidity^0.4.19 (patch_4.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function collect(uint _am) public {\n        Holder storage acc = Acc[msg.sender];\n        if (acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime) {\n            require(msg.sender.call.value(_am)());\n            acc.balance -= _am;\n            Log.addMessage(msg.sender, _am, \"Collect\");\n        }",
+          "message": "Low level call in PENNY_BY_PENNY.collect (patch_4.sol#38-45):\n\t-require(bool)(msg.sender.call.value(_am)()) patch_4.sol#41\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 50,
+          "vulnerability_code": "contract PENNY_BY_PENNY {\n    struct Holder {\n        uint unlockTime;\n        uint balance;\n    }\n\n    mapping(address => Holder) public Acc;\n\n    uint public MinSum;\n\n    LogFile Log;\n\n    bool initialized;\n\n    function setMinSum(uint _val) public {\n        require(!initialized);\n        MinSum = _val;\n    }\n\n    function setLogFile(address _log) public {\n        require(!initialized);\n        Log = LogFile(_log);\n    }\n\n    function initialize() public {\n        initialized = true;\n    }\n\n    function put(uint _lockTime) public payable {\n        Holder storage acc = Acc[msg.sender];\n        acc.balance += msg.value;\n        if (now + _lockTime > acc.unlockTime) acc.unlockTime = now + _lockTime;\n        Log.addMessage(msg.sender, msg.value, \"Put\");\n    }\n\n    function collect(uint _am) public {\n        Holder storage acc = Acc[msg.sender];\n        if (acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime) {\n            require(msg.sender.call.value(_am)());\n            acc.balance -= _am;\n            Log.addMessage(msg.sender, _am, \"Collect\");\n        }\n    }\n\n    function() public payable {\n        put(0);\n    }",
+          "message": "Contract 'PENNY_BY_PENNY' (patch_4.sol#3-50) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setMinSum(uint _val) public {",
+          "message": "Parameter '_val' of PENNY_BY_PENNY.setMinSum (patch_4.sol#17) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setLogFile(address _log) public {",
+          "message": "Parameter '_log' of PENNY_BY_PENNY.setLogFile (patch_4.sol#22) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function put(uint _lockTime) public payable {",
+          "message": "Parameter '_lockTime' of PENNY_BY_PENNY.put (patch_4.sol#31) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function collect(uint _am) public {",
+          "message": "Parameter '_am' of PENNY_BY_PENNY.collect (patch_4.sol#38) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => Holder) public Acc;",
+          "message": "Variable 'PENNY_BY_PENNY.Acc' (patch_4.sol#9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum;",
+          "message": "Variable 'PENNY_BY_PENNY.MinSum' (patch_4.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    LogFile Log;",
+          "message": "Variable 'PENNY_BY_PENNY.Log' (patch_4.sol#13) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of LogFile.addMessage (patch_4.sol#62) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of LogFile.addMessage (patch_4.sol#62) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of LogFile.addMessage (patch_4.sol#62) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public history;",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public history;",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => Holder) public Acc;",
+          "message": null
+        },
+        {
+          "name": "Re-Entrancy Vulnerability",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(msg.sender.call.value(_am)());",
+          "message": null
+        },
+        {
+          "name": "Timestamp Dependency",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime) {",
+          "message": null
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "TODTransfer",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "DAO",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,111 @@
+  pragma solidity ^0.4.19;
+  
+  contract PrivateBank {
+      mapping(address => uint) public balances;
+  
+      uint public MinDeposit = 1 ether;
+  
+      Log TransferLog;
+  
+-     function PrivateBank(address _lib) {
++     function PrivateBank(address _lib) public {
+?                                        +++++++
+          TransferLog = Log(_lib);
+      }
+  
+-     function Deposit() public payable {
+?              ^
++     function deposit() public payable {
+?              ^
+-         if (msg.value >= MinDeposit) {
+?          ^^                         ^^
++         require(msg.value >= MinDeposit);
+?         ++++ ^^                         ^
+-             balances[msg.sender] += msg.value;
+? ----
++         balances[msg.sender] += msg.value;
+-             TransferLog.AddMessage(msg.sender, msg.value, "Deposit");
+? ----                    ^
++         TransferLog.addMessage(msg.sender, msg.value, "Deposit");
+?                     ^
+-         }
+      }
+  
+-     function CashOut(uint _am) {
+?              ^
++     function cashOut(uint _am) public {
+?              ^                 +++++++
+-         if (_am <= balances[msg.sender]) {
+?          ^^                             ^^
++         require(_am <= balances[msg.sender]);
+?         ++++ ^^                             ^
+-             if (msg.sender.call.value(_am)()) {
+-                 balances[msg.sender] -= _am;
+? --------
++         balances[msg.sender] -= _am;
++         require(msg.sender.call.value(_am)());
+-                 TransferLog.AddMessage(msg.sender, _am, "CashOut");
+? --------                    ^
++         TransferLog.addMessage(msg.sender, _am, "CashOut");
+?                     ^
+-             }
+-         }
+      }
+  
+      function() public payable {}
++ 
+  }
+  
+  contract Log {
++ 
+      struct Message {
+-         address Sender;
+?                 ^
++         address sender;
+?                 ^
+-         string Data;
+?                ^
++         string data;
+?                ^
+-         uint Val;
+?              ^
++         uint val;
+?              ^
+-         uint Time;
+?              ^
++         uint time;
+?              ^
+      }
+  
+-     Message[] public History;
+?                      ^
++     Message[] public history;
+?                      ^
+  
+-     Message LastMsg;
++     function addMessage(address _adr, uint _val, string _data) public {
++         Message memory newMessage;
++         newMessage.sender = _adr;
++         newMessage.time = now;
++         newMessage.val = _val;
++         newMessage.data = _data;
++         history.push(newMessage);
++     }
++ } 
+  
+-     function AddMessage(address _adr, uint _val, string _data) public {
+-         LastMsg.Sender = _adr;
+-         LastMsg.Time = now;
+-         LastMsg.Val = _val;
+-         LastMsg.Data = _data;
+-         History.push(LastMsg);
+-     }
+- }
++ //Changes Made:
++ //1. Added public modifier to the constructor function of PrivateBank contract.
++ //2. Changed function names to follow the camelCase naming convention.
++ //3. Added require statement in the deposit function to check if the deposit amount is greater than or equal to the minimum deposit amount.
++ //4. Removed unnecessary if statement from the cashOut function.
++ //5. Added require statement in the cashOut function to check if the withdrawal amount is less than or equal to the account balance.
++ //6. Changed the variable names to follow the camelCase naming convention.
++ //7. Added memory keyword to the newMessage variable in the addMessage function.

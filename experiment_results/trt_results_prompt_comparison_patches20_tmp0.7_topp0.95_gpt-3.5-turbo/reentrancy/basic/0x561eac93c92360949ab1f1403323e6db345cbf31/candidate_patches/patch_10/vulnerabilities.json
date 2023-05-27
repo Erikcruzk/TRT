@@ -1,0 +1,172 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public history;",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public history;",
+          "message": null
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "TODTransfer",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_17"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function setMinSum(uint _val) public {\n        require(!initialized);\n        MinSum = _val;",
+          "message": "BANK_SAFE.setMinSum (patch_10.sol#12-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function setLogFile(address _log) public {\n        require(!initialized);\n        Log = LogFile(_log);",
+          "message": "BANK_SAFE.setLogFile (patch_10.sol#17-20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function initialize() public {\n        require(!initialized);\n        initialized = true;",
+          "message": "BANK_SAFE.initialize (patch_10.sol#22-25) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function collect(uint _am) public {\n        require(balances[msg.sender] >= MinSum && balances[msg.sender] >= _am);\n        balances[msg.sender] -= _am;\n        require(msg.sender.call.value(_am)());\n        Log.addMessage(msg.sender, _am, \"Collect\");",
+          "message": "BANK_SAFE.collect (patch_10.sol#32-37) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 41,
+          "vulnerability_code": "    function() public payable {\n        deposit();",
+          "message": "BANK_SAFE.fallback (patch_10.sol#39-41) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": 57,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {\n        Message memory newMsg = Message(_adr, _data, _val, now);\n        history.push(newMsg);",
+          "message": "LogFile.addMessage (patch_10.sol#54-57) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_10.sol:\n\t- pragma solidity^0.4.19 (patch_10.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function collect(uint _am) public {\n        require(balances[msg.sender] >= MinSum && balances[msg.sender] >= _am);\n        balances[msg.sender] -= _am;\n        require(msg.sender.call.value(_am)());\n        Log.addMessage(msg.sender, _am, \"Collect\");",
+          "message": "Low level call in BANK_SAFE.collect (patch_10.sol#32-37):\n\t-require(bool)(msg.sender.call.value(_am)()) patch_10.sol#35\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 42,
+          "vulnerability_code": "contract BANK_SAFE {\n    mapping(address => uint256) public balances;\n\n    uint public MinSum;\n\n    LogFile public Log;\n\n    bool public initialized;\n\n    function setMinSum(uint _val) public {\n        require(!initialized);\n        MinSum = _val;\n    }\n\n    function setLogFile(address _log) public {\n        require(!initialized);\n        Log = LogFile(_log);\n    }\n\n    function initialize() public {\n        require(!initialized);\n        initialized = true;\n    }\n\n    function deposit() public payable {\n        balances[msg.sender] += msg.value;\n        Log.addMessage(msg.sender, msg.value, \"Put\");\n    }\n\n    function collect(uint _am) public {\n        require(balances[msg.sender] >= MinSum && balances[msg.sender] >= _am);\n        balances[msg.sender] -= _am;\n        require(msg.sender.call.value(_am)());\n        Log.addMessage(msg.sender, _am, \"Collect\");\n    }\n\n    function() public payable {\n        deposit();\n    }",
+          "message": "Contract 'BANK_SAFE' (patch_10.sol#3-42) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setMinSum(uint _val) public {",
+          "message": "Parameter '_val' of BANK_SAFE.setMinSum (patch_10.sol#12) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setLogFile(address _log) public {",
+          "message": "Parameter '_log' of BANK_SAFE.setLogFile (patch_10.sol#17) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function collect(uint _am) public {",
+          "message": "Parameter '_am' of BANK_SAFE.collect (patch_10.sol#32) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum;",
+          "message": "Variable 'BANK_SAFE.MinSum' (patch_10.sol#6) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    LogFile public Log;",
+          "message": "Variable 'BANK_SAFE.Log' (patch_10.sol#8) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of LogFile.addMessage (patch_10.sol#54) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of LogFile.addMessage (patch_10.sol#54) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of LogFile.addMessage (patch_10.sol#54) is not in mixedCase\n"
+        }
+      ]
+    }
+  }
+}

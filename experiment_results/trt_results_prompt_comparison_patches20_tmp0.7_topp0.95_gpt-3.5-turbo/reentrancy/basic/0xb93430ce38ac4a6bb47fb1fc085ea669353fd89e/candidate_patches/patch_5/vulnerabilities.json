@@ -1,0 +1,165 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_15"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function cashOut(uint _am) public {\n        require(_am <= balances[msg.sender], \"Insufficient balance.\");\n        require(msg.sender.call.value(_am)(), \"Transaction failed.\");\n        balances[msg.sender] -= _am;\n        transferLog.addMessage(msg.sender, _am, \"CashOut\");",
+          "message": "Reentrancy in PrivateBank.cashOut (patch_5.sol#20-25):\n\tExternal calls:\n\t- require(bool,string)(msg.sender.call.value(_am)(),Transaction failed.) (patch_5.sol#22)\n\tState variables written after the call(s):\n\t- balances (patch_5.sol#23)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinDeposit = 1 ether;",
+          "message": "PrivateBank.MinDeposit should be constant (patch_5.sol#6)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "    function deposit() public payable {\n        require(msg.value >= MinDeposit, \"Minimum deposit not met.\");\n        balances[msg.sender] += msg.value;\n        transferLog.addMessage(msg.sender, msg.value, \"Deposit\");",
+          "message": "PrivateBank.deposit (patch_5.sol#14-18) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function cashOut(uint _am) public {\n        require(_am <= balances[msg.sender], \"Insufficient balance.\");\n        require(msg.sender.call.value(_am)(), \"Transaction failed.\");\n        balances[msg.sender] -= _am;\n        transferLog.addMessage(msg.sender, _am, \"CashOut\");",
+          "message": "PrivateBank.cashOut (patch_5.sol#20-25) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() public payable {}",
+          "message": "PrivateBank.fallback (patch_5.sol#27) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": 49,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {\n        Message memory newMsg = Message({\n            sender: _adr,\n            time: now,\n            val: _val,\n            data: _data\n        });\n        history.push(newMsg);",
+          "message": "Log.addMessage (patch_5.sol#41-49) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_5.sol:\n\t- pragma solidity^0.4.19 (patch_5.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function cashOut(uint _am) public {\n        require(_am <= balances[msg.sender], \"Insufficient balance.\");\n        require(msg.sender.call.value(_am)(), \"Transaction failed.\");\n        balances[msg.sender] -= _am;\n        transferLog.addMessage(msg.sender, _am, \"CashOut\");",
+          "message": "Low level call in PrivateBank.cashOut (patch_5.sol#20-25):\n\t-require(bool,string)(msg.sender.call.value(_am)(),Transaction failed.) patch_5.sol#22\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "    function PrivateBank(address _lib) public {\n        transferLog = Log(_lib);",
+          "message": "Function 'PrivateBank.PrivateBank' (patch_5.sol#10-12) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function PrivateBank(address _lib) public {",
+          "message": "Parameter '_lib' of PrivateBank.PrivateBank (patch_5.sol#10) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function cashOut(uint _am) public {",
+          "message": "Parameter '_am' of PrivateBank.cashOut (patch_5.sol#20) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinDeposit = 1 ether;",
+          "message": "Variable 'PrivateBank.MinDeposit' (patch_5.sol#6) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of Log.addMessage (patch_5.sol#41) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of Log.addMessage (patch_5.sol#41) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of Log.addMessage (patch_5.sol#41) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public history;",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public history;",
+          "message": null
+        },
+        {
+          "name": "Re-Entrancy Vulnerability",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender.call.value(_am)(), \"Transaction failed.\");",
+          "message": null
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "DAO",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    }
+  }
+}

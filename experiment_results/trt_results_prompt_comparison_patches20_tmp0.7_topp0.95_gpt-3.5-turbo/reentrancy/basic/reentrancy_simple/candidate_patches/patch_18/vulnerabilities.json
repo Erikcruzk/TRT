@@ -1,0 +1,67 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        userBalance[msg.sender] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 8,
+          "vulnerability_code": "    function getBalance(address u) public constant returns (uint) {\n        return userBalance[u];",
+          "message": "Reentrance.getBalance (patch_18.sol#6-8) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function addToBalance() public payable {\n        require(msg.value > 0);\n        userBalance[msg.sender] += msg.value;",
+          "message": "Reentrance.addToBalance (patch_18.sol#10-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(userBalance[msg.sender] > 0);\n        uint balance = userBalance[msg.sender];\n        userBalance[msg.sender] = 0;\n        msg.sender.transfer(balance);",
+          "message": "Reentrance.withdrawBalance (patch_18.sol#15-20) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;",
+          "message": "Detected issues with version pragma in patch_18.sol:\n\t- pragma solidity^0.4.15 (patch_18.sol#1): it allows old versions\n"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function getFirstWithdrawalBonus() public {\n        require(!claimedBonus[msg.sender]); // Check if the caller has already claimed the bonus\n        rewardsForA[msg.sender] += 100;\n        claimedBonus[msg.sender] = true;\n        withdrawReward(msg.sender);",
+          "message": "Reentrancy_bonus.getFirstWithdrawalBonus (patch_16.sol#15-20) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function withdrawReward(address recipient) public {\n        require(rewardsForA[recipient] > 0); // Check if recipient has any reward to withdraw\n        uint amountToWithdraw = rewardsForA[recipient];\n        rewardsForA[recipient] = 0;\n        require(msg.sender.call.value(amountToWithdraw)()); // Use msg.sender instead of recipient to prevent re-entrancy",
+          "message": "Low level call in Reentrancy_bonus.withdrawReward (patch_16.sol#8-13):\n\t-require(bool)(msg.sender.call.value(amountToWithdraw)()) patch_16.sol#12\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "contract Reentrancy_bonus {\n    mapping(address => uint) private userBalances;\n    mapping(address => bool) private claimedBonus;\n    mapping(address => uint) private rewardsForA;\n\n    function withdrawReward(address recipient) public {\n        require(rewardsForA[recipient] > 0); // Check if recipient has any reward to withdraw\n        uint amountToWithdraw = rewardsForA[recipient];\n        rewardsForA[recipient] = 0;\n        require(msg.sender.call.value(amountToWithdraw)()); // Use msg.sender instead of recipient to prevent re-entrancy\n    }\n\n    function getFirstWithdrawalBonus() public {\n        require(!claimedBonus[msg.sender]); // Check if the caller has already claimed the bonus\n        rewardsForA[msg.sender] += 100;\n        claimedBonus[msg.sender] = true;\n        withdrawReward(msg.sender);\n    }",
+          "message": "Contract 'Reentrancy_bonus' (patch_16.sol#3-21) is not in CapWords\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => uint) private userBalances;",
+          "message": "Reentrancy_bonus.userBalances (patch_16.sol#4) is never used in Reentrancy_bonus\n"
+        }
+      ]
+    }
+  }
+}

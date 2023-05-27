@@ -1,0 +1,95 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function withdrawBalance() {\n        uint amountToWithdraw = userBalances[msg.sender];\n\n        if (!(msg.sender.call.value(amountToWithdraw)())) {\n            throw;\n        }\n        userBalances[msg.sender] = 0;",
+          "message": "Reentrancy in EtherBank.withdrawBalance (etherbank.sol#14-21):\n\tExternal calls:\n\t- ! (msg.sender.call.value(amountToWithdraw)()) (etherbank.sol#17-19)\n\tState variables written after the call(s):\n\t- userBalances (etherbank.sol#20)\n"
+        },
+        {
+          "name": "deprecated-standards",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            throw;",
+          "message": "Deprecated standard detected @ etherbank.sol#18:\n\t- Usage of \"throw\" should be replaced with \"revert()\"\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 8,
+          "vulnerability_code": "    function getBalance(address user) constant returns (uint) {\n        return userBalances[user];",
+          "message": "EtherBank.getBalance (etherbank.sol#6-8) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 12,
+          "vulnerability_code": "    function addToBalance() {\n        userBalances[msg.sender] += msg.value;",
+          "message": "EtherBank.addToBalance (etherbank.sol#10-12) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function withdrawBalance() {\n        uint amountToWithdraw = userBalances[msg.sender];\n\n        if (!(msg.sender.call.value(amountToWithdraw)())) {\n            throw;\n        }\n        userBalances[msg.sender] = 0;",
+          "message": "EtherBank.withdrawBalance (etherbank.sol#14-21) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;",
+          "message": "Detected issues with version pragma in etherbank.sol:\n\t- pragma solidity^0.4.0 (etherbank.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function withdrawBalance() {\n        uint amountToWithdraw = userBalances[msg.sender];\n\n        if (!(msg.sender.call.value(amountToWithdraw)())) {\n            throw;\n        }\n        userBalances[msg.sender] = 0;",
+          "message": "Low level call in EtherBank.withdrawBalance (etherbank.sol#14-21):\n\t-! (msg.sender.call.value(amountToWithdraw)()) etherbank.sol#17-19\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Re-Entrancy Vulnerability",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (!(msg.sender.call.value(amountToWithdraw)())) {",
+          "message": null
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "DAO",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    }
+  }
+}

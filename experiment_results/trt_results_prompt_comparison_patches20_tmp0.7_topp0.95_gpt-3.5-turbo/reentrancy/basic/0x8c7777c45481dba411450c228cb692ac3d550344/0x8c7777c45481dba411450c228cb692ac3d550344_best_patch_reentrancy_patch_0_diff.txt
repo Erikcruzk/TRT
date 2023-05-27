@@ -1,0 +1,105 @@
+  pragma solidity ^0.4.19;
+  
+  contract ETH_VAULT {
+      mapping(address => uint) public balances;
+  
+      Log TransferLog;
+  
+      uint public MinDeposit = 1 ether;
+  
+      function ETH_VAULT(address _log) public {
+          TransferLog = Log(_log);
+      }
+  
+-     function Deposit() public payable {
+?              ^
++     function deposit() public payable {
+?              ^
+-         if (msg.value > MinDeposit) {
+?          ^^                        ^^
++         require(msg.value >= MinDeposit);
+?         ++++ ^^            +            ^
+-             balances[msg.sender] += msg.value;
+? ----
++         balances[msg.sender] += msg.value;
+-             TransferLog.AddMessage(msg.sender, msg.value, "Deposit");
+? ----                    ^
++         TransferLog.addMessage(msg.sender, msg.value, "Deposit");
+?                     ^
+-         }
+      }
+  
+-     function CashOut(uint _am) public payable {
+?              ^                        --------
++     function cashOut(uint _am) public {
+?              ^
+-         if (_am <= balances[msg.sender]) {
+?          ^^                             ^^
++         require(_am <= balances[msg.sender]);
+?         ++++ ^^                             ^
+-             if (msg.sender.call.value(_am)()) {
+-                 balances[msg.sender] -= _am;
+? --------
++         balances[msg.sender] -= _am;
++         require(msg.sender.call.value(_am)());
+-                 TransferLog.AddMessage(msg.sender, _am, "CashOut");
+? --------                    ^
++         TransferLog.addMessage(msg.sender, _am, "CashOut");
+?                     ^
+-             }
+-         }
+      }
+  
+      function() public payable {}
++ 
+  }
+  
+  contract Log {
+      struct Message {
+-         address Sender;
+?                 ^
++         address sender;
+?                 ^
+-         string Data;
+?                ^
++         string data;
+?                ^
+-         uint Val;
+?              ^
++         uint val;
+?              ^
+-         uint Time;
+?              ^
++         uint time;
+?              ^
+      }
+  
+-     Message[] public History;
+?                      ^
++     Message[] public history;
+?                      ^
+  
+-     Message LastMsg;
+- 
+-     function AddMessage(address _adr, uint _val, string _data) public {
+?              ^
++     function addMessage(address _adr, uint _val, string _data) public {
+?              ^
+-         LastMsg.Sender = _adr;
+-         LastMsg.Time = now;
+-         LastMsg.Val = _val;
++         Message memory newMessage;
++         newMessage.sender = _adr;
++         newMessage.time = now;
++         newMessage.val = _val;
+-         LastMsg.Data = _data;
+?         ^ ----  ^
++         newMessage.data = _data;
+?         ^^^^^^^  + ^
+-         History.push(LastMsg);
+?         ^            ^ ----
++         history.push(newMessage);
+?         ^            ^^^^^^^  +
+      }
+- }
++ }
