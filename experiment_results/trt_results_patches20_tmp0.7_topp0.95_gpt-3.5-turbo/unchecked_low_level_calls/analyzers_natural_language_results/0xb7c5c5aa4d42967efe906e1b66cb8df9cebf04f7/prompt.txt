@@ -1,0 +1,33 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.23;
+
+contract keepMyEther {
+    mapping(address => uint256) public balances;
+
+    function() public payable {
+        balances[msg.sender] += msg.value;
+    }
+
+    function withdraw() public {
+        msg.sender.call.value(balances[msg.sender])();
+        balances[msg.sender] = 0;
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+/// 1. Smartcheck Analysis Results
+/// 1.1. Vulnerability: unchecked_low_level_calls at Line 11:
+        msg.sender.call.value(balances[msg.sender])();
+
+
+/// 2. Mythril-0.23.15 Analysis Results
+/// 2.1. Vulnerability: unchecked_low_level_calls at Line 11:
+        msg.sender.call.value(balances[msg.sender])();
+///  Message:The return value of a message call is not checked.
+///   External calls return a boolean value. If the callee halts with an exception, 'false' is returned and execution continues in the caller. The caller should check whether an exception happened and react accordingly to avoid unexpected behavior. For example it is often desirable to wrap external calls in require() so the transaction is reverted if the call fails.
+///   Classification: SWC-104
+
+
+
+/// Repaired Solidity Smart Contract

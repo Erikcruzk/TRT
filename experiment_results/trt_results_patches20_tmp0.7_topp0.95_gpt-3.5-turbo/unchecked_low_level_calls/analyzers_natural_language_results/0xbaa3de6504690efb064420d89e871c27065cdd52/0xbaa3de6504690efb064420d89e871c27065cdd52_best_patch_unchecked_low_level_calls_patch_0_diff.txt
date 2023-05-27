@@ -1,0 +1,68 @@
+  pragma solidity ^0.4.23;
+  
+  contract Proxy {
+      modifier onlyOwner() {
+-         if (msg.sender == Owner) _;
+?          ^^               ^     --
++         require(msg.sender == owner);
+?         ++++ ^^               ^
++         _;
+      }
+-     address Owner = msg.sender;
++     address owner;
+  
+      function transferOwner(address _owner) public onlyOwner {
+-         Owner = _owner;
+?         ^
++         owner = _owner;
+?         ^
+      }
+  
+      function proxy(address target, bytes data) public payable {
+-         target.call.value(msg.value)(data);
++         require(target.call.value(msg.value)(data));
+?         ++++++++                                  +
+      }
+  }
+  
+  contract VaultProxy is Proxy {
+-     address public Owner;
+-     mapping(address => uint256) public Deposits;
+?                                        ^
++     mapping(address => uint256) public deposits;
+?                                        ^
+  
+      function() public payable {}
+  
+      function Vault() public payable {
+          if (msg.sender == tx.origin) {
+-             Owner = msg.sender;
+?             ^
++             owner = msg.sender;
+?             ^
+              deposit();
+          }
+      }
+  
+      function deposit() public payable {
+          if (msg.value > 0.25 ether) {
+-             Deposits[msg.sender] += msg.value;
+?             ^
++             deposits[msg.sender] += msg.value;
+?             ^
+          }
+      }
+  
+      function withdraw(uint256 amount) public onlyOwner {
+-         if (amount > 0 && Deposits[msg.sender] >= amount) {
+?          ^^               ^                              ^^
++         require(amount > 0 && deposits[msg.sender] >= amount);
+?         ++++ ^^               ^                              ^
++         deposits[msg.sender] -= amount;
+-             msg.sender.transfer(amount);
+? ----
++         msg.sender.transfer(amount);
+-         }
+      }
+- }
++ }

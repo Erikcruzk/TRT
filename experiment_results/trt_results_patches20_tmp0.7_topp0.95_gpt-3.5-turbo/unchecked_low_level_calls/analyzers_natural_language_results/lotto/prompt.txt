@@ -1,0 +1,46 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.18;
+
+contract Lotto {
+    bool public payedOut = false;
+    address public winner;
+    uint public winAmount;
+
+    function sendToWinner() public {
+        require(!payedOut);
+
+        winner.send(winAmount);
+        payedOut = true;
+    }
+
+    function withdrawLeftOver() public {
+        require(payedOut);
+
+        msg.sender.send(this.balance);
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+/// 1. Smartcheck Analysis Results
+/// 1.1. Vulnerability: unchecked_low_level_calls at Line 11:
+        winner.send(winAmount);
+/// 1.2. Vulnerability: unchecked_low_level_calls at Line 18:
+        msg.sender.send(this.balance);
+
+
+/// 2. Mythril-0.23.15 Analysis Results
+/// 2.1. Vulnerability: unchecked_low_level_calls at Line 18:
+        msg.sender.send(this.balance);
+///  Message:The return value of a message call is not checked.
+///   External calls return a boolean value. If the callee halts with an exception, 'false' is returned and execution continues in the caller. The caller should check whether an exception happened and react accordingly to avoid unexpected behavior. For example it is often desirable to wrap external calls in require() so the transaction is reverted if the call fails.
+///   Classification: SWC-104
+/// 2.2. Vulnerability: unchecked_low_level_calls at Line 11:
+        winner.send(winAmount);
+///  Message:The return value of a message call is not checked.
+///   External calls return a boolean value. If the callee halts with an exception, 'false' is returned and execution continues in the caller. The caller should check whether an exception happened and react accordingly to avoid unexpected behavior. For example it is often desirable to wrap external calls in require() so the transaction is reverted if the call fails.
+///   Classification: SWC-104
+
+
+
+/// Repaired Solidity Smart Contract

