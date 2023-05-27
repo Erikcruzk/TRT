@@ -1,0 +1,34 @@
+  pragma solidity ^0.4.24;
+  
+- contract Missing {
++ contract Repaired {
+      address private owner;
+  
+-     modifier onlyowner() {
+?                  ^
++     modifier onlyOwner() {
+?                  ^
+          require(msg.sender == owner);
+          _;
+      }
+  
+-     function Constructor() public {
+?     --- ------
++     constructor() public {
+          owner = msg.sender;
+      }
+  
+-     function() payable {}
++     function() external payable {}
+?                +++++++++
+  
+-     function withdraw() public onlyowner {
+?                                    ^
++     function withdraw() public onlyOwner {
+?                                    ^
+-         owner.transfer(this.balance);
++         owner.transfer(address(this).balance);
+?                        ++++++++    +
+      }
+- }
++ }

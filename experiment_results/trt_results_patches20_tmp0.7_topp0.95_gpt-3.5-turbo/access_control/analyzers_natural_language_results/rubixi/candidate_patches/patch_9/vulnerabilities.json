@@ -1,0 +1,273 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_22"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "calls-loop",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            participants[payoutOrder].etherAddress.transfer(payoutToSend);",
+          "message": "Rubixi.addPayout has external calls inside a loop:\n\t- participants[payoutOrder].etherAddress.transfer(payoutToSend) (patch_9.sol#58)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": 30,
+          "vulnerability_code": "    function() public payable {\n        init();",
+          "message": "Rubixi.fallback (patch_9.sol#28-30) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": 79,
+          "vulnerability_code": "    function collectFeesInEther(uint _amt) public onlyowner {\n        _amt *= 1 ether;\n        if (_amt > collectedFees) collectAllFees();\n\n        require(collectedFees > 0);\n\n        creator.transfer(_amt);\n        collectedFees -= _amt;",
+          "message": "Rubixi.collectFeesInEther (patch_9.sol#71-79) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": 87,
+          "vulnerability_code": "    function collectPercentOfFees(uint _pcent) public onlyowner {\n        require(collectedFees > 0 && _pcent <= 100);\n\n        uint feesToCollect = (collectedFees * _pcent) / 100;\n        creator.transfer(feesToCollect);\n        collectedFees -= feesToCollect;",
+          "message": "Rubixi.collectPercentOfFees (patch_9.sol#81-87) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": 91,
+          "vulnerability_code": "    function changeOwner(address _owner) public onlyowner {\n        creator = _owner;",
+          "message": "Rubixi.changeOwner (patch_9.sol#89-91) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 93,
+          "vulnerability_to_line": 96,
+          "vulnerability_code": "    function changeMultiplier(uint _mult) public onlyowner {\n        require(_mult <= 300 && _mult >= 120);\n        pyramidMultiplier = _mult;",
+          "message": "Rubixi.changeMultiplier (patch_9.sol#93-96) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": 101,
+          "vulnerability_code": "    function changeFeePercentage(uint _fee) public onlyowner {\n        require(_fee <= 10);\n        feePercent = _fee;",
+          "message": "Rubixi.changeFeePercentage (patch_9.sol#98-101) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 103,
+          "vulnerability_to_line": 110,
+          "vulnerability_code": "    function currentMultiplier()\n        public\n        view\n        returns (uint multiplier, string info)\n    {\n        multiplier = pyramidMultiplier;\n        info = \"This multiplier applies to you as soon as transaction is received, may be lowered to hasten payouts or increased if payouts are fast enough. Due to no float or decimals, multiplier is x100 for a fractional multiplier e.g. 250 is actually a 2.5x multiplier. Capped at 3x max and 1.2x min.\";",
+          "message": "Rubixi.currentMultiplier (patch_9.sol#103-110) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 112,
+          "vulnerability_to_line": 115,
+          "vulnerability_code": "    function currentFeePercentage() public view returns (uint fee, string info) {\n        fee = feePercent;\n        info = \"Shown in % form. Fee is halved(50%) for amounts equal or greater than 50 ethers. (Fee may change, but is capped to a maximum of 10%)\";",
+          "message": "Rubixi.currentFeePercentage (patch_9.sol#112-115) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 117,
+          "vulnerability_to_line": 124,
+          "vulnerability_code": "    function currentPyramidBalanceApproximately()\n        public\n        view\n        returns (uint pyramidBalance, string info)\n    {\n        pyramidBalance = balance / 1 ether;\n        info = \"All balance values are measured in Ethers, note that due to no decimal placing, these values show up as integers only, within the contract itself you will get the exact decimal value you are supposed to\";",
+          "message": "Rubixi.currentPyramidBalanceApproximately (patch_9.sol#117-124) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 126,
+          "vulnerability_to_line": 132,
+          "vulnerability_code": "    function nextPayoutWhenPyramidBalanceTotalsApproximately()\n        public\n        view\n        returns (uint balancePayout)\n    {\n        balancePayout = participants[payoutOrder].payout / 1 ether;",
+          "message": "Rubixi.nextPayoutWhenPyramidBalanceTotalsApproximately (patch_9.sol#126-132) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": 140,
+          "vulnerability_code": "    function feesSeperateFromBalanceApproximately()\n        public\n        view\n        returns (uint fees)\n    {\n        fees = collectedFees / 1 ether;",
+          "message": "Rubixi.feesSeperateFromBalanceApproximately (patch_9.sol#134-140) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 142,
+          "vulnerability_to_line": 144,
+          "vulnerability_code": "    function totalParticipants() public view returns (uint count) {\n        count = participants.length;",
+          "message": "Rubixi.totalParticipants (patch_9.sol#142-144) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": 152,
+          "vulnerability_code": "    function numberOfParticipantsWaitingForPayout()\n        public\n        view\n        returns (uint count)\n    {\n        count = participants.length - payoutOrder;",
+          "message": "Rubixi.numberOfParticipantsWaitingForPayout (patch_9.sol#146-152) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": 161,
+          "vulnerability_code": "    function participantDetails(\n        uint orderInPyramid\n    ) public view returns (address Address, uint Payout) {\n        if (orderInPyramid <= participants.length) {\n            Address = participants[orderInPyramid].etherAddress;\n            Payout = participants[orderInPyramid].payout / 1 ether;\n        }",
+          "message": "Rubixi.participantDetails (patch_9.sol#154-161) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;",
+          "message": "Detected issues with version pragma in patch_9.sol:\n\t- pragma solidity^0.4.15 (patch_9.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addPayout(uint _fee) private {",
+          "message": "Parameter '_fee' of Rubixi.addPayout (patch_9.sol#45) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function collectFeesInEther(uint _amt) public onlyowner {",
+          "message": "Parameter '_amt' of Rubixi.collectFeesInEther (patch_9.sol#71) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function collectPercentOfFees(uint _pcent) public onlyowner {",
+          "message": "Parameter '_pcent' of Rubixi.collectPercentOfFees (patch_9.sol#81) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function changeOwner(address _owner) public onlyowner {",
+          "message": "Parameter '_owner' of Rubixi.changeOwner (patch_9.sol#89) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 93,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function changeMultiplier(uint _mult) public onlyowner {",
+          "message": "Parameter '_mult' of Rubixi.changeMultiplier (patch_9.sol#93) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function changeFeePercentage(uint _fee) public onlyowner {",
+          "message": "Parameter '_fee' of Rubixi.changeFeePercentage (patch_9.sol#98) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 131,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        balancePayout = participants[payoutOrder].payout / 1 ether;",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 151,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        count = participants.length - payoutOrder;",
+          "message": null
+        }
+      ]
+    },
+    "manticore-0.3.7": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril-0.23.15": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 126,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function nextPayoutWhenPyramidBalanceTotalsApproximately()",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        },
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function participantDetails(",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _amt *= 1 ether;",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        }
+      ]
+    },
+    "maian": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Not destructible (no self-destruct)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "DAOConstantGas",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "TODTransfer",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "TODReceiver",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "TODAmount",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    }
+  }
+}

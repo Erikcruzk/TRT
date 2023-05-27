@@ -1,0 +1,94 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.0;
+
+contract FibonacciBalance {
+    address public fibonacciLibrary;
+
+    uint public calculatedFibNumber;
+
+    uint public start = 3;
+    uint public withdrawalCounter;
+
+    bytes4 constant fibSig = bytes4(sha3("setFibonacci(uint256)"));
+
+    constructor(address _fibonacciLibrary) public payable {
+        fibonacciLibrary = _fibonacciLibrary;
+    }
+
+    function withdraw() {
+        withdrawalCounter += 1;
+
+        require(fibonacciLibrary.delegatecall(fibSig, withdrawalCounter));
+        msg.sender.transfer(calculatedFibNumber * 1 ether);
+    }
+
+    function() public {
+        require(fibonacciLibrary.delegatecall(msg.data));
+    }
+}
+
+contract FibonacciLib {
+    uint public start;
+    uint public calculatedFibNumber;
+
+    function setStart(uint _start) public {
+        start = _start;
+    }
+
+    function setFibonacci(uint n) public {
+        calculatedFibNumber = fibonacci(n);
+    }
+
+    function fibonacci(uint n) internal returns (uint) {
+        if (n == 0) return start;
+        else if (n == 1) return start + 1;
+        else return fibonacci(n - 1) + fibonacci(n - 2);
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+/// 1. Slither Analysis Results
+/// 1.1. Vulnerability: access_control at Line 17-22:
+    function withdraw() {
+        withdrawalCounter += 1;
+
+        require(fibonacciLibrary.delegatecall(fibSig, withdrawalCounter));
+        msg.sender.transfer(calculatedFibNumber * 1 ether);
+///  Message:FibonacciBalance.withdraw (FibonacciBalance.sol#17-22) sends eth to arbitrary user
+///   	Dangerous calls:
+///   	- msg.sender.transfer(calculatedFibNumber * 1000000000000000000) (FibonacciBalance.sol#21)
+/// 1.2. Vulnerability: access_control at Line 17-22:
+    function withdraw() {
+        withdrawalCounter += 1;
+
+        require(fibonacciLibrary.delegatecall(fibSig, withdrawalCounter));
+        msg.sender.transfer(calculatedFibNumber * 1 ether);
+///  Message:FibonacciBalance.withdraw (FibonacciBalance.sol#17-22) uses delegatecall to a input-controlled function id
+///   	require(bool)(fibonacciLibrary.delegatecall(fibSig,withdrawalCounter)) (FibonacciBalance.sol#20)
+/// 1.3. Vulnerability: access_control at Line 24-26:
+    function() public {
+        require(fibonacciLibrary.delegatecall(msg.data));
+///  Message:FibonacciBalance.fallback (FibonacciBalance.sol#24-26) uses delegatecall to a input-controlled function id
+///   	require(bool)(fibonacciLibrary.delegatecall(msg.data)) (FibonacciBalance.sol#25)
+
+
+/// 2. Mythril-0.23.15 Analysis Results
+/// 2.1. Vulnerability: access_control at Line 25:
+        require(fibonacciLibrary.delegatecall(msg.data));
+///  Message:The contract delegates execution to another contract with a user-supplied address.
+///   The smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.
+///   Classification: SWC-112
+/// 2.2. Vulnerability: access_control at Line 20:
+        require(fibonacciLibrary.delegatecall(fibSig, withdrawalCounter));
+///  Message:The contract delegates execution to another contract with a user-supplied address.
+///   The smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.
+///   Classification: SWC-112
+
+
+/// 3. Maian Analysis Results
+/// 3.1. Vulnerability: access_control
+
+
+
+/// Repaired Solidity Smart Contract
