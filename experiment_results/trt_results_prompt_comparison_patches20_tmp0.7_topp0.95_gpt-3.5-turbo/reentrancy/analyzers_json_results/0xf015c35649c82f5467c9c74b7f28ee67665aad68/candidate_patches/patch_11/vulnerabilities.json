@@ -1,0 +1,165 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_15"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "uninitialized-local",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        Message memory lastMsg;",
+          "message": "lastMsg in Log.addMessage (patch_11.sol#55) is a local variable never initialiazed\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum = 1 ether;",
+          "message": "MY_BANK.MinSum should be constant (patch_11.sol#13)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function withdraw(uint _am) public {\n        require(_am > 0, \"Amount should be greater than 0\");\n        Holder storage acc = Acc[msg.sender];\n        require(acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime, \"Insufficient balance or unlock time not reached\");\n        acc.balance -= _am;\n        msg.sender.transfer(_am);\n        emit Withdraw(msg.sender, _am);",
+          "message": "MY_BANK.withdraw (patch_11.sol#30-37) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 41,
+          "vulnerability_code": "    function() public payable {\n        deposit(0);",
+          "message": "MY_BANK.fallback (patch_11.sol#39-41) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": 61,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {\n        Message memory lastMsg;\n        lastMsg.Sender = _adr;\n        lastMsg.Time = now;\n        lastMsg.Val = _val;\n        lastMsg.Data = _data;\n        History.push(lastMsg);",
+          "message": "Log.addMessage (patch_11.sol#54-61) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 42,
+          "vulnerability_code": "contract MY_BANK {\n    struct Holder {\n        uint unlockTime;\n        uint balance;\n    }\n\n    mapping(address => Holder) public Acc;\n\n    Log LogFile;\n\n    uint public MinSum = 1 ether;\n\n    event Deposit(address indexed account, uint amount);\n    event Withdraw(address indexed account, uint amount);\n\n    constructor(address log) public {\n        LogFile = Log(log);\n    }\n\n    function deposit(uint _unlockTime) public payable {\n        require(msg.value > 0, \"Amount should be greater than 0\");\n        Holder storage acc = Acc[msg.sender];\n        acc.balance += msg.value;\n        acc.unlockTime = _unlockTime > now ? _unlockTime : now;\n        emit Deposit(msg.sender, msg.value);\n    }\n\n    function withdraw(uint _am) public {\n        require(_am > 0, \"Amount should be greater than 0\");\n        Holder storage acc = Acc[msg.sender];\n        require(acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime, \"Insufficient balance or unlock time not reached\");\n        acc.balance -= _am;\n        msg.sender.transfer(_am);\n        emit Withdraw(msg.sender, _am);\n    }\n\n    function() public payable {\n        deposit(0);\n    }",
+          "message": "Contract 'MY_BANK' (patch_11.sol#3-42) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function deposit(uint _unlockTime) public payable {",
+          "message": "Parameter '_unlockTime' of MY_BANK.deposit (patch_11.sol#22) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdraw(uint _am) public {",
+          "message": "Parameter '_am' of MY_BANK.withdraw (patch_11.sol#30) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => Holder) public Acc;",
+          "message": "Variable 'MY_BANK.Acc' (patch_11.sol#9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Log LogFile;",
+          "message": "Variable 'MY_BANK.LogFile' (patch_11.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum = 1 ether;",
+          "message": "Variable 'MY_BANK.MinSum' (patch_11.sol#13) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of Log.addMessage (patch_11.sol#54) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of Log.addMessage (patch_11.sol#54) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of Log.addMessage (patch_11.sol#54) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public History;",
+          "message": "Variable 'Log.History' (patch_11.sol#52) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public History;",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public History;",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        acc.balance += msg.value;",
+          "message": null
+        },
+        {
+          "name": "Timestamp Dependency",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime, \"Insufficient balance or unlock time not reached\");",
+          "message": null
+        }
+      ]
+    }
+  }
+}

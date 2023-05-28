@@ -1,0 +1,100 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.19;
+
+contract ETH_VAULT {
+    mapping(address => uint) public balances;
+
+    uint public MinDeposit = 1 ether;
+
+    Log TransferLog;
+
+    function ETH_VAULT(address _log) public {
+        TransferLog = Log(_log);
+    }
+
+    function Deposit() public payable {
+        if (msg.value > MinDeposit) {
+            balances[msg.sender] += msg.value;
+            TransferLog.AddMessage(msg.sender, msg.value, "Deposit");
+        }
+    }
+
+    function CashOut(uint _am) public payable {
+        if (_am <= balances[msg.sender]) {
+            if (msg.sender.call.value(_am)()) {
+                balances[msg.sender] -= _am;
+                TransferLog.AddMessage(msg.sender, _am, "CashOut");
+            }
+        }
+    }
+
+    function() public payable {}
+}
+
+contract Log {
+    struct Message {
+        address Sender;
+        string Data;
+        uint Val;
+        uint Time;
+    }
+
+    Message[] public History;
+
+    Message LastMsg;
+
+    function AddMessage(address _adr, uint _val, string _data) public {
+        LastMsg.Sender = _adr;
+        LastMsg.Time = now;
+        LastMsg.Val = _val;
+        LastMsg.Data = _data;
+        History.push(LastMsg);
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+{
+  "securify": {
+    "successfull_analysis": true,
+    "errors": [],
+    "vulnerability_findings": [
+      {
+        "name": "reentrancy",
+        "vulnerability_from_line": null,
+        "vulnerability_to_line": null,
+        "vulnerability_code": null,
+        "message": null
+      }
+    ]
+  },
+  "slither": {
+    "successfull_analysis": true,
+    "errors": [
+      "EXIT_CODE_22"
+    ],
+    "vulnerability_findings": [
+      {
+        "name": "reentrancy",
+        "vulnerability_from_line": 21,
+        "vulnerability_to_line": 28,
+        "vulnerability_code": "    function CashOut(uint _am) public payable {\n        if (_am <= balances[msg.sender]) {\n            if (msg.sender.call.value(_am)()) {\n                balances[msg.sender] -= _am;\n                TransferLog.AddMessage(msg.sender, _am, \"CashOut\");\n            }\n        }",
+        "message": "Reentrancy in ETH_VAULT.CashOut (0xbaf51e761510c1a11bf48dd87c0307ac8a8c8a4f.sol#21-28):\n\tExternal calls:\n\t- msg.sender.call.value(_am)() (0xbaf51e761510c1a11bf48dd87c0307ac8a8c8a4f.sol#23-26)\n\tState variables written after the call(s):\n\t- balances (0xbaf51e761510c1a11bf48dd87c0307ac8a8c8a4f.sol#24)\n"
+      }
+    ]
+  },
+  "oyente": {
+    "successfull_analysis": true,
+    "errors": [],
+    "vulnerability_findings": [
+      {
+        "name": "reentrancy",
+        "vulnerability_from_line": 23,
+        "vulnerability_to_line": null,
+        "vulnerability_code": "            if (msg.sender.call.value(_am)()) {",
+        "message": null
+      }
+    ]
+  }
+}
+
+/// Repaired Solidity Smart Contract

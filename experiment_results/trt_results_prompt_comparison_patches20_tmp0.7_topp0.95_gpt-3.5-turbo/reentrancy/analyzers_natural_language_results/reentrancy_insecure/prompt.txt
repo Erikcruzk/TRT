@@ -1,0 +1,43 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.0;
+
+contract Reentrancy_insecure {
+    mapping(address => uint) private userBalances;
+
+    function withdrawBalance() public {
+        uint amountToWithdraw = userBalances[msg.sender];
+
+        (bool success, ) = msg.sender.call.value(amountToWithdraw)("");
+        require(success);
+        userBalances[msg.sender] = 0;
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+/// 1. Slither Analysis Results
+/// 1.1. Vulnerability: reentrancy at Line 6-12:
+    function withdrawBalance() public {
+        uint amountToWithdraw = userBalances[msg.sender];
+
+        (bool success, ) = msg.sender.call.value(amountToWithdraw)("");
+        require(success);
+        userBalances[msg.sender] = 0;
+///  Message:Reentrancy in Reentrancy_insecure.withdrawBalance (reentrancy_insecure.sol#6-12):
+///   	External calls:
+///   	- (success) = msg.sender.call.value(amountToWithdraw)() (reentrancy_insecure.sol#9)
+///   	State variables written after the call(s):
+///   	- userBalances (reentrancy_insecure.sol#11)
+
+
+/// 2. Securify Analysis Results
+/// 2.1. Vulnerability: reentrancy
+
+
+/// 3. Oyente Analysis Results
+/// 3.1. Vulnerability: reentrancy at Line 9:
+        (bool success, ) = msg.sender.call.value(amountToWithdraw)("");
+
+
+
+/// Repaired Solidity Smart Contract

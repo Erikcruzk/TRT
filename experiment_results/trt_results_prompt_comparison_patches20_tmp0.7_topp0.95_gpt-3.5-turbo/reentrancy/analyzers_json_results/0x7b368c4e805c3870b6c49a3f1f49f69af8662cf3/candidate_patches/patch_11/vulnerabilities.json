@@ -1,0 +1,130 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_11"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public minSum = 1 ether;",
+          "message": "W_WALLET.minSum should be constant (patch_11.sol#7)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 27,
+          "vulnerability_code": "    function collect(uint _am) public {\n        require(balances[msg.sender] >= minSum, \"Minimum balance not met\");\n        require(balances[msg.sender] >= _am, \"Insufficient balance\");\n        require(now > unlockTimes[msg.sender], \"Funds are locked\");\n\n        balances[msg.sender] -= _am;\n        msg.sender.transfer(_am);\n        logFile.addMessage(msg.sender, _am, \"Collect\");",
+          "message": "W_WALLET.collect (patch_11.sol#19-27) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 31,
+          "vulnerability_code": "    function() public payable {\n        put(0);",
+          "message": "W_WALLET.fallback (patch_11.sol#29-31) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": 52,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {\n        Message memory newMessage = Message({\n            sender: _adr,\n            time: now,\n            val: _val,\n            data: _data\n        });\n        history.push(newMessage);",
+          "message": "Log.addMessage (patch_11.sol#44-52) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 32,
+          "vulnerability_code": "contract W_WALLET {\n    mapping(address => uint) public balances;\n    mapping(address => uint) public unlockTimes;\n    Log public logFile;\n    uint public minSum = 1 ether;\n\n    constructor(address _log) public {\n        logFile = Log(_log);\n    }\n\n    function put(uint _unlockTime) public payable {\n        balances[msg.sender] += msg.value;\n        unlockTimes[msg.sender] = _unlockTime > now ? _unlockTime : now;\n        logFile.addMessage(msg.sender, msg.value, \"Put\");\n    }\n\n    function collect(uint _am) public {\n        require(balances[msg.sender] >= minSum, \"Minimum balance not met\");\n        require(balances[msg.sender] >= _am, \"Insufficient balance\");\n        require(now > unlockTimes[msg.sender], \"Funds are locked\");\n\n        balances[msg.sender] -= _am;\n        msg.sender.transfer(_am);\n        logFile.addMessage(msg.sender, _am, \"Collect\");\n    }\n\n    function() public payable {\n        put(0);\n    }",
+          "message": "Contract 'W_WALLET' (patch_11.sol#3-32) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _log) public {",
+          "message": "Parameter '_log' of W_WALLET. (patch_11.sol#9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function put(uint _unlockTime) public payable {",
+          "message": "Parameter '_unlockTime' of W_WALLET.put (patch_11.sol#13) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function collect(uint _am) public {",
+          "message": "Parameter '_am' of W_WALLET.collect (patch_11.sol#19) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of Log.addMessage (patch_11.sol#44) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of Log.addMessage (patch_11.sol#44) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of Log.addMessage (patch_11.sol#44) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public history;",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public history;",
+          "message": null
+        },
+        {
+          "name": "Timestamp Dependency",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(now > unlockTimes[msg.sender], \"Funds are locked\");",
+          "message": null
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    }
+  }
+}

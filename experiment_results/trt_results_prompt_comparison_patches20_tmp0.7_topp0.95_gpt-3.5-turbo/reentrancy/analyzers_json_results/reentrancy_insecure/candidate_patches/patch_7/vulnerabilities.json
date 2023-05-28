@@ -1,0 +1,67 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "DAOConstantGas",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bool success = msg.sender.send(amountToWithdraw);",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        userBalances[msg.sender] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender]); // check if user is already withdrawing\n        locked[msg.sender] = true; // lock user from re-entering\n\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n\n        bool success = msg.sender.send(amountToWithdraw);\n        require(success);\n\n        locked[msg.sender] = false; // release the lock",
+          "message": "Reentrancy_secure.withdrawBalance (patch_7.sol#7-18) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 22,
+          "vulnerability_code": "    function deposit() public payable {\n        userBalances[msg.sender] += msg.value;",
+          "message": "Reentrancy_secure.deposit (patch_7.sol#20-22) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "contract Reentrancy_secure {\n    mapping(address => uint) private userBalances;\n    mapping(address => bool) private locked;\n\n    function withdrawBalance() public {\n        require(!locked[msg.sender]); // check if user is already withdrawing\n        locked[msg.sender] = true; // lock user from re-entering\n\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n\n        bool success = msg.sender.send(amountToWithdraw);\n        require(success);\n\n        locked[msg.sender] = false; // release the lock\n    }\n\n    function deposit() public payable {\n        userBalances[msg.sender] += msg.value;\n    }",
+          "message": "Contract 'Reentrancy_secure' (patch_7.sol#3-23) is not in CapWords\n"
+        }
+      ]
+    }
+  }
+}

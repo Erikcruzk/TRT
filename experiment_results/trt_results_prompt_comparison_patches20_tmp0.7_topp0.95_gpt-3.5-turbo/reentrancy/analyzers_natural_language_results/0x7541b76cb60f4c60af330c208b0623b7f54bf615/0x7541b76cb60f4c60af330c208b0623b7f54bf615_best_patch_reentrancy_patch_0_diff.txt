@@ -1,0 +1,90 @@
+  pragma solidity ^0.4.25;
+  
+  contract U_BANK {
++     mapping(address => uint) public balances;
++     mapping(address => uint) public unlockTimes;
++ 
++     event LogDeposit(address indexed sender, uint amount);
++     event LogWithdrawal(address indexed sender, uint amount);
++ 
++     uint public minSum = 2 ether;
++ 
+-     function Put(uint _unlockTime) public payable {
+?              ^^
++     function deposit(uint _unlockTime) public payable {
+?              ^^^^^^
+-         var acc = Acc[msg.sender];
+-         acc.balance += msg.value;
+?         ----
++         balances[msg.sender] += msg.value;
+?                +++++++++++++
+-         acc.unlockTime = _unlockTime > now ? _unlockTime : now;
+?         ----
++         unlockTimes[msg.sender] = _unlockTime > now ? _unlockTime : now;
+?                   +++++++++++++
+-         LogFile.AddMessage(msg.sender, msg.value, "Put");
++         emit LogDeposit(msg.sender, msg.value);
+      }
+  
+-     function Collect(uint _am) public payable {
+?              ^^^^^^                   --------
++     function withdraw(uint _am) public {
+?              ^^ +++++
++         require(balances[msg.sender] >= minSum && balances[msg.sender] >= _am && now > unlockTimes[msg.sender], "Insufficient balance or unlock time not reached");
++         balances[msg.sender] -= _am;
++         msg.sender.transfer(_am);
++         emit LogWithdrawal(msg.sender, _am);
+-         var acc = Acc[msg.sender];
+-         if (
+-             acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime
+-         ) {
+-             if (msg.sender.call.value(_am)()) {
+-                 acc.balance -= _am;
+-                 LogFile.AddMessage(msg.sender, _am, "Collect");
+-             }
+-         }
+      }
+  
+      function() public payable {
+-         Put(0);
+?         ^^
++         deposit(0);
+?         ^^^^^^
+      }
++ }- 
+-     struct Holder {
+-         uint unlockTime;
+-         uint balance;
+-     }
+- 
+-     mapping(address => Holder) public Acc;
+- 
+-     Log LogFile;
+- 
+-     uint public MinSum = 2 ether;
+- 
+-     function U_BANK(address log) public {
+-         LogFile = Log(log);
+-     }
+- }
+- 
+- contract Log {
+-     struct Message {
+-         address Sender;
+-         string Data;
+-         uint Val;
+-         uint Time;
+-     }
+- 
+-     Message[] public History;
+- 
+-     Message LastMsg;
+- 
+-     function AddMessage(address _adr, uint _val, string _data) public {
+-         LastMsg.Sender = _adr;
+-         LastMsg.Time = now;
+-         LastMsg.Val = _val;
+-         LastMsg.Data = _data;
+-         History.push(LastMsg);
+-     }
+- }

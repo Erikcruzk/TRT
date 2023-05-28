@@ -1,0 +1,64 @@
+pragma solidity ^0.4.19;
+
+contract ETH_VAULT {
+    mapping(address => uint) public balances;
+
+    Log TransferLog;
+
+    uint public MinDeposit = 1 ether;
+
+    bool private locked = false;
+
+    modifier noReentrancy() {
+        require(!locked);
+        locked = true;
+        _;
+        locked = false;
+    }
+
+    function ETH_VAULT(address _log) public {
+        TransferLog = Log(_log);
+    }
+
+    function Deposit() public payable {
+        if (msg.value > MinDeposit) {
+            balances[msg.sender] += msg.value;
+            TransferLog.AddMessage(msg.sender, msg.value, "Deposit");
+        }
+    }
+
+    function CashOut(uint _am) public payable noReentrancy {
+        if (_am <= balances[msg.sender]) {
+            if (msg.sender.call.value(_am)()) {
+                balances[msg.sender] -= _am;
+                TransferLog.AddMessage(msg.sender, _am, "CashOut");
+            }
+        }
+    }
+
+    function() public payable {}
+
+}
+
+contract Log {
+    struct Message {
+        address Sender;
+        string Data;
+        uint Val;
+        uint Time;
+    }
+
+    Message[] public History;
+
+    Message LastMsg;
+
+    function AddMessage(address _adr, uint _val, string _data) public {
+        LastMsg.Sender = _adr;
+        LastMsg.Time = now;
+        LastMsg.Val = _val;
+        LastMsg.Data = _data;
+        History.push(LastMsg);
+    }
+} 
+
+// In the repaired contract, the reentrancy vulnerability has been fixed by implementing a noReentrancy modifier that prevents the function from being called again until it has completed execution. The modifier uses a boolean variable to keep track of the state of the contract and only allows the function to execute when it is not already in use.

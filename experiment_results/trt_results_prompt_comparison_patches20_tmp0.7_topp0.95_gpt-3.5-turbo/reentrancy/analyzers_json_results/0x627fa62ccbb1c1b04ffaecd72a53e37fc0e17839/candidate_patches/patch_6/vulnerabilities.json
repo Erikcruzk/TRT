@@ -1,0 +1,109 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_9"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function changeOwner(address addr) public onlyOwner {\n        newOwner = addr;",
+          "message": "Ownable.changeOwner (patch_6.sol#11-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function confirmOwner() public {\n        if (msg.sender == newOwner) {\n            owner = newOwner;\n            newOwner = address(0);\n        }",
+          "message": "Ownable.confirmOwner (patch_6.sol#15-20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function() public payable {\n        deposit();",
+          "message": "TokenBank.fallback (patch_6.sol#43-45) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": 58,
+          "vulnerability_code": "    function withdrawTokenToHolder(address to, address token, uint amount) public onlyOwner {\n        if (holders[to] > 0) {\n            holders[to] = 0;\n            withdrawToken(token, amount, to);\n        }",
+          "message": "TokenBank.withdrawTokenToHolder (patch_6.sol#53-58) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "    function withdrawToHolder(address addr, uint weiAmount) public onlyOwner {\n        if (holders[addr] > 0 && weiAmount <= holders[addr]) {\n            holders[addr] -= weiAmount;\n            addr.transfer(weiAmount);\n        }",
+          "message": "TokenBank.withdrawToHolder (patch_6.sol#60-65) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_6.sol:\n\t- pragma solidity^0.4.19 (patch_6.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": 31,
+          "vulnerability_code": "    function withdrawToken(address token, uint256 amount, address to) public onlyOwner {\n        require(token.call(bytes4(keccak256(\"transfer(address,uint256)\")), to, amount));",
+          "message": "Low level call in Token.withdrawToken (patch_6.sol#29-31):\n\t-require(bool)(token.call(bytes4(keccak256()(transfer(address,uint256))),to,amount)) patch_6.sol#30\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function Ownable() public {\n        owner = msg.sender;",
+          "message": "Function 'Ownable.Ownable' (patch_6.sol#7-9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": 41,
+          "vulnerability_code": "    function TokenBank() public {\n        owner = msg.sender;\n        minDeposit = 1 ether;",
+          "message": "Function 'TokenBank.TokenBank' (patch_6.sol#38-41) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            holders[msg.sender] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "TODTransfer",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    }
+  }
+}

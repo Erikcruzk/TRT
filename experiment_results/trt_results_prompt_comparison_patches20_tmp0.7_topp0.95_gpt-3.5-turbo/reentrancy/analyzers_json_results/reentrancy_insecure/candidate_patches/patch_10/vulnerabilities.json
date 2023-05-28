@@ -1,0 +1,88 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "DAO",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        userBalances[msg.sender] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender]);\n        locked[msg.sender] = true;\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n        locked[msg.sender] = false;",
+          "message": "Reentrancy in Reentrancy_secure.withdrawBalance (patch_10.sol#7-15):\n\tExternal calls:\n\t- (success) = msg.sender.call.value(amountToWithdraw)() (patch_10.sol#12)\n\tState variables written after the call(s):\n\t- locked (patch_10.sol#14)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender]);\n        locked[msg.sender] = true;\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n        locked[msg.sender] = false;",
+          "message": "Reentrancy_secure.withdrawBalance (patch_10.sol#7-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function depositBalance() public payable {\n        userBalances[msg.sender] += msg.value;",
+          "message": "Reentrancy_secure.depositBalance (patch_10.sol#17-19) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function getBalance() public view returns (uint) {\n        return userBalances[msg.sender];",
+          "message": "Reentrancy_secure.getBalance (patch_10.sol#21-23) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!locked[msg.sender]);\n        locked[msg.sender] = true;\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n        locked[msg.sender] = false;",
+          "message": "Low level call in Reentrancy_secure.withdrawBalance (patch_10.sol#7-15):\n\t-(success) = msg.sender.call.value(amountToWithdraw)() patch_10.sol#12\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "contract Reentrancy_secure {\n    mapping(address => uint) private userBalances;\n    mapping(address => bool) private locked;\n\n    function withdrawBalance() public {\n        require(!locked[msg.sender]);\n        locked[msg.sender] = true;\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n        locked[msg.sender] = false;\n    }\n\n    function depositBalance() public payable {\n        userBalances[msg.sender] += msg.value;\n    }\n\n    function getBalance() public view returns (uint) {\n        return userBalances[msg.sender];\n    }",
+          "message": "Contract 'Reentrancy_secure' (patch_10.sol#3-24) is not in CapWords\n"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!isCurrentlyWithdrawn[msg.sender]); // Only allow one withdrawal at a time\n        isCurrentlyWithdrawn[msg.sender] = true;\n\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n\n        isCurrentlyWithdrawn[msg.sender] = false;",
+          "message": "Reentrancy in Reentrancy_secure.withdrawBalance (patch_10.sol#7-18):\n\tExternal calls:\n\t- (success) = msg.sender.call.value(amountToWithdraw)() (patch_10.sol#14)\n\tState variables written after the call(s):\n\t- isCurrentlyWithdrawn (patch_10.sol#17)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!isCurrentlyWithdrawn[msg.sender]); // Only allow one withdrawal at a time\n        isCurrentlyWithdrawn[msg.sender] = true;\n\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n\n        isCurrentlyWithdrawn[msg.sender] = false;",
+          "message": "Reentrancy_secure.withdrawBalance (patch_10.sol#7-18) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 22,
+          "vulnerability_code": "    function depositBalance() public payable {\n        userBalances[msg.sender] += msg.value;",
+          "message": "Reentrancy_secure.depositBalance (patch_10.sol#20-22) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;",
+          "message": "Detected issues with version pragma in patch_10.sol:\n\t- pragma solidity^0.5.0 (patch_10.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!isCurrentlyWithdrawn[msg.sender]); // Only allow one withdrawal at a time\n        isCurrentlyWithdrawn[msg.sender] = true;\n\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n\n        isCurrentlyWithdrawn[msg.sender] = false;",
+          "message": "Low level call in Reentrancy_secure.withdrawBalance (patch_10.sol#7-18):\n\t-(success) = msg.sender.call.value(amountToWithdraw)() patch_10.sol#14\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "contract Reentrancy_secure {\n    mapping(address => uint) private userBalances;\n    mapping(address => bool) private isCurrentlyWithdrawn;\n\n    function withdrawBalance() public {\n        require(!isCurrentlyWithdrawn[msg.sender]); // Only allow one withdrawal at a time\n        isCurrentlyWithdrawn[msg.sender] = true;\n\n        uint amountToWithdraw = userBalances[msg.sender];\n        userBalances[msg.sender] = 0;\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success);\n\n        isCurrentlyWithdrawn[msg.sender] = false;\n    }\n\n    function depositBalance() public payable {\n        userBalances[msg.sender] += msg.value;\n    }",
+          "message": "Contract 'Reentrancy_secure' (patch_10.sol#3-23) is not in CapWords\n"
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

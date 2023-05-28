@@ -1,0 +1,67 @@
+pragma solidity ^0.4.25;
+
+contract U_BANK {
+    function Put(uint _unlockTime) public payable {
+        Holder storage acc = Acc[msg.sender];
+        acc.balance += msg.value;
+        acc.unlockTime = _unlockTime > now ? _unlockTime : now;
+        LogFile.AddMessage(msg.sender, msg.value, "Put");
+    }
+
+    function Collect(uint _am) public payable {
+        Holder storage acc = Acc[msg.sender];
+        if (
+            acc.balance >= MinSum && acc.balance >= _am && now > acc.unlockTime
+        ) {
+            acc.balance -= _am;
+            if (msg.sender.call.value(_am)()) {
+                LogFile.AddMessage(msg.sender, _am, "Collect");
+            } else {
+                acc.balance += _am;
+            }
+        }
+    }
+
+    function() public payable {
+        Put(0);
+    }
+
+    struct Holder {
+        uint unlockTime;
+        uint balance;
+    }
+
+    mapping(address => Holder) public Acc;
+
+    Log LogFile;
+
+    uint public MinSum = 2 ether;
+
+    constructor(address log) public {
+        LogFile = Log(log);
+    }
+}
+
+contract Log {
+    struct Message {
+        address Sender;
+        string Data;
+        uint Val;
+        uint Time;
+    }
+
+    Message[] public History;
+
+    function AddMessage(address _adr, uint _val, string _data) public {
+        Message memory LastMsg;
+        LastMsg.Sender = _adr;
+        LastMsg.Time = now;
+        LastMsg.Val = _val;
+        LastMsg.Data = _data;
+        History.push(LastMsg);
+    }
+} 
+
+// The above code has been repaired to address the reentrancy vulnerability by first updating the state variable before calling an external function. 
+// Additionally, the constructor keyword has been added to the constructor function. 
+// Lastly, the LastMsg variable has been moved into the AddMessage function to avoid any potential issues with multiple calls.

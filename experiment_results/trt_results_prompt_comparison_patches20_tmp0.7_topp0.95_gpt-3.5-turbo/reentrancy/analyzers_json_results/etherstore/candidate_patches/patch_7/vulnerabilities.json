@@ -1,0 +1,88 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        balances[msg.sender] += msg.value;",
+          "message": null
+        },
+        {
+          "name": "Timestamp Dependency",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public withdrawalLimit = 1 ether;",
+          "message": "EtherStore.withdrawalLimit should be constant (patch_7.sol#4)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": 11,
+          "vulnerability_code": "    function depositFunds() public payable {\n        balances[msg.sender] += msg.value;",
+          "message": "EtherStore.depositFunds (patch_7.sol#9-11) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "    function withdrawFunds(uint256 _weiToWithdraw) public {\n        require(!reentrancyGuard);\n        require(balances[msg.sender] >= _weiToWithdraw);\n        require(_weiToWithdraw <= withdrawalLimit);\n        require(now >= lastWithdrawTime[msg.sender] + 1 weeks);\n        reentrancyGuard = true;\n        msg.sender.transfer(_weiToWithdraw);\n        balances[msg.sender] -= _weiToWithdraw;\n        lastWithdrawTime[msg.sender] = now;\n        reentrancyGuard = false;",
+          "message": "EtherStore.withdrawFunds (patch_7.sol#13-23) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdrawFunds(uint256 _weiToWithdraw) public {",
+          "message": "Parameter '_weiToWithdraw' of EtherStore.withdrawFunds (patch_7.sol#13) is not in mixedCase\n"
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "TODTransfer",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "DAOConstantGas",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        credit[to] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function donate(address to) public payable {\n        credit[to] += msg.value;",
+          "message": "SimpleDAO.donate (patch_13.sol#7-9) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function withdraw(uint amount) public {\n        require(!frozenAccount[msg.sender]);\n        require(credit[msg.sender] >= amount);\n        credit[msg.sender] -= amount;\n        msg.sender.transfer(amount);",
+          "message": "SimpleDAO.withdraw (patch_13.sol#11-16) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "    function queryCredit(address to) public view returns (uint) {\n        return credit[to];",
+          "message": "SimpleDAO.queryCredit (patch_13.sol#18-20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function freezeAccount(address toFreeze) public {\n        frozenAccount[toFreeze] = true;",
+          "message": "SimpleDAO.freezeAccount (patch_13.sol#22-24) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function unfreezeAccount(address toUnfreeze) public {\n        frozenAccount[toUnfreeze] = false;",
+          "message": "SimpleDAO.unfreezeAccount (patch_13.sol#26-28) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.2;",
+          "message": "Detected issues with version pragma in patch_13.sol:\n\t- pragma solidity^0.4.2 (patch_13.sol#1): it allows old versions\n"
+        }
+      ]
+    }
+  }
+}

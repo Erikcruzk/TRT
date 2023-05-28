@@ -1,0 +1,88 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public minSum = 1 ether;",
+          "message": "W_WALLET.minSum should be constant (patch_4.sol#8)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function collect(uint amount) public {\n        require(balances[msg.sender] >= minSum && balances[msg.sender] >= amount && now > unlockTimes[msg.sender]);\n        balances[msg.sender] -= amount;\n        msg.sender.transfer(amount);\n        logFile.addMessage(msg.sender, amount, \"Collect\");",
+          "message": "W_WALLET.collect (patch_4.sol#20-25) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function() public payable {\n        put(0);",
+          "message": "W_WALLET.fallback (patch_4.sol#27-29) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": 50,
+          "vulnerability_code": "    function addMessage(address sender, uint val, string data) public {\n        Message memory newMessage = Message({\n            sender: sender,\n            data: data,\n            val: val,\n            time: now\n        });\n        history.push(newMessage);",
+          "message": "Log.addMessage (patch_4.sol#42-50) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 30,
+          "vulnerability_code": "contract W_WALLET {\n    mapping(address => uint) public balances;\n    mapping(address => uint) public unlockTimes;\n    Log public logFile;\n\n    uint public minSum = 1 ether;\n\n    constructor(address log) public {\n        logFile = Log(log);\n    }\n\n    function put(uint unlockTime) public payable {\n        balances[msg.sender] += msg.value;\n        unlockTimes[msg.sender] = unlockTime > now ? unlockTime : now;\n        logFile.addMessage(msg.sender, msg.value, \"Put\");\n    }\n\n    function collect(uint amount) public {\n        require(balances[msg.sender] >= minSum && balances[msg.sender] >= amount && now > unlockTimes[msg.sender]);\n        balances[msg.sender] -= amount;\n        msg.sender.transfer(amount);\n        logFile.addMessage(msg.sender, amount, \"Collect\");\n    }\n\n    function() public payable {\n        put(0);\n    }",
+          "message": "Contract 'W_WALLET' (patch_4.sol#3-30) is not in CapWords\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public history;",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public history;",
+          "message": null
+        },
+        {
+          "name": "Timestamp Dependency",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(balances[msg.sender] >= minSum && balances[msg.sender] >= amount && now > unlockTimes[msg.sender]);",
+          "message": null
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    }
+  }
+}

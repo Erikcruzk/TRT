@@ -1,0 +1,74 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        credit[to] += msg.value;",
+          "message": null
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 8,
+          "vulnerability_code": "    function donate(address to) public payable {\n        credit[to] += msg.value;",
+          "message": "SimpleDAO.donate (patch_4.sol#6-8) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function withdraw(uint amount) public {\n        if (credit[msg.sender] >= amount) {\n            credit[msg.sender] -= amount;\n            require(msg.sender.call.value(amount)());\n        }",
+          "message": "SimpleDAO.withdraw (patch_4.sol#10-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function queryCredit(address to) public view returns (uint) {\n        return credit[to];",
+          "message": "SimpleDAO.queryCredit (patch_4.sol#17-19) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.2;",
+          "message": "Detected issues with version pragma in patch_4.sol:\n\t- pragma solidity^0.4.2 (patch_4.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function withdraw(uint amount) public {\n        if (credit[msg.sender] >= amount) {\n            credit[msg.sender] -= amount;\n            require(msg.sender.call.value(amount)());\n        }",
+          "message": "Low level call in SimpleDAO.withdraw (patch_4.sol#10-15):\n\t-require(bool)(msg.sender.call.value(amount)()) patch_4.sol#13\n"
+        }
+      ]
+    }
+  }
+}

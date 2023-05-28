@@ -1,0 +1,151 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_13"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum = 1 ether;",
+          "message": "W_WALLET.MinSum should be constant (patch_6.sol#13)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 30,
+          "vulnerability_code": "    function collect(uint _am) public {\n        require(Acc[msg.sender].balance >= MinSum && Acc[msg.sender].balance >= _am && now > Acc[msg.sender].unlockTime, \"Insufficient balance or locked funds\");\n        Acc[msg.sender].balance -= _am;\n        LogFile.addMessage(msg.sender, _am, \"Collect\");\n        msg.sender.transfer(_am);",
+          "message": "W_WALLET.collect (patch_6.sol#25-30) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": 34,
+          "vulnerability_code": "    function() public payable {\n        put(0);",
+          "message": "W_WALLET.fallback (patch_6.sol#32-34) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": 55,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {\n        Message memory newMessage = Message({\n            sender: _adr,\n            time: now,\n            val: _val,\n            data: _data\n        });\n        history.push(newMessage);",
+          "message": "Log.addMessage (patch_6.sol#47-55) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 35,
+          "vulnerability_code": "contract W_WALLET {\n    struct Holder {\n        uint unlockTime;\n        uint balance;\n    }\n\n    mapping(address => Holder) public Acc;\n\n    Log LogFile;\n\n    uint public MinSum = 1 ether;\n\n    constructor(address log) public {\n        LogFile = Log(log);\n    }\n\n    function put(uint _unlockTime) public payable {\n        Acc[msg.sender].balance += msg.value;\n        Acc[msg.sender].unlockTime = _unlockTime > now ? _unlockTime : now;\n        LogFile.addMessage(msg.sender, msg.value, \"Put\");\n    }\n\n    function collect(uint _am) public {\n        require(Acc[msg.sender].balance >= MinSum && Acc[msg.sender].balance >= _am && now > Acc[msg.sender].unlockTime, \"Insufficient balance or locked funds\");\n        Acc[msg.sender].balance -= _am;\n        LogFile.addMessage(msg.sender, _am, \"Collect\");\n        msg.sender.transfer(_am);\n    }\n\n    function() public payable {\n        put(0);\n    }",
+          "message": "Contract 'W_WALLET' (patch_6.sol#3-35) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function put(uint _unlockTime) public payable {",
+          "message": "Parameter '_unlockTime' of W_WALLET.put (patch_6.sol#19) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function collect(uint _am) public {",
+          "message": "Parameter '_am' of W_WALLET.collect (patch_6.sol#25) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => Holder) public Acc;",
+          "message": "Variable 'W_WALLET.Acc' (patch_6.sol#9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Log LogFile;",
+          "message": "Variable 'W_WALLET.LogFile' (patch_6.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum = 1 ether;",
+          "message": "Variable 'W_WALLET.MinSum' (patch_6.sol#13) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of Log.addMessage (patch_6.sol#47) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of Log.addMessage (patch_6.sol#47) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of Log.addMessage (patch_6.sol#47) is not in mixedCase\n"
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public history;",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public history;",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => Holder) public Acc;",
+          "message": null
+        },
+        {
+          "name": "Timestamp Dependency",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(Acc[msg.sender].balance >= MinSum && Acc[msg.sender].balance >= _am && now > Acc[msg.sender].unlockTime, \"Insufficient balance or locked funds\");",
+          "message": null
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    }
+  }
+}

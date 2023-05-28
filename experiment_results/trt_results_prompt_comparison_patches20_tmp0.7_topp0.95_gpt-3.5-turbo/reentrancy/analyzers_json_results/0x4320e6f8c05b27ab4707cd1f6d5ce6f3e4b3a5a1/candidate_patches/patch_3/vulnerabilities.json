@@ -1,0 +1,179 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_18"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "uninitialized-state",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool initialized;",
+          "message": "ACCURAL_DEPOSIT.initialized (patch_3.sol#10) is never initialized. It is used in:\n\t- setMinSum (patch_3.sol#16-19)\n"
+        },
+        {
+          "name": "uninitialized-local",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        Message memory message;",
+          "message": "message in LogFile.addMessage (patch_3.sol#49) is a local variable never initialiazed\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool initialized;",
+          "message": "ACCURAL_DEPOSIT.initialized should be constant (patch_3.sol#10)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function setMinSum(uint _val) public {\n        require(!initialized);\n        MinSum = _val;",
+          "message": "ACCURAL_DEPOSIT.setMinSum (patch_3.sol#16-19) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": 31,
+          "vulnerability_code": "    function collect(uint _am) public {\n        require(balances[msg.sender] >= MinSum && balances[msg.sender] >= _am);\n        balances[msg.sender] -= _am;\n        msg.sender.transfer(_am);\n        Log.addMessage(msg.sender, _am, \"Collect\");",
+          "message": "ACCURAL_DEPOSIT.collect (patch_3.sol#26-31) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": 35,
+          "vulnerability_code": "    function() public payable {\n        deposit();",
+          "message": "ACCURAL_DEPOSIT.fallback (patch_3.sol#33-35) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": 55,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {\n        Message memory message;\n        message.sender = _adr;\n        message.time = now;\n        message.val = _val;\n        message.data = _data;\n        history.push(message);",
+          "message": "LogFile.addMessage (patch_3.sol#48-55) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.19;",
+          "message": "Detected issues with version pragma in patch_3.sol:\n\t- pragma solidity^0.4.19 (patch_3.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 36,
+          "vulnerability_code": "contract ACCURAL_DEPOSIT {\n    mapping(address => uint256) public balances;\n\n    uint public MinSum = 1 ether;\n\n    LogFile Log;\n\n    bool initialized;\n\n    function ACCURAL_DEPOSIT(address _log) public {\n        Log = LogFile(_log);\n    }\n\n    function setMinSum(uint _val) public {\n        require(!initialized);\n        MinSum = _val;\n    }\n\n    function deposit() public payable {\n        balances[msg.sender] += msg.value;\n        Log.addMessage(msg.sender, msg.value, \"Put\");\n    }\n\n    function collect(uint _am) public {\n        require(balances[msg.sender] >= MinSum && balances[msg.sender] >= _am);\n        balances[msg.sender] -= _am;\n        msg.sender.transfer(_am);\n        Log.addMessage(msg.sender, _am, \"Collect\");\n    }\n\n    function() public payable {\n        deposit();\n    }",
+          "message": "Contract 'ACCURAL_DEPOSIT' (patch_3.sol#3-36) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function ACCURAL_DEPOSIT(address _log) public {\n        Log = LogFile(_log);",
+          "message": "Function 'ACCURAL_DEPOSIT.ACCURAL_DEPOSIT' (patch_3.sol#12-14) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function ACCURAL_DEPOSIT(address _log) public {",
+          "message": "Parameter '_log' of ACCURAL_DEPOSIT.ACCURAL_DEPOSIT (patch_3.sol#12) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setMinSum(uint _val) public {",
+          "message": "Parameter '_val' of ACCURAL_DEPOSIT.setMinSum (patch_3.sol#16) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function collect(uint _am) public {",
+          "message": "Parameter '_am' of ACCURAL_DEPOSIT.collect (patch_3.sol#26) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public MinSum = 1 ether;",
+          "message": "Variable 'ACCURAL_DEPOSIT.MinSum' (patch_3.sol#6) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    LogFile Log;",
+          "message": "Variable 'ACCURAL_DEPOSIT.Log' (patch_3.sol#8) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_adr' of LogFile.addMessage (patch_3.sol#48) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_val' of LogFile.addMessage (patch_3.sol#48) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMessage(address _adr, uint _val, string _data) public {",
+          "message": "Parameter '_data' of LogFile.addMessage (patch_3.sol#48) is not in mixedCase\n"
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "TODTransfer",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public history;",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Message[] public history;",
+          "message": null
+        }
+      ]
+    }
+  }
+}

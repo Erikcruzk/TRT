@@ -1,0 +1,74 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 9,
+          "vulnerability_code": "    function getBalance(address u) constant returns (uint) {\n        return userBalance[u];",
+          "message": "Reentrance.getBalance (patch_5.sol#7-9) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "    function addToBalance() payable {\n        userBalance[msg.sender] += msg.value;",
+          "message": "Reentrance.addToBalance (patch_5.sol#11-13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "    function withdrawBalance() {\n        require(!locked[msg.sender]); // check if user is already withdrawing\n        locked[msg.sender] = true; // lock the user\n        uint balance = userBalance[msg.sender];\n        userBalance[msg.sender] = 0;\n        if (!msg.sender.send(balance)) { // transfer the balance\n            userBalance[msg.sender] = balance; // revert if transfer fails\n        }\n        locked[msg.sender] = false; // unlock the user",
+          "message": "Reentrance.withdrawBalance (patch_5.sol#15-24) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;",
+          "message": "Detected issues with version pragma in patch_5.sol:\n\t- pragma solidity^0.4.15 (patch_5.sol#1): it allows old versions\n"
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "MissingInputValidation",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "DAOConstantGas",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        userBalance[msg.sender] += msg.value;",
+          "message": null
+        }
+      ]
+    }
+  }
+}

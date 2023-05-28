@@ -1,0 +1,70 @@
+/// Your task is to repair the following Solidity Smart Contract
+pragma solidity ^0.4.0;
+
+contract EtherBank {
+    mapping(address => uint) userBalances;
+
+    function getBalance(address user) constant returns (uint) {
+        return userBalances[user];
+    }
+
+    function addToBalance() {
+        userBalances[msg.sender] += msg.value;
+    }
+
+    function withdrawBalance() {
+        uint amountToWithdraw = userBalances[msg.sender];
+
+        if (!(msg.sender.call.value(amountToWithdraw)())) {
+            throw;
+        }
+        userBalances[msg.sender] = 0;
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+{
+  "securify": {
+    "successfull_analysis": true,
+    "errors": [],
+    "vulnerability_findings": [
+      {
+        "name": "reentrancy",
+        "vulnerability_from_line": null,
+        "vulnerability_to_line": null,
+        "vulnerability_code": null,
+        "message": null
+      }
+    ]
+  },
+  "slither": {
+    "successfull_analysis": true,
+    "errors": [
+      "EXIT_CODE_7"
+    ],
+    "vulnerability_findings": [
+      {
+        "name": "reentrancy",
+        "vulnerability_from_line": 14,
+        "vulnerability_to_line": 21,
+        "vulnerability_code": "    function withdrawBalance() {\n        uint amountToWithdraw = userBalances[msg.sender];\n\n        if (!(msg.sender.call.value(amountToWithdraw)())) {\n            throw;\n        }\n        userBalances[msg.sender] = 0;",
+        "message": "Reentrancy in EtherBank.withdrawBalance (etherbank.sol#14-21):\n\tExternal calls:\n\t- ! (msg.sender.call.value(amountToWithdraw)()) (etherbank.sol#17-19)\n\tState variables written after the call(s):\n\t- userBalances (etherbank.sol#20)\n"
+      }
+    ]
+  },
+  "oyente": {
+    "successfull_analysis": true,
+    "errors": [],
+    "vulnerability_findings": [
+      {
+        "name": "reentrancy",
+        "vulnerability_from_line": 17,
+        "vulnerability_to_line": null,
+        "vulnerability_code": "        if (!(msg.sender.call.value(amountToWithdraw)())) {",
+        "message": null
+      }
+    ]
+  }
+}
+
+/// Repaired Solidity Smart Contract

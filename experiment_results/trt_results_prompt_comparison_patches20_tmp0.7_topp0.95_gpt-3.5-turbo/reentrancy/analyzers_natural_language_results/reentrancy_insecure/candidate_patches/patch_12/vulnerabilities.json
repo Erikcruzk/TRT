@@ -1,0 +1,74 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-eth",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!isCurrentlyWithdrawing[msg.sender]); // prevent reentrancy\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0); // ensure user has balance to withdraw\n\n        isCurrentlyWithdrawing[msg.sender] = true; // mark user as currently withdrawing\n        userBalances[msg.sender] = 0; // update user balance to 0 before transfer\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success); // ensure transfer was successful\n\n        isCurrentlyWithdrawing[msg.sender] = false; // mark user as finished withdrawing",
+          "message": "Reentrancy in Reentrancy_secure.withdrawBalance (patch_12.sol#7-19):\n\tExternal calls:\n\t- (success) = msg.sender.call.value(amountToWithdraw)() (patch_12.sol#15)\n\tState variables written after the call(s):\n\t- isCurrentlyWithdrawing (patch_12.sol#18)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!isCurrentlyWithdrawing[msg.sender]); // prevent reentrancy\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0); // ensure user has balance to withdraw\n\n        isCurrentlyWithdrawing[msg.sender] = true; // mark user as currently withdrawing\n        userBalances[msg.sender] = 0; // update user balance to 0 before transfer\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success); // ensure transfer was successful\n\n        isCurrentlyWithdrawing[msg.sender] = false; // mark user as finished withdrawing",
+          "message": "Reentrancy_secure.withdrawBalance (patch_12.sol#7-19) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;",
+          "message": "Detected issues with version pragma in patch_12.sol:\n\t- pragma solidity^0.4.0 (patch_12.sol#1): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function withdrawBalance() public {\n        require(!isCurrentlyWithdrawing[msg.sender]); // prevent reentrancy\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0); // ensure user has balance to withdraw\n\n        isCurrentlyWithdrawing[msg.sender] = true; // mark user as currently withdrawing\n        userBalances[msg.sender] = 0; // update user balance to 0 before transfer\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success); // ensure transfer was successful\n\n        isCurrentlyWithdrawing[msg.sender] = false; // mark user as finished withdrawing",
+          "message": "Low level call in Reentrancy_secure.withdrawBalance (patch_12.sol#7-19):\n\t-(success) = msg.sender.call.value(amountToWithdraw)() patch_12.sol#15\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "contract Reentrancy_secure {\n    mapping(address => uint) private userBalances;\n    mapping(address => bool) private isCurrentlyWithdrawing;\n\n    function withdrawBalance() public {\n        require(!isCurrentlyWithdrawing[msg.sender]); // prevent reentrancy\n        uint amountToWithdraw = userBalances[msg.sender];\n        require(amountToWithdraw > 0); // ensure user has balance to withdraw\n\n        isCurrentlyWithdrawing[msg.sender] = true; // mark user as currently withdrawing\n        userBalances[msg.sender] = 0; // update user balance to 0 before transfer\n\n        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");\n        require(success); // ensure transfer was successful\n\n        isCurrentlyWithdrawing[msg.sender] = false; // mark user as finished withdrawing\n    }",
+          "message": "Contract 'Reentrancy_secure' (patch_12.sol#3-20) is not in CapWords\n"
+        }
+      ]
+    },
+    "securify": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "DAO",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = msg.sender.call.value(amountToWithdraw)(\"\");",
+          "message": null
+        }
+      ]
+    }
+  }
+}

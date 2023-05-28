@@ -1,0 +1,28 @@
+# Configuration file for automatic program repair experiments
+
+# Folder name for results
+experiment_settings:
+  experiment_name: "trt_results_prompt_comparison/reentrancy/analyzers_natural_language_results"
+  delete_old_experiment_name: false
+  llm_model_name: "gpt-3.5-turbo"
+  vulnerable_contracts_directory: "sc_datasets/smartbugs_curated_no_comment/reentrancy" #"smartbugs_reentrancy_short_no_comments_test" # Folder name for buggy smart contracts
+  target_vulnerabilities: [reentrancy] # [access_control, arithmetic, transaction_order_dependence, reentrancy, unchecked_low_level_call, unhandled_exception]
+  n_smartbugs_threads: 60
+  n_repair_threads: 10
+  # smartbugs_tools: [oyente, slither, confuzzius, conkas, honeybadger, maian, mythril, osiris, securify, sFuzz, solhint]
+  smartbugs_tools: [oyente, securify, slither] #[access_control_tools, arithmetic_tools, reentrancy_tools, unchecked_calls_tools, transaction_order_dependence_tools]
+  smartbugs_timeout: 3600
+  smartbugs_processes: 11
+  patch_examples_directory: "sc_repair_examples"
+  prompt_style: "analyzers_natural_language_results" # Alternatives: "basic", "analyzers_json_results", "analyzers_natural_language_results"
+
+# LLM model and settings
+llm_settings:
+  gpt-3.5-turbo:
+    model_name: "gpt-3.5-turbo"
+    secret_api_key: "KTH_OPENAI_API_KEY"
+    temperature: 0.7
+    top_p: 0.95
+    num_candidate_patches: 20
+    max_time: 3600
+    stop: ["///"]
