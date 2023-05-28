@@ -21,8 +21,11 @@ install/setup-venv.sh
 ```
 
 #### Run in Docker
-1. docker build --pull --rm -f "Dockerfile" -t trt:latest "."
-2. Start containera
+1. Clone repo
+2. cd transformative_repair
+3. Add .env file with openAI credentials
+4. docker build --pull --rm -f "Dockerfile" -t trt:latest "."
+5. Start containera
 
 - access_control
 ```
