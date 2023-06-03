@@ -167,7 +167,7 @@ class TransformativeRepair:
         diff = difflib.ndiff(file1_lines, file2_lines)
         #diff = difflib.context_diff(file1_lines, file2_lines, fromfile=f'{original_sc_path}', tofile=f'{best_patch_path}')
 
-        with open(os.path.join(original_sc_dir, f'{original_sc_name}_best_patch_{target_vulnerability}_{bect_patch_name}_diff.txt'), 'w') as output_file:
+        with open(os.path.join(original_sc_dir, f'{original_sc_name}_best_patch_{target_vulnerability}_{bect_patch_name}_diff.diff'), 'w') as output_file:
             for line in diff:
                 output_file.write(line)
 
