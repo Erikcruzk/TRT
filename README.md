@@ -1,31 +1,71 @@
-## Transformative Smart Contract Repair
+# The Transformative Repair Tool
 
-Attempt to repair Smart Contracts using OpenAI Codex model.
+TRT is the first tool for Automatic Program repair of Solidity Smart Contracts.
 
-## Get Started
+## Run i Docker
 
-### Installation and Configuration
-
-#### Install Python requirements
-
-`pip3 install -r requirements.txt`
-
-#### Install smartbugs
-
-Clone smartbugs and install it in the root directory of our tool:
-
+1. Clone repo
+2. Add your openAI as in the .env file
 ```
+cd transformative_repair
+touch .env
+echo "OPENAI_API_KEY=<your_openai_key>" > .env
+```
+3. Run docker
+   - Docker compose
+```
+cd transformative_repair
+docker-compose up -d --build
+```
+   - Docker
+```
+cd transformative_repair
+docker build -t trt:latest .
+docker run -tid\
+  -v $(pwd)/config.yml:/app/config.yml \
+  -v $(pwd)/experiment_results:/app/experiment_results \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /tmp:/tmp \
+  --name trt_container \
+  trt:latest
+```
+4. Edit experiment configs `config.yml`
+5. Enter container and run experiments
+```
+docker-compose exec trt_container bash
+tmux new -s trt_session
+python3 main.py
+```
+
+## Run locally
+
+1. Clone repo
+2. Add your openAI as in the .env file
+```
+cd transformative_repair
+touch .env
+echo "OPENAI_API_KEY=<your_openai_key>" > .env
+```
+3. Install smartbugs
+```
+cd transformative_repair
 git clone https://github.com/smartbugs/smartbugs
 cd smartbugs
 install/setup-venv.sh
 ```
 
-#### Run in Docker
+4. Install pip requirements
+`pip3 install -r requirements.txt`
+
+5. Run TRT
+`python3 main.py`
+
+#### TRT result experiments
 1. Clone repo
 2. cd transformative_repair
 3. Add .env file with openAI credentials
 4. docker build --pull --rm -f "Dockerfile" -t trt:latest "."
-5. Start containera
+5. Start containers
 
 - access_control
 ```
@@ -95,12 +135,6 @@ docker exec -it trt_container_<name> bash
 docker stop trt_container_<name>
 ```
 
-#### Add the API Key for OpenAI
-
-Add .env file with openAI-key
-
-`OPENAI_API_KEY=XXXXX`
-
 #### Prompt experiment roadmap
 Temperature 0.5 and 0.7. Top_p 0.95
 
@@ -146,6 +180,16 @@ Temperature 0.5 and 0.7. Top_p 0.95
 - Increase dataset. keep hidden from LLMs
 - Create test harness for all contracts
 - Get tools depending on vulnerability
+- Better Manticore Support
+- Select tmp folder location
+- Do not mute underlyning container logs (Mythril?). I want to be able to inspect the logs when I am inside
+
+### Improvements to TRT
+- Add config file for parsing of results
+- Do not reset execution time when retaking experiments
+- Automatically create tests for SC => fail if SC bugs are detected
+- TAT => Transformative Attack Tool. Shows how to attach an original SC
+- Adapt TRT to solve bug level
 
 
 docker ps -a | grep -E 'smartbugs/mythril:0.23.15|smartbugs/smartcheck|smartbugs/security:usolc|smartbugs/manticore:0.3.7|smartbugs/oyente:480e725|smartbugs/slither|smartbugs/maian:solc5.10|smartbugs/osiris:d1ecc37|trt:latest' | awk '{print $1}' | xargs docker rm -f

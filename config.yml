@@ -2,16 +2,16 @@
 
 # Folder name for results
 experiment_settings:
-  experiment_name: "trt_results/arithmetic/analyzers_natural_language_results"
-  delete_old_experiment_name: false
-  llm_model_name: "gpt-3.5-turbo"
-  vulnerable_contracts_directory: "sc_datasets/smartbugs_curated_no_comment/arithmetic" #"smartbugs_reentrancy_short_no_comments_test" # Folder name for buggy smart contracts
+  experiment_name: "<experiment_name>" # Name of experiment directory
+  delete_old_experiment_name: false # If true, removed results directory at start
+  llm_model_name: "gpt-3.5-turbo" # Model to use. needs to exist in llm_settings
+  vulnerable_contracts_directory: "<sc_directory_to_analyze>" # Folder name for buggy smart contracts
   target_vulnerabilities: [arithmetic] # [access_control, arithmetic, transaction_order_dependence, reentrancy, unchecked_low_level_call, unhandled_exception]
-  n_smartbugs_threads: 60
-  n_repair_threads: 10
+  n_smartbugs_threads: 10 # Worker threads running smartbugs processes
+  n_repair_threads: 10 # Worker threads repairing SCs
   # smartbugs_tools: [oyente, slither, confuzzius, conkas, honeybadger, maian, mythril, osiris, securify, sFuzz, solhint]
   smartbugs_tools: [arithmetic_tools] #[access_control_tools, arithmetic_tools, reentrancy_tools, unchecked_calls_tools, transaction_order_dependence_tools]
-  smartbugs_timeout: 3600
+  smartbugs_timeout: 3600 # Timeout limit in seconds for each Analyzer
   smartbugs_processes: 11
   patch_examples_directory: "sc_repair_examples"
   prompt_style: "analyzers_natural_language_results" # Alternatives: "basic", "analyzers_json_results", "analyzers_natural_language_results"
@@ -20,9 +20,9 @@ experiment_settings:
 llm_settings:
   gpt-3.5-turbo:
     model_name: "gpt-3.5-turbo"
-    secret_api_key: "KTH_OPENAI_API_KEY"
+    secret_api_key: "OPENAI_API_KEY" # OPENAI_API_KEY needs to be present in the .env file
     temperature: 0.7
     top_p: 0.95
-    num_candidate_patches: 20
+    num_candidate_patches: 20 # Number of candidate patches per SC
     max_time: 3600
     stop: ["///"]
