@@ -1,6 +1,8 @@
 # The Transformative Repair Tool
 
-TRT is the first tool for Automatic Program repair of Solidity Smart Contracts.
+<img src="./logos/TRT_logo_white.png" alt="Alternative Text" style="opacity:0.5;" width="200"/>
+
+TRT is the first tool for Automatic Program Repair (APR) of Solidity Smart Contracts.
 
 ## Run i Docker
 
