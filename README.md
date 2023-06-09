@@ -1,6 +1,10 @@
 # The Transformative Repair Tool
 
-<img src="./logos/TRT_logo_white.png" alt="Alternative Text" style="opacity:0.5;" width="200"/>
+<div style="display: flex;">
+    <div style="width:200px; height:200px; background-color:white; display:flex; opacity:0.9">
+        <img src="./logos/TRT_logo.png" alt="Alternative Text" width="200"/>
+    </div>
+</div> 
 
 TRT is the first tool for Automatic Program Repair (APR) of Solidity Smart Contracts.
 
