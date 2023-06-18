@@ -62,7 +62,7 @@ install/setup-venv.sh
 5. Run TRT
 `python3 main.py`
 
-#### TRT result experiments
+## TRT run experiments
 1. Clone repo
 2. cd transformative_repair
 3. Add .env file with openAI credentials
@@ -136,6 +136,21 @@ docker exec -it trt_container_<name> bash
 ```
 docker stop trt_container_<name>
 ```
+5. count active containers
+```
+docker ps --format "{{.ID}}" | wc -l
+```
+
+## Docker Cleanup procedure
+1. Remove all smartbugs images
+```
+docker ps -a | grep -E 'smartbugs/mythril:0.23.15|smartbugs/smartcheck|smartbugs/security:usolc|smartbugs/manticore:0.3.7|smartbugs/oyente:480e725|smartbugs/slither|smartbugs/maian:solc5.10|smartbugs/osiris:d1ecc37|trt:latest' | awk '{print $1}' | xargs docker rm -f
+```
+
+2. Remove all trt containers
+```
+docker ps -a | grep trt:latest | awk '{print $1}' | xargs docker rm -f
+```
 
 #### Prompt experiment roadmap
 Temperature 0.5 and 0.7. Top_p 0.95
@@ -144,58 +159,26 @@ Temperature 0.5 and 0.7. Top_p 0.95
 2. Json info from analyzers `analyzers_json_results`
 3. Natural language info from analyzers `analyzers_natural_language_results`
 
-#### Conclusions
-- Osiris may be flagging false positives (it is reporting all direct calls to external functions vulnerable to reentrancy. Probably expecting to add transfer or send instead)
-
-#### TODOs
-1.  experiment_results/smartbugs_reentrancy_short_no_comments_tools3_patches10_tmp0.7_topp0.95_gpt-3.5-turbo/analyzers_natural_language_results/reentrancy_cross_function/candidate_patches/patch_0/patch_0.sol
-
-- manticore, mythril, oyente, slither (have more discussions about what tools to use)
-- Check with all tools modifier_reentrancy contract
-  - Two ways to patch this SC
-  1. Look at email
-  2. Remove the external function call vulnerability and reentrancy vulnerability will dissapear too
-
-- Create tests chatGPT and Run tests on remix
-   
-- FLAG SOMEHOW IF ORIFINAL SC HAS NO BUG
-
-### meeting mojtaba
-- Fixed bug
-- Manticore too slow and not finding reentrancy
-
-
-*** Use mythril, oyente, slither
-*** Update smartbugs
-
-*** Generate new key for every experiment
-
-*** Look at c# runtime assertions
-
 
 ### Improvements to Smartbugs
-- Allow for parsing to common vulnerability types Ä(labelled vulnerabilities)
+- Allow for parsing to common vulnerability types (labelled vulnerabilities)
 - Know what tools detect these different labels
 - Establish voting system between tools (vote in/out false positives)
-- Build k3s architecture for running docker containers on different machines. To scale execution horizontally.
 - Provide summary report of errors encountered
-- Increase dataset. keep hidden from LLMs
-- Create test harness for all contracts
 - Get tools depending on vulnerability
 - Better Manticore Support
 - Select tmp folder location
 - Do not mute underlyning container logs (Mythril?). I want to be able to inspect the logs when I am inside
 
 ### Improvements to TRT
+- Adapt to Smartbugs 2.0
+- Create compile check on specific version
 - Add config file for parsing of results
 - Do not reset execution time when retaking experiments
 - Automatically create tests for SC => fail if SC bugs are detected
 - TAT => Transformative Attack Tool. Shows how to attach an original SC
-- Adapt TRT to solve bug level
-
-
-docker ps -a | grep -E 'smartbugs/mythril:0.23.15|smartbugs/smartcheck|smartbugs/security:usolc|smartbugs/manticore:0.3.7|smartbugs/oyente:480e725|smartbugs/slither|smartbugs/maian:solc5.10|smartbugs/osiris:d1ecc37|trt:latest' | awk '{print $1}' | xargs docker rm -f
-
-docker ps -a | grep trt:latest | awk '{print $1}' | xargs docker rm -f
-
-docker ps --format "{{.ID}}" | wc -l
+- TDT => Transformative Detect Tool. Detection with LLMs
+- Adapt TRT to fix and assess at bug level
+- Build k3s architecture for running docker containers on different machines. To scale execution horizontally.
+- Increase dataset. keep hidden from LLMs
+- Create test harness for all contracts
