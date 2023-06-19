@@ -14,7 +14,7 @@ cd transformative_repair
 touch .env
 echo "OPENAI_API_KEY=<your_openai_key>" > .env
 ```
-3. Edit experiment configs `config.yml`
+3. Edit experiment configs [`config.yml`](config.yml)
 
 ## Run in Docker
 
@@ -66,9 +66,22 @@ pip3 install -r requirements.txt
 python3 main.py
 ```
 
+# TRT experiment results on the Smartbugs Curated Dataset
+1. [Prompt Engineering results](experiment_results/trt_results_prompt_comparison_patches20_tmp0.7_topp0.95_gpt-3.5-turbo)
+    - [Basic prompt results](experiment_results/trt_results_prompt_comparison_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/reentrancy/basic/trt_results_prompt_comparison_patches20_tmp0.7_topp0.95_gpt-3.5-turbo_reentrancy_analyzers_natural_language_results_summary.md)
+    - [JSON prompt results](experiment_results/trt_results_prompt_comparison_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/reentrancy/analyzers_json_results/trt_results_prompt_comparison_patches20_tmp0.7_topp0.95_gpt-3.5-turbo_reentrancy_analyzers_json_results_summary.md)
+    - [Natural Language prompt results](experiment_results/trt_results_prompt_comparison_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/reentrancy/analyzers_natural_language_results/trt_results_prompt_comparison_patches20_tmp0.7_topp0.95_gpt-3.5-turbo_reentrancy_analyzers_natural_language_results_summary.md)
+3. [Main Experimentation Results with natural Language Prompt](experiment_results/trt_results_patches20_tmp0.7_topp0.95_gpt-3.5-turbo)
+    - [access_control](experiment_results/trt_results_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/access_control/analyzers_natural_language_results/trt_results_patches20_tmp0.7_topp0.95_gpt-3.5-turbo_access_control_analyzers_natural_language_results_summary.md)
+    - [arithmetic](experiment_results/trt_results_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/arithmetic/analyzers_natural_language_results/trt_results_patches20_tmp0.7_topp0.95_gpt-3.5-turbo_arithmetic_analyzers_natural_language_results_summary.md)
+    - [reentrancy](experiment_results/trt_results_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/reentrancy/analyzers_natural_language_results/trt_results_patches20_tmp0.7_topp0.95_gpt-3.5-turbo_reentrancy_analyzers_natural_language_results_summary.md)
+    - [Transaction Order Dependence](experiment_results/trt_results_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/transaction_order_dependence/analyzers_natural_language_results/trt_results_patches20_tmp0.7_topp0.95_gpt-3.5-turbo_transaction_order_dependence_analyzers_natural_language_results_summary.md)
+    - [Unchecked Low Level Calls](experiment_results/trt_results_patches20_tmp0.7_topp0.95_gpt-3.5-turbo/unchecked_low_level_calls/analyzers_natural_language_results/trt_results_patches20_tmp0.7_topp0.95_gpt-3.5-turbo_unchecked_low_level_calls_analyzers_natural_language_results_summary.md)
+
 
 # TRT experiments containers
-- access_control
+
+1. access_control
 ```
 docker run -tid\
   -v $(pwd)/config_access_control.yml:/app/config.yml \
@@ -80,7 +93,7 @@ docker run -tid\
 docker exec -it trt_container_access_control bash
 ```
 
-- arithmetic
+2. arithmetic
 ```
 docker run -tid\
   -v $(pwd)/config_arithmetic.yml:/app/config.yml \
@@ -92,7 +105,7 @@ docker run -tid\
   docker exec -it trt_container_arithmetic bash
 ```
 
-- reentrancy
+3. reentrancy
 ```
 docker run -tid\
   -v $(pwd)/config_reentrancy.yml:/app/config.yml \
@@ -104,7 +117,7 @@ docker run -tid\
   docker exec -it trt_container_reentrancy bash
 ```
 
-- tod
+4. tod
 ```
 docker run -tid\
   -v $(pwd)/config_tod.yml:/app/config.yml \
@@ -116,7 +129,7 @@ docker run -tid\
   docker exec -it trt_container_tod bash
 ```
 
-- unchecked
+5. unchecked
 ```
 docker run -tid\
   -v $(pwd)/config_unchecked.yml:/app/config.yml \
@@ -127,15 +140,17 @@ docker run -tid\
   trt:latest
   docker exec -it trt_container_unchecked bash
 ```
-3. Enter Container
+
+## Helpful commands
+1. Enter Container
 ```
 docker exec -it trt_container_<name> bash
 ```
-4. Stop container
+2. Stop container
 ```
 docker stop trt_container_<name>
 ```
-5. count active containers
+3. count active containers
 ```
 docker ps --format "{{.ID}}" | wc -l
 ```
