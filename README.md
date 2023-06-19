@@ -4,22 +4,29 @@
 
 TRT is the first tool for Automatic Program Repair (APR) of Solidity Smart Contracts.
 
-## Run i Docker
+# How To Run TRT
+## Init
 
 1. Clone repo
-2. Add your openAI as in the .env file
+2. Add your openAI key in the .env file
 ```
 cd transformative_repair
 touch .env
 echo "OPENAI_API_KEY=<your_openai_key>" > .env
 ```
-3. Run docker
-   - Docker compose
+3. Edit experiment configs `config.yml`
+
+## Run in Docker
+
+### Docker compose
+
 ```
 cd transformative_repair
 docker-compose up -d --build
 ```
-   - Docker
+
+### Docker
+
 ```
 cd transformative_repair
 docker build -t trt:latest .
@@ -31,8 +38,8 @@ docker run -tid\
   --name trt_container \
   trt:latest
 ```
-4. Edit experiment configs `config.yml`
-5. Enter container and run experiments
+
+### Enter container and run experiments
 ```
 docker-compose exec trt_container bash
 tmux new -s trt_session
@@ -41,14 +48,7 @@ python3 main.py
 
 ## Run locally
 
-1. Clone repo
-2. Add your openAI as in the .env file
-```
-cd transformative_repair
-touch .env
-echo "OPENAI_API_KEY=<your_openai_key>" > .env
-```
-3. Install smartbugs
+1. Install smartbugs
 ```
 cd transformative_repair
 git clone https://github.com/smartbugs/smartbugs
@@ -56,19 +56,18 @@ cd smartbugs
 install/setup-venv.sh
 ```
 
-4. Install pip requirements
-`pip3 install -r requirements.txt`
+2. Install pip requirements
+```
+pip3 install -r requirements.txt
+```
 
-5. Run TRT
-`python3 main.py`
+3. Run TRT
+```
+python3 main.py
+```
 
-## TRT run experiments
-1. Clone repo
-2. cd transformative_repair
-3. Add .env file with openAI credentials
-4. docker build --pull --rm -f "Dockerfile" -t trt:latest "."
-5. Start containers
 
+# TRT experiments containers
 - access_control
 ```
 docker run -tid\
@@ -141,7 +140,7 @@ docker stop trt_container_<name>
 docker ps --format "{{.ID}}" | wc -l
 ```
 
-## Docker Cleanup procedure
+# Docker Cleanup procedure
 1. Remove all smartbugs images
 ```
 docker ps -a | grep -E 'smartbugs/mythril:0.23.15|smartbugs/smartcheck|smartbugs/security:usolc|smartbugs/manticore:0.3.7|smartbugs/oyente:480e725|smartbugs/slither|smartbugs/maian:solc5.10|smartbugs/osiris:d1ecc37|trt:latest' | awk '{print $1}' | xargs docker rm -f
@@ -152,7 +151,7 @@ docker ps -a | grep -E 'smartbugs/mythril:0.23.15|smartbugs/smartcheck|smartbugs
 docker ps -a | grep trt:latest | awk '{print $1}' | xargs docker rm -f
 ```
 
-#### Prompt experiment roadmap
+#Prompt experiment roadmap
 Temperature 0.5 and 0.7. Top_p 0.95
 
 1. Basic. Just Fix this vulnerable Solidity Smart Contract `basic`
@@ -160,7 +159,7 @@ Temperature 0.5 and 0.7. Top_p 0.95
 3. Natural language info from analyzers `analyzers_natural_language_results`
 
 
-### Improvements to Smartbugs
+# Improvements to Smartbugs
 - Allow for parsing to common vulnerability types (labelled vulnerabilities)
 - Know what tools detect these different labels
 - Establish voting system between tools (vote in/out false positives)
@@ -170,7 +169,7 @@ Temperature 0.5 and 0.7. Top_p 0.95
 - Select tmp folder location
 - Do not mute underlyning container logs (Mythril?). I want to be able to inspect the logs when I am inside
 
-### Improvements to TRT
+# Improvements to TRT
 - Adapt to Smartbugs 2.0
 - Create compile check on specific version
 - Add config file for parsing of results
