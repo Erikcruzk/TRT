@@ -543,21 +543,24 @@ class TransformativeRepair:
         sc_vulnerable_count = 0
 
         # Create sc_dirs
-        for sc_filename in os.listdir(self.vulnerable_contracts_dir):
-            sc_name, file_extension = os.path.splitext(os.path.basename(sc_filename))
-            sc_path = os.path.join(self.vulnerable_contracts_dir, sc_filename)
-            if os.path.isfile(sc_path) and file_extension == ".sol":
-                # Create dir for contract
-                results_dir =  Path(os.path.join(self.experiment_results_dir, sc_name))
-                results_dir.mkdir(parents=True, exist_ok=True)
+        for root, dirs, files in os.walk(self.vulnerable_contracts_dir):
+            for sc_filename in files:
+                sc_name, file_extension = os.path.splitext(os.path.basename(sc_filename))
+                sc_path = os.path.join(root, sc_filename)
+                if file_extension == ".sol":
+                    # Create dir for contract
+                    results_dir = Path(os.path.join(self.experiment_results_dir, sc_name))
+                    # Rest of your code...
 
-                # Copy vulnerable sc to results
-                sc_results_path = Path(os.path.join(results_dir, sc_filename))
-                shutil.copyfile(sc_path, sc_results_path)
-                
-                # Add to results
-                sc_vulnerable_count += 1
-                self.smartbugs_sc_queue.put((sc_results_path, True))
+                    results_dir.mkdir(parents=True, exist_ok=True)
+
+                    # Copy vulnerable sc to results
+                    sc_results_path = Path(os.path.join(results_dir, sc_filename))
+                    shutil.copyfile(sc_path, sc_results_path)
+
+                    # Add to results
+                    sc_vulnerable_count += 1
+                    self.smartbugs_sc_queue.put((sc_results_path, True))
 
         # Initialize progress bar
         n_candidate_patches = self.llm_settings[self.experiment_settings["llm_model_name"]]["num_candidate_patches"]
@@ -579,6 +582,3 @@ class TransformativeRepair:
         #### Start Summary Thread
         shutdown_thread = threading.Thread(target=TransformativeRepair.shutdown_thread, args=(self.experiment_settings, self.llm_settings, stop_event))
         shutdown_thread.start()
-
-
-        
