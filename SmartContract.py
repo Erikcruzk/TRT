@@ -12,6 +12,7 @@ import yaml
 import re
 import atexit
 
+
 def exit_handler(process):
     # Try to gracefully terminate the process
     process.terminate()
@@ -21,11 +22,12 @@ def exit_handler(process):
         # If the process does not terminate in 5 seconds, kill it
         process.kill()
 
+
 class SmartContract:
-    def __init__(self, experiment_settings:dict, sc_path:Path):
-        self.experiment_settings:dict = experiment_settings
-        self.path:Path = sc_path
-        self.results_dir:Path = self.path.parent.absolute().relative_to(Path.cwd())
+    def __init__(self, experiment_settings: dict, sc_path: Path):
+        self.experiment_settings: dict = experiment_settings
+        self.path: Path = sc_path
+        self.results_dir: Path = self.path.parent.absolute().relative_to(Path.cwd())
 
         self.filename = os.path.basename(self.path)
         self.name, _ = os.path.splitext(self.filename)
@@ -49,21 +51,23 @@ class SmartContract:
         pattern = r"(\".*?\"|\'.*?\')|(/\*.*?\*/|//[^\r\n]*$)"
         # first group captures quoted strings (double or single)
         # second group captures comments (//single-line or /* multi-line */)
-        regex = re.compile(pattern, re.MULTILINE|re.DOTALL)
+        regex = re.compile(pattern, re.MULTILINE | re.DOTALL)
+
         def _replacer(match):
             # if the 2nd group (capturing comments) is not None,
             # it means we have captured a non-quoted (real) comment string.
             if match.group(2) is not None:
-                return "" # so we will return empty to remove the comment
-            else: # otherwise, we will return the 1st group
-                return match.group(1) # captured quoted-string
+                return ""  # so we will return empty to remove the comment
+            else:  # otherwise, we will return the 1st group
+                return match.group(1)  # captured quoted-string
+
         return regex.sub(_replacer, string)
-    
+
     @staticmethod
     def get_stripped_source_code_hash(source_code) -> str:
         # Remove comments
         stripped_source_code = SmartContract.remove_comments(source_code)
-        
+
         # Remove new lines, tabs, and spaces
         stripped_source_code = re.sub(r"[\n\t\s]*", "", stripped_source_code)
 
@@ -72,31 +76,23 @@ class SmartContract:
         return hash_object.hexdigest()
 
     @staticmethod
-    def get_smartbugs_tools(smartbugs_tools:List[str]):
-        tools = smartbugs_tools
+    def get_smartbugs_tools(smartbugs_tools: List[str]):
+        tools = set(smartbugs_tools)
 
-        if "access_control_tools" in smartbugs_tools:
-            tools.remove("access_control_tools")
-            tools.extend(["maian", "manticore", "mythril", "oyente", "securify", "slither"])
-        
-        if "arithmetic_tools" in smartbugs_tools:
-            tools.remove("arithmetic_tools")
-            tools.extend(["manticore", "mythril", "osiris", "oyente", "smartcheck"])
-        
-        if "reentrancy_tools" in smartbugs_tools:
-            tools.remove("reentrancy_tools")
-            tools.extend(["manticore", "mythril", "oyente", "securify", "slither"])
-        
-        if "unchecked_calls_tools" in smartbugs_tools:
-            tools.remove("unchecked_calls_tools")
-            tools.extend(["manticore", "mythril", "securify", "smartcheck"])
-        
-        if "transaction_order_dependence_tools" in smartbugs_tools:
-            tools.remove("transaction_order_dependence_tools")
-            tools.extend(["securify"])
+        mapping = {
+            "access_control_tools": ["maian", "manticore", "mythril", "oyente", "securify", "slither"],
+            "arithmetic_tools": ["manticore", "mythril", "osiris", "oyente", "smartcheck"],
+            "reentrancy_tools": ["manticore", "mythril", "oyente", "securify", "slither"],
+            "unchecked_calls_tools": ["manticore", "mythril", "securify", "smartcheck"],
+            "transaction_order_dependence_tools": ["securify"]
+        }
 
-        tools = list(set(tools))
-        return tools
+        for tool, replacements in mapping.items():
+            if tool in tools:
+                tools.remove(tool)
+                tools.update(replacements)
+
+        return list(tools)
 
     @staticmethod
     def get_vulnerability_aliases() -> dict:
@@ -114,104 +110,123 @@ class SmartContract:
 
         # Access Control
         access_control_aliases = ["access_control", "access control",
-                            "SWC 105", "SWC 106", "SWC 112", "SWC 115", # SWC
-                           "No Ether leak (no send)", "Destructible (verified)", #Maian
-                           "Delegatecall to user controlled address", "Delegatecall to user controlled function", "Reachable ether leak to sender", "Reachable ether leak to sender via argument", "Reachable external call to sender", "Reachable external call to sender via argument", "Reachable SELFDESTRUCT", "Warning ORIGIN instruction used", # Manticore
-                           "Unprotected Ether Withdrawal (SWC 105)", "Unprotected Selfdestruct (SWC 106)", "Delegatecall to user-supplied address (SWC 112)", "Dependence on tx.origin (SWC 115)", # Mythril
-                           "Parity Multisig Bug 2" # Oyente
-                           "UnrestrictedEtherFlow",  #Securify
-                          "arbitrary-send", "controlled-delegatecall", "suicidal", "tx-origin", "events-access" # Slither
-                          ]
+                                  "SWC 105", "SWC 106", "SWC 112", "SWC 115",  # SWC
+                                  "No Ether leak (no send)", "Destructible (verified)",  # Maian
+                                  "Delegatecall to user controlled address", "Delegatecall to user controlled function",
+                                  "Reachable ether leak to sender", "Reachable ether leak to sender via argument",
+                                  "Reachable external call to sender", "Reachable external call to sender via argument",
+                                  "Reachable SELFDESTRUCT", "Warning ORIGIN instruction used",  # Manticore
+                                  "Unprotected Ether Withdrawal (SWC 105)", "Unprotected Selfdestruct (SWC 106)",
+                                  "Delegatecall to user-supplied address (SWC 112)",
+                                  "Dependence on tx.origin (SWC 115)",  # Mythril
+                                  "Parity Multisig Bug 2"  # Oyente
+                                  "UnrestrictedEtherFlow",  # Securify
+                                  "arbitrary-send", "controlled-delegatecall", "suicidal", "tx-origin", "events-access"
+                                  # Slither
+                                  ]
         vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in access_control_aliases], "access_control"))
-        
+
         # Arithmetic: integer over and underflow
         arithmetic_aliases = ["overflow", "underflow", "integer overflow"
-                      "SWC 101", # SWC
-                      "Unsigned integer overflow at ADD instruction", "Unsigned integer overflow at MUL instruction", "Unsigned integer overflow at SUB instruction", # Manticore
-                     "Integer Arithmetic Bugs (SWC 101)", # Mythril
-                     "Division bugs", "Overflow bugs", "Signedness bugs", "Truncation bugs", "Underflow bugs", "Modulo bugs",# Osiris
-                     "Integer Overflow", "Integer Underflow",  # Oyente
-                     "SOLIDITY_ARRAY_LENGTH_MANIPULATION", "SOLIDITY_DIV_MUL", "SOLIDITY_UINT_CANT_BE_NEGATIVE", "SOLIDITY_VAR", "SOLIDITY_VAR_IN_LOOP_FOR"# Smartcheck
-                      ]
+                                                       "SWC 101",  # SWC
+                              "Unsigned integer overflow at ADD instruction",
+                              "Unsigned integer overflow at MUL instruction",
+                              "Unsigned integer overflow at SUB instruction",  # Manticore
+                              "Integer Arithmetic Bugs (SWC 101)",  # Mythril
+                              "Division bugs", "Overflow bugs", "Signedness bugs", "Truncation bugs", "Underflow bugs",
+                              "Modulo bugs",  # Osiris
+                              "Integer Overflow", "Integer Underflow",  # Oyente
+                              "SOLIDITY_ARRAY_LENGTH_MANIPULATION", "SOLIDITY_DIV_MUL",
+                              "SOLIDITY_UINT_CANT_BE_NEGATIVE", "SOLIDITY_VAR", "SOLIDITY_VAR_IN_LOOP_FOR"  # Smartcheck
+                              ]
         vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in arithmetic_aliases], "arithmetic"))
 
         # Bad randomness
-        bad_randomness_aliases = [] # TODO missing
+        bad_randomness_aliases = []  # TODO missing
         vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in bad_randomness_aliases], "bad_randomness"))
 
         # Denial of service
         denial_of_service_aliases = [
-            "SWC 113", "SWC 128"] # TODO No tools catch
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in denial_of_service_aliases], "denial_of_service"))
+            "SWC 113", "SWC 128"]  # TODO No tools catch
+        vulnerabilities_aliases.update(
+            dict.fromkeys([x.lower() for x in denial_of_service_aliases], "denial_of_service"))
 
         # TOD
         transaction_order_dependence_aliases = [
             "transaction order dependence", "tod",
             "SWC 114",
             # Oyente
-            "TODAmount", "TODReceiver", "TODTransfer" # Securify
+            "TODAmount", "TODReceiver", "TODTransfer"  # Securify
         ]
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in transaction_order_dependence_aliases], "transaction_order_dependence"))
-        
+        vulnerabilities_aliases.update(
+            dict.fromkeys([x.lower() for x in transaction_order_dependence_aliases], "transaction_order_dependence"))
+
         # Reentrancy
         reentrancy_aliases = ["reentrancy", "reentrance",
                               "SWC 107",
-                              "Re-Entrancy Vulnerability", # Oyente
-                              "External Call To User-Supplied Address (SWC 107)", "State access after external call (SWC 107)", # Mythril
-                              "DAO", "ReentrancyNoETH", "ReentrancyBenign", # Securify
-                              "reentrancy-eth", "reentrancy-no-eth", "reentrancy-benign", "reentrancy-events", "reentrancy-unlimited-gas", # Slither
+                              "Re-Entrancy Vulnerability",  # Oyente
+                              "External Call To User-Supplied Address (SWC 107)",
+                              "State access after external call (SWC 107)",  # Mythril
+                              "DAO", "ReentrancyNoETH", "ReentrancyBenign",  # Securify
+                              "reentrancy-eth", "reentrancy-no-eth", "reentrancy-benign", "reentrancy-events",
+                              "reentrancy-unlimited-gas",  # Slither
                               "Unprotected Ether Withdrawal", "reentrance"]
         vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in reentrancy_aliases], "reentrancy"))
 
         # Short Address
-        short_addresses_aliases = [] # TODO missing add smartcheck?
+        short_addresses_aliases = []  # TODO missing add smartcheck?
         vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in short_addresses_aliases], "short_addresses"))
 
         # Time Manipulation
         time_manipulation_aliases = []
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in time_manipulation_aliases], "time_manipulation"))
+        vulnerabilities_aliases.update(
+            dict.fromkeys([x.lower() for x in time_manipulation_aliases], "time_manipulation"))
 
         # unchecked low level call
         unchecked_low_level_calls_aliases = [
             "SWC 104",
-            "Returned value at CALL instruction is not used", "Returned value at CALL instruction is not used"# Manticore
-            "Unchecked return value from external call. (SWC 104)",# Mythril
-            "UnhandledException", # Securify
-            "unchecked-lowlevel", "low-level-calls", "unused-return", # Slither
-            "SOLIDITY_SEND", "SOLIDITY_UNCHECKED_CALL" # Smartcheck
+            "Returned value at CALL instruction is not used",
+            "Returned value at CALL instruction is not used"  # Manticore
+            "Unchecked return value from external call. (SWC 104)",  # Mythril
+            "UnhandledException",  # Securify
+            "unchecked-lowlevel", "low-level-calls", "unused-return",  # Slither
+            "SOLIDITY_SEND", "SOLIDITY_UNCHECKED_CALL"  # Smartcheck
         ]
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unchecked_low_level_calls_aliases], "unchecked_low_level_calls"))
+        vulnerabilities_aliases.update(
+            dict.fromkeys([x.lower() for x in unchecked_low_level_calls_aliases], "unchecked_low_level_calls"))
 
         # unhandled exception
         unhandled_exception_aliases = ["Unhandled Exception", "unhandled", "UnhandledException", "Exception Disorder"]
-        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in unhandled_exception_aliases], "unhandled_exception"))
+        vulnerabilities_aliases.update(
+            dict.fromkeys([x.lower() for x in unhandled_exception_aliases], "unhandled_exception"))
 
         return vulnerabilities_aliases
-    
+
     @staticmethod
-    def rename_findings_with_aliases(findings:List[dict]) -> list:
+    def rename_findings_with_aliases(findings: List[dict]) -> list:
         vulnerabilities_aliases = SmartContract.get_vulnerability_aliases()
 
         findings_renamed = copy.deepcopy(findings)
         for finding in findings_renamed:
-            
+
             vulnerability_name = finding["name"].lower()
 
             # Check if alias fount
             if vulnerability_name in vulnerabilities_aliases:
                 finding["name"] = vulnerabilities_aliases[vulnerability_name]
                 continue
-            
+
             # Check if vulnerability_name contains any alias
-            vulnerability_name_contains_alias = vulnerabilities_aliases.get(next((key for key in vulnerabilities_aliases if key in vulnerability_name), None));
+            vulnerability_name_contains_alias = vulnerabilities_aliases.get(
+                next((key for key in vulnerabilities_aliases if key in vulnerability_name), None));
             if vulnerability_name_contains_alias:
                 finding["name"] = vulnerability_name_contains_alias
                 continue
-        
+
         return findings_renamed
 
     @staticmethod
-    def get_analyzer_results_for_summary(vulnerabilities:dict) -> dict:
+    def get_analyzer_results_for_summary(vulnerabilities: dict) -> dict:
         analyzer_results_for_summary = {}
 
         vulnerabilities_aliases = SmartContract.get_vulnerability_aliases()
@@ -219,7 +234,7 @@ class SmartContract:
         for tool_name, tool_result in vulnerabilities["analyzer_results"].items():
             analyzer_results_for_summary[tool_name] = []
             findings = tool_result["vulnerability_findings"]
-            
+
             if not tool_result.get("successfull_analysis", False) == True:
                 analyzer_results_for_summary[tool_name].append("unsuccessfull_analysis")
 
@@ -230,17 +245,18 @@ class SmartContract:
                 if vulnerability_name in vulnerabilities_aliases:
                     analyzer_results_for_summary[tool_name].append(vulnerabilities_aliases[vulnerability_name])
                     continue
-                
+
                 # Check if vulnerability_name contains any alias
-                vulnerability_name_contains_alias = vulnerabilities_aliases.get(next((key for key in vulnerabilities_aliases if key in vulnerability_name), None));
+                vulnerability_name_contains_alias = vulnerabilities_aliases.get(
+                    next((key for key in vulnerabilities_aliases if key in vulnerability_name), None));
                 if vulnerability_name_contains_alias:
                     analyzer_results_for_summary[tool_name].append(vulnerability_name_contains_alias)
                     continue
-                
+
                 # Finally add vulnerability name
-                #print(vulnerability_name)
+                # print(vulnerability_name)
                 analyzer_results_for_summary[tool_name].append(vulnerability_name)
-            
+
             # Delete duplicates
             analyzer_results_for_summary[tool_name] = list(set(analyzer_results_for_summary[tool_name]))
 
@@ -249,23 +265,24 @@ class SmartContract:
         return analyzer_results_for_summary
 
     @staticmethod
-    def check_if_compiles(analyzer_results:dict, compilation_tools:list) -> bool:
+    def check_if_compiles(analyzer_results: dict, compilation_tools: list) -> bool:
         compiles = True
 
         errorTexts = ["solidity compilation failed", "unsuccessfull_analysis"]
 
-        for tool_vulnerabilities  in {k: v for k, v in analyzer_results.items() if k in compilation_tools}.values():
-            lower_vulnerabilities =  [x.lower() for x in tool_vulnerabilities]
+        for tool_vulnerabilities in {k: v for k, v in analyzer_results.items() if k in compilation_tools}.values():
+            lower_vulnerabilities = [x.lower() for x in tool_vulnerabilities]
 
-            if(any(elem in lower_vulnerabilities for elem in errorTexts)):
+            if (any(elem in lower_vulnerabilities for elem in errorTexts)):
                 compiles = False
         return compiles
-    
-    def create_vulnerabilities_from_sb_results(self, tool_name:str, tool_result:dict) -> None:
-        
+
+    def create_vulnerabilities_from_sb_results(self, tool_name: str, tool_result: dict) -> None:
+
         lines = self.source_code.split("\n")
         tool_vulnerabilities = {}
-        tool_vulnerabilities["successfull_analysis"] = False if (tool_result["errors"] or tool_result["fails"]) and not tool_result["findings"] else True
+        tool_vulnerabilities["successfull_analysis"] = False if (tool_result["errors"] or tool_result["fails"]) and not \
+        tool_result["findings"] else True
         tool_vulnerabilities["errors"] = tool_result["errors"] + tool_result.get("fails", [])
 
         vulnerability_findings = []
@@ -277,23 +294,23 @@ class SmartContract:
             vulnerability["vulnerability_from_line"] = from_line
             to_line = finding.get("line_end", None)
             vulnerability["vulnerability_to_line"] = to_line
-    
+
             if from_line and to_line:
-                code = "\n".join(lines[from_line - 1 : to_line - 1])
+                code = "\n".join(lines[from_line - 1: to_line - 1])
             elif from_line:
                 code = lines[from_line - 1]
             else:
                 code = None
 
-            vulnerability["vulnerability_code"] = code        
+            vulnerability["vulnerability_code"] = code
 
             vulnerability["message"] = finding.get("message", None)
 
             vulnerability_findings.append(vulnerability)
-        
+
         tool_vulnerabilities["vulnerability_findings"] = vulnerability_findings
         self.vulnerabilities["analyzer_results"][tool_name] = tool_vulnerabilities
-    
+
     def remove_old_smartbugs_directories(self):
         smartbugs_results_dir = Path(os.path.join(self.results_dir, "smartbugs_results"))
         dirs = os.listdir(smartbugs_results_dir)
@@ -305,7 +322,7 @@ class SmartContract:
                 date_str = parts[1]
                 time_str = parts[2]
                 date_time = datetime.strptime(date_str + " " + time_str, "%Y%m%d %H%M%S")
-                
+
                 if tool not in tool_dirs:
                     tool_dirs[tool] = (d, date_time)
                 else:
@@ -321,14 +338,15 @@ class SmartContract:
     def set_vulnerabilities(self):
         smartbugs_results_dirs = Path(os.path.join(self.results_dir, "smartbugs_results"))
         self.vulnerabilities["smartbugs_completed"] = False
-        self.vulnerabilities["analyzer_results"] = {}        
+        self.vulnerabilities["analyzer_results"] = {}
 
         # Loop through all smartbugs_results
-        for smartbugs_result_dir in [os.path.join(smartbugs_results_dirs, f) for f in os.listdir(smartbugs_results_dirs) if os.path.isdir(os.path.join(smartbugs_results_dirs, f))]:
+        for smartbugs_result_dir in [os.path.join(smartbugs_results_dirs, f) for f in os.listdir(smartbugs_results_dirs)
+                                     if os.path.isdir(os.path.join(smartbugs_results_dirs, f))]:
             tool_name = os.path.basename(smartbugs_result_dir).split("_", 1)[0]
             tool_result = json.load(open(os.path.join(smartbugs_result_dir, "result.json"), "r"))
             self.create_vulnerabilities_from_sb_results(tool_name, tool_result)
-        
+
         if not self.vulnerabilities["analyzer_results"] == {}:
             self.vulnerabilities["smartbugs_completed"] = True
 
@@ -336,11 +354,11 @@ class SmartContract:
         with open(os.path.join(self.results_dir, "vulnerabilities.json"), "w") as outfile:
             outfile.write(json.dumps(self.vulnerabilities, indent=2))
 
-    def run_smartbugs(self) -> None:    
+    def run_smartbugs(self) -> None:
         try:
             # Create smsrtbugs results directory
             smartbugs_results_dir = Path(os.path.join(self.results_dir, "smartbugs_results"))
-            smartbugs_results_dir.mkdir(parents=True, exist_ok=True)            
+            smartbugs_results_dir.mkdir(parents=True, exist_ok=True)
 
             #### Create smartbugs config yaml file
             # set the fields that are not editable
@@ -350,19 +368,20 @@ class SmartContract:
                 "json": True,
                 "tools": self.smartbugs_tools,
                 "results": os.path.join(smartbugs_results_dir, "${TOOL}_${RUNID}"),
-                "log": os.path.join(self.results_dir,"smartbugs_logs", "{RUNID}.log"),
+                "log": os.path.join(self.results_dir, "smartbugs_logs", "{RUNID}.log"),
                 "processes": self.experiment_settings["smartbugs_processes"],
                 "timeout": self.experiment_settings["smartbugs_timeout"]
             }
 
             # write the data to a YAML file
-            smartbugs_config_path = os.path.join(self.results_dir,"smartbugs_config.yml")
+            smartbugs_config_path = os.path.join(self.results_dir, "smartbugs_config.yml")
             with open(smartbugs_config_path, "w") as f:
                 yaml.dump(smartbugs_config, f)
 
             # Run smartbugs
-            #process = subprocess.Popen(f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}', shell=True, stdout=subprocess.DEVNULL)
-            process = subprocess.Popen(f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}', shell=True) # DEBUG
+            # process = subprocess.Popen(f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}', shell=True, stdout=subprocess.DEVNULL)
+            process = subprocess.Popen(f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}',
+                                       shell=True)  # DEBUG
 
             atexit.register(exit_handler, process)
 
@@ -377,5 +396,5 @@ class SmartContract:
         except Exception as e:
             self.vulnerabilities["smartbugs_completed"] = str(e)
             logging.critical(f"Smartbugs failure {self.results_dir} {str(e)}", exc_info=True)
-        
+
         self.write_vulnerabilities_to_results_dir()
