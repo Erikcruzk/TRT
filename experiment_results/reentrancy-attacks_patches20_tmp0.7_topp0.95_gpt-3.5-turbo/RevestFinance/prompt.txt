@@ -1,0 +1,347 @@
+/// Your task is to repair the following Solidity Smart Contract
+
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+import '@openzeppelin/contracts/utils/introspection/ERC165Checker.sol';
+import "./interfaces/IRevest.sol";
+import "./interfaces/IAddressRegistry.sol";
+import "./interfaces/ILockManager.sol";
+import "./interfaces/IInterestHandler.sol";
+import "./interfaces/ITokenVault.sol";
+import "./interfaces/IRewardsHandler.sol";
+import "./interfaces/IOracleDispatch.sol";
+import "./interfaces/IOutputReceiver.sol";
+import "./interfaces/IAddressLock.sol";
+import "./utils/RevestAccessControl.sol";
+import "./utils/RevestReentrancyGuard.sol";
+import "./lib/IUnicryptV2Locker.sol";
+import "./lib/IWETH.sol";
+import "./FNFTHandler.sol";
+
+contract Revest is IRevest, AccessControlEnumerable, RevestAccessControl, RevestReentrancyGuard {
+    using SafeERC20 for IERC20;
+    using ERC165Checker for address;
+
+    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+    bytes4 public constant ADDRESS_LOCK_INTERFACE_ID = type(IAddressLock).interfaceId;
+
+    address immutable WETH;
+
+    uint public erc20Fee = 0;     uint private constant erc20multiplierPrecision = 1000;
+    uint public flatWeiFee = 0;
+    uint private constant MAX_INT = 2**256 - 1;
+    mapping(address => bool) private approved;
+
+        constructor(address provider, address weth) RevestAccessControl(provider) {
+        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+        _setupRole(PAUSER_ROLE, _msgSender());
+        WETH = weth;
+    }
+
+    
+        function mintTimeLock(
+        uint endTime,
+        address[] memory recipients,
+        uint[] memory quantities,
+        IRevest.FNFTConfig memory fnftConfig
+    ) external payable override returns (uint) {
+                uint fnftId = getFNFTHandler().getNextId();
+                {
+            IRevest.LockParam memory timeLock;
+            timeLock.lockType = IRevest.LockType.TimeLock;
+            timeLock.timeLockExpiry = endTime;
+            getLockManager().createLock(fnftId, timeLock);
+        }
+        doMint(recipients, quantities, fnftId, fnftConfig, msg.value);
+
+        emit FNFTTimeLockMinted(fnftConfig.asset, _msgSender(), fnftId, endTime, quantities, fnftConfig);
+
+        return fnftId;
+    }
+
+    function mintValueLock(
+        address primaryAsset,
+        address compareTo,
+        uint unlockValue,
+        bool unlockRisingEdge,
+        address oracleDispatch,
+        address[] memory recipients,
+        uint[] memory quantities,
+        IRevest.FNFTConfig memory fnftConfig
+    ) external payable override returns (uint) {
+                uint fnftId = getFNFTHandler().getNextId();
+                {
+            IRevest.LockParam memory valueLock;
+            valueLock.lockType = IRevest.LockType.ValueLock;
+            valueLock.valueLock.unlockRisingEdge = unlockRisingEdge;
+            valueLock.valueLock.unlockValue = unlockValue;
+            valueLock.valueLock.asset = primaryAsset;
+            valueLock.valueLock.compareTo = compareTo;
+            valueLock.valueLock.oracle = oracleDispatch;
+
+            getLockManager().createLock(fnftId, valueLock);
+        }
+
+        doMint(recipients, quantities, fnftId, fnftConfig, msg.value);
+
+        emit FNFTValueLockMinted(primaryAsset,  _msgSender(), fnftId, compareTo, oracleDispatch, quantities, fnftConfig);
+
+        return fnftId;
+    }
+
+    function mintAddressLock(
+        address trigger,
+        bytes memory arguments,
+        address[] memory recipients,
+        uint[] memory quantities,
+        IRevest.FNFTConfig memory fnftConfig
+    ) external payable override returns (uint) {
+        uint fnftId = getFNFTHandler().getNextId();
+
+        {
+            IRevest.LockParam memory addressLock;
+            addressLock.addressLock = trigger;
+            addressLock.lockType = IRevest.LockType.AddressLock;
+                        uint lockId = getLockManager().createLock(fnftId, addressLock);
+
+            if(trigger.supportsInterface(ADDRESS_LOCK_INTERFACE_ID)) {
+                IAddressLock(trigger).createLock(fnftId, lockId, arguments);
+            }
+        }
+                        doMint(recipients, quantities, fnftId, fnftConfig, msg.value);
+
+        emit FNFTAddressLockMinted(fnftConfig.asset, _msgSender(), fnftId, trigger, quantities, fnftConfig);
+
+        return fnftId;
+    }
+
+    function withdrawFNFT(uint fnftId, uint quantity) external override revestNonReentrant(fnftId) {
+        address fnftHandler = addressesProvider.getRevestFNFT();
+                require(quantity <= IFNFTHandler(fnftHandler).getSupply(fnftId), "E022");
+                require(quantity <= IFNFTHandler(fnftHandler).getBalance(_msgSender(), fnftId), "E006");
+                require(IFNFTHandler(fnftHandler).getBalance(_msgSender(), fnftId) > 0, "E032");
+
+        IRevest.LockType lockType = getLockManager().lockTypes(fnftId);
+        require(lockType != IRevest.LockType.DoesNotExist, "E007");
+        require(getLockManager().unlockFNFT(fnftId, _msgSender()),
+            lockType == IRevest.LockType.TimeLock ? "E010" :
+            lockType == IRevest.LockType.ValueLock ? "E018" : "E019");
+                burn(_msgSender(), fnftId, quantity);
+        getTokenVault().withdrawToken(fnftId, quantity, _msgSender());
+
+        emit FNFTWithdrawn(_msgSender(), fnftId, quantity);
+    }
+
+    function unlockFNFT(uint fnftId) external override {
+                IRevest.LockType lock = getLockManager().lockTypes(fnftId);
+        require(lock == IRevest.LockType.AddressLock || lock == IRevest.LockType.ValueLock, "E008");
+        require(getLockManager().unlockFNFT(fnftId, _msgSender()), "E056");
+
+        emit FNFTUnlocked(_msgSender(), fnftId);
+    }
+
+    function splitFNFT(
+        uint fnftId,
+        uint[] memory proportions,
+        uint quantity
+    ) external override returns (uint[] memory) {
+                require(getFNFTHandler().getBalance(_msgSender(), fnftId) > 0, "E032");
+                require(getTokenVault().getSplitsRemaining(fnftId) > 0, "E023");
+        uint[] memory newFNFTIds = new uint[](proportions.length);
+        uint start = getFNFTHandler().getNextId();
+        uint lockId = getLockManager().fnftIdToLockId(fnftId);
+        getFNFTHandler().burn(_msgSender(), fnftId, quantity);
+        for(uint i = 0; i < proportions.length; i++) {
+            newFNFTIds[i] = start + i;
+            getFNFTHandler().mint(_msgSender(), newFNFTIds[i], quantity, "");
+            getLockManager().pointFNFTToLock(newFNFTIds[i], lockId);
+        }
+        getTokenVault().splitFNFT(fnftId, newFNFTIds, proportions, quantity);
+
+        emit FNFTSplit(_msgSender(), newFNFTIds, proportions, quantity);
+
+        return newFNFTIds;
+    }
+
+        function extendFNFTMaturity(
+        uint fnftId,
+        uint endTime
+    ) external returns (uint) {
+        uint supply = getFNFTHandler().getSupply(fnftId);
+        uint balance = getFNFTHandler().getBalance(_msgSender(), fnftId);
+
+        require(fnftId < getFNFTHandler().getNextId(), "E007");
+        require(balance == supply, "E022");
+                        require(getTokenVault().getFNFT(fnftId).maturityExtension &&
+            getLockManager().lockTypes(fnftId) == IRevest.LockType.TimeLock, "E029");
+                require(getLockManager().fnftIdToLock(fnftId).timeLockExpiry < endTime, "E030");
+
+                IRevest.LockParam memory lock;
+        lock.lockType = IRevest.LockType.TimeLock;
+        lock.timeLockExpiry = endTime;
+
+        getLockManager().createLock(fnftId, lock);
+
+        emit FNFTMaturityExtended(_msgSender(), fnftId, endTime);
+
+                return fnftId;
+    }
+
+        function depositAdditionalToFNFT(
+        uint fnftId,
+        uint amount,
+        uint quantity
+    ) external override returns (uint) {
+        IRevest.FNFTConfig memory fnft = getTokenVault().getFNFT(fnftId);
+        require(fnftId < getFNFTHandler().getNextId(), "E007");
+        require(fnft.isMulti, "E034");
+        require(fnft.depositStopTime < block.timestamp || fnft.depositStopTime == 0, "E035");
+        require(quantity > 0, "E070");
+
+        address vault = addressesProvider.getTokenVault();
+        address handler = addressesProvider.getRevestFNFT();
+        address lockHandler = addressesProvider.getLockManager();
+
+        bool createNewSeries = false;
+        {
+            uint supply = IFNFTHandler(handler).getSupply(fnftId);
+
+            uint balance = IFNFTHandler(handler).getBalance(_msgSender(), fnftId);
+
+            if (quantity > balance) {
+                require(quantity == supply, "E069");
+            }
+            else if (quantity < balance || balance < supply) {
+                createNewSeries = true;
+            }
+        }
+
+                uint totalERC20Fee = erc20Fee * quantity * amount / erc20multiplierPrecision;
+        if(totalERC20Fee > 0) {
+            IERC20(fnft.asset).safeTransferFrom(_msgSender(), addressesProvider.getAdmin(), totalERC20Fee);
+        }
+
+        uint lockId = ILockManager(lockHandler).fnftIdToLockId(fnftId);
+
+                uint newFNFTId;
+        if(createNewSeries) {
+                        newFNFTId = IFNFTHandler(handler).getNextId();
+            ILockManager(lockHandler).pointFNFTToLock(newFNFTId, lockId);
+            burn(_msgSender(), fnftId, quantity);
+            IFNFTHandler(handler).mint(_msgSender(), newFNFTId, quantity, "");
+        } else {
+                        newFNFTId = 0;         }
+
+                ITokenVault(vault).depositToken(fnftId, amount, quantity);
+                if(fnft.asset != address(0)){
+            IERC20(fnft.asset).safeTransferFrom(_msgSender(), vault, quantity * amount);
+        }
+
+        ITokenVault(vault).handleMultipleDeposits(fnftId, newFNFTId, fnft.depositAmount + amount);
+
+        emit FNFTAddionalDeposited(_msgSender(), newFNFTId, quantity, amount);
+
+        return newFNFTId;
+    }
+
+        function getAddressesProvider() external view returns (IAddressRegistry) {
+        return addressesProvider;
+    }
+
+            
+    function doMint(
+        address[] memory recipients,
+        uint[] memory quantities,
+        uint fnftId,
+        IRevest.FNFTConfig memory fnftConfig,
+        uint weiValue
+    ) internal {
+        bool isSingular;
+        uint totalQuantity = quantities[0];
+        {
+            uint rec = recipients.length;
+            uint quant = quantities.length;
+            require(rec == quant, "recipients and quantities arrays must match");
+                        isSingular = rec == 1;
+            if(!isSingular) {
+                for(uint i = 1; i < quant; i++) {
+                    totalQuantity += quantities[i];
+                }
+            }
+            require(totalQuantity > 0, "E003");
+        }
+
+                address vault = addressesProvider.getTokenVault();
+
+                if(weiValue > 0) {
+                        IWETH(WETH).deposit{value: weiValue}();
+        }
+
+        if(flatWeiFee > 0) {
+            require(weiValue >= flatWeiFee, "E005");
+            address reward = addressesProvider.getRewardsHandler();
+            if(!approved[reward]) {
+                IERC20(WETH).approve(reward, MAX_INT);
+                approved[reward] = true;
+            }
+            IRewardsHandler(reward).receiveFee(WETH, flatWeiFee);
+        }
+
+        {
+            uint totalERC20Fee = erc20Fee * totalQuantity * fnftConfig.depositAmount / erc20multiplierPrecision;
+            if(totalERC20Fee > 0) {
+                IERC20(fnftConfig.asset).safeTransferFrom(_msgSender(), addressesProvider.getAdmin(), totalERC20Fee);
+            }
+        }
+                weiValue -= flatWeiFee;
+                if(weiValue > 0) {
+                        require(fnftConfig.asset == WETH, "E053");
+            require(weiValue >= fnftConfig.depositAmount, "E015");
+        }
+
+                ITokenVault(vault).createFNFT(fnftId, fnftConfig, totalQuantity, _msgSender());
+
+                if(fnftConfig.asset != address(0)){
+            IERC20(fnftConfig.asset).safeTransferFrom(_msgSender(), vault, totalQuantity * fnftConfig.depositAmount);
+        }
+                        if(!isSingular) {
+            getFNFTHandler().mintBatchRec(recipients, quantities, fnftId, totalQuantity, '');
+        } else {
+            getFNFTHandler().mint(recipients[0], fnftId, quantities[0], '');
+        }
+
+    }
+
+    function burn(
+        address account,
+        uint id,
+        uint amount
+    ) internal {
+        address fnftHandler = addressesProvider.getRevestFNFT();
+        require(IFNFTHandler(fnftHandler).getSupply(id) - amount >= 0, "E025");
+        IFNFTHandler(fnftHandler).burn(account, id, amount);
+    }
+
+    function setFlatWeiFee(uint wethFee) external override onlyOwner {
+        flatWeiFee = wethFee;
+    }
+
+    function setERC20Fee(uint erc20) external override onlyOwner {
+        erc20Fee = erc20;
+    }
+
+    function getFlatWeiFee() external view override returns (uint) {
+        return flatWeiFee;
+    }
+
+    function getERC20Fee() external view override returns (uint) {
+        return erc20Fee;
+    }
+}
+
+/// This Solidity Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+
+
+/// Repaired Solidity Smart Contract

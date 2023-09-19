@@ -1,0 +1,669 @@
+{
+    "<stdin>:IStrategyLink": {
+        "abi": [
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "strategy",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "uint256",
+                        "name": "pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "user",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "borrowAmount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "StrategyBorrow",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "strategy",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "uint256",
+                        "name": "pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "user",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "borrowAmount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "StrategyDeposit",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "strategy",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "uint256",
+                        "name": "pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "user",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "StrategyLiquidation",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "strategy",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "uint256",
+                        "name": "pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "user",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "StrategyWithdraw",
+                "type": "event"
+            },
+            {
+                "inputs": [],
+                "name": "bank",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_account",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_debtFrom",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_bAmount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_desirePrice",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_slippage",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "deposit",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "lpAmount",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_account",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_debtFrom",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_bAmount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_desirePrice",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_slippage",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "depositLPToken",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "lpAmount",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_account",
+                        "type": "address"
+                    }
+                ],
+                "name": "emergencyWithdraw",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getBaseToken",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "baseToken",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_account",
+                        "type": "address"
+                    }
+                ],
+                "name": "getBorrowAmount",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "value",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_account",
+                        "type": "address"
+                    }
+                ],
+                "name": "getBorrowInfo",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "borrowFrom",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "bid",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_account",
+                        "type": "address"
+                    }
+                ],
+                "name": "getDepositAmount",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getPoolCollateralToken",
+                "outputs": [
+                    {
+                        "internalType": "address[]",
+                        "name": "collateralToken",
+                        "type": "address[]"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getPoolInfo",
+                "outputs": [
+                    {
+                        "internalType": "address[]",
+                        "name": "collateralToken",
+                        "type": "address[]"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "baseToken",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "lpToken",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "poolId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "totalLPAmount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "totalLPRefund",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getPoollpToken",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "lpToken",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getSource",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_account",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_hunter",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_maxDebt",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "liquidation",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "massUpdatePools",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_account",
+                        "type": "address"
+                    }
+                ],
+                "name": "pendingLPAmount",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "value",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_account",
+                        "type": "address"
+                    }
+                ],
+                "name": "pendingRewards",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "value",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "poolLength",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_account",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_rate",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "_fast",
+                        "type": "bool"
+                    }
+                ],
+                "name": "repayBorrow",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "updatePool",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_account",
+                        "type": "address"
+                    }
+                ],
+                "name": "userInfo",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_account",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_rate",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "withdraw",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_pid",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_account",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_rate",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "withdrawLPToken",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ],
+        "bin": ""
+    }
+}

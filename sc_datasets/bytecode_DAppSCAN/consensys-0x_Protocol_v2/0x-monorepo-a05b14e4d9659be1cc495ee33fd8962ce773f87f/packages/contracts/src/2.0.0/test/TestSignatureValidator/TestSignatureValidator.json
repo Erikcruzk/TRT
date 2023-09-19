@@ -1,0 +1,938 @@
+{
+    "<stdin>:ISignatureValidator": {
+        "abi": [
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "hash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "preSign",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "validatorAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "approval",
+                        "type": "bool"
+                    }
+                ],
+                "name": "setSignatureValidatorApproval",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "hash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "isValidSignature",
+                "outputs": [
+                    {
+                        "name": "isValid",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ],
+        "bin": ""
+    },
+    "<stdin>:ITransactions": {
+        "abi": [
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "salt",
+                        "type": "uint256"
+                    },
+                    {
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "data",
+                        "type": "bytes"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "executeTransaction",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ],
+        "bin": ""
+    },
+    "<stdin>:IValidator": {
+        "abi": [
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "hash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "isValidSignature",
+                "outputs": [
+                    {
+                        "name": "isValid",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ],
+        "bin": ""
+    },
+    "<stdin>:IWallet": {
+        "abi": [
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "hash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "isValidSignature",
+                "outputs": [
+                    {
+                        "name": "isValid",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ],
+        "bin": ""
+    },
+    "<stdin>:LibBytes": {
+        "abi": [],
+        "bin": "604c602c600b82828239805160001a60731460008114601c57601e565bfe5b5030600052607381538281f30073000000000000000000000000000000000000000030146080604052600080fd00a165627a7a72305820b898e19287d296697257c6b370980436d05721f09dcba71134e03da7fdf9d9fc0029"
+    },
+    "<stdin>:LibEIP712": {
+        "abi": [
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "EIP712_DOMAIN_SEPARATOR_SCHEMA_HASH",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bytes32"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "EIP712_DOMAIN_HASH",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bytes32"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            }
+        ],
+        "bin": "608060405234801561001057600080fd5b5060405160200180807f454950373132446f6d61696e2800000000000000000000000000000000000000815250600d01807f737472696e67206e616d652c0000000000000000000000000000000000000000815250600c01807f737472696e672076657273696f6e2c0000000000000000000000000000000000815250600f01807f6164647265737320766572696679696e67436f6e747261637400000000000000815250601901807f290000000000000000000000000000000000000000000000000000000000000081525060010190506040516020818303038152906040526040518082805190602001908083835b6020831015156101265780518252602082019150602081019050602083039250610101565b6001836020036101000a03801982511681845116808217855250505050505090500191505060405180910390206040805190810160405280600b81526020017f30782050726f746f636f6c0000000000000000000000000000000000000000008152506040518082805190602001908083835b6020831015156101be5780518252602082019150602081019050602083039250610199565b6001836020036101000a03801982511681845116808217855250505050505090500191505060405180910390206040805190810160405280600181526020017f32000000000000000000000000000000000000000000000000000000000000008152506040518082805190602001908083835b6020831015156102565780518252602082019150602081019050602083039250610231565b6001836020036101000a038019825116818451168082178552505050505050905001915050604051809103902030604051602001808560001916600019168152602001846000191660001916815260200183600019166000191681526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019450505050506040516020818303038152906040526040518082805190602001908083835b602083101515610331578051825260208201915060208101905060208303925061030c565b6001836020036101000a03801982511681845116808217855250505050505090500191505060405180910390206000816000191690555061022e806103776000396000f30060806040526004361061004c576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680632624b2d914610051578063e306f77914610084575b600080fd5b34801561005d57600080fd5b506100666100b7565b60405180826000191660001916815260200191505060405180910390f35b34801561009057600080fd5b506100996101fc565b60405180826000191660001916815260200191505060405180910390f35b60405160200180807f454950373132446f6d61696e2800000000000000000000000000000000000000815250600d01807f737472696e67206e616d652c0000000000000000000000000000000000000000815250600c01807f737472696e672076657273696f6e2c0000000000000000000000000000000000815250600f01807f6164647265737320766572696679696e67436f6e747261637400000000000000815250601901807f290000000000000000000000000000000000000000000000000000000000000081525060010190506040516020818303038152906040526040518082805190602001908083835b6020831015156101cc57805182526020820191506020810190506020830392506101a7565b6001836020036101000a038019825116818451168082178552505050505050905001915050604051809103902081565b600054815600a165627a7a723058206389964f084667f8f032f4a760f84477182a17193bcbffe9097d4c637318d5ef0029"
+    },
+    "<stdin>:LibExchangeErrors": {
+        "abi": [],
+        "bin": "6080604052348015600f57600080fd5b50603580601d6000396000f3006080604052600080fd00a165627a7a723058200094965194c5b0d890daf1e9867f4c0f23ef536fe67fa6d66ef779ac47271d720029"
+    },
+    "<stdin>:MSignatureValidator": {
+        "abi": [
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "hash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "preSign",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "validatorAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "approval",
+                        "type": "bool"
+                    }
+                ],
+                "name": "setSignatureValidatorApproval",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "hash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "isValidSignature",
+                "outputs": [
+                    {
+                        "name": "isValid",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "name": "validatorAddress",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "name": "approved",
+                        "type": "bool"
+                    }
+                ],
+                "name": "SignatureValidatorApproval",
+                "type": "event"
+            }
+        ],
+        "bin": ""
+    },
+    "<stdin>:MTransactions": {
+        "abi": [
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "salt",
+                        "type": "uint256"
+                    },
+                    {
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "data",
+                        "type": "bytes"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "executeTransaction",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ],
+        "bin": ""
+    },
+    "<stdin>:MixinSignatureValidator": {
+        "abi": [
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "hash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "preSign",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "validatorAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "approval",
+                        "type": "bool"
+                    }
+                ],
+                "name": "setSignatureValidatorApproval",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "",
+                        "type": "address"
+                    },
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "allowedValidators",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "",
+                        "type": "bytes32"
+                    },
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "preSigned",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "hash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "isValidSignature",
+                "outputs": [
+                    {
+                        "name": "isValid",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "salt",
+                        "type": "uint256"
+                    },
+                    {
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "data",
+                        "type": "bytes"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "executeTransaction",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "name": "validatorAddress",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "name": "approved",
+                        "type": "bool"
+                    }
+                ],
+                "name": "SignatureValidatorApproval",
+                "type": "event"
+            }
+        ],
+        "bin": ""
+    },
+    "<stdin>:MixinTransactions": {
+        "abi": [
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "EIP712_DOMAIN_SEPARATOR_SCHEMA_HASH",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bytes32"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "hash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "preSign",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "",
+                        "type": "bytes32"
+                    }
+                ],
+                "name": "transactions",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "validatorAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "approval",
+                        "type": "bool"
+                    }
+                ],
+                "name": "setSignatureValidatorApproval",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "hash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "isValidSignature",
+                "outputs": [
+                    {
+                        "name": "isValid",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "salt",
+                        "type": "uint256"
+                    },
+                    {
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "data",
+                        "type": "bytes"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "executeTransaction",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "EIP712_DOMAIN_HASH",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bytes32"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "currentContextAddress",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "name": "validatorAddress",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "name": "approved",
+                        "type": "bool"
+                    }
+                ],
+                "name": "SignatureValidatorApproval",
+                "type": "event"
+            }
+        ],
+        "bin": ""
+    },
+    "<stdin>:TestSignatureValidator": {
+        "abi": [
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "EIP712_DOMAIN_SEPARATOR_SCHEMA_HASH",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bytes32"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "hash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "preSign",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "",
+                        "type": "bytes32"
+                    }
+                ],
+                "name": "transactions",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "validatorAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "approval",
+                        "type": "bool"
+                    }
+                ],
+                "name": "setSignatureValidatorApproval",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "",
+                        "type": "address"
+                    },
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "allowedValidators",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "",
+                        "type": "bytes32"
+                    },
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "preSigned",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "hash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "isValidSignature",
+                "outputs": [
+                    {
+                        "name": "isValid",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "hash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "name": "signer",
+                        "type": "address"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "publicIsValidSignature",
+                "outputs": [
+                    {
+                        "name": "isValid",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "salt",
+                        "type": "uint256"
+                    },
+                    {
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "name": "data",
+                        "type": "bytes"
+                    },
+                    {
+                        "name": "signature",
+                        "type": "bytes"
+                    }
+                ],
+                "name": "executeTransaction",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "EIP712_DOMAIN_HASH",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bytes32"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "currentContextAddress",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "name": "signerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "name": "validatorAddress",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "name": "approved",
+                        "type": "bool"
+                    }
+                ],
+                "name": "SignatureValidatorApproval",
+                "type": "event"
+            }
+        ],
+        "bin": "608060405260405160200180807f454950373132446f6d61696e2800000000000000000000000000000000000000815250600d01807f737472696e67206e616d652c0000000000000000000000000000000000000000815250600c01807f737472696e672076657273696f6e2c0000000000000000000000000000000000815250600f01807f6164647265737320766572696679696e67436f6e747261637400000000000000815250601901807f290000000000000000000000000000000000000000000000000000000000000081525060010190506040516020818303038152906040526040518082805190602001908083835b6020831015156200011b5780518252602082019150602081019050602083039250620000f4565b6001836020036101000a03801982511681845116808217855250505050505090500191505060405180910390206040805190810160405280600b81526020017f30782050726f746f636f6c0000000000000000000000000000000000000000008152506040518082805190602001908083835b602083101515620001b557805182526020820191506020810190506020830392506200018e565b6001836020036101000a03801982511681845116808217855250505050505090500191505060405180910390206040805190810160405280600181526020017f32000000000000000000000000000000000000000000000000000000000000008152506040518082805190602001908083835b6020831015156200024f578051825260208201915060208101905060208303925062000228565b6001836020036101000a038019825116818451168082178552505050505050905001915050604051809103902030604051602001808560001916600019168152602001846000191660001916815260200183600019166000191681526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019450505050506040516020818303038152906040526040518082805190602001908083835b6020831015156200032c578051825260208201915060208101905060208303925062000305565b6001836020036101000a0380198251168184511680821785525050505050509050019150506040518091039020600081600019169055506123f780620003736000396000f3006080604052600436106100af576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680632624b2d9146100b45780633683ef8e146100e7578063642f2eaf1461015057806377fcce68146101995780637b8e3514146101e857806382c174d01461026357806393634702146102cc578063abba41cc1461037b578063bfc8bfce1461042a578063e306f779146104a7578063eea086ba146104da575b600080fd5b3480156100c057600080fd5b506100c9610531565b60405180826000191660001916815260200191505060405180910390f35b3480156100f357600080fd5b5061014e6004803603810190808035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001908201803590602001919091929391929390505050610676565b005b34801561015c57600080fd5b5061017f600480360381019080803560001916906020019092919050505061079d565b604051808215151515815260200191505060405180910390f35b3480156101a557600080fd5b506101e6600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035151590602001909291905050506107bd565b005b3480156101f457600080fd5b50610249600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506108cb565b604051808215151515815260200191505060405180910390f35b34801561026f57600080fd5b506102b26004803603810190808035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506108fa565b604051808215151515815260200191505060405180910390f35b3480156102d857600080fd5b506103616004803603810190808035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001908201803590602001908080601f0160208091040260200160405190810160405280939291908181526020018383808284378201915050505050509192919290505050610929565b604051808215151515815260200191505060405180910390f35b34801561038757600080fd5b506104106004803603810190808035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001908201803590602001908080601f0160208091040260200160405190810160405280939291908181526020018383808284378201915050505050509192919290505050611849565b604051808215151515815260200191505060405180910390f35b34801561043657600080fd5b506104a560048036038101908080359060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001908201803590602001919091929391929390803590602001908201803590602001919091929391929390505050611862565b005b3480156104b357600080fd5b506104bc611c9a565b60405180826000191660001916815260200191505060405180910390f35b3480156104e657600080fd5b506104ef611ca0565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b60405160200180807f454950373132446f6d61696e2800000000000000000000000000000000000000815250600d01807f737472696e67206e616d652c0000000000000000000000000000000000000000815250600c01807f737472696e672076657273696f6e2c0000000000000000000000000000000000815250600f01807f6164647265737320766572696679696e67436f6e747261637400000000000000815250601901807f290000000000000000000000000000000000000000000000000000000000000081525060010190506040516020818303038152906040526040518082805190602001908083835b6020831015156106465780518252602082019150602081019050602083039250610621565b6001836020036101000a038019825116818451168082178552505050505050905001915050604051809103902081565b6106b3848484848080601f016020809104026020016040519081016040528093929190818152602001838380828437820191505050505050610929565b1515610727576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260118152602001807f494e56414c49445f5349474e415455524500000000000000000000000000000081525060200191505060405180910390fd5b6001806000866000191660001916815260200190815260200160002060008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050505050565b60036020528060005260406000206000915054906101000a900460ff1681565b60006107c7611cc6565b905081600260008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff0219169083151502179055508273ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff167fa8656e308026eeabce8f0bc18048433252318ab80ac79da0b3d3d8697dfba89184604051808215151515815260200191505060405180910390a3505050565b60026020528160005260406000206020528060005260406000206000915091509054906101000a900460ff1681565b60016020528160005260406000206020528060005260406000206000915091509054906101000a900460ff1681565b600080600080600080600080600089511115156109ae576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601e8152602001807f4c454e4754485f475245415445525f5448414e5f305f5245515549524544000081525060200191505060405180910390fd5b6109b789611d52565b7f0100000000000000000000000000000000000000000000000000000000000000900496506009808111156109e857fe5b60ff168760ff16101515610a64576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260158152602001807f5349474e41545552455f554e535550504f52544544000000000000000000000081525060200191505060405180910390fd5b8660ff166009811115610a7357fe5b955060006009811115610a8257fe5b866009811115610a8e57fe5b1415610b02576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260118152602001807f5349474e41545552455f494c4c4547414c00000000000000000000000000000081525060200191505060405180910390fd5b60016009811115610b0f57fe5b866009811115610b1b57fe5b1415610ba65760008951141515610b9a576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260118152602001807f4c454e4754485f305f524551554952454400000000000000000000000000000081525060200191505060405180910390fd5b6000975087975061183b565b60026009811115610bb357fe5b866009811115610bbf57fe5b1415610da55760418951141515610c3e576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260128152602001807f4c454e4754485f36355f5245515549524544000000000000000000000000000081525060200191505060405180910390fd5b886000815181101515610c4d57fe5b9060200101517f010000000000000000000000000000000000000000000000000000000000000090047f0100000000000000000000000000000000000000000000000000000000000000027f010000000000000000000000000000000000000000000000000000000000000090049450610cd160018a611e6290919063ffffffff16565b9350610ce760218a611e6290919063ffffffff16565b925060018b868686604051600081526020016040526040518085600019166000191681526020018460ff1660ff1681526020018360001916600019168152602001826000191660001916815260200194505050505060206040516020810390808403906000865af1158015610d60573d6000803e3d6000fd5b5050506020604051035191508173ffffffffffffffffffffffffffffffffffffffff168a73ffffffffffffffffffffffffffffffffffffffff1614975087975061183b565b60036009811115610db257fe5b866009811115610dbe57fe5b14156110555760418951141515610e3d576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260128152602001807f4c454e4754485f36355f5245515549524544000000000000000000000000000081525060200191505060405180910390fd5b886000815181101515610e4c57fe5b9060200101517f010000000000000000000000000000000000000000000000000000000000000090047f0100000000000000000000000000000000000000000000000000000000000000027f010000000000000000000000000000000000000000000000000000000000000090049450610ed060018a611e6290919063ffffffff16565b9350610ee660218a611e6290919063ffffffff16565b925060018b60405160200180807f19457468657265756d205369676e6564204d6573736167653a0a333200000000815250601c0182600019166000191681526020019150506040516020818303038152906040526040518082805190602001908083835b602083101515610f6f5780518252602082019150602081019050602083039250610f4a565b6001836020036101000a0380198251168184511680821785525050505050509050019150506040518091039020868686604051600081526020016040526040518085600019166000191681526020018460ff1660ff1681526020018360001916600019168152602001826000191660001916815260200194505050505060206040516020810390808403906000865af1158015611010573d6000803e3d6000fd5b5050506020604051035191508173ffffffffffffffffffffffffffffffffffffffff168a73ffffffffffffffffffffffffffffffffffffffff1614975087975061183b565b6004600981111561106257fe5b86600981111561106e57fe5b141561112657600089511415156110ed576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260118152602001807f4c454e4754485f305f524551554952454400000000000000000000000000000081525060200191505060405180910390fd5b3373ffffffffffffffffffffffffffffffffffffffff168a73ffffffffffffffffffffffffffffffffffffffff1614975087975061183b565b6005600981111561113357fe5b86600981111561113f57fe5b141561126e578973ffffffffffffffffffffffffffffffffffffffff16631626ba7e8c8b6040518363ffffffff167c010000000000000000000000000000000000000000000000000000000002815260040180836000191660001916815260200180602001828103825283818151815260200191508051906020019080838360005b838110156111dc5780820151818401526020810190506111c1565b50505050905090810190601f1680156112095780820380516001836020036101000a031916815260200191505b509350505050602060405180830381600087803b15801561122957600080fd5b505af115801561123d573d6000803e3d6000fd5b505050506040513d602081101561125357600080fd5b8101908080519060200190929190505050975087975061183b565b6006600981111561127b57fe5b86600981111561128757fe5b141561148e5761129689611f1b565b9050600260008b73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900460ff161515611331576000975061183b565b8073ffffffffffffffffffffffffffffffffffffffff1663936347028c8c8c6040518463ffffffff167c01000000000000000000000000000000000000000000000000000000000281526004018084600019166000191681526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200180602001828103825283818151815260200191508051906020019080838360005b838110156113fb5780820151818401526020810190506113e0565b50505050905090810190601f1680156114285780820380516001836020036101000a031916815260200191505b50945050505050602060405180830381600087803b15801561144957600080fd5b505af115801561145d573d6000803e3d6000fd5b505050506040513d602081101561147357600080fd5b8101908080519060200190929190505050975087975061183b565b6007600981111561149b57fe5b8660098111156114a757fe5b141561151d57600160008c6000191660001916815260200190815260200160002060008b73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900460ff16975087975061183b565b6008600981111561152a57fe5b86600981111561153657fe5b14156117cd57604189511415156115b5576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260128152602001807f4c454e4754485f36355f5245515549524544000000000000000000000000000081525060200191505060405180910390fd5b8860008151811015156115c457fe5b9060200101517f010000000000000000000000000000000000000000000000000000000000000090047f0100000000000000000000000000000000000000000000000000000000000000027f01000000000000000000000000000000000000000000000000000000000000009004945061164860018a611e6290919063ffffffff16565b935061165e60218a611e6290919063ffffffff16565b925060018b60405160200180807f19457468657265756d205369676e6564204d6573736167653a0a200000000000815250601b0182600019166000191681526020019150506040516020818303038152906040526040518082805190602001908083835b6020831015156116e757805182526020820191506020810190506020830392506116c2565b6001836020036101000a0380198251168184511680821785525050505050509050019150506040518091039020868686604051600081526020016040526040518085600019166000191681526020018460ff1660ff1681526020018360001916600019168152602001826000191660001916815260200194505050505060206040516020810390808403906000865af1158015611788573d6000803e3d6000fd5b5050506020604051035191508173ffffffffffffffffffffffffffffffffffffffff168a73ffffffffffffffffffffffffffffffffffffffff1614975087975061183b565b6040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260158152602001807f5349474e41545552455f554e535550504f52544544000000000000000000000081525060200191505060405180910390fd5b505050505050509392505050565b6000611856848484610929565b90508090509392505050565b60008073ffffffffffffffffffffffffffffffffffffffff16600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16141515611929576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260128152602001807f5245454e5452414e43595f494c4c4547414c000000000000000000000000000081525060200191505060405180910390fd5b61196e611969888888888080601f016020809104026020016040519081016040528093929190818152602001838380828437820191505050505050611fde565b6121cd565b905060036000826000191660001916815260200190815260200160002060009054906101000a900460ff16151515611a0e576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252600f8152602001807f494e56414c49445f54585f48415348000000000000000000000000000000000081525060200191505060405180910390fd5b3373ffffffffffffffffffffffffffffffffffffffff168673ffffffffffffffffffffffffffffffffffffffff16141515611b3657611a80818785858080601f016020809104026020016040519081016040528093929190818152602001838380828437820191505050505050610929565b1515611af4576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260148152602001807f494e56414c49445f54585f5349474e415455524500000000000000000000000081525060200191505060405180910390fd5b85600460006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505b600160036000836000191660001916815260200190815260200160002060006101000a81548160ff0219169083151502179055503073ffffffffffffffffffffffffffffffffffffffff16858560405180838380828437820191505092505050600060405180830381855af49150501515611c19576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260108152602001807f4641494c45445f455845435554494f4e0000000000000000000000000000000081525060200191505060405180910390fd5b3373ffffffffffffffffffffffffffffffffffffffff168673ffffffffffffffffffffffffffffffffffffffff16141515611c91576000600460006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505b50505050505050565b60005481565b600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b600080600073ffffffffffffffffffffffffffffffffffffffff16600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1614611d4757600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16611d49565b335b90508091505090565b6000808251111515611df2576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260218152602001807f475245415445525f5448414e5f5a45524f5f4c454e4754485f5245515549524581526020017f440000000000000000000000000000000000000000000000000000000000000081525060400191505060405180910390fd5b816001835103815181101515611e0457fe5b9060200101517f010000000000000000000000000000000000000000000000000000000000000090047f0100000000000000000000000000000000000000000000000000000000000000029050600182510380835250809050919050565b600060208201835110151515611f06576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260268152602001807f475245415445525f4f525f455155414c5f544f5f33325f4c454e4754485f524581526020017f515549524544000000000000000000000000000000000000000000000000000081525060400191505060405180910390fd5b60208201915081830151905080905092915050565b60006014825110151515611fbd576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260268152602001807f475245415445525f4f525f455155414c5f544f5f32305f4c454e4754485f524581526020017f515549524544000000000000000000000000000000000000000000000000000081525060400191505060405180910390fd5b611fcb8260148451036122fc565b9050601482510380835250809050919050565b600080600060405160200180807f5a65726f45785472616e73616374696f6e280000000000000000000000000000815250601201807f75696e743235362073616c742c00000000000000000000000000000000000000815250600d01807f61646472657373207369676e6572416464726573732c00000000000000000000815250601601807f6279746573206461746100000000000000000000000000000000000000000000815250600a01807f290000000000000000000000000000000000000000000000000000000000000081525060010190506040516020818303038152906040526040518082805190602001908083835b6020831015156120f857805182526020820191506020810190506020830392506120d3565b6001836020036101000a03801982511681845116808217855250505050505090500191505060405180910390209150836040518082805190602001908083835b60208310151561215d5780518252602082019150602081019050602083039250612138565b6001836020036101000a0380198251168184511680821785525050505050509050019150506040518091039020905060405182815286602082015273ffffffffffffffffffffffffffffffffffffffff861660408201528160608201526080812093505082925050509392505050565b60006040805190810160405280600281526020017f1901000000000000000000000000000000000000000000000000000000000000815250600054836040516020018084805190602001908083835b602083101515612241578051825260208201915060208101905060208303925061221c565b6001836020036101000a0380198251168184511680821785525050505050509050018360001916600019168152602001826000191660001916815260200193505050506040516020818303038152906040526040518082805190602001908083835b6020831015156122c857805182526020820191506020810190506020830392506122a3565b6001836020036101000a03801982511681845116808217855250505050505090500191505060405180910390209050919050565b6000601482018351101515156123a0576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260268152602001807f475245415445525f4f525f455155414c5f544f5f32305f4c454e4754485f524581526020017f515549524544000000000000000000000000000000000000000000000000000081525060400191505060405180910390fd5b60148201915073ffffffffffffffffffffffffffffffffffffffff82840151169050809050929150505600a165627a7a72305820d97e78a8dde62d3a88f5d4b73dc91e33be0aef28a34f57b216da0ff93c43a9240029"
+    }
+}

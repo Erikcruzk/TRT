@@ -1,0 +1,139 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_17"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": 79,
+          "vulnerability_code": "    receive () external payable virtual {\n        _fallback();",
+          "message": "Contract locking ether found in Paraluni.sol:\n\tContract ParaProxy has payable functions:\n\t - fallback (Paraluni.sol#77-79)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": 47,
+          "vulnerability_code": "    function _delegate(address implementation) internal virtual {\n        // solhint-disable-next-line no-inline-assembly\n        assembly {\n            // Copy msg.data. We take full control of memory in this inline assembly\n            // block because it will not return to Solidity code. We overwrite the\n            // Solidity scratch pad at memory position 0.\n            calldatacopy(0, 0, calldatasize())\n\n            // Call the implementation.\n            // out and outsize are 0 because we don't know the size yet.\n            let result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)\n\n            // Copy the returned data.\n            returndatacopy(0, 0, returndatasize())\n\n            switch result\n            // delegatecall returns 0 on error.\n            case 0 { revert(0, returndatasize()) }\n            default { return(0, returndatasize()) }\n        }",
+          "message": "Proxy._delegate uses assembly (Paraluni.sol#27-47)\n\t- Paraluni.sol#29-46\n"
+        },
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.6.0 <0.8.0;",
+          "message": "Different versions of Solidity is used in Paraluni.sol:\n\t- Version used: ['0.6.12', '>=0.6.0<0.8.0']\n\t- Paraluni.sol#9 declares pragma solidity>=0.6.0<0.8.0\n\t- Paraluni.sol#93 declares pragma solidity0.6.12\n\t- Paraluni.sol#119 declares pragma solidity0.6.12\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": 166,
+          "vulnerability_code": "    function _setPendingImplementation(address newPendingImplementation) public returns (uint) {\n\n        require(msg.sender == admin, \"auth\");\n\n        address oldPendingImplementation = pendingImplementation;\n\n        pendingImplementation = newPendingImplementation;\n\n        emit NewPendingImplementation(oldPendingImplementation, pendingImplementation);\n\n        return 0;",
+          "message": "ParaProxy._setPendingImplementation (Paraluni.sol#155-166) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 173,
+          "vulnerability_to_line": 193,
+          "vulnerability_code": "    function _acceptImplementation() public returns (uint) {\n        // Check caller is pendingImplementation and pendingImplementation \u2260 address(0)\n        if (msg.sender != pendingImplementation || pendingImplementation == address(0)) {\n            return 1;\n        }\n\n        // Save current values for inclusion in log\n        address oldImplementation = implementation;\n        address oldPendingImplementation = pendingImplementation;\n\n        implementation = pendingImplementation;\n\n        pendingImplementation = address(0);\n\n        emit NewImplementation(oldImplementation, implementation);\n        emit NewPendingImplementation(oldPendingImplementation, pendingImplementation);\n\n        return 0;\n    }\n",
+          "message": "ParaProxy._acceptImplementation (Paraluni.sol#173-193) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 200,
+          "vulnerability_to_line": 218,
+          "vulnerability_code": "    function _setPendingAdmin(address newPendingAdmin) public returns (uint) {\n        // Check caller = admin\n        if (msg.sender != admin) {\n            return 1;\n        }\n\n        // Save current value, if any, for inclusion in log\n        address oldPendingAdmin = pendingAdmin;\n\n        // Store pendingAdmin with value newPendingAdmin\n        pendingAdmin = newPendingAdmin;\n\n        // Emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin)\n        emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin);\n\n        return 0;\n    }\n",
+          "message": "ParaProxy._setPendingAdmin (Paraluni.sol#200-218) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 223,
+          "vulnerability_to_line": 245,
+          "vulnerability_code": "    function _acceptAdmin() public returns (uint) {\n        // Check caller is pendingAdmin and pendingAdmin \u2260 address(0)\n        if (msg.sender != pendingAdmin || msg.sender == address(0)) {\n            return 1;\n        }\n\n        // Save current values for inclusion in log\n        address oldAdmin = admin;\n        address oldPendingAdmin = pendingAdmin;\n\n        // Store admin with value pendingAdmin\n        admin = pendingAdmin;\n\n        // Clear the pending value\n        pendingAdmin = address(0);\n\n        emit NewAdmin(oldAdmin, admin);\n        emit NewPendingAdmin(oldPendingAdmin, pendingAdmin);\n\n        return 0;\n    }\n",
+          "message": "ParaProxy._acceptAdmin (Paraluni.sol#223-245) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.6.0 <0.8.0;",
+          "message": "Detected issues with version pragma in Paraluni.sol:\n\t- pragma solidity>=0.6.0<0.8.0 (Paraluni.sol#9): is has a complex pragma\n\t- pragma solidity0.6.12 (Paraluni.sol#93): it allows old versions\n\t- pragma solidity0.6.12 (Paraluni.sol#119): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": 47,
+          "vulnerability_code": "    function _delegate(address implementation) internal virtual {\n        // solhint-disable-next-line no-inline-assembly\n        assembly {\n            // Copy msg.data. We take full control of memory in this inline assembly\n            // block because it will not return to Solidity code. We overwrite the\n            // Solidity scratch pad at memory position 0.\n            calldatacopy(0, 0, calldatasize())\n\n            // Call the implementation.\n            // out and outsize are 0 because we don't know the size yet.\n            let result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)\n\n            // Copy the returned data.\n            returndatacopy(0, 0, returndatasize())\n\n            switch result\n            // delegatecall returns 0 on error.\n            case 0 { revert(0, returndatasize()) }\n            default { return(0, returndatasize()) }\n        }",
+          "message": "Function 'Proxy._delegate' (Paraluni.sol#27-47) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _implementation() internal view virtual returns (address);",
+          "message": "Function 'Proxy._implementation' (Paraluni.sol#53) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": 63,
+          "vulnerability_code": "    function _fallback() internal virtual {\n        _beforeFallback();\n        _delegate(_implementation());",
+          "message": "Function 'Proxy._fallback' (Paraluni.sol#60-63) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": 88,
+          "vulnerability_code": "    function _beforeFallback() internal virtual {",
+          "message": "Function 'Proxy._beforeFallback' (Paraluni.sol#87-88) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 245,
+          "vulnerability_to_line": 249,
+          "vulnerability_code": "    function _implementation() internal view virtual override returns (address){\n        return implementation;\n    }\n",
+          "message": "Function 'ParaProxy._implementation' (Paraluni.sol#245-249) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": 166,
+          "vulnerability_code": "    function _setPendingImplementation(address newPendingImplementation) public returns (uint) {\n\n        require(msg.sender == admin, \"auth\");\n\n        address oldPendingImplementation = pendingImplementation;\n\n        pendingImplementation = newPendingImplementation;\n\n        emit NewPendingImplementation(oldPendingImplementation, pendingImplementation);\n\n        return 0;",
+          "message": "Function 'ParaProxy._setPendingImplementation' (Paraluni.sol#155-166) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 173,
+          "vulnerability_to_line": 193,
+          "vulnerability_code": "    function _acceptImplementation() public returns (uint) {\n        // Check caller is pendingImplementation and pendingImplementation \u2260 address(0)\n        if (msg.sender != pendingImplementation || pendingImplementation == address(0)) {\n            return 1;\n        }\n\n        // Save current values for inclusion in log\n        address oldImplementation = implementation;\n        address oldPendingImplementation = pendingImplementation;\n\n        implementation = pendingImplementation;\n\n        pendingImplementation = address(0);\n\n        emit NewImplementation(oldImplementation, implementation);\n        emit NewPendingImplementation(oldPendingImplementation, pendingImplementation);\n\n        return 0;\n    }\n",
+          "message": "Function 'ParaProxy._acceptImplementation' (Paraluni.sol#173-193) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 200,
+          "vulnerability_to_line": 218,
+          "vulnerability_code": "    function _setPendingAdmin(address newPendingAdmin) public returns (uint) {\n        // Check caller = admin\n        if (msg.sender != admin) {\n            return 1;\n        }\n\n        // Save current value, if any, for inclusion in log\n        address oldPendingAdmin = pendingAdmin;\n\n        // Store pendingAdmin with value newPendingAdmin\n        pendingAdmin = newPendingAdmin;\n\n        // Emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin)\n        emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin);\n\n        return 0;\n    }\n",
+          "message": "Function 'ParaProxy._setPendingAdmin' (Paraluni.sol#200-218) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 223,
+          "vulnerability_to_line": 245,
+          "vulnerability_code": "    function _acceptAdmin() public returns (uint) {\n        // Check caller is pendingAdmin and pendingAdmin \u2260 address(0)\n        if (msg.sender != pendingAdmin || msg.sender == address(0)) {\n            return 1;\n        }\n\n        // Save current values for inclusion in log\n        address oldAdmin = admin;\n        address oldPendingAdmin = pendingAdmin;\n\n        // Store admin with value pendingAdmin\n        admin = pendingAdmin;\n\n        // Clear the pending value\n        pendingAdmin = address(0);\n\n        emit NewAdmin(oldAdmin, admin);\n        emit NewPendingAdmin(oldPendingAdmin, pendingAdmin);\n\n        return 0;\n    }\n",
+          "message": "Function 'ParaProxy._acceptAdmin' (Paraluni.sol#223-245) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_KILL_OOM"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}
