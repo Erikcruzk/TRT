@@ -4,6 +4,7 @@ import subprocess
 import json
 import os
 import traceback
+import backoff
 from typing import Dict, List
 import openai
 from SmartContract import SmartContract;
@@ -71,7 +72,7 @@ class PromptEngine:
         # Generate Repair
         openai.api_key = os.environ.get(llm_settings["secret_api_key"])
         try:
-            response = openai.ChatCompletion.create(
+            response = self.completions_with_backoff(
                 model=llm_settings["model_name"],
                 messages=[
                     {"role": "user", "content": prompt}
@@ -92,18 +93,19 @@ class PromptEngine:
         candidate_patches_paths = []
         for i, choice in enumerate(response.choices):
             try:
-                repaired_sc_dir = os.path.join(sc.results_dir,
-                                               "candidate_patches",
-                                               f'patch_{i}')
+                # if content not empty
+                if choice["message"]["content"].strip():
+                    repaired_sc_dir = os.path.join(sc.results_dir,
+                                                "candidate_patches",
+                                                f'patch_{i}')
 
-                Path(repaired_sc_dir).mkdir(parents=True, exist_ok=True)  # TODO: minimize mkdir
+                    Path(repaired_sc_dir).mkdir(parents=True, exist_ok=True)  # TODO: minimize mkdir
 
-                patch_path = Path(os.path.join(repaired_sc_dir, f'patch_{i}.sol'))
+                    patch_path = Path(os.path.join(repaired_sc_dir, f'patch_{i}.sol'))
 
-                with open(patch_path, 'w') as repaired_sc:
-                    repaired_sc.write(choice["message"]["content"].strip())
-
-                candidate_patches_paths.append(patch_path)
+                    with open(patch_path, 'w') as repaired_sc:
+                        repaired_sc.write(choice["message"]["content"].strip())
+                    candidate_patches_paths.append(patch_path)
             except Exception as e:
                 raise IOError(f"Fail on '{patch_path}': {str(e)}")
 
@@ -198,3 +200,7 @@ class PromptEngine:
 /// Repaired {sc_language} Smart Contract""")
 
         return templates
+
+    @backoff.on_exception(backoff.expo, openai.error.RateLimitError)
+    def completions_with_backoff(self, **kwargs):
+        return openai.ChatCompletion.create(**kwargs)

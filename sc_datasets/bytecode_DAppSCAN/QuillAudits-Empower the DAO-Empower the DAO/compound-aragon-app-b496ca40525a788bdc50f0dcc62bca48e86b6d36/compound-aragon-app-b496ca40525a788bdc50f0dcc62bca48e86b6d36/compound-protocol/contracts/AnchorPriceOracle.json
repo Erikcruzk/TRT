@@ -1,0 +1,675 @@
+{
+    "<stdin>:AnchorPriceOracle": {
+        "abi": [
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_poster",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "asset",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "requestedPriceMantissa",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "anchorPriceMantissa",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "cappedPriceMantissa",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "CappedPricePosted",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "error",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "info",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "detail",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "asset",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "sender",
+                        "type": "address"
+                    }
+                ],
+                "name": "Failure",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "oldAnchorAdmin",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "newAnchorAdmin",
+                        "type": "address"
+                    }
+                ],
+                "name": "NewAnchorAdmin",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "anchorAdmin",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "asset",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "oldScaledPrice",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "newScaledPrice",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "NewPendingAnchor",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "oldPendingAnchorAdmin",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "newPendingAnchorAdmin",
+                        "type": "address"
+                    }
+                ],
+                "name": "NewPendingAnchorAdmin",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "asset",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "previousPriceMantissa",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "requestedPriceMantissa",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "newPriceMantissa",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "PricePosted",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "bool",
+                        "name": "newState",
+                        "type": "bool"
+                    }
+                ],
+                "name": "SetPaused",
+                "type": "event"
+            },
+            {
+                "constant": false,
+                "inputs": [],
+                "name": "_acceptAnchorAdmin",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "_assetPrices",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "mantissa",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "requestedState",
+                        "type": "bool"
+                    }
+                ],
+                "name": "_setPaused",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "asset",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "newScaledPrice",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "_setPendingAnchor",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "newPendingAnchorAdmin",
+                        "type": "address"
+                    }
+                ],
+                "name": "_setPendingAnchorAdmin",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "anchorAdmin",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "anchors",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "period",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "priceMantissa",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "asset",
+                        "type": "address"
+                    }
+                ],
+                "name": "assetPrices",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "asset",
+                        "type": "address"
+                    }
+                ],
+                "name": "getPrice",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "isPriceOracle",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "maxSwing",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "mantissa",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "maxSwingMantissa",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "numBlocksPerPeriod",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "paused",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "pendingAnchorAdmin",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "pendingAnchors",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "poster",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "asset",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "requestedPriceMantissa",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "setPrice",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "internalType": "address[]",
+                        "name": "assets",
+                        "type": "address[]"
+                    },
+                    {
+                        "internalType": "uint256[]",
+                        "name": "requestedPriceMantissas",
+                        "type": "uint256[]"
+                    }
+                ],
+                "name": "setPrices",
+                "outputs": [
+                    {
+                        "internalType": "uint256[]",
+                        "name": "",
+                        "type": "uint256[]"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ],
+        "bin": "608060405234801561001057600080fd5b506040516120cc3803806120cc8339818101604052602081101561003357600080fd5b810190808051906020019092919050505033600360006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555080600260006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550604051806020016040528067016345785d8a000081525060016000820151816000015590505050611fd0806100fc6000396000f3fe608060405234801561001057600080fd5b50600436106101205760003560e01c80635c975abb116100ad5780639964622c116100715780639964622c146105b35780639e8c4d951461060b578063c5faf1d514610663578063ccb13cbd14610681578063de9d0e851461069f57610120565b80635c975abb1461046e5780635e9a523c1461049057806366331bba146104e8578063692374e31461050a578063809597211461056957610120565b806326617c28116100f457806326617c281461024757806341976e091461028b5780634352fa9f146102e3578063451b1e3a14610406578063485feabe1461045057610120565b8062e4768b1461012557806308f31857146101875780630c9c6301146101d1578063183f3444146101ef575b600080fd5b6101716004803603604081101561013b57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080359060200190929190505050610701565b6040518082815260200191505060405180910390f35b61018f61077f565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6101d96107a5565b6040518082815260200191505060405180910390f35b6102316004803603602081101561020557600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506107b1565b6040518082815260200191505060405180910390f35b6102756004803603602081101561025d57600080fd5b810190808035151590602001909291905050506107cf565b6040518082815260200191505060405180910390f35b6102cd600480360360208110156102a157600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506108a3565b6040518082815260200191505060405180910390f35b6103af600480360360408110156102f957600080fd5b810190808035906020019064010000000081111561031657600080fd5b82018360208201111561032857600080fd5b8035906020019184602083028401116401000000008311171561034a57600080fd5b90919293919293908035906020019064010000000081111561036b57600080fd5b82018360208201111561037d57600080fd5b8035906020019184602083028401116401000000008311171561039f57600080fd5b90919293919293905050506108b5565b6040518080602001828103825283818151815260200191508051906020019060200280838360005b838110156103f25780820151818401526020810190506103d7565b505050509050019250505060405180910390f35b61040e610ab5565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b610458610adb565b6040518082815260200191505060405180910390f35b610476610ae0565b604051808215151515815260200191505060405180910390f35b6104d2600480360360208110156104a657600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610af2565b6040518082815260200191505060405180910390f35b6104f0610b5c565b604051808215151515815260200191505060405180910390f35b61054c6004803603602081101561052057600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610b61565b604051808381526020018281526020019250505060405180910390f35b610571610b85565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6105f5600480360360208110156105c957600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610bab565b6040518082815260200191505060405180910390f35b61064d6004803603602081101561062157600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610d2c565b6040518082815260200191505060405180910390f35b61066b610d44565b6040518082815260200191505060405180910390f35b610689610d50565b6040518082815260200191505060405180910390f35b6106eb600480360360408110156106b557600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080359060200190929190505050610f33565b6040518082815260200191505060405180910390f35b6000600260009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161461076c5761076583600160086110e4565b9050610779565b61077683836111c1565b90505b92915050565b600360009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b67016345785d8a000081565b60056020528060005260406000206000915090508060000154905081565b6000600360009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161461083a5761083360006001806110e4565b905061089e565b816000806101000a81548160ff0219169083151502179055507f3c70af01296aef045b2f5c9d3c30b05d4428fd257145b9c7fcd76418e65b598082604051808215151515815260200191505060405180910390a16000600281111561089b57fe5b90505b919050565b60006108ae82610af2565b9050919050565b6060600085859050905060008484905090506060600260009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161461098357600160405190808252806020026020018201604052801561094e5781602001602082028038833980820191505090505b50905061095f6000600160086110e4565b8160008151811061096c57fe5b602002602001018181525050809350505050610aad565b60008314806109925750828214155b156109fc5760016040519080825280602002602001820160405280156109c75781602001602082028038833980820191505090505b5090506109d860006002600a6110e4565b816000815181106109e557fe5b602002602001018181525050809350505050610aad565b82604051908082528060200260200182016040528015610a2b5781602001602082028038833980820191505090505b50905060008090505b83811015610aa557610a80898983818110610a4b57fe5b9050602002013573ffffffffffffffffffffffffffffffffffffffff16888884818110610a7457fe5b905060200201356111c1565b828281518110610a8c57fe5b6020026020010181815250508080600101915050610a34565b508093505050505b949350505050565b600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60f081565b6000809054906101000a900460ff1681565b60008060009054906101000a900460ff1615610b115760009050610b57565b600560008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206000015490505b919050565b600181565b60066020528060005260406000206000915090508060000154908060010154905082565b600260009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6000600360009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614610c1757610c106000600160026110e4565b9050610d27565b6000600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905082600460006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055507f6c773973d5bcf264b509f4194ceb99e891251f6aabb325523a863c282958b13e8184604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019250505060405180910390a160006002811115610d2357fe5b9150505b919050565b60076020528060005260406000206000915090505481565b60018060000154905081565b6000600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614610dbc57610db56000600160006110e4565b9050610f30565b6000600360009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16600360006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506000600460006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055507fbef9248fe57ae972dd47833f68c43f0b3b2d14217612dfbc804a520a23730d468133604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019250505060405180910390a160006002811115610f2c57fe5b9150505b90565b6000600360009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614610f9e57610f9783600160036110e4565b90506110de565b6000600760008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002054905082600760008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055507ff0aa20c29c1f8e751bfe0a78bc49a520ed14f2dab274087d90d1341d8b76af5c33858386604051808573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200183815260200182815260200194505050505060405180910390a1600060028111156110da57fe5b9150505b92915050565b60007faa79e227ddffd6bd453dddd0b5e7914ea5b5e8c55d871cc86953e8e363b2dda883600281111561111357fe5b83600a81111561111f57fe5b60008733604051808681526020018581526020018481526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019550505050505060405180910390a18260028111156111b857fe5b90509392505050565b6000806111cc611f1c565b600160f043816111d857fe5b0401816080018181525050600760008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020548160e0018181525050604051806020016040528085815250816000018190525060008160e001511461132357600081606001818152505060405180602001604052808260e00151815250816040018190525061128781604001518260000151611769565b809050826020018190528193505050600060038111156112a357fe5b8260038111156112af57fe5b146112d6576112cd85600260048560038111156112c857fe5b61180d565b92505050611763565b6112fa816020015160016040518060200160405290816000820154815250506118ea565b1561131e57611315856002600684602001516000015161180d565b92505050611763565b61147d565b600660008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600001548160600181815250506040518060200160405280600660008873ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206001015481525081604001819052506000816060015114611464576113e6816040015182600001516118ff565b8090508360a0018460000182905282151515158152508294505050506000600381111561140f57fe5b82600381111561141b57fe5b1461144257611439856002600585600381111561143457fe5b61180d565b92505050611763565b8060a001511561145f578060400151600001518160c00181815250505b61147c565b60405180602001604052808581525081604001819052505b5b61148a8160400151611b12565b156114a55761149c85600260076110e4565b92505050611763565b6114b28160000151611b12565b156114cd576114c485600260096110e4565b92505050611763565b6000600760008773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020541461155a576000600760008773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055505b8060600151816080015111156115e257604051806040016040528082608001518152602001826000015160000151815250600660008773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008201518160000155602082015181600101559050505b6000600560008773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060000154905061163b86836000015160000151611b22565b7fdd71a1d19fcba687442a1d5c58578f1e409af71a79d10fd95a4d66efd8fa9ae7868287856000015160000151604051808573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200184815260200183815260200182815260200194505050505060405180910390a18160a0015115611750577f7221f7a2708437039cc63319145b6b873a40594b9782a3bee45b975e2f3b0f6886868460c00151856000015160000151604051808573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200184815260200183815260200182815260200194505050505060405180910390a15b6000600281111561175d57fe5b93505050505b92915050565b6000611773611f75565b61177b611f75565b600061178786866118ea565b156117c3576117968686611b81565b8093508192505050600060038111156117ab57fe5b8160038111156117b757fe5b146117be57fe5b6117f6565b6117cd8587611b81565b8093508192505050600060038111156117e257fe5b8160038111156117ee57fe5b146117f557fe5b5b6118008287611bc4565b9350935050509250929050565b60007faa79e227ddffd6bd453dddd0b5e7914ea5b5e8c55d871cc86953e8e363b2dda884600281111561183c57fe5b84600a81111561184857fe5b848833604051808681526020018581526020018481526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019550505050505060405180910390a18360028111156118e057fe5b9050949350505050565b60008160000151836000015111905092915050565b60008061190a611f75565b611912611f75565b6040518060200160405280670de0b6b3a76400008152509050611933611f75565b61193b611f75565b611943611f75565b61194b611f75565b600061196d866001604051806020016040529081600082015481525050611beb565b80965081925050506000600381111561198257fe5b81600381111561198e57fe5b146119ba5780600060405180602001604052806000815250809050985098509850505050505050611b0b565b6119c48b86611c2e565b8094508192505050600060038111156119d957fe5b8160038111156119e557fe5b14611a115780600060405180602001604052806000815250809050985098509850505050505050611b0b565b611a1b8a846118ea565b15611a36576000600184985098509850505050505050611b0b565b611a56866001604051806020016040529081600082015481525050611b81565b809550819250505060006003811115611a6b57fe5b816003811115611a7757fe5b14611aa35780600060405180602001604052806000815250809050985098509850505050505050611b0b565b611aad8b85611c2e565b809350819250505060006003811115611ac257fe5b816003811115611ace57fe5b14611ad557fe5b611adf8a83611d4f565b15611afa576000600183985098509850505050505050611b0b565b6000808b9850985098505050505050505b9250925092565b6000808260000151149050919050565b604051806020016040528082815250600560008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600082015181600001559050505050565b6000611b8b611f75565b600080611ba086600001518660000151611d64565b91509150816040518060200160405280838152508090509350935050509250929050565b6000611bce611f75565b611be084600001518460000151611d8f565b915091509250929050565b6000611bf5611f75565b600080611c0a86600001518660000151611e63565b91509150816040518060200160405280838152508090509350935050509250929050565b6000611c38611f75565b600080611c4d86600001518660000151611e95565b9150915060006003811115611c5e57fe5b826003811115611c6a57fe5b14611c8e578160405180602001604052806000815250809050935093505050611d48565b600080611cad6002670de0b6b3a764000081611ca657fe5b0484611e63565b9150915060006003811115611cbe57fe5b826003811115611cca57fe5b14611cf05781604051806020016040528060008152508090509550955050505050611d48565b600080611d0583670de0b6b3a7640000611ee8565b9150915060006003811115611d1657fe5b826003811115611d2257fe5b14611d2957fe5b6000604051806020016040528083815250809050975097505050505050505b9250929050565b60008160000151836000015110905092915050565b600080838311611d7c57600083850391509150611d88565b60036000809050915091505b9250929050565b6000611d99611f75565b600080611dae86670de0b6b3a7640000611e95565b9150915060006003811115611dbf57fe5b826003811115611dcb57fe5b14611def578160405180602001604052806000815250809050935093505050611e5c565b600080611dfc8388611ee8565b9150915060006003811115611e0d57fe5b826003811115611e1957fe5b14611e3f5781604051806020016040528060008152508090509550955050505050611e5c565b600060405180602001604052808381525080905095509550505050505b9250929050565b60008060008385019050848110611e81576000819250925050611e8e565b6002600080905092509250505b9250929050565b6000806000841415611eb05760008080905091509150611ee1565b6000838502905083858281611ec157fe5b0414611ed857600260008090509250925050611ee1565b60008192509250505b9250929050565b6000806000831415611f04576001600080905091509150611f15565b6000838581611f0f57fe5b04915091505b9250929050565b604051806101000160405280611f30611f88565b8152602001611f3d611f88565b8152602001611f4a611f88565b8152602001600081526020016000815260200160001515815260200160008152602001600081525090565b6040518060200160405280600081525090565b604051806020016040528060008152509056fea265627a7a72315820a0089037f35ba651aa70003e7113718269c787d466379682a4918bb5d605535464736f6c63430005110032"
+    },
+    "<stdin>:CarefulMath": {
+        "abi": [],
+        "bin": "6080604052348015600f57600080fd5b50603e80601d6000396000f3fe6080604052600080fdfea265627a7a7231582017297f543c6917208dea1203c9c91f4d110715948e85645208f7a034e429c99764736f6c63430005110032"
+    },
+    "<stdin>:ComptrollerErrorReporter": {
+        "abi": [
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "error",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "info",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "detail",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "Failure",
+                "type": "event"
+            }
+        ],
+        "bin": "6080604052348015600f57600080fd5b50603e80601d6000396000f3fe6080604052600080fdfea265627a7a72315820b97d546da327a56389473d4fbc8ea3baaee56b6dd30dc297e2819d3b2898948c64736f6c63430005110032"
+    },
+    "<stdin>:Exponential": {
+        "abi": [],
+        "bin": "6080604052348015600f57600080fd5b50603e80601d6000396000f3fe6080604052600080fdfea265627a7a723158201533403c6ed3520f51e00dc856bceb68c4ee9d80d4b260c948fa9ce53e5555ed64736f6c63430005110032"
+    },
+    "<stdin>:OracleErrorReporter": {
+        "abi": [
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "error",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "info",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "detail",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "asset",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "sender",
+                        "type": "address"
+                    }
+                ],
+                "name": "Failure",
+                "type": "event"
+            }
+        ],
+        "bin": "6080604052348015600f57600080fd5b50603e80601d6000396000f3fe6080604052600080fdfea265627a7a7231582093fe86b2ffa858f76793b8d1b6936e3dad62ca5566c2bde7ef801710e92f227864736f6c63430005110032"
+    },
+    "<stdin>:TokenErrorReporter": {
+        "abi": [
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "error",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "info",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "detail",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "Failure",
+                "type": "event"
+            }
+        ],
+        "bin": "6080604052348015600f57600080fd5b50603e80601d6000396000f3fe6080604052600080fdfea265627a7a723158208702d0555a1bc076fdbfa41b276990c48839260867da3dcfa97b2510c33e747764736f6c63430005110032"
+    }
+}

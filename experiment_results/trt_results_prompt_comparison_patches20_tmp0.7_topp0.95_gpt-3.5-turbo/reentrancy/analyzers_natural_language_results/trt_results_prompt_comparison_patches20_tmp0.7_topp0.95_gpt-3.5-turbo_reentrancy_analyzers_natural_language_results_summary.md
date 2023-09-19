@@ -4,11 +4,11 @@
 | --- | --- |
 | experiment_name | trt_results_prompt_comparison_patches20_tmp0.7_topp0.95_gpt-3.5-turbo_reentrancy_analyzers_natural_language_results |
 | dataset | sc_datasets/smartbugs_curated_no_comment/reentrancy |
-| smartbugs_tools | ['slither', 'oyente', 'securify'] |
-| prompt_style | analyzers_natural_language_results |
+| smartbugs_tools | ['oyente', 'slither', 'securify'] |
+| prompt_style | basic |
 | n_threads | sb_threads=60 llm_rapair_threads=10 |
 | llm_settings | {'model_name': 'gpt-3.5-turbo', 'secret_api_key': 'KTH_OPENAI_API_KEY', 'temperature': 0.7, 'top_p': 0.95, 'num_candidate_patches': 20, 'max_time': 3600, 'stop': ['///']} |
-| run_time | 0:48:23 |
+| run_time | 0:00:00 |
 
 ## Target Vulnerabilities
 

@@ -11,7 +11,7 @@ from typing import List
 import yaml
 import re
 import atexit
-
+import tiktoken
 
 def exit_handler(process):
     # Try to gracefully terminate the process
@@ -33,6 +33,11 @@ class SmartContract:
         self.name, _ = os.path.splitext(self.filename)
         self.language = "Solidity" if self.filename.endswith(".sol") else "Unknown"
         self.source_code = open(self.path, "r").read().strip()
+
+        self.length = 0
+
+        self.source_code = self.reduce_source_code(self.source_code, self.experiment_settings["shave"], self.experiment_settings["threshold"])
+
         self.hash = SmartContract.get_stripped_source_code_hash(self.source_code)
 
         self.smartbugs_tools = SmartContract.get_smartbugs_tools(self.experiment_settings["smartbugs_tools"])
@@ -84,7 +89,8 @@ class SmartContract:
             "arithmetic_tools": ["manticore", "mythril", "osiris", "oyente", "smartcheck"],
             "reentrancy_tools": ["manticore", "mythril", "oyente", "securify", "slither"],
             "unchecked_calls_tools": ["manticore", "mythril", "securify", "smartcheck"],
-            "transaction_order_dependence_tools": ["securify"]
+            "transaction_order_dependence_tools": ["securify"],
+            "analysis": ["smartcheck", "slither", "semgrep"]
         }
 
         for tool, replacements in mapping.items():
@@ -278,8 +284,9 @@ class SmartContract:
         return compiles
 
     def create_vulnerabilities_from_sb_results(self, tool_name: str, tool_result: dict) -> None:
-
-        lines = self.source_code.split("\n")
+        with open(self.path, "r") as f:
+            source_code = f.read()
+        lines = source_code.split("\n")
         tool_vulnerabilities = {}
         tool_vulnerabilities["successfull_analysis"] = False if (tool_result["errors"] or tool_result["fails"]) and not \
         tool_result["findings"] else True
@@ -378,6 +385,14 @@ class SmartContract:
             with open(smartbugs_config_path, "w") as f:
                 yaml.dump(smartbugs_config, f)
 
+
+            # Check if file at self.path is not empty
+            if os.stat(self.path).st_size == 0:
+                self.vulnerabilities["smartbugs_completed"] = False
+                self.vulnerabilities["analyzer_results"] = {"smartbugs": "File is empty"}
+                self.write_vulnerabilities_to_results_dir()
+                return
+
             # Run smartbugs
             # process = subprocess.Popen(f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}', shell=True, stdout=subprocess.DEVNULL)
             process = subprocess.Popen(f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}',
@@ -398,3 +413,63 @@ class SmartContract:
             logging.critical(f"Smartbugs failure {self.results_dir} {str(e)}", exc_info=True)
 
         self.write_vulnerabilities_to_results_dir()
+
+    def reduce_source_code(self, sc, shave, threshold):
+        # Three possible options: remove all docstrings, remove safe libraries, remove file directives
+
+        # Check if tokenized file longeer than threshold
+
+        encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
+        if len(encoding.encode(sc)) >= threshold:
+            if "NatSpec" in shave:
+                sc = self.remove_NatSpec(sc)
+            if "comments" in shave:
+                sc = self.remove_comments(sc)
+            if "definitions" in shave:
+                sc = self.remove_definitions(sc)
+        self.length = len(encoding.encode(sc))
+        return sc
+    
+    @staticmethod
+    def remove_NatSpec(sc):
+        # removes all docstrings from the solidity code
+        return re.sub(r'\/\*\*.*?\*\/\n|\/\/\/.*?\n', '', sc, flags=re.DOTALL)    
+    
+    @staticmethod
+    def remove_comments(sc):
+        # removes all file directives from the solidity code
+        return re.sub(r'\/\*[\s\S]*?\*\/\n|\/\/.*\n', '', sc)
+
+    @staticmethod
+    def remove_definitions(sc):
+        # removes all common libraries from the solidity code using a dictionary of common libraries names
+
+        lines = sc.split('\n')  # Convert self.sc to a list of lines
+        modified_lines = []
+    
+        common = ['Proxy', 'SafeMath', 'SafeERC20', 'Ownable', 'IERC20', 'Address', 'EnumerableSet', 'EnumerableMap', 'Strings', 'Context', 'ReentrancyGuard', 'Pausable', 'ERC20', 'ERC20Detailed', 'ERC20Burnable', 'ERC20Mintable', 'ERC20Pausable', 'ERC20Capped', 'ERC721', 'ERC721Enumerable', 'ERC721Metadata', 'ERC721Pausable', 'ERC721Burnable', 'ERC721Holder', 'ERC721Receiver', 'ERC721MetadataMintable', 'ERC721MetadataMintable', 'ERC721Full']
+        
+        in_definition = False
+        brace_count = 0
+
+        for line in lines:
+            line_stripped = line.strip()
+            if any(f'library {def_name}' in line_stripped for def_name in common) or any(f'interface {def_name}' in line_stripped for def_name in common):
+                in_definition = True
+                brace_count = 0
+                if '{' in line:
+                    brace_count += line.count('{')
+                if '}' in line:
+                    brace_count -= line.count('}')
+            elif in_definition:
+                if '{' in line:
+                    brace_count += line.count('{')
+                if '}' in line:
+                    brace_count -= line.count('}')
+                if brace_count <= 0:
+                    in_definition = False
+                    continue
+            else:
+                modified_lines.append(line)
+        
+        return '\n'.join(modified_lines)

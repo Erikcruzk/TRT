@@ -9,6 +9,8 @@ import threading
 import time
 import networkx as nx
 import openai
+import tiktoken
+
 from pyvis.network import Network
 from SmartContract import SmartContract
 from PromptEngine import PromptEngine
@@ -51,8 +53,12 @@ class TransformativeRepair:
         self.smartbugs_tools = SmartContract.get_smartbugs_tools(experiment_settings["smartbugs_tools"])
 
         # Generate the extended experiment name for result directory
-        extended_experiment_name = self._get_extended_experiment_name()
-        self.experiment_results_dir = self._get_experiment_results_dir(extended_experiment_name)
+        self.smartbugs_tools:List[str] = SmartContract.get_smartbugs_tools(self.experiment_settings["smartbugs_tools"])
+        extended_experiment_name = os.path.join(f'{Path(experiment_settings["experiment_name"]).parts[0]}_patches{self.llm_settings[self.llm_model_name]["num_candidate_patches"]}_tmp{self.llm_settings[self.llm_model_name]["temperature"]}_topp{self.llm_settings[self.llm_model_name]["top_p"]}_{self.llm_model_name}')
+        child_dirs = os.path.join(*(Path(experiment_settings.get("experiment_name", "")).parts[1:])) if len(Path(experiment_settings.get("experiment_name", "")).parts) > 1 else ""
+        self.experiment_results_dir:Path = Path(os.path.join("experiment_results", 
+            extended_experiment_name, 
+            child_dirs))
 
         # Delete previous experiment results if requested
         self._delete_old_experiment_results()
@@ -64,6 +70,10 @@ class TransformativeRepair:
 
         self.prompt_style = experiment_settings["prompt_style"]
 
+        # Set setting to shave long contracts
+        self.shave = experiment_settings["shave"]
+        self.threshold = experiment_settings["threshold"]
+
         # Create queues for smartbugs and repair smart contracts
         self.smartbugs_sc_queue = queue.Queue()
         self.repair_sc_queue = queue.Queue()
@@ -72,19 +82,6 @@ class TransformativeRepair:
         atexit.register(clear_queue, self.smartbugs_sc_queue)
         atexit.register(clear_queue, self.repair_sc_queue)
 
-    def _get_extended_experiment_name(self) -> str:
-        """
-        Generate the extended experiment name by appending LLM settings to the base experiment name.
-
-        Returns:
-            str: Extended experiment name.
-        """
-        experiment_name_parts = Path(self.experiment_settings["experiment_name"]).parts
-        experiment_name = experiment_name_parts[0]
-        if len(experiment_name_parts) > 1:
-            child_dirs = os.path.join(*experiment_name_parts[1:])
-            return f'{experiment_name}_patches{self._get_llm_setting("num_candidate_patches")}_tmp{self._get_llm_setting("temperature")}_topp{self._get_llm_setting("top_p")}_{self.llm_model_name}/{child_dirs}'
-        return experiment_name
 
     def _get_llm_setting(self, setting_name: str) -> str:
         """
@@ -98,17 +95,6 @@ class TransformativeRepair:
         """
         return self.llm_settings[self.llm_model_name][setting_name]
 
-    def _get_experiment_results_dir(self, extended_experiment_name: str) -> Path:
-        """
-        Get the path for the experiment results directory.
-
-        Args:
-            extended_experiment_name (str): Extended experiment name.
-
-        Returns:
-            Path: Path to the experiment results directory.
-        """
-        return Path(os.path.join("experiment_results", extended_experiment_name))
 
     def _delete_old_experiment_results(self) -> None:
         """
@@ -557,6 +543,15 @@ class TransformativeRepair:
             pe = PromptEngine(sc, experiment_settings)
             prompt = pe.generate_prompt(experiment_settings["prompt_style"])
 
+            encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
+            if sc.length >= 3000:
+                sc.vulnerabilities["smartbugs_completed"] = "Contract too long. Reparing skipped"
+                sc.write_vulnerabilities_to_results_dir()
+                progressbar.update(1)
+                # print(progressbar.n)
+                return
+
+
             #### Step 3: Save prompt
             with open(os.path.join(sc.results_dir, "prompt.txt"), 'w') as file:
                 file.write(prompt)
@@ -566,8 +561,8 @@ class TransformativeRepair:
             candidate_patches_paths = []
             if model_name == "gpt-3.5-turbo":
                 try:
-                    # candidate_patches_paths = pe.get_codex_repaired_sc(experiment_settings, llm_settings[model_name],
-                    #                                                    sc, prompt)
+                    candidate_patches_paths = pe.get_codex_repaired_sc(experiment_settings, llm_settings[model_name],
+                                                                       sc, prompt)
                     pass
                 except Exception as e:
                     logging.critical(f'An exception occurred when repairing contract={sc_path}: {str(e)}',
@@ -649,7 +644,6 @@ class TransformativeRepair:
                 if file_extension == ".sol":
                     # Create dir for contract
                     results_dir = Path(os.path.join(self.experiment_results_dir, sc_name))
-                    # Rest of your code...
 
                     results_dir.mkdir(parents=True, exist_ok=True)
 
