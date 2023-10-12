@@ -114,15 +114,11 @@ def parse(exit_code, log, output):
     except Exception as e:
         fails.add(f"error parsing results: {e}")
         issues = {}
-    # print('This is the issues: ')
-    # print(issues)
-    print('-------------------------------- -------------------------------- --------------------------------')
     for issue in issues:
-        print('Issue is -> ', issue)
+        issue
         finding = {}
         for i, f in (("check", "name"), ("impact", "impact"),
                      ("confidence", "confidence"), ("description", "message")):
-            # print(f"i: {i}, f: {f}, and issue[i]: {issue[i]}")
             finding[f] = issue[i]
 
         elements = issue.get("elements", [])
@@ -148,10 +144,9 @@ def parse(exit_code, log, output):
         for element in elements:
             if element.get("type") == "function":
                 finding["function"] = element["name"]
-                finding["contract"] = element["contract"]["name"]
+                # Mojtaba: Changing it to directly getting the name of the contract
+                finding["contract"] = element["name"]
                 break
         findings.append(finding)
-    print('# parser.py, line 152')
-    print("# Parser.py: let's try our luck in findings: ")
-    print(findings)
+        
     return findings, infos, errors, fails

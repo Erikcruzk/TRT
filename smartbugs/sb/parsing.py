@@ -8,8 +8,6 @@ def get_parser(tool):
     key = (tid,tmode)
     if  key not in tool_parsers:
         try:
-            print('# parsing.py, moudlename is: ')
-            print(f"tools.{tid}.{tmode}")
             modulename = f"tools.{tid}.{tmode}"
             fn = os.path.join(sb.cfg.TOOLS_HOME, tid, tool["parser"])
             spec = importlib.util.spec_from_file_location(modulename, fn)
@@ -26,27 +24,18 @@ def parse(task_log, tool_log, tool_output):
     tool = task_log["tool"]
     filename = task_log["filename"]
     exit_code = task_log["result"]["exit_code"]
-    print('# parsing.py, filename is ')
-    print(filename)
     tool_parser = get_parser(tool)
-    print('# using parser: ', tool_parser)
     try:
-        print(31)
-        #print('# tool_output is ', tool_output)
         findings,infos,errors,fails = tool_parser.parse(exit_code, tool_log, tool_output)
 
-        print(33)
         for finding in findings:
-            print(32)
             # if FINDINGS is defined, ensure that the current finding is in FINDINGS
             # irrelevant for SmartBugs, but may be relevant for programs further down the line
             if tool_parser.FINDINGS and finding["name"] not in tool_parser.FINDINGS:
                 raise sb.errors.SmartBugsError(f"'{finding['name']}' not among the findings of {tool['id']}")
             # check that filename within docker corresponds to filename outside, before replacing it
             # splitting at "/" is ok, since it is a Linux path from within the docker container
-            print(38)
             assert not finding.get("filename") or filename.endswith(finding["filename"].split("/")[-1])
-            print(41)
             finding["filename"] = filename
     except Exception as e:
         raise sb.errors.SmartBugsError(f"Parsing of results failed\n{e}")

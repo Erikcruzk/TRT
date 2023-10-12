@@ -62,46 +62,32 @@ def execute(task):
     for i in range(3):
         try:
             start_time = time.time()
-            print('analysis.py: 65')
             exit_code,tool_log,tool_output,docker_args = sb.docker.execute(task)
-            #print('analysis.py: 67, \nexit_code: \n{0}, \ntool_output: \n{1}, \ndocker_args: \n{2}'.format(exit_code, tool_output, docker_args))
             duration = time.time() - start_time
-            print('analysis.py: 69')
             break
         except sb.errors.SmartBugsError as e:
-            print('analysis.py: 71')
             if i == 2:
                 raise
         # wait 3 to 8 minutes
         time.sleep(random.randint(3,8)*60)
-    print('analysis.py: 77')
     # write result to files
     task_log = task_log_dict(task, start_time, duration, exit_code, tool_log, tool_output, docker_args)
-    print('analysis.py: 80, task_log: ')
-    print(task_log)
+    
 
     if tool_log:
         sb.io.write_txt(fn_tool_log, tool_log)
     if tool_output:
-        print('analysis.py: 80, the if that checks tool_output')
         sb.io.write_bin(fn_tool_output, tool_output)
-    print('analysis.py: 84')
     # Parse output of tool
     if task.settings.json or task.settings.sarif:
-        print('analysis.py: 87')
         parsed_result = sb.parsing.parse(task_log, tool_log, tool_output)
-        print('analysis.py: 89')
         sb.io.write_json(fn_parser_output,parsed_result)
-        print('analysis.py: 91')
         # Format parsed result as sarif
         if task.settings.sarif:
-            print('analysis.py: 94')
             sarif_result = sb.sarif.sarify(task_log["tool"], parsed_result["findings"])
             sb.io.write_json(fn_sarif_output, sarif_result)
-    print('analysis.py: 97')
     # Write to fn_task_log last, to indicate that this task is done
     sb.io.write_json(fn_task_log, task_log)
-    print('analysis.py: 100')
 
     return duration
 

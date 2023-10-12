@@ -50,8 +50,6 @@ def read_bin(fn):
         raise sb.errors.SmartBugsError(e)
 
 def write_bin(fn, output):
-    print('in io.py, fn: ')
-    print(fn)
     try:
         with open(fn, 'wb') as f:
             f.write(output)
