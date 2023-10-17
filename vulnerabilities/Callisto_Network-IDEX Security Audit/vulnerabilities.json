@@ -1,0 +1,1126 @@
+{
+    "idex-4a05eb28e570e9820066474ff2adc924ce7a27bd/MyToken.sol": {
+        "semgrep": {
+            "successfull_analysis": true,
+            "errors": [],
+            "vulnerability_findings": []
+        },
+        "slither": {
+            "successfull_analysis": true,
+            "errors": [
+                "EXIT_CODE_26"
+            ],
+            "vulnerability_findings": [
+                {
+                    "name": "erc20-interface",
+                    "vulnerability_from_line": 6,
+                    "vulnerability_to_line": 78,
+                    "vulnerability_code": "contract MyToken {\n\n    /* Public variables of the token */\n\n    string public standard = 'Token 0.1';\n\n    string public name;\n\n    string public symbol;\n\n    uint8 public decimals;\n\n    uint256 public totalSupply;\n\n\n\n    /* This creates an array with all balances */\n\n    mapping (address => uint256) public balanceOf;\n\n    mapping (address => mapping (address => uint256)) public allowance;\n\n\n\n    /* This generates a public event on the blockchain that will notify clients */\n\n    event Transfer(address indexed from, address indexed to, uint256 value);\n\n\n\n    /* Initializes contract with initial supply tokens to the creator of the contract */\n\n    function MyToken(\n\n        uint256 initialSupply,\n\n        string tokenName,\n\n        uint8 decimalUnits,\n\n        string tokenSymbol\n\n        ) {\n\n        balanceOf[msg.sender] = initialSupply;              // Give the creator all initial tokens\n\n        totalSupply = initialSupply;                        // Update total supply\n\n        name = tokenName;                                   // Set the name for display purposes\n\n        symbol = tokenSymbol;                               // Set the symbol for display purposes\n\n        decimals = decimalUnits;                            // Amount of decimals for display purposes\n\n    }\n\n\n\n    /* Send coins */\n\n    function transfer(address _to, uint256 _value) {\n\n        if (balanceOf[msg.sender] < _value) throw;           // Check if the sender has enough\n\n        if (balanceOf[_to] + _value < balanceOf[_to]) throw; // Check for overflows\n\n        balanceOf[msg.sender] -= _value;                     // Subtract from the sender\n\n        balanceOf[_to] += _value;                            // Add the same to the recipient\n\n        Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place\n\n    }\n\n\n\n    /* Allow another contract to spend some tokens in your behalf */\n\n    function approve(address _spender, uint256 _value)\n\n        returns (bool success) {\n\n        allowance[msg.sender][_spender] = _value;\n\n        return true;\n\n    }\n\n\n\n    /* Approve and then comunicate the approved contract in a single tx */\n\n    function approveAndCall(address _spender, uint256 _value, bytes _extraData)\n\n        returns (bool success) {\n\n        tokenRecipient spender = tokenRecipient(_spender);\n\n        if (approve(_spender, _value)) {\n\n            spender.receiveApproval(msg.sender, _value, this, _extraData);\n\n            return true;\n\n        }\n\n    }        \n\n\n\n    /* A contract attempts to get the coins */\n\n    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {\n\n        if (balanceOf[_from] < _value) throw;                 // Check if the sender has enough\n\n        if (balanceOf[_to] + _value < balanceOf[_to]) throw;  // Check for overflows\n\n        if (_value > allowance[_from][msg.sender]) throw;   // Check allowance\n\n        balanceOf[_from] -= _value;                          // Subtract from the sender\n\n        balanceOf[_to] += _value;                            // Add the same to the recipient\n\n        allowance[_from][msg.sender] -= _value;\n\n        Transfer(_from, _to, _value);\n\n        return true;\n\n    }\n\n\n\n    /* This unnamed function is called whenever someone tries to send ether to it */\n\n    // SWC-Code With No Effects: L73 - L75\n\n    function () {\n\n        throw;     // Prevents accidental sending of ether\n\n    }\n",
+                    "message": "MyToken (MyToken.sol#6-78) has incorrect ERC20 function interface(s):\n\t-transfer (MyToken.sol#36-42)\n"
+                },
+                {
+                    "name": "constable-states",
+                    "vulnerability_from_line": 8,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    string public standard = 'Token 0.1';\n",
+                    "message": "MyToken.standard should be constant (MyToken.sol#8)\n"
+                },
+                {
+                    "name": "deprecated-standards",
+                    "vulnerability_from_line": 37,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        if (balanceOf[msg.sender] < _value) throw;           // Check if the sender has enough\n",
+                    "message": "Deprecated standard detected @ MyToken.sol#37:\n\t- Usage of \"throw\" should be replaced with \"revert()\"\n"
+                },
+                {
+                    "name": "deprecated-standards",
+                    "vulnerability_from_line": 38,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        if (balanceOf[_to] + _value < balanceOf[_to]) throw; // Check for overflows\n",
+                    "message": "Deprecated standard detected @ MyToken.sol#38:\n\t- Usage of \"throw\" should be replaced with \"revert()\"\n"
+                },
+                {
+                    "name": "deprecated-standards",
+                    "vulnerability_from_line": 63,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        if (balanceOf[_from] < _value) throw;                 // Check if the sender has enough\n",
+                    "message": "Deprecated standard detected @ MyToken.sol#63:\n\t- Usage of \"throw\" should be replaced with \"revert()\"\n"
+                },
+                {
+                    "name": "deprecated-standards",
+                    "vulnerability_from_line": 64,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        if (balanceOf[_to] + _value < balanceOf[_to]) throw;  // Check for overflows\n",
+                    "message": "Deprecated standard detected @ MyToken.sol#64:\n\t- Usage of \"throw\" should be replaced with \"revert()\"\n"
+                },
+                {
+                    "name": "deprecated-standards",
+                    "vulnerability_from_line": 65,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        if (_value > allowance[_from][msg.sender]) throw;   // Check allowance\n",
+                    "message": "Deprecated standard detected @ MyToken.sol#65:\n\t- Usage of \"throw\" should be replaced with \"revert()\"\n"
+                },
+                {
+                    "name": "deprecated-standards",
+                    "vulnerability_from_line": 76,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        throw;     // Prevents accidental sending of ether\n",
+                    "message": "Deprecated standard detected @ MyToken.sol#76:\n\t- Usage of \"throw\" should be replaced with \"revert()\"\n"
+                },
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 4,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "contract tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData); }\n",
+                    "message": "tokenRecipient.receiveApproval (MyToken.sol#4) should be declared external\n"
+                },
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 36,
+                    "vulnerability_to_line": 42,
+                    "vulnerability_code": "    function transfer(address _to, uint256 _value) {\n\n        if (balanceOf[msg.sender] < _value) throw;           // Check if the sender has enough\n\n        if (balanceOf[_to] + _value < balanceOf[_to]) throw; // Check for overflows\n\n        balanceOf[msg.sender] -= _value;                     // Subtract from the sender\n\n        balanceOf[_to] += _value;                            // Add the same to the recipient\n\n        Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place\n",
+                    "message": "MyToken.transfer (MyToken.sol#36-42) should be declared external\n"
+                },
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 52,
+                    "vulnerability_to_line": 59,
+                    "vulnerability_code": "    function approveAndCall(address _spender, uint256 _value, bytes _extraData)\n\n        returns (bool success) {\n\n        tokenRecipient spender = tokenRecipient(_spender);\n\n        if (approve(_spender, _value)) {\n\n            spender.receiveApproval(msg.sender, _value, this, _extraData);\n\n            return true;\n\n        }\n",
+                    "message": "MyToken.approveAndCall (MyToken.sol#52-59) should be declared external\n"
+                },
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 62,
+                    "vulnerability_to_line": 71,
+                    "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {\n\n        if (balanceOf[_from] < _value) throw;                 // Check if the sender has enough\n\n        if (balanceOf[_to] + _value < balanceOf[_to]) throw;  // Check for overflows\n\n        if (_value > allowance[_from][msg.sender]) throw;   // Check allowance\n\n        balanceOf[_from] -= _value;                          // Subtract from the sender\n\n        balanceOf[_to] += _value;                            // Add the same to the recipient\n\n        allowance[_from][msg.sender] -= _value;\n\n        Transfer(_from, _to, _value);\n\n        return true;\n",
+                    "message": "MyToken.transferFrom (MyToken.sol#62-71) should be declared external\n"
+                },
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 75,
+                    "vulnerability_to_line": 77,
+                    "vulnerability_code": "    function () {\n\n        throw;     // Prevents accidental sending of ether\n",
+                    "message": "MyToken.fallback (MyToken.sol#75-77) should be declared external\n"
+                },
+                {
+                    "name": "solc-version",
+                    "vulnerability_from_line": 3,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "pragma solidity ^0.4.6;\n",
+                    "message": "Detected issues with version pragma in MyToken.sol:\n\t- pragma solidity^0.4.6 (MyToken.sol#3): it allows old versions\n"
+                },
+                {
+                    "name": "naming-convention",
+                    "vulnerability_from_line": 4,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "contract tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData); }\n",
+                    "message": "Contract 'tokenRecipient' (MyToken.sol#4) is not in CapWords\n"
+                },
+                {
+                    "name": "naming-convention",
+                    "vulnerability_from_line": 22,
+                    "vulnerability_to_line": 33,
+                    "vulnerability_code": "    function MyToken(\n\n        uint256 initialSupply,\n\n        string tokenName,\n\n        uint8 decimalUnits,\n\n        string tokenSymbol\n\n        ) {\n\n        balanceOf[msg.sender] = initialSupply;              // Give the creator all initial tokens\n\n        totalSupply = initialSupply;                        // Update total supply\n\n        name = tokenName;                                   // Set the name for display purposes\n\n        symbol = tokenSymbol;                               // Set the symbol for display purposes\n\n        decimals = decimalUnits;                            // Amount of decimals for display purposes\n",
+                    "message": "Function 'MyToken.MyToken' (MyToken.sol#22-33) is not in mixedCase\n"
+                },
+                {
+                    "name": "naming-convention",
+                    "vulnerability_from_line": 36,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function transfer(address _to, uint256 _value) {\n",
+                    "message": "Parameter '_to' of MyToken.transfer (MyToken.sol#36) is not in mixedCase\n"
+                },
+                {
+                    "name": "naming-convention",
+                    "vulnerability_from_line": 36,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function transfer(address _to, uint256 _value) {\n",
+                    "message": "Parameter '_value' of MyToken.transfer (MyToken.sol#36) is not in mixedCase\n"
+                },
+                {
+                    "name": "naming-convention",
+                    "vulnerability_from_line": 45,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function approve(address _spender, uint256 _value)\n",
+                    "message": "Parameter '_spender' of MyToken.approve (MyToken.sol#45) is not in mixedCase\n"
+                },
+                {
+                    "name": "naming-convention",
+                    "vulnerability_from_line": 45,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function approve(address _spender, uint256 _value)\n",
+                    "message": "Parameter '_value' of MyToken.approve (MyToken.sol#45) is not in mixedCase\n"
+                },
+                {
+                    "name": "naming-convention",
+                    "vulnerability_from_line": 52,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function approveAndCall(address _spender, uint256 _value, bytes _extraData)\n",
+                    "message": "Parameter '_spender' of MyToken.approveAndCall (MyToken.sol#52) is not in mixedCase\n"
+                },
+                {
+                    "name": "naming-convention",
+                    "vulnerability_from_line": 52,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function approveAndCall(address _spender, uint256 _value, bytes _extraData)\n",
+                    "message": "Parameter '_value' of MyToken.approveAndCall (MyToken.sol#52) is not in mixedCase\n"
+                },
+                {
+                    "name": "naming-convention",
+                    "vulnerability_from_line": 52,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function approveAndCall(address _spender, uint256 _value, bytes _extraData)\n",
+                    "message": "Parameter '_extraData' of MyToken.approveAndCall (MyToken.sol#52) is not in mixedCase\n"
+                },
+                {
+                    "name": "naming-convention",
+                    "vulnerability_from_line": 62,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {\n",
+                    "message": "Parameter '_from' of MyToken.transferFrom (MyToken.sol#62) is not in mixedCase\n"
+                },
+                {
+                    "name": "naming-convention",
+                    "vulnerability_from_line": 62,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {\n",
+                    "message": "Parameter '_to' of MyToken.transferFrom (MyToken.sol#62) is not in mixedCase\n"
+                },
+                {
+                    "name": "naming-convention",
+                    "vulnerability_from_line": 62,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {\n",
+                    "message": "Parameter '_value' of MyToken.transferFrom (MyToken.sol#62) is not in mixedCase\n"
+                }
+            ]
+        },
+        "smartcheck": {
+            "successfull_analysis": true,
+            "errors": [],
+            "vulnerability_findings": [
+                {
+                    "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+                    "vulnerability_from_line": 37,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        if (balanceOf[msg.sender] < _value) throw;           // Check if the sender has enough\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+                    "vulnerability_from_line": 38,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        if (balanceOf[_to] + _value < balanceOf[_to]) throw; // Check for overflows\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+                    "vulnerability_from_line": 63,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        if (balanceOf[_from] < _value) throw;                 // Check if the sender has enough\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+                    "vulnerability_from_line": 64,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        if (balanceOf[_to] + _value < balanceOf[_to]) throw;  // Check for overflows\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+                    "vulnerability_from_line": 65,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        if (_value > allowance[_from][msg.sender]) throw;   // Check allowance\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+                    "vulnerability_from_line": 76,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        throw;     // Prevents accidental sending of ether\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_ERC20_APPROVE",
+                    "vulnerability_from_line": 45,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function approve(address _spender, uint256 _value)\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_PRAGMAS_VERSION",
+                    "vulnerability_from_line": 3,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "pragma solidity ^0.4.6;\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_REDUNDANT_FALLBACK_REJECT",
+                    "vulnerability_from_line": 75,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function () {\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_REVERT_REQUIRE",
+                    "vulnerability_from_line": 37,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        if (balanceOf[msg.sender] < _value) throw;           // Check if the sender has enough\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_REVERT_REQUIRE",
+                    "vulnerability_from_line": 38,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        if (balanceOf[_to] + _value < balanceOf[_to]) throw; // Check for overflows\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_REVERT_REQUIRE",
+                    "vulnerability_from_line": 63,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        if (balanceOf[_from] < _value) throw;                 // Check if the sender has enough\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_REVERT_REQUIRE",
+                    "vulnerability_from_line": 64,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        if (balanceOf[_to] + _value < balanceOf[_to]) throw;  // Check for overflows\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_REVERT_REQUIRE",
+                    "vulnerability_from_line": 65,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        if (_value > allowance[_from][msg.sender]) throw;   // Check allowance\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_VISIBILITY",
+                    "vulnerability_from_line": 4,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "contract tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData); }\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_VISIBILITY",
+                    "vulnerability_from_line": 22,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function MyToken(\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_VISIBILITY",
+                    "vulnerability_from_line": 36,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function transfer(address _to, uint256 _value) {\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_VISIBILITY",
+                    "vulnerability_from_line": 45,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function approve(address _spender, uint256 _value)\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_VISIBILITY",
+                    "vulnerability_from_line": 52,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function approveAndCall(address _spender, uint256 _value, bytes _extraData)\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_VISIBILITY",
+                    "vulnerability_from_line": 62,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_VISIBILITY",
+                    "vulnerability_from_line": 75,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function () {\n",
+                    "message": null
+                }
+            ]
+        },
+        "oyente": {
+            "successfull_analysis": true,
+            "errors": [],
+            "vulnerability_findings": [
+                {
+                    "name": "Integer Overflow",
+                    "vulnerability_from_line": 52,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function approveAndCall(address _spender, uint256 _value, bytes _extraData)\n",
+                    "message": null
+                },
+                {
+                    "name": "Integer Underflow",
+                    "vulnerability_from_line": 9,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    string public name;\n",
+                    "message": null
+                }
+            ]
+        },
+        "mythril": {
+            "successfull_analysis": true,
+            "errors": [],
+            "vulnerability_findings": [
+                {
+                    "name": "External Call To User-Supplied Address (SWC 107)",
+                    "vulnerability_from_line": 56,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "            spender.receiveApproval(msg.sender, _value, this, _extraData);\n",
+                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+                }
+            ]
+        },
+        "osiris": {
+            "successfull_analysis": true,
+            "errors": [],
+            "vulnerability_findings": []
+        }
+    },
+    "idex-4a05eb28e570e9820066474ff2adc924ce7a27bd/DVIP.sol": {
+        "semgrep": {
+            "successfull_analysis": true,
+            "errors": [],
+            "vulnerability_findings": []
+        },
+        "slither": {
+            "successfull_analysis": true,
+            "errors": [
+                "EXIT_CODE_1"
+            ],
+            "vulnerability_findings": [
+                {
+                    "name": "solc-version",
+                    "vulnerability_from_line": 3,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "pragma solidity ^0.4.7;\n",
+                    "message": "Detected issues with version pragma in DVIP.sol:\n\t- pragma solidity^0.4.7 (DVIP.sol#3): it allows old versions\n"
+                }
+            ]
+        },
+        "smartcheck": {
+            "successfull_analysis": true,
+            "errors": [],
+            "vulnerability_findings": [
+                {
+                    "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+                    "vulnerability_from_line": 6,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "  function feeFor(address from, address to, uint256 amount) constant external returns (uint256 value);\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_PRAGMAS_VERSION",
+                    "vulnerability_from_line": 3,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "pragma solidity ^0.4.7;\n",
+                    "message": null
+                }
+            ]
+        },
+        "oyente": {
+            "successfull_analysis": false,
+            "errors": [
+                "execution failed"
+            ],
+            "vulnerability_findings": []
+        },
+        "mythril": {
+            "successfull_analysis": false,
+            "errors": [
+                "input files do not contain any valid contracts"
+            ],
+            "vulnerability_findings": []
+        },
+        "osiris": {
+            "successfull_analysis": false,
+            "errors": [
+                "Solidity compilation failed"
+            ],
+            "vulnerability_findings": []
+        }
+    },
+    "idex-4a05eb28e570e9820066474ff2adc924ce7a27bd/interface/Token.sol": {
+        "semgrep": {
+            "successfull_analysis": true,
+            "errors": [],
+            "vulnerability_findings": []
+        },
+        "slither": {
+            "successfull_analysis": true,
+            "errors": [
+                "EXIT_CODE_6"
+            ],
+            "vulnerability_findings": [
+                {
+                    "name": "constable-states",
+                    "vulnerability_from_line": 10,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    bool public allowTransactions;\n",
+                    "message": "Token.allowTransactions should be constant (Token.sol#10)\nToken.decimals should be constant (Token.sol#9)\nToken.name should be constant (Token.sol#6)\nToken.standard should be constant (Token.sol#5)\nToken.symbol should be constant (Token.sol#7)\nToken.totalSupply should be constant (Token.sol#8)\n"
+                },
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 13,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function transfer(address _to, uint256 _value) returns (bool success);\n",
+                    "message": "Token.transfer (Token.sol#13) should be declared external\n"
+                },
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 14,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function approveAndCall(address _spender, uint256 _value, bytes _extraData) returns (bool success);\n",
+                    "message": "Token.approveAndCall (Token.sol#14) should be declared external\n"
+                },
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 15,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function approve(address _spender, uint256 _value) returns (bool success);\n",
+                    "message": "Token.approve (Token.sol#15) should be declared external\n"
+                },
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 16,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) returns (bool success);\n",
+                    "message": "Token.transferFrom (Token.sol#16) should be declared external\n"
+                },
+                {
+                    "name": "solc-version",
+                    "vulnerability_from_line": 3,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "pragma solidity ^0.4.6;\n",
+                    "message": "Detected issues with version pragma in Token.sol:\n\t- pragma solidity^0.4.6 (Token.sol#3): it allows old versions\n"
+                }
+            ]
+        },
+        "smartcheck": {
+            "successfull_analysis": true,
+            "errors": [],
+            "vulnerability_findings": [
+                {
+                    "name": "SOLIDITY_PRAGMAS_VERSION",
+                    "vulnerability_from_line": 3,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "pragma solidity ^0.4.6;\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_VISIBILITY",
+                    "vulnerability_from_line": 13,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function transfer(address _to, uint256 _value) returns (bool success);\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_VISIBILITY",
+                    "vulnerability_from_line": 14,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function approveAndCall(address _spender, uint256 _value, bytes _extraData) returns (bool success);\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_VISIBILITY",
+                    "vulnerability_from_line": 15,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function approve(address _spender, uint256 _value) returns (bool success);\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_VISIBILITY",
+                    "vulnerability_from_line": 16,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) returns (bool success);\n",
+                    "message": null
+                }
+            ]
+        },
+        "oyente": {
+            "successfull_analysis": false,
+            "errors": [
+                "execution failed"
+            ],
+            "vulnerability_findings": []
+        },
+        "mythril": {
+            "successfull_analysis": false,
+            "errors": [
+                "input files do not contain any valid contracts"
+            ],
+            "vulnerability_findings": []
+        },
+        "osiris": {
+            "successfull_analysis": false,
+            "errors": [
+                "Solidity compilation failed"
+            ],
+            "vulnerability_findings": []
+        }
+    },
+    "idex-4a05eb28e570e9820066474ff2adc924ce7a27bd/interface/TokenRecipient.sol": {
+        "semgrep": {
+            "successfull_analysis": true,
+            "errors": [],
+            "vulnerability_findings": []
+        },
+        "slither": {
+            "successfull_analysis": true,
+            "errors": [
+                "EXIT_CODE_2"
+            ],
+            "vulnerability_findings": [
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 6,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "  function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData);\n",
+                    "message": "TokenRecipient.receiveApproval (TokenRecipient.sol#6) should be declared external\n"
+                },
+                {
+                    "name": "solc-version",
+                    "vulnerability_from_line": 3,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "pragma solidity ^0.4.7;\n",
+                    "message": "Detected issues with version pragma in TokenRecipient.sol:\n\t- pragma solidity^0.4.7 (TokenRecipient.sol#3): it allows old versions\n"
+                }
+            ]
+        },
+        "smartcheck": {
+            "successfull_analysis": true,
+            "errors": [],
+            "vulnerability_findings": [
+                {
+                    "name": "SOLIDITY_PRAGMAS_VERSION",
+                    "vulnerability_from_line": 3,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "pragma solidity ^0.4.7;\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_VISIBILITY",
+                    "vulnerability_from_line": 6,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "  function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData);\n",
+                    "message": null
+                }
+            ]
+        },
+        "oyente": {
+            "successfull_analysis": false,
+            "errors": [
+                "execution failed"
+            ],
+            "vulnerability_findings": []
+        },
+        "mythril": {
+            "successfull_analysis": false,
+            "errors": [
+                "input files do not contain any valid contracts"
+            ],
+            "vulnerability_findings": []
+        },
+        "osiris": {
+            "successfull_analysis": false,
+            "errors": [
+                "Solidity compilation failed"
+            ],
+            "vulnerability_findings": []
+        }
+    },
+    "idex-4a05eb28e570e9820066474ff2adc924ce7a27bd/lib/Token.sol": {
+        "semgrep": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "slither": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "smartcheck": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "oyente": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "mythril": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "osiris": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        }
+    },
+    "idex-4a05eb28e570e9820066474ff2adc924ce7a27bd/lib/Relay.sol": {
+        "semgrep": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "slither": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "smartcheck": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "oyente": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "mythril": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "osiris": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        }
+    },
+    "idex-4a05eb28e570e9820066474ff2adc924ce7a27bd/lib/StateTransferrable.sol": {
+        "semgrep": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "slither": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "smartcheck": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "oyente": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "mythril": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "osiris": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        }
+    },
+    "idex-4a05eb28e570e9820066474ff2adc924ce7a27bd/lib/Owned.sol": {
+        "semgrep": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "slither": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "smartcheck": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "oyente": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "mythril": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "osiris": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        }
+    },
+    "idex-4a05eb28e570e9820066474ff2adc924ce7a27bd/lib/TrustEvents.sol": {
+        "semgrep": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "slither": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "smartcheck": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "oyente": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "mythril": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "osiris": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        }
+    },
+    "idex-4a05eb28e570e9820066474ff2adc924ce7a27bd/lib/Namereg.sol": {
+        "semgrep": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "slither": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "smartcheck": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "oyente": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "mythril": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "osiris": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        }
+    },
+    "idex-4a05eb28e570e9820066474ff2adc924ce7a27bd/lib/Precision.sol": {
+        "semgrep": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "slither": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "smartcheck": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "oyente": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "mythril": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "osiris": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        }
+    },
+    "idex-4a05eb28e570e9820066474ff2adc924ce7a27bd/lib/Math.sol": {
+        "semgrep": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "slither": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "smartcheck": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "oyente": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "mythril": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "osiris": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        }
+    },
+    "idex-4a05eb28e570e9820066474ff2adc924ce7a27bd/lib/TokenBase.sol": {
+        "semgrep": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "slither": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "smartcheck": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "oyente": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "mythril": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "osiris": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        }
+    },
+    "idex-4a05eb28e570e9820066474ff2adc924ce7a27bd/lib/Assertive.sol": {
+        "semgrep": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "slither": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "smartcheck": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "oyente": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "mythril": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "osiris": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        }
+    },
+    "idex-4a05eb28e570e9820066474ff2adc924ce7a27bd/lib/Util.sol": {
+        "semgrep": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "slither": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "smartcheck": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "oyente": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "mythril": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        },
+        "osiris": {
+            "successfull_analysis": false,
+            "errors": [
+                "Smartbugs results not found"
+            ],
+            "vulnerability_findings": []
+        }
+    }
+}

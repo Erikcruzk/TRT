@@ -196,3 +196,34 @@ Temperature 0.5 and 0.7. Top_p 0.95
 - Build k3s architecture for running docker containers on different machines. To scale execution horizontally.
 - Increase dataset. keep hidden from LLMs
 - Create test harness for all contracts
+
+# Config.json parameters
+
+
+| Parameter                   | Description                                        | Options/Examples                               |
+|-----------------------------|----------------------------------------------------|------------------------------------------------|
+| experiment name^1           | Experiment name                                   |                                                |
+| delete old experiment name^1| Delete old experiment results with the same name |                                                |
+| n repair threads^1          | Number of threads for repair                     |                                                |
+| patch examples directory^1  | Directory for patch examples                      |                                                |
+| llm model name^1            | Name of the LLM (Large Language Model) to use    |                                                |
+| vulnerable contracts directory^1 | Directory path for vulnerable smart contracts  |                                                |
+| target vulnerabilities^1    | List of target vulnerabilities                    | [access_control, arithmetic, transaction_order_dependence, reentrancy, unchecked_low_level_call, unhandled_exception] |
+| n smartbugs threads^1       | Number of threads for SmartBugs analysis         |                                                |
+| smartbugs tools^1           | List of tools used for SmartBugs analysis        | [access_control_tools, arithmetic_tools, reentrancy_tools, unchecked_calls_tools, transaction_order_dependence_tools] or [oyente, slither, confuzzius, conkas, honeybadger, maian, mythril, osiris, securify, sFuzz, solhint] |
+| smartbugs timeout^1         | Timeout for SmartBugs analysis                    |                                                |
+| smartbugs processes^1       | Concurrent SmartBugs processes                    |                                                |
+| prompt style^1              | Style for prompts                                  | [basic, analyzers_json_results, analyzers_natural_language_results] |
+| shave^1                     | List of elements to remove from the contract     | [comments, NatSpec, file directives] |
+| threshold^1                 | Number of tokens that trigger shaving process    |                                                |
+| model name^2                | Name of the LLM model (second occurrence)        |                                                |
+| secret api key^2            | Secret API key for the LLM model (the name of the env variable)              |  |
+| temperature^2               | Temperature setting for the LLM model            |                                                |
+| top p^2                     | Top-p setting for the LLM model                   |                                                |
+| num candidate patches^2     | Number of candidate patches for the LLM model    |                                                |
+| max time^2                  | Maximum time setting for the LLM model            |                                                |
+| stop^2                      | Stop token(s) for the LLM model                   |  |
+
+
+*1*: Experiment setting parameter.
+*2*: LLM setting parameter.
