@@ -451,7 +451,7 @@
                     "vulnerability_from_line": 713,
                     "vulnerability_to_line": 770,
                     "vulnerability_code": "    function createLoan(\n\n        Oracle _oracleContract,\n\n        address _borrower,\n\n        bytes32 _currency,\n\n        uint256 _amount,\n\n        uint256 _interestRate,\n\n        uint256 _interestRatePunitory,\n\n        uint256 _duesIn,\n\n        uint256 _cancelableAt,\n\n        uint256 _expirationRequest,\n\n        string memory _metadata\n\n    ) public returns (uint256) {\n\n        require(!deprecated);\n\n        require(_cancelableAt <= _duesIn);\n\n        require(address(_oracleContract) != address(0) || _currency == bytes32(0));\n\n        require(_borrower != address(0));\n\n        require(_amount != 0);\n\n        require(_interestRatePunitory != 0);\n\n        require(_interestRate != 0);\n\n        require(_expirationRequest > block.timestamp);\n\n\n\n        Loan memory loan = Loan(\n\n            Status.initial,\n\n            _oracleContract,\n\n            _borrower,\n\n            address(0),\n\n            msg.sender,\n\n            address(0),\n\n            _amount,\n\n            0,\n\n            0,\n\n            0,\n\n            0,\n\n            _interestRate,\n\n            _interestRatePunitory,\n\n            0,\n\n            _duesIn,\n\n            _currency,\n\n            _cancelableAt,\n\n            0,\n\n            address(0),\n\n            _expirationRequest,\n\n            _metadata\n\n        );\n\n\n\n        uint index = loans.push(loan) - 1;\n\n        emit CreatedLoan(index, _borrower, msg.sender);\n\n\n\n        bytes32 identifier = getIdentifier(index);\n\n        require(identifierToIndex[identifier] == 0);\n\n        identifierToIndex[identifier] = index;\n\n\n\n        if (msg.sender == _borrower) {\n\n            approveLoan(index);\n\n        }\n\n\n\n        return index;\n",
-                    "message": "NanoLoanEngine.createLoan (NanoLoanEngine.sol#713-770) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool)(_expirationRequest > block.timestamp) (NanoLoanEngine.sol#732)\n\t- require(bool)(identifierToIndex[identifier] == 0) (NanoLoanEngine.sol#762)\n"
+                    "message": "NanoLoanEngine.createLoan (NanoLoanEngine.sol#713-770) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool)(identifierToIndex[identifier] == 0) (NanoLoanEngine.sol#762)\n\t- require(bool)(_expirationRequest > block.timestamp) (NanoLoanEngine.sol#732)\n"
                 },
                 {
                     "name": "timestamp",
@@ -472,7 +472,7 @@
                     "vulnerability_from_line": 911,
                     "vulnerability_to_line": 948,
                     "vulnerability_code": "    function lend(uint index, bytes memory oracleData, Cosigner cosigner, bytes memory cosignerData) public returns (bool) {\n\n        Loan storage loan = loans[index];\n\n\n\n        require(loan.status == Status.initial);\n\n        require(isApproved(index));\n\n        require(block.timestamp <= loan.expirationRequest);\n\n\n\n        loan.lender = msg.sender;\n\n        loan.dueTime = safeAdd(block.timestamp, loan.duesIn);\n\n        loan.interestTimestamp = block.timestamp;\n\n        loan.status = Status.lent;\n\n\n\n        // ERC721, create new loan and transfer it to the lender\n\n        emit Transfer(address(0), loan.lender, index);\n\n        activeLoans += 1;\n\n        lendersBalance[loan.lender] += 1;\n\n\n\n        if (loan.cancelableAt > 0)\n\n            internalAddInterest(loan, safeAdd(block.timestamp, loan.cancelableAt));\n\n\n\n        // Transfer the money to the borrower before handling the cosigner\n\n        // so the cosigner could require a specific usage for that money.\n\n        uint256 transferValue = convertRate(loan.oracle, loan.currency, oracleData, loan.amount);\n\n        require(rcn.transferFrom(msg.sender, loan.borrower, transferValue));\n\n\n\n        if (address(cosigner) != address(0)) {\n\n            // The cosigner it's temporary set to the next address (cosigner + 2), it's expected that the cosigner will\n\n            // call the method \"cosign\" to accept the conditions; that method also sets the cosigner to the right\n\n            // address. If that does not happen, the transaction fails.\n\n            loan.cosigner = address(uint256(address(cosigner)) + 2);\n\n            require(cosigner.requestCosign(address(this), index, cosignerData, oracleData));\n\n            require(loan.cosigner == address(cosigner));\n\n        }\n\n\n\n        emit Lent(index, loan.lender, address(cosigner));\n\n\n\n        return true;\n",
-                    "message": "NanoLoanEngine.lend (NanoLoanEngine.sol#911-948) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- loan.cancelableAt > 0 (NanoLoanEngine.sol#928-929)\n\t- require(bool)(loan.cosigner == address(cosigner)) (NanoLoanEngine.sol#942)\n\t- require(bool)(block.timestamp <= loan.expirationRequest) (NanoLoanEngine.sol#916)\n\t- require(bool)(rcn.transferFrom(msg.sender,loan.borrower,transferValue)) (NanoLoanEngine.sol#934)\n\t- require(bool)(loan.status == Status.initial) (NanoLoanEngine.sol#914)\n"
+                    "message": "NanoLoanEngine.lend (NanoLoanEngine.sol#911-948) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool)(rcn.transferFrom(msg.sender,loan.borrower,transferValue)) (NanoLoanEngine.sol#934)\n\t- require(bool)(loan.status == Status.initial) (NanoLoanEngine.sol#914)\n\t- loan.cancelableAt > 0 (NanoLoanEngine.sol#928-929)\n\t- require(bool)(loan.cosigner == address(cosigner)) (NanoLoanEngine.sol#942)\n\t- require(bool)(block.timestamp <= loan.expirationRequest) (NanoLoanEngine.sol#916)\n"
                 },
                 {
                     "name": "timestamp",
@@ -658,13 +658,6 @@
                 },
                 {
                     "name": "external-function",
-                    "vulnerability_from_line": 773,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function getTotalLoans() public view returns (uint256) { return loans.length; }\n",
-                    "message": "NanoLoanEngine.getTotalLoans (NanoLoanEngine.sol#773) should be declared external\n"
-                },
-                {
-                    "name": "external-function",
                     "vulnerability_from_line": 279,
                     "vulnerability_to_line": null,
                     "vulnerability_code": "    function getTotalLoans() public view returns (uint256);\n",
@@ -672,10 +665,10 @@
                 },
                 {
                     "name": "external-function",
-                    "vulnerability_from_line": 280,
+                    "vulnerability_from_line": 773,
                     "vulnerability_to_line": null,
-                    "vulnerability_code": "    function getOracle(uint index) public view returns (Oracle);\n",
-                    "message": "Engine.getOracle (NanoLoanEngine.sol#280) should be declared external\n"
+                    "vulnerability_code": "    function getTotalLoans() public view returns (uint256) { return loans.length; }\n",
+                    "message": "NanoLoanEngine.getTotalLoans (NanoLoanEngine.sol#773) should be declared external\n"
                 },
                 {
                     "name": "external-function",
@@ -683,6 +676,13 @@
                     "vulnerability_to_line": null,
                     "vulnerability_code": "    function getOracle(uint index) public view returns (Oracle) { return loans[index].oracle; }\n",
                     "message": "NanoLoanEngine.getOracle (NanoLoanEngine.sol#774) should be declared external\n"
+                },
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 280,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function getOracle(uint index) public view returns (Oracle);\n",
+                    "message": "Engine.getOracle (NanoLoanEngine.sol#280) should be declared external\n"
                 },
                 {
                     "name": "external-function",
@@ -756,17 +756,17 @@
                 },
                 {
                     "name": "external-function",
-                    "vulnerability_from_line": 781,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function getPaid(uint index) public view returns (uint256) { return loans[index].paid; }\n",
-                    "message": "NanoLoanEngine.getPaid (NanoLoanEngine.sol#781) should be declared external\n"
-                },
-                {
-                    "name": "external-function",
                     "vulnerability_from_line": 286,
                     "vulnerability_to_line": null,
                     "vulnerability_code": "    function getPaid(uint index) public view returns (uint256);\n",
                     "message": "Engine.getPaid (NanoLoanEngine.sol#286) should be declared external\n"
+                },
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 781,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function getPaid(uint index) public view returns (uint256) { return loans[index].paid; }\n",
+                    "message": "NanoLoanEngine.getPaid (NanoLoanEngine.sol#781) should be declared external\n"
                 },
                 {
                     "name": "external-function",
@@ -903,17 +903,17 @@
                 },
                 {
                     "name": "external-function",
-                    "vulnerability_from_line": 313,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function approve(address, uint256) public returns (bool);\n",
-                    "message": "ERC721.approve (NanoLoanEngine.sol#313) should be declared external\n"
-                },
-                {
-                    "name": "external-function",
                     "vulnerability_from_line": 1081,
                     "vulnerability_to_line": 1087,
                     "vulnerability_code": "    function approve(address to, uint256 index) public returns (bool) {\n\n        Loan storage loan = loans[index];\n\n        require(msg.sender == loan.lender);\n\n        loan.approvedTransfer = to;\n\n        emit Approval(msg.sender, to, index);\n\n        return true;\n",
                     "message": "NanoLoanEngine.approve (NanoLoanEngine.sol#1081-1087) should be declared external\n"
+                },
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 313,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function approve(address, uint256) public returns (bool);\n",
+                    "message": "ERC721.approve (NanoLoanEngine.sol#313) should be declared external\n"
                 },
                 {
                     "name": "external-function",
@@ -938,13 +938,6 @@
                 },
                 {
                     "name": "external-function",
-                    "vulnerability_from_line": 317,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function getApproved(uint256 _tokenId) public view returns (address);\n",
-                    "message": "ERC721.getApproved (NanoLoanEngine.sol#317) should be declared external\n"
-                },
-                {
-                    "name": "external-function",
                     "vulnerability_from_line": 790,
                     "vulnerability_to_line": null,
                     "vulnerability_code": "    function getApproved(uint index) public view returns (address) {return loans[index].approvedTransfer; }\n",
@@ -952,10 +945,10 @@
                 },
                 {
                     "name": "external-function",
-                    "vulnerability_from_line": 318,
+                    "vulnerability_from_line": 317,
                     "vulnerability_to_line": null,
-                    "vulnerability_code": "    function isApprovedForAll(address _owner, address _operator) public view returns (bool);\n",
-                    "message": "ERC721.isApprovedForAll (NanoLoanEngine.sol#318) should be declared external\n"
+                    "vulnerability_code": "    function getApproved(uint256 _tokenId) public view returns (address);\n",
+                    "message": "ERC721.getApproved (NanoLoanEngine.sol#317) should be declared external\n"
                 },
                 {
                     "name": "external-function",
@@ -963,6 +956,13 @@
                     "vulnerability_to_line": 613,
                     "vulnerability_code": "    function isApprovedForAll(address _owner, address _operator) public view returns (bool) {\n\n        return operators[_owner][_operator];\n",
                     "message": "NanoLoanEngine.isApprovedForAll (NanoLoanEngine.sol#611-613) should be declared external\n"
+                },
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 318,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function isApprovedForAll(address _owner, address _operator) public view returns (bool);\n",
+                    "message": "ERC721.isApprovedForAll (NanoLoanEngine.sol#318) should be declared external\n"
                 },
                 {
                     "name": "external-function",
@@ -1818,40 +1818,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 182,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        return token.transfer(to, amount);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "Multiple Calls in a Single Transaction (SWC 113)",
-                    "vulnerability_from_line": 182,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        return token.transfer(to, amount);\n",
-                    "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/basalt/utils/OwnableBasalt.sol": {
@@ -1937,25 +1903,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/basalt/utils/RpSafeMath.sol": {
@@ -1999,25 +1946,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/basalt/utils/TokenLockable.sol": {
@@ -2138,40 +2066,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 105,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        return token.transfer(to, amount);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "Multiple Calls in a Single Transaction (SWC 113)",
-                    "vulnerability_from_line": 105,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        return token.transfer(to, amount);\n",
-                    "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/basalt/examples/ReferenceOracle.sol": {
@@ -3153,47 +3047,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 483,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        if (rateCache.timestamp >= timestamp && !isExpired(rateCache.timestamp)) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 494,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "            require(!isExpired(timestamp), \"The rate provided is expired\");\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 320,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes32[] public currencies;\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/basalt/interfaces/Engine.sol": {
@@ -3559,25 +3412,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/basalt/interfaces/ERC721.sol": {
@@ -3739,27 +3573,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/basalt/interfaces/Oracle.sol": {
@@ -3964,25 +3777,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/diaspore/LoanManager.sol": {
@@ -6282,24 +6076,10 @@
                 },
                 {
                     "name": "uninitialized-local",
-                    "vulnerability_from_line": 1429,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        uint256 tokens;\n",
-                    "message": "tokens in DebtEngine.payBatch (LoanManager.sol#1429) is a local variable never initialiazed\n"
-                },
-                {
-                    "name": "uninitialized-local",
-                    "vulnerability_from_line": 1373,
+                    "vulnerability_from_line": 1465,
                     "vulnerability_to_line": null,
                     "vulnerability_code": "        uint256 equivalent;\n",
-                    "message": "equivalent in DebtEngine.payToken (LoanManager.sol#1373) is a local variable never initialiazed\n"
-                },
-                {
-                    "name": "uninitialized-local",
-                    "vulnerability_from_line": 1464,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        uint256 tokens;\n",
-                    "message": "tokens in DebtEngine.payTokenBatch (LoanManager.sol#1464) is a local variable never initialiazed\n"
+                    "message": "equivalent in DebtEngine.payTokenBatch (LoanManager.sol#1465) is a local variable never initialiazed\n"
                 },
                 {
                     "name": "uninitialized-local",
@@ -6310,17 +6090,31 @@
                 },
                 {
                     "name": "uninitialized-local",
-                    "vulnerability_from_line": 1465,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        uint256 equivalent;\n",
-                    "message": "equivalent in DebtEngine.payTokenBatch (LoanManager.sol#1465) is a local variable never initialiazed\n"
-                },
-                {
-                    "name": "uninitialized-local",
                     "vulnerability_from_line": 1430,
                     "vulnerability_to_line": null,
                     "vulnerability_code": "        uint256 equivalent;\n",
                     "message": "equivalent in DebtEngine.payBatch (LoanManager.sol#1430) is a local variable never initialiazed\n"
+                },
+                {
+                    "name": "uninitialized-local",
+                    "vulnerability_from_line": 1429,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        uint256 tokens;\n",
+                    "message": "tokens in DebtEngine.payBatch (LoanManager.sol#1429) is a local variable never initialiazed\n"
+                },
+                {
+                    "name": "uninitialized-local",
+                    "vulnerability_from_line": 1464,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        uint256 tokens;\n",
+                    "message": "tokens in DebtEngine.payTokenBatch (LoanManager.sol#1464) is a local variable never initialiazed\n"
+                },
+                {
+                    "name": "uninitialized-local",
+                    "vulnerability_from_line": 1373,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        uint256 equivalent;\n",
+                    "message": "equivalent in DebtEngine.payToken (LoanManager.sol#1373) is a local variable never initialiazed\n"
                 },
                 {
                     "name": "shadowing-local",
@@ -9444,25 +9238,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/diaspore/DebtEngine.sol": {
@@ -12124,27 +11899,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "DOCKER_TIMEOUT"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/diaspore/utils/OracleAdapter.sol": {
@@ -12657,40 +12411,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 292,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        (_tokens, _equivalent) = legacyOracle.getRate(icurrency, _data);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 293,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        _equivalent = 10 ** _equivalent;\n",
-                    "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/diaspore/model/NanoLoanModel.sol": {
@@ -13994,96 +13714,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 851,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        defined = timestamp == now || timestamp <= states[id].interestTimestamp;\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 479,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function mult(uint256 x, uint256 y) internal pure returns (uint256) {\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 835,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        require(uint64(now) + _duesIn > uint64(now), \"duesIn should be not 0 or overflow now plus duesIn\");\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 996,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        if (state.interestTimestamp < timestamp) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 998,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "            if (state.interestTimestamp < endNonPunitory) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 1009,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "            if (config.dueTime < timestamp) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 470,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        require(z >= x, \"Add overflow\");\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 694,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        return (a < b) ? a : b;\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 869,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        if (timestamp > config.dueTime && timestamp > state.interestTimestamp) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 869,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        if (timestamp > config.dueTime && timestamp > state.interestTimestamp) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/diaspore/model/InstallmentsModel.sol": {
@@ -15569,68 +15199,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 840,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        require(target <= now, \"Forbidden advance clock into the future\");\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 1002,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        if (clock < _target) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 877,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        uint256 base = _baseDebt(\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 795,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "                baseDebt = _baseDebt(clock, duration, config.installments, config.cuota);\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 1043,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        if (clock >= currentClock) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 1085,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "            (delta, installmentCompleted) = _calcDelta({\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/diaspore/interfaces/LoanCallback.sol": {
@@ -15666,27 +15234,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/diaspore/interfaces/Model.sol": {
@@ -15743,27 +15290,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/diaspore/interfaces/RateOracle.sol": {
@@ -15835,27 +15361,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/diaspore/interfaces/ModelDescriptor.sol": {
@@ -15905,27 +15410,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/core/diaspore/interfaces/LoanApprover.sol": {
@@ -16003,27 +15487,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/commons/Ownable.sol": {
@@ -16123,25 +15586,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/commons/SimpleDelegable.sol": {
@@ -16297,25 +15741,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/commons/ERC721Base.sol": {
@@ -17535,25 +16960,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/commons/ERC165.sol": {
@@ -17681,27 +17087,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/TestOracle.sol": {
@@ -17992,17 +17377,17 @@
                 },
                 {
                     "name": "external-function",
-                    "vulnerability_from_line": 51,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function url() public view returns (string memory);\n",
-                    "message": "Oracle.url (TestOracle.sol#51) should be declared external\n"
-                },
-                {
-                    "name": "external-function",
                     "vulnerability_from_line": 333,
                     "vulnerability_to_line": 335,
                     "vulnerability_code": "    function url() public view returns (string memory) {\n\n        return _purl;\n",
                     "message": "TestOracle.url (TestOracle.sol#333-335) should be declared external\n"
+                },
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 51,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    function url() public view returns (string memory);\n",
+                    "message": "Oracle.url (TestOracle.sol#51) should be declared external\n"
                 },
                 {
                     "name": "external-function",
@@ -18445,96 +17830,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 315,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public dummyDataBytes3 = buildData(dummyData3);\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 315,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public dummyDataBytes3 = buildData(dummyData3);\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 334,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        return _purl;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 334,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        return _purl;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 313,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public dummyDataBytes1 = buildData(dummyData1);\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 313,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public dummyDataBytes1 = buildData(dummyData1);\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 314,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public dummyDataBytes2 = buildData(dummyData2);\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 314,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public dummyDataBytes2 = buildData(dummyData2);\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 46,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes32[] public currencies;\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": null,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": null,
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.\nClassification: SWC-101"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/TestERC721.sol": {
@@ -19768,25 +19063,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/TestERC721ReceiverMultiple.sol": {
@@ -19899,54 +19175,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 43,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public lastData;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 43,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public lastData;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": null,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": null,
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.\nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": null,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": null,
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.\nClassification: SWC-101"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/IERC721Receiver.sol": {
@@ -19982,27 +19210,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/TestCosigner.sol": {
@@ -21019,47 +20226,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 426,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public badData = buildData(keccak256(\"bad_data\"), 0);\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 425,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public noCosignData = buildData(keccak256(\"return_true_no_cosign\"), 0);\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 424,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public data = buildData(keccak256(\"test_oracle\"), dummyCost);\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/TestERC721ReceiverLegacy.sol": {
@@ -21130,47 +20296,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 24,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public lastData;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 24,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public lastData;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": null,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": null,
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.\nClassification: SWC-101"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/TestURIProvider.sol": {
@@ -22418,40 +21543,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 626,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        return uri;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 611,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    string public uri = \"https://ripioCreditNetwork/debtId\";\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/TestERC721ReceiverLegacyRaw.sol": {
@@ -22522,47 +21613,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 24,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public lastData;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 24,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public lastData;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": null,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": null,
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.\nClassification: SWC-101"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/TestAccountMock.sol": {
@@ -22662,33 +21712,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 22,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "            success := call(\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/IERC721ReceiverLegacy.sol": {
@@ -22724,27 +21747,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/TestToken.sol": {
@@ -23089,25 +22091,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/TestERC721Receiver.sol": {
@@ -23185,47 +22168,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 26,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public lastData;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 26,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public lastData;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": null,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": null,
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.\nClassification: SWC-101"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/diaspore/TestDebtEngine.sol": {
@@ -23346,25 +22288,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/diaspore/TestLoanCallback.sol": {
@@ -23506,47 +22429,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 30,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public requireData;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 30,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    bytes public requireData;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": null,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": null,
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.\nClassification: SWC-101"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/diaspore/TestLoanApprover.sol": {
@@ -24360,33 +23242,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 346,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function setErrorBehavior(\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/diaspore/TestModel.sol": {
@@ -24712,17 +23567,17 @@
                 },
                 {
                     "name": "uninitialized-local",
-                    "vulnerability_from_line": 583,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "            uint256 aux;\n",
-                    "message": "aux in TestModel._run (TestModel.sol#583) is a local variable never initialiazed\n"
-                },
-                {
-                    "name": "uninitialized-local",
                     "vulnerability_from_line": 437,
                     "vulnerability_to_line": null,
                     "vulnerability_code": "            uint256 aux;\n",
                     "message": "aux in TestModel.getStatus (TestModel.sol#437) is a local variable never initialiazed\n"
+                },
+                {
+                    "name": "uninitialized-local",
+                    "vulnerability_from_line": 583,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "            uint256 aux;\n",
+                    "message": "aux in TestModel._run (TestModel.sol#583) is a local variable never initialiazed\n"
                 },
                 {
                     "name": "uninitialized-local",
@@ -25298,61 +24153,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 431,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function getStatus(bytes32 id) external returns (uint256) {\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 601,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        require(due > now, \"Due time already past\");\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 573,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        return _run(id);\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 588,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        if (now != prevPing) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 591,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "            if (now >= dueTime && prevPing < dueTime) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/test_utils/diaspore/TestRateOracle.sol": {
@@ -26061,25 +24861,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/utils/SafeMath.sol": {
@@ -26137,25 +24918,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/utils/BytesUtils.sol": {
@@ -26612,23 +25374,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/utils/ImplementsInterface.sol": {
@@ -26784,23 +25529,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/utils/IsContract.sol": {
@@ -26857,23 +25585,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/interfaces/IERC20.sol": {
@@ -26909,27 +25620,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/interfaces/Cosigner.sol": {
@@ -26993,27 +25683,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/interfaces/IERC165.sol": {
@@ -27049,27 +25718,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "rcn-network-master/rcn-network-master/contracts/interfaces/IERC173.sol": {
@@ -27105,27 +25753,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     }
 }

@@ -430,14 +430,14 @@
                     "vulnerability_from_line": 669,
                     "vulnerability_to_line": null,
                     "vulnerability_code": "            (uint longAmount, uint shortAmount) = computePriceWeightedAmounts(MAX_SANE_AMOUNT, getOrderAmount(o), o.price);\n",
-                    "message": "shortAmount_scope_2 in Degens.computeMaxPosition (Degens.sol#669) is a local variable never initialiazed\n"
+                    "message": "longAmount_scope_1 in Degens.computeMaxPosition (Degens.sol#669) is a local variable never initialiazed\n"
                 },
                 {
                     "name": "uninitialized-local",
                     "vulnerability_from_line": 669,
                     "vulnerability_to_line": null,
                     "vulnerability_code": "            (uint longAmount, uint shortAmount) = computePriceWeightedAmounts(MAX_SANE_AMOUNT, getOrderAmount(o), o.price);\n",
-                    "message": "longAmount_scope_1 in Degens.computeMaxPosition (Degens.sol#669) is a local variable never initialiazed\n"
+                    "message": "shortAmount_scope_2 in Degens.computeMaxPosition (Degens.sol#669) is a local variable never initialiazed\n"
                 },
                 {
                     "name": "reentrancy-benign",
@@ -465,7 +465,7 @@
                     "vulnerability_from_line": 519,
                     "vulnerability_to_line": 647,
                     "vulnerability_code": "    function tradeCore(uint amount, Order memory o, bool takerUnlimitedBalance) private view returns(Trade memory t) {\n\n        t.status = TradeStatus.INVALID;\n\n\n\n        if (block.timestamp >= o.expiry) {\n\n            t.status = TradeStatus.ORDER_EXPIRED;\n\n            return t;\n\n        }\n\n\n\n        uint orderFilledAmount = filledAmounts[o.fillHash];\n\n\n\n        if (cancelTimestamps[o.maker] >= o.timestamp || orderFilledAmount == uint(-1)) {\n\n            t.status = TradeStatus.ORDER_CANCELLED;\n\n            return t;\n\n        }\n\n\n\n        if (msg.sender == o.maker) {\n\n            t.status = TradeStatus.SELF_TRADE;\n\n            return t;\n\n        }\n\n\n\n        if (amount > MAX_SANE_AMOUNT) {\n\n            t.status = TradeStatus.AMOUNT_MALFORMED;\n\n            return t;\n\n        }\n\n\n\n        Match storage m = matches[o.matchId];\n\n\n\n        if (m.finalized) {\n\n            t.status = TradeStatus.MATCH_FINALIZED;\n\n            return t;\n\n        }\n\n\n\n\n\n        uint longAmount;\n\n        uint shortAmount;\n\n        uint longBalance;\n\n        uint shortBalance;\n\n\n\n        if (o.direction == 0) {\n\n            // maker short, taker long\n\n            t.longAddr = msg.sender;\n\n            longAmount = amount;\n\n\n\n            t.shortAddr = o.maker;\n\n            shortAmount = safeSub(o.amount, orderFilledAmount);\n\n\n\n            longBalance = takerUnlimitedBalance ? MAX_SANE_AMOUNT : lookupBalance(o.token, t.longAddr);\n\n            shortBalance = lookupBalance(o.token, t.shortAddr);\n\n        } else {\n\n            // maker long, taker short\n\n            t.longAddr = o.maker;\n\n            longAmount = safeSub(o.amount, orderFilledAmount);\n\n\n\n            t.shortAddr = msg.sender;\n\n            shortAmount = amount;\n\n\n\n            longBalance = lookupBalance(o.token, t.longAddr);\n\n            shortBalance = takerUnlimitedBalance ? MAX_SANE_AMOUNT : lookupBalance(o.token, t.shortAddr);\n\n        }\n\n\n\n        int oldLongPosition = m.positions[t.longAddr][o.token];\n\n        int oldShortPosition = m.positions[t.shortAddr][o.token];\n\n\n\n        longAmount = minu256(longAmount, computeEffectiveBalance(longBalance, oldLongPosition, o.price, true));\n\n        shortAmount = minu256(shortAmount, computeEffectiveBalance(shortBalance, oldShortPosition, o.price, false));\n\n\n\n        if (longAmount < MIN_SANE_AMOUNT) {\n\n            t.status = o.direction == 0 ? TradeStatus.TAKER_NO_BALANCE : TradeStatus.ORDER_NO_BALANCE;\n\n            return t;\n\n        }\n\n\n\n        if (shortAmount < MIN_SANE_AMOUNT) {\n\n            t.status = o.direction == 0 ? TradeStatus.ORDER_NO_BALANCE : TradeStatus.TAKER_NO_BALANCE;\n\n            return t;\n\n        }\n\n\n\n        (longAmount, shortAmount) = computePriceWeightedAmounts(longAmount, shortAmount, o.price);\n\n\n\n        if (longAmount < MIN_SANE_AMOUNT || shortAmount < MIN_SANE_AMOUNT) {\n\n            t.status = TradeStatus.TRADE_TOO_SMALL;\n\n            return t;\n\n        }\n\n\n\n        int newLongPosition = oldLongPosition + (int(longAmount) + int(shortAmount));\n\n        int newShortPosition = oldShortPosition - (int(longAmount) + int(shortAmount));\n\n\n\n\n\n        t.longBalanceDelta = 0;\n\n        t.shortBalanceDelta = 0;\n\n\n\n        if (oldLongPosition < 0) t.longBalanceDelta += priceDivide(-oldLongPosition + min256(0, newLongPosition), MAX_PRICE - o.price);\n\n        if (newLongPosition > 0) t.longBalanceDelta -= priceDivide(newLongPosition - max256(0, oldLongPosition), o.price);\n\n\n\n        if (oldShortPosition > 0) t.shortBalanceDelta += priceDivide(oldShortPosition - max256(0, newShortPosition), o.price);\n\n        if (newShortPosition < 0) t.shortBalanceDelta -= priceDivide(-newShortPosition + min256(0, oldShortPosition), MAX_PRICE - o.price);\n\n\n\n        int exposureDelta = computeExposureDelta(t.longBalanceDelta, t.shortBalanceDelta, oldLongPosition, newLongPosition, oldShortPosition, newShortPosition);\n\n\n\n        if (exposureDelta != 0) {\n\n            if (exposureDelta == 1) {\n\n                newLongPosition--;\n\n                newShortPosition++;\n\n            } else if (exposureDelta == -1) {\n\n                t.longBalanceDelta++; // one left-over wei: arbitrarily give it to long\n\n            } else {\n\n                assert(false);\n\n            }\n\n\n\n            exposureDelta = computeExposureDelta(t.longBalanceDelta, t.shortBalanceDelta, oldLongPosition, newLongPosition, oldShortPosition, newShortPosition);\n\n            assert(exposureDelta == 0);\n\n        }\n\n\n\n\n\n        t.status = TradeStatus.OK;\n\n        t.newLongPosition = newLongPosition;\n\n        t.newShortPosition = newShortPosition;\n\n        t.shortAmount = shortAmount;\n\n        t.longAmount = longAmount;\n\n\n\n        if (o.direction == 0) {\n\n            t.takerAmount = t.longAmount;\n\n            t.makerAmount = t.shortAmount;\n\n        } else {\n\n            t.takerAmount = t.shortAmount;\n\n            t.makerAmount = t.longAmount;\n\n        }\n\n\n\n        return t;\n",
-                    "message": "Degens.tradeCore (Degens.sol#519-647) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp >= o.expiry (Degens.sol#522-525)\n\t- cancelTimestamps[o.maker] >= o.timestamp || orderFilledAmount == uint256(- 1) (Degens.sol#529-532)\n"
+                    "message": "Degens.tradeCore (Degens.sol#519-647) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- cancelTimestamps[o.maker] >= o.timestamp || orderFilledAmount == uint256(- 1) (Degens.sol#529-532)\n\t- block.timestamp >= o.expiry (Degens.sol#522-525)\n"
                 },
                 {
                     "name": "timestamp",
@@ -887,61 +887,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 231,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        if (expiry != 0 && block.timestamp >= expiry) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 650,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        if (block.timestamp >= o.expiry || cancelTimestamps[o.maker] >= o.timestamp) return 0;\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 650,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        if (block.timestamp >= o.expiry || cancelTimestamps[o.maker] >= o.timestamp) return 0;\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 522,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        if (block.timestamp >= o.expiry) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Multiple Calls in a Single Transaction (SWC 113)",
-                    "vulnerability_from_line": 513,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        uint balance = minu256(IERC20Token(token).balanceOf(addr), IERC20Token(token).allowance(addr, address(this)));\n",
-                    "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "degens-contract-a777d578f9354de257a26e9cb0b3c6d92ea7f8e7/contracts/QueryDegens.sol": {
@@ -1160,25 +1105,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "degens-contract-a777d578f9354de257a26e9cb0b3c6d92ea7f8e7/contracts/TestToken.sol": {
@@ -1593,47 +1519,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 142,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function magicMintTokens(address addr, uint tokens) public { balances[addr] += tokens; }\n",
-                    "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 230,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, address(this), data);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 247,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        return ERC20Interface(tokenAddress).transfer(owner, tokens);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     }
 }

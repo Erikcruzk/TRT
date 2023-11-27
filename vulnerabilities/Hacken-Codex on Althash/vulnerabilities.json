@@ -467,113 +467,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 514,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        if (block.timestamp >= periodFinish) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 344,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        return a < b ? a : b;\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 379,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "            CDEXRanking.insert(amount, msg.sender);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 387,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        _balances[msg.sender] = _balances[msg.sender].add(amount);\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 387,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        _balances[msg.sender] = _balances[msg.sender].add(amount);\n",
-                    "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 390,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        bool success = CDEXToken.transferFrom(msg.sender, address(this), amount);\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 390,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        bool success = CDEXToken.transferFrom(msg.sender, address(this), amount);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "Multiple Calls in a Single Transaction (SWC 113)",
-                    "vulnerability_from_line": 390,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        bool success = CDEXToken.transferFrom(msg.sender, address(this), amount);\n",
-                    "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 390,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        bool success = CDEXToken.transferFrom(msg.sender, address(this), amount);\n",
-                    "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 50,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        _status = _NOT_ENTERED;\n",
-                    "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 539,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        require(block.timestamp > periodFinish);\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 493,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        bool success = CDEXToken.transferFrom(owner, address(this), amount);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 496,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        emit RewardsDeposited(owner, address(this), amount);\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
         }
     },
     "Codex-Rewards-Platform-395a888b54cc9fabbaed92bf068ff93ef4f3c433/contracts/CDEX_ranking.sol": {
@@ -1086,59 +979,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Integer Overflow",
-                    "vulnerability_from_line": 394,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        values[_key].push(_value);\n",
-                    "message": null
-                }
-            ]
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 399,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function remove(uint _key, address _value) public {\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 332,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    mapping(uint => address[]) public values;\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Overflow bugs",
-                    "vulnerability_from_line": 420,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        address[] memory _addresses = new address[](_positions);\n",
-                    "message": null
-                },
-                {
-                    "name": "Underflow bugs",
-                    "vulnerability_from_line": 395,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        addressPosition[_value] = values[_key].length - 1;\n",
-                    "message": null
-                }
-            ]
         }
     },
     "Codex-Rewards-Platform-395a888b54cc9fabbaed92bf068ff93ef4f3c433/contracts/BokkyPooBahsRedBlackTreeLibrary.sol": {
@@ -1392,21 +1232,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
         }
     },
     "Codex-Rewards-Platform-6ec987cf357d337a042e3d4c209f37466f5db220/contracts/CDEX_rewards.sol": {
@@ -1863,113 +1688,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 513,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        if (block.timestamp >= periodFinish) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 343,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        return a < b ? a : b;\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 378,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "            CDEXRanking.insert(amount, msg.sender);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 386,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        _balances[msg.sender] = _balances[msg.sender].add(amount);\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 386,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        _balances[msg.sender] = _balances[msg.sender].add(amount);\n",
-                    "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 389,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        bool success = CDEXToken.transferFrom(msg.sender, address(this), amount);\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 389,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        bool success = CDEXToken.transferFrom(msg.sender, address(this), amount);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "Multiple Calls in a Single Transaction (SWC 113)",
-                    "vulnerability_from_line": 389,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        bool success = CDEXToken.transferFrom(msg.sender, address(this), amount);\n",
-                    "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 389,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        bool success = CDEXToken.transferFrom(msg.sender, address(this), amount);\n",
-                    "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 50,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        _status = _NOT_ENTERED;\n",
-                    "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 538,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        require(block.timestamp > periodFinish);\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 492,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        bool success = CDEXToken.transferFrom(owner, address(this), amount);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 495,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        emit RewardsDeposited(owner, address(this), amount);\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
         }
     },
     "Codex-Rewards-Platform-6ec987cf357d337a042e3d4c209f37466f5db220/contracts/CDEX_ranking.sol": {
@@ -2482,66 +2200,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Integer Overflow",
-                    "vulnerability_from_line": 394,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        values[_key].push(_value);\n",
-                    "message": null
-                }
-            ]
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 399,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function remove(uint _key, address _value) public {\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 332,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    mapping(uint => address[]) public values;\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 361,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function last() public view returns (uint _key) {\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Overflow bugs",
-                    "vulnerability_from_line": 420,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        address[] memory _addresses = new address[](_positions);\n",
-                    "message": null
-                },
-                {
-                    "name": "Underflow bugs",
-                    "vulnerability_from_line": 395,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        addressPosition[_value] = values[_key].length - 1;\n",
-                    "message": null
-                }
-            ]
         }
     },
     "Codex-Rewards-Platform-6ec987cf357d337a042e3d4c209f37466f5db220/contracts/BokkyPooBahsRedBlackTreeLibrary.sol": {
@@ -2795,21 +2453,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
         }
     },
     "Codex-Rewards-Platform-d364d0ef9258dd468f8202a352c58724d6b65638/contracts/CDEX_rewards.sol": {
@@ -2991,7 +2634,7 @@
                     "vulnerability_from_line": 507,
                     "vulnerability_to_line": 537,
                     "vulnerability_code": "    function notifyRewardAmount(uint256 reward)\n\n        public\n\n        onlyOwner\n\n        updateReward(address(0))\n\n    {\n\n        /// Adding the decimal places to the reward\n\n        reward = reward.mul(1e8);\n\n        /// The total deposited amount should cater for the rewards and the loyalty bonus.\n\n        /// Therefore, the notified reward must be equal to total deposited minus total possible bonus over the reward.\n\n        require(reward <= depositedRewardTokens.sub(reward.mul(loyaltyBonusTotal).div(10000)));\n\n        /// If not during staking period, calculates the new reward rate per second.\n\n        /// Else, adds the new reward to current non-distributed rewards.\n\n        if (block.timestamp >= periodFinish) {\n\n            rewardRate = reward.div(rewardsDuration);\n\n        } else {\n\n            uint256 remaining = periodFinish.sub(block.timestamp);\n\n            uint256 leftover = remaining.mul(rewardRate);\n\n            rewardRate = reward.add(leftover).div(rewardsDuration);\n\n        }\n\n        /// Ensure the provided reward amount is not more than the balance in the contract.\n\n        /// This keeps the reward rate in the right range, preventing overflows due to\n\n        /// very high values of rewardRate in the earned and rewardsPerToken functions;\n\n        /// Reward + leftover must be less than 2^256 / 10^18 to avoid overflow.\n\n        require(rewardRate <= depositedRewardTokens.div(rewardsDuration));\n\n        /// Updates the last updated time\n\n        lastUpdateTime = block.timestamp;\n\n        /// Resets the staking period\n\n        periodFinish = block.timestamp.add(rewardsDuration);\n\n        /// Emits the event\n\n        emit RewardAdded(reward);\n",
-                    "message": "CDEXStakingPool.notifyRewardAmount (CDEX_rewards.sol#507-537) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp >= periodFinish (CDEX_rewards.sol#519-525)\n\t- require(bool)(rewardRate <= depositedRewardTokens.div(rewardsDuration)) (CDEX_rewards.sol#530)\n"
+                    "message": "CDEXStakingPool.notifyRewardAmount (CDEX_rewards.sol#507-537) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool)(rewardRate <= depositedRewardTokens.div(rewardsDuration)) (CDEX_rewards.sol#530)\n\t- block.timestamp >= periodFinish (CDEX_rewards.sol#519-525)\n"
                 },
                 {
                     "name": "timestamp",
@@ -3294,113 +2937,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 519,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        if (block.timestamp >= periodFinish) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 344,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        return a < b ? a : b;\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 380,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "            CDEXRanking.insert(amount, msg.sender);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 388,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        _balances[msg.sender] = _balances[msg.sender].add(amount);\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 388,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        _balances[msg.sender] = _balances[msg.sender].add(amount);\n",
-                    "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 391,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        CDEXToken.transferFrom(msg.sender, address(this), amount);\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 391,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        CDEXToken.transferFrom(msg.sender, address(this), amount);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "Multiple Calls in a Single Transaction (SWC 113)",
-                    "vulnerability_from_line": 391,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        CDEXToken.transferFrom(msg.sender, address(this), amount);\n",
-                    "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 391,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        CDEXToken.transferFrom(msg.sender, address(this), amount);\n",
-                    "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 51,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        _status = _NOT_ENTERED;\n",
-                    "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 544,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        require(block.timestamp > periodFinish);\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 498,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        CDEXToken.transferFrom(owner, address(this), amount);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 500,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        emit RewardsDeposited(owner, address(this), amount);\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
         }
     },
     "Codex-Rewards-Platform-d364d0ef9258dd468f8202a352c58724d6b65638/contracts/CDEX_ranking.sol": {
@@ -3927,61 +3463,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Integer Overflow",
-                    "vulnerability_from_line": 100,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        self.nodes[key] = Node({parent: cursor, left: EMPTY, right: EMPTY, red: true});\n",
-                    "message": null
-                }
-            ]
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 399,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function remove(uint _key, address _value) public {\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 332,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    mapping(uint => address[]) public values;\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": true,
-            "errors": [
-                "SYMBOLIC EXECUTION TIMEOUT"
-            ],
-            "vulnerability_findings": [
-                {
-                    "name": "Overflow bugs",
-                    "vulnerability_from_line": 1,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "// File: ../sc_datasets/DAppSCAN/Hacken-Codex on Althash/Codex-Rewards-Platform-d364d0ef9258dd468f8202a352c58724d6b65638/contracts/BokkyPooBahsRedBlackTreeLibrary.sol\n",
-                    "message": null
-                },
-                {
-                    "name": "Underflow bugs",
-                    "vulnerability_from_line": 395,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        addressPosition[_value] = values[_key].length - 1;\n",
-                    "message": null
-                }
-            ]
         }
     },
     "Codex-Rewards-Platform-d364d0ef9258dd468f8202a352c58724d6b65638/contracts/BokkyPooBahsRedBlackTreeLibrary.sol": {
@@ -4242,21 +3723,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
         }
     }
 }

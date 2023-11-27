@@ -74,6 +74,9 @@ class TransformativeRepair:
         self.shave = experiment_settings["shave"]
         self.threshold = experiment_settings["threshold"]
 
+        self.preanalized = experiment_settings["preanalized"]
+        self.analysis_results_directory = experiment_settings["analysis_results_directory"]
+
         # Create queues for smartbugs and repair smart contracts
         self.smartbugs_sc_queue = queue.Queue()
         self.repair_sc_queue = queue.Queue()
@@ -205,7 +208,7 @@ class TransformativeRepair:
                                                      f'{original_sc_name}_best_patch_{target_vulnerability}_{bect_patch_name}.sol'))
         shutil.copy2(best_patch_path, best_patch_copy_location)
 
-        # Save diff of original path and best patch        
+        # Save diff of original path and best patch   
         with open(original_sc_path, 'r') as file1, open(best_patch_path, 'r') as file2:
             file1_lines = file1.readlines()
             file2_lines = file2.readlines()
@@ -235,9 +238,19 @@ class TransformativeRepair:
         repair_target_graphs = {}
         compile_graph = nx.DiGraph()
 
-        for sc_dir in [os.path.join(results_dir, item) for item in os.listdir(results_dir) if
-                       os.path.isdir(os.path.join(results_dir, item))]:
-            sc_name = os.path.basename(sc_dir)
+        if experiment_settings['preanalized']:
+            sc_result_dirs = []
+            print(results_dir)
+            for root, dirs, files in os.walk(results_dir):
+                for item in dirs:
+                    if item.endswith(".sol"):
+                        sc_result_dirs.append(os.path.join(root, item))
+        else:
+            sc_result_dirs = [os.path.join(results_dir, item) for item in os.listdir(results_dir) if
+                              os.path.isdir(os.path.join(results_dir, item))]
+
+        for sc_dir in sc_result_dirs:
+            sc_name = os.path.basename(sc_dir).replace(".sol", "")
 
             # Add to compile graph
             compile_graph.add_node(sc_name,
@@ -258,6 +271,10 @@ class TransformativeRepair:
             n_unique_patches_that_compile = 0
 
             target_max_repair = {}
+
+            if n_patches == 0:
+                print(sc_dir, " has no patches")
+                continue
 
             for patch_file_name in patch_results["unique_patches"].keys():
                 patch_name, _ = os.path.splitext(patch_file_name)
@@ -373,12 +390,13 @@ class TransformativeRepair:
 
         # Create pyvis graphs for results
         base_graph_name = os.path.join(extended_experiment_name, child_dirs).replace("/", "_")
-        for target_vulnerability in experiment_settings["target_vulnerabilities"]:
-            TransformativeRepair.save_graph(repair_target_graphs[target_vulnerability], results_dir,
-                                            f'{base_graph_name}_{target_vulnerability}')
+        if repair_target_graphs:
+            for target_vulnerability in experiment_settings["target_vulnerabilities"]:
+                TransformativeRepair.save_graph(repair_target_graphs[target_vulnerability], results_dir,
+                                                f'{base_graph_name}_{target_vulnerability}')
 
-            # Create pyvis graphs for compilation
-        TransformativeRepair.save_graph(compile_graph, results_dir, f'{base_graph_name}_compilation')
+                # Create pyvis graphs for compilation
+            TransformativeRepair.save_graph(compile_graph, results_dir, f'{base_graph_name}_compilation')
 
         return target_summaries
 
@@ -435,15 +453,29 @@ class TransformativeRepair:
             time.sleep(sleep)
             try:
                 finished = True
-                for sc_dir in [os.path.join(results_dir, item) for item in os.listdir(results_dir) if
-                               os.path.isdir(os.path.join(results_dir, item))]:
+                
+                if experiment_settings['preanalized']:
+                    sc_result_dirs = []
+                    for root, dirs, files in os.walk(results_dir):
+                        for item in dirs:
+                            if item.endswith(".sol"):
+                                sc_result_dirs.append(os.path.join(root, item))
+                else:
+                    sc_result_dirs = [os.path.join(results_dir, item) for item in os.listdir(results_dir) if
+                                    os.path.isdir(os.path.join(results_dir, item))]
+
+                for sc_dir in sc_result_dirs:
                     candidate_patches_dir = os.path.join(sc_dir, "candidate_patches")
                     patch_results_path = os.path.join(candidate_patches_dir, "patch_results.json")
                     patch_results = json.load(open(patch_results_path, 'r')) if os.path.isfile(
                         patch_results_path) else {}
-
                     # Check that all patch generations have completed
-                    if not patch_results.get("patch_generation_completed", False) == True:
+                    if patch_results.get("patch_generation_completed", False) == "Contract too long. Reparing skipped":
+                        # skip this contract
+                        print("Skipping contract: ", sc_dir)
+                        continue
+                    elif not patch_results.get("patch_generation_completed", False) == True:
+                        print("Detected unfinished patch generation: ", sc_dir)   
                         finished = False
                         break
 
@@ -456,7 +488,18 @@ class TransformativeRepair:
                         if not patch_vulnerability.get("smartbugs_completed", False) == True:
                             finished = False
                             break
+                        elif patch_vulnerability.get("smartbugs_completed", False) == "Contract too long. Reparing skipped":
+                            # Move directory to unfinished
+                            print("Moving contract to unfinished: ", sc_dir)
+                            unfinished_dir = os.path.join(results_dir, "unfinished")
+                            print("Moving to: ", unfinished_dir)
+                            Path(unfinished_dir).mkdir(parents=True, exist_ok=True)
+                            shutil.move(sc_dir, unfinished_dir)
+                            finished = False
+                            break
+                            
             except Exception as e:
+                print(f'An exception occurred when checking if all patches have finished: {str(e)}')
                 finished = False
             sleep = 5
 
@@ -472,6 +515,7 @@ class TransformativeRepair:
 
         try:
             #### Step 1: Initialize SC
+            print(f'Finding vulnerabilities for contract={sc_path}')
             sc = SmartContract(experiment_settings, sc_path)
 
             if not sc.vulnerabilities.get("smartbugs_completed", False):
@@ -548,8 +592,7 @@ class TransformativeRepair:
                 sc.vulnerabilities["smartbugs_completed"] = "Contract too long. Reparing skipped"
                 sc.write_vulnerabilities_to_results_dir()
                 progressbar.update(1)
-                # print(progressbar.n)
-                return
+                raise Exception("Contract too long. Reparing skipped")
 
 
             #### Step 3: Save prompt
@@ -595,6 +638,7 @@ class TransformativeRepair:
             patches_results["unique_patches"] = unique_patches
             patches_results["patch_generation_completed"] = True
         except Exception as e:
+            patches_results["unique_patches"] = {}
             patches_results["patch_generation_completed"] = str(e)
             if isinstance(e, openai.error.RateLimitError):
                 sleep = 100 * random.random()
@@ -628,6 +672,13 @@ class TransformativeRepair:
     def start(self):
         #### Start!
         print(f'Starting experiment: {self.experiment_results_dir}')
+
+        if not self.preanalized:
+            self.full_analysis()
+        else:
+            self.partial_analysis()
+
+    def full_analysis(self):
 
         #### Step 1: Add all vulnerable sc to smartbugs_sc_queue
         self.experiment_results_dir.mkdir(parents=True, exist_ok=True)
@@ -680,3 +731,93 @@ class TransformativeRepair:
         shutdown_thread = threading.Thread(target=TransformativeRepair.shutdown_thread,
                                            args=(self.experiment_settings, self.llm_settings, stop_event))
         shutdown_thread.start()
+
+    def partial_analysis(self):
+
+        #### Step 1: Add all vulnerable sc to smartbugs_sc_queue
+        self.experiment_results_dir.mkdir(parents=True, exist_ok=True)
+
+        shutil.copyfile('config.yml', os.path.join(self.experiment_results_dir, "config.yml"))
+
+        sc_vulnerable_count = 0
+
+        for project in os.listdir(self.analysis_results_directory):
+
+            results_dir = Path(os.path.join(self.experiment_results_dir, project))
+            results_dir.mkdir(parents=True, exist_ok=True)
+            
+            project_vulnerabilities_src = Path(os.path.join(self.analysis_results_directory, project, "vulnerabilities.json"))
+
+            with open(project_vulnerabilities_src, 'r') as f:
+                
+                project_vulnerabilities = json.load(f)
+
+                for k, v in project_vulnerabilities.items():
+
+                    # Create dir for contract and copy vulnerable sc to results
+                    source_code_path = Path(os.path.join(self.vulnerable_contracts_dir, project, k))
+                    result_path = Path(os.path.join(results_dir, k))
+                    file_name = os.path.basename(source_code_path)
+                    result_path.mkdir(parents=True, exist_ok=True)
+                    shutil.copyfile(source_code_path, os.path.join(result_path, file_name))
+                    
+                    # Add vulnerabilities to results
+                    with open(os.path.join(result_path, "vulnerabilities.json"), 'w') as vulnerabilities_file:
+                        vulnerabilites_formatted = {}
+                        vulnerabilites_formatted["smartbugs_completed"] = True
+                        vulnerabilites_formatted["analyzer_results"] = v
+                        json.dump(vulnerabilites_formatted, vulnerabilities_file, indent=2)
+                    
+                    sc_vulnerable_count += 1
+                    self.repair_sc_queue.put(Path(os.path.join(result_path, file_name)))
+            shutil.copyfile(project_vulnerabilities_src,
+                            os.path.join(results_dir, "project_vulnerabilities.json"))
+            
+        # Initialize progress bar
+        n_candidate_patches = self.llm_settings[self.experiment_settings["llm_model_name"]]["num_candidate_patches"]
+        progressbar = tqdm(total=sc_vulnerable_count + sc_vulnerable_count * n_candidate_patches,
+                           desc="Smartbugs processes", colour='#ff5a5f')
+
+        stop_event = threading.Event()
+        atexit.register(close_all_threads, stop_event)
+
+        #### Step 2: Consume smartbugs_queue
+        for i in range(self.experiment_settings["n_smartbugs_threads"]):
+            smartbugs_thread = threading.Thread(target=TransformativeRepair.consumer_of_vulnerabilities_queue, args=(
+                self.experiment_settings, self.smartbugs_sc_queue, self.repair_sc_queue, stop_event, progressbar))
+            smartbugs_thread.start()
+
+        #### Step 2: Consume smart repair_sc_queue
+        for i in range(self.experiment_settings["n_repair_threads"]):
+            repair_thread = threading.Thread(target=TransformativeRepair.consumer_of_repair_queue, args=(
+                self.experiment_settings, self.llm_settings, self.smartbugs_sc_queue, self.repair_sc_queue, stop_event,
+                progressbar))
+            repair_thread.start()
+
+        #### Start Summary Thread
+        shutdown_thread = threading.Thread(target=TransformativeRepair.shutdown_thread,
+                                           args=(self.experiment_settings, self.llm_settings, stop_event))
+        shutdown_thread.start()
+
+        return
+   
+        # Create sc_dirs
+        for root, dirs, files in os.walk(self.vulnerable_contracts_dir):
+            for sc_filename in files:
+                sc_name, file_extension = os.path.splitext(os.path.basename(sc_filename))
+                sc_path = os.path.join(root, sc_filename)
+                if file_extension == ".sol":
+                    # Create dir for contract
+                    results_dir = Path(os.path.join(self.experiment_results_dir, sc_name))
+
+                    results_dir.mkdir(parents=True, exist_ok=True)
+
+                    # Copy vulnerable sc to results
+                    sc_results_path = Path(os.path.join(results_dir, sc_filename))
+                    shutil.copyfile(sc_path, sc_results_path)
+
+                    # Add to results
+                    sc_vulnerable_count += 1
+                    self.smartbugs_sc_queue.put((sc_results_path, True))
+
+        

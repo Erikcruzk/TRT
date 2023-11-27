@@ -76,11 +76,12 @@ def create_vulnerabilities(source_code_dir, smartbugs_results_dir, output_dir, s
                     sc_path = os.path.join(root, file)
                     for sbtool in sbtools:
                         sbtool_path = os.path.join(smartbugs_results_dir, sbtool)
-                        sb_result_path = os.path.join(sbtool_path,'sc_datasets/compiled_DAppSCAN', project, suffix, file, 'result.json')
+                        sb_result_path = os.path.join(sbtool_path, project, suffix, file, 'result.json')
                         analyzer_results[sbtool] = save_results(sb_result_path, sc_path)
                     vulnerabilities[os.path.join(suffix, file)] = analyzer_results
 
         if not os.path.exists(os.path.join(output_dir, project)):
+            print(f"Creating directory {os.path.join(output_dir, project)}")
             os.mkdir(os.path.join(output_dir, project))
         with open(os.path.join(output_dir, project, 'vulnerabilities.json'), 'w') as vulnerabilities_file:
             json.dump(vulnerabilities, vulnerabilities_file, indent=4)
@@ -91,4 +92,4 @@ def create_vulnerabilities(source_code_dir, smartbugs_results_dir, output_dir, s
 
 if __name__ == "__main__":
     # find_vulnerable_files('/Users/gabrielemorello/Code/require-data/DAppSCAN')
-    create_vulnerabilities('/Users/gabrielemorello/Code/TRT/sc_datasets/compiled_DAppSCAN', '/Users/gabrielemorello/Code/require-data/DAppSCAN/results_smartbugs', '/Users/gabrielemorello/Code/TRT/vulnerabilities', ['semgrep', 'slither', 'smartcheck', 'oyente', 'mythril', 'osiris'])
+    create_vulnerabilities('/Users/gabrielemorello/Code/TRT/sc_datasets/DAppSCAN_processed', '/Users/gabrielemorello/Code/require-data/DAppSCAN/results_smartbugs', '/Users/gabrielemorello/Code/TRT/vulnerabilities', ['semgrep', 'slither', 'smartcheck'])
