@@ -761,47 +761,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 208,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "           Strategy(_current).withdrawAll();\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 210,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        strategies[_token] = _strategy;\n",
-                    "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 239,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        Strategy(strategies[_token]).withdrawAll();\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "bt-finance-6300bc1271b73a1755fae02594d25fdf6fa39a9c/contracts/vote/BT-ETHTheCitadel.sol": {
@@ -901,33 +860,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 72,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function sqrt(uint256 x) public pure returns (uint256 y) {\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "bt-finance-6300bc1271b73a1755fae02594d25fdf6fa39a9c/contracts/stake/StakingRewardsFactory.sol": {
@@ -1928,7 +1860,7 @@
                     "vulnerability_from_line": 623,
                     "vulnerability_to_line": 642,
                     "vulnerability_code": "    function notifyRewardAmount(uint256 reward) external onlyRewardsDistribution updateReward(address(0)) {\n\n        if (block.timestamp >= periodFinish) {\n\n            rewardRate = reward.div(rewardsDuration);\n\n        } else {\n\n            uint256 remaining = periodFinish.sub(block.timestamp);\n\n            uint256 leftover = remaining.mul(rewardRate);\n\n            rewardRate = reward.add(leftover).div(rewardsDuration);\n\n        }\n\n\n\n        // Ensure the provided reward amount is not more than the balance in the contract.\n\n        // This keeps the reward rate in the right range, preventing overflows due to\n\n        // very high values of rewardRate in the earned and rewardsPerToken functions;\n\n        // Reward + leftover must be less than 2^256 / 10^18 to avoid overflow.\n\n        uint balance = rewardsToken.balanceOf(address(this));\n\n        require(rewardRate <= balance.div(rewardsDuration), \"Provided reward too high\");\n\n\n\n        lastUpdateTime = block.timestamp;\n\n        periodFinish = block.timestamp.add(rewardsDuration);\n\n        emit RewardAdded(reward);\n",
-                    "message": "StakingRewards.notifyRewardAmount (StakingRewardsFactory.sol#623-642) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp >= periodFinish (StakingRewardsFactory.sol#624-630)\n\t- require(bool,string)(rewardRate <= balance.div(rewardsDuration),Provided reward too high) (StakingRewardsFactory.sol#637)\n"
+                    "message": "StakingRewards.notifyRewardAmount (StakingRewardsFactory.sol#623-642) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool,string)(rewardRate <= balance.div(rewardsDuration),Provided reward too high) (StakingRewardsFactory.sol#637)\n\t- block.timestamp >= periodFinish (StakingRewardsFactory.sol#624-630)\n"
                 },
                 {
                     "name": "timestamp",
@@ -2378,25 +2310,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "bt-finance-6300bc1271b73a1755fae02594d25fdf6fa39a9c/contracts/stake/Bt.sol": {
@@ -2930,25 +2843,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "bt-finance-6300bc1271b73a1755fae02594d25fdf6fa39a9c/contracts/strategies/StrategyPickleUSDC.sol": {
@@ -3965,25 +3859,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "bt-finance-6300bc1271b73a1755fae02594d25fdf6fa39a9c/contracts/strategies/StrategyPickleWBTC.sol": {
@@ -4986,25 +4861,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "bt-finance-6300bc1271b73a1755fae02594d25fdf6fa39a9c/contracts/strategies/StrategyETHAlpha.sol": {
@@ -5685,33 +5541,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 196,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    address[] public swap2BTRouting;\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "bt-finance-6300bc1271b73a1755fae02594d25fdf6fa39a9c/contracts/strategies/StrategyPickleCRVRenWBTC.sol": {
@@ -6714,25 +6543,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "bt-finance-6300bc1271b73a1755fae02594d25fdf6fa39a9c/contracts/strategies/StrategyPickle3CRV.sol": {
@@ -7714,25 +7524,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "bt-finance-6300bc1271b73a1755fae02594d25fdf6fa39a9c/contracts/strategies/V1.2/strategyUSDTUNIFarm.sol": {
@@ -8714,25 +8505,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "bt-finance-6300bc1271b73a1755fae02594d25fdf6fa39a9c/contracts/strategies/V1.2/StrategyDAIUNIFarm.sol": {
@@ -9714,25 +9486,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "bt-finance-6300bc1271b73a1755fae02594d25fdf6fa39a9c/contracts/strategies/V1.2/StrategyDAISLPFarm.sol": {
@@ -10679,25 +10432,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "bt-finance-6300bc1271b73a1755fae02594d25fdf6fa39a9c/contracts/strategies/V1.2/StrategyUSDCUNIFarm.sol": {
@@ -11693,25 +11427,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "bt-finance-6300bc1271b73a1755fae02594d25fdf6fa39a9c/contracts/strategies/V1.2/StrategyWBTCUNIFarm.sol": {
@@ -12693,25 +12408,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "bt-finance-6300bc1271b73a1755fae02594d25fdf6fa39a9c/contracts/vault/bVault.sol": {
@@ -13952,25 +13648,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "bt-finance-6300bc1271b73a1755fae02594d25fdf6fa39a9c/contracts/vault/bVaultETH.sol": {
@@ -14569,17 +14246,17 @@
                 },
                 {
                     "name": "external-function",
-                    "vulnerability_from_line": 93,
-                    "vulnerability_to_line": 97,
-                    "vulnerability_code": "    function transferFrom(address sender, address recipient, uint256 amount) public returns (bool) {\n\n        _transfer(sender, recipient, amount);\n\n        _approve(sender, _msgSender(), _allowances[sender][_msgSender()].sub(amount, \"ERC20: transfer amount exceeds allowance\"));\n\n        return true;\n",
-                    "message": "ERC20.transferFrom (bVaultETH.sol#93-97) should be declared external\n"
-                },
-                {
-                    "name": "external-function",
                     "vulnerability_from_line": 17,
                     "vulnerability_to_line": null,
                     "vulnerability_code": "    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);\n",
                     "message": "IERC20.transferFrom (bVaultETH.sol#17) should be declared external\n"
+                },
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 93,
+                    "vulnerability_to_line": 97,
+                    "vulnerability_code": "    function transferFrom(address sender, address recipient, uint256 amount) public returns (bool) {\n\n        _transfer(sender, recipient, amount);\n\n        _approve(sender, _msgSender(), _allowances[sender][_msgSender()].sub(amount, \"ERC20: transfer amount exceeds allowance\"));\n\n        return true;\n",
+                    "message": "ERC20.transferFrom (bVaultETH.sol#93-97) should be declared external\n"
                 },
                 {
                     "name": "external-function",
@@ -15190,25 +14867,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     }
 }

@@ -91,17 +91,17 @@
                 },
                 {
                     "name": "external-function",
-                    "vulnerability_from_line": 33,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\tfunction transferFrom(address _from, address _to, uint256 _value) public returns (bool success);\n",
-                    "message": "ERC20Interface.transferFrom (Etherscan-0x54735d716995071585A4f6ba341a6Ded79756F09.sol#33) should be declared external\n"
-                },
-                {
-                    "name": "external-function",
                     "vulnerability_from_line": 121,
                     "vulnerability_to_line": 139,
                     "vulnerability_code": "\tfunction transferFrom(address _from, address _to, uint256 _value) notStopped public returns (bool success){\n\n\t\trequire(balances[_from] >= _value\n\n\t\t\t&& allowed[_from][msg.sender] >= _value);\n\n\n\n\t\tif(blackList[_from] > 0){\n\n\t\t\temit RejectedPaymentFromBlacklistedAddr(_from, _to, _value);\n\n\t\t\treturn false;\n\n\t\t}\n\n\t\tif(blackList[_to] > 0){\n\n\t\t\temit RejectedPaymentToBlacklistedAddr(_from, _to, _value);\n\n\t\t\treturn false;\n\n\t\t}\n\n\n\n\t\tbalances[_from] -= _value;\n\n\t\tallowed[_from][msg.sender] -= _value;\n\n\t\tbalances[_to] += _value;\n\n\t\temit Transfer(_from, _to, _value);\n\n\t\treturn true;\n",
                     "message": "FLUX.transferFrom (Etherscan-0x54735d716995071585A4f6ba341a6Ded79756F09.sol#121-139) should be declared external\n"
+                },
+                {
+                    "name": "external-function",
+                    "vulnerability_from_line": 33,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "\tfunction transferFrom(address _from, address _to, uint256 _value) public returns (bool success);\n",
+                    "message": "ERC20Interface.transferFrom (Etherscan-0x54735d716995071585A4f6ba341a6Ded79756F09.sol#33) should be declared external\n"
                 },
                 {
                     "name": "external-function",
@@ -387,52 +387,6 @@
                     "vulnerability_from_line": 96,
                     "vulnerability_to_line": null,
                     "vulnerability_code": "    function start() onlyOwner {\n",
-                    "message": null
-                }
-            ]
-        },
-        "oyente": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Integer Overflow",
-                    "vulnerability_from_line": 136,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\tbalances[_to] += _value;\n",
-                    "message": null
-                }
-            ]
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 71,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\tfunction airdrop(address[] _to, uint256[] _value) onlyOwner notStopped public {\n",
-                    "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 72,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t    for(uint256 i = 0; i < _to.length; i++){\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Overflow bugs",
-                    "vulnerability_from_line": 117,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\tbalances[_to] += _value;\n",
                     "message": null
                 }
             ]

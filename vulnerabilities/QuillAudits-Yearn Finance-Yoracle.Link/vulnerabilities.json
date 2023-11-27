@@ -668,7 +668,7 @@
                     "vulnerability_from_line": 643,
                     "vulnerability_to_line": 662,
                     "vulnerability_code": "    function current(address tokenIn, uint amountIn, address tokenOut) external view returns (uint amountOut) {\n\n        address pair = UniswapV2Library.pairFor(factory, tokenIn, tokenOut);\n\n        require(_valid(pair, periodSize.mul(2)), \"UniswapV2Oracle::quote: stale prices\");\n\n        (address token0,) = UniswapV2Library.sortTokens(tokenIn, tokenOut);\n\n\n\n        Observation memory _observation = lastObservation(pair);\n\n        (uint price0Cumulative, uint price1Cumulative,) = UniswapV2OracleLibrary.currentCumulativePrices(pair);\n\n        if (block.timestamp == _observation.timestamp) {\n\n            _observation = observations[pair][observations[pair].length-2];\n\n        }\n\n\n\n        // SWC-Integer Overflow and Underflow: L651\n\n        uint timeElapsed = block.timestamp - _observation.timestamp;\n\n        timeElapsed = timeElapsed == 0 ? 1 : timeElapsed;\n\n        if (token0 == tokenIn) {\n\n            return computeAmountOut(_observation.price0Cumulative, price0Cumulative, timeElapsed, amountIn);\n\n        } else {\n\n            return computeAmountOut(_observation.price1Cumulative, price1Cumulative, timeElapsed, amountIn);\n\n        }\n",
-                    "message": "Keep3rV1Oracle.current (Keep3rV1Oracle.sol#643-662) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- timeElapsed == 0 (Keep3rV1Oracle.sol#656)\n\t- block.timestamp == _observation.timestamp (Keep3rV1Oracle.sol#650-652)\n"
+                    "message": "Keep3rV1Oracle.current (Keep3rV1Oracle.sol#643-662) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp == _observation.timestamp (Keep3rV1Oracle.sol#650-652)\n\t- timeElapsed == 0 (Keep3rV1Oracle.sol#656)\n"
                 },
                 {
                     "name": "pragma",
@@ -1132,138 +1132,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 532,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    mapping(address => Observation[]) public observations;\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 711,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        uint length = observations[pair].length-1;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 711,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        uint length = observations[pair].length-1;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 711,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        uint length = observations[pair].length-1;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 711,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        uint length = observations[pair].length-1;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 711,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        uint length = observations[pair].length-1;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 222,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function sub(uint256 a, uint256 b) internal pure returns (uint256) {\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": null,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": null,
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 827,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        estimate = 40 * _vol * _underlying * sqrt(_time);\n",
-                    "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 827,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        estimate = 40 * _vol * _underlying * sqrt(_time);\n",
-                    "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 780,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function sqrt(uint256 x) public pure returns (uint256) {\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 827,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        estimate = 40 * _vol * _underlying * sqrt(_time);\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 798,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function stddev(uint[] memory numbers) public pure returns (uint256 sd) {\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 843,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        uint _vol = stddev(_numbers);\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 759,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        return stddev(sample(tokenIn, amountIn, tokenOut, points, window));\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 806,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        for(i = 0; i < numbers.length; i++) {\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "yoracle.link-faf1309cbe7a05f70b338351315039eb8e5b9c09/contracts/UniswapOracleFactory.sol": {
@@ -1909,27 +1777,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solc experienced a fatal error"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "yoracle.link-faf1309cbe7a05f70b338351315039eb8e5b9c09/contracts/Migrations.sol": {
@@ -2043,23 +1890,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solc experienced a fatal error"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
         }
     },
     "yoracle.link-faf1309cbe7a05f70b338351315039eb8e5b9c09/contracts/UniswapV2Oracle.sol": {
@@ -2567,17 +2397,17 @@
                 },
                 {
                     "name": "uninitialized-local",
-                    "vulnerability_from_line": 405,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        for (uint i; i < path.length - 1; i++) {\n",
-                    "message": "i in UniswapV2Library.getAmountsOut (UniswapV2Oracle.sol#405) is a local variable never initialiazed\n"
-                },
-                {
-                    "name": "uninitialized-local",
                     "vulnerability_from_line": 108,
                     "vulnerability_to_line": null,
                     "vulnerability_code": "        uint z;\n",
                     "message": "z in FixedPoint.mul (UniswapV2Oracle.sol#108) is a local variable never initialiazed\n"
+                },
+                {
+                    "name": "uninitialized-local",
+                    "vulnerability_from_line": 405,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "        for (uint i; i < path.length - 1; i++) {\n",
+                    "message": "i in UniswapV2Library.getAmountsOut (UniswapV2Oracle.sol#405) is a local variable never initialiazed\n"
                 },
                 {
                     "name": "timestamp",
@@ -2894,89 +2724,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 542,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        return (block.timestamp - lastUpdated[pair]) > periodSize;\n",
-                    "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 584,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        require(_valid(pair, periodSize.mul(2)), \"UniswapV2Oracle::quote: stale prices\");\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 589,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        if (block.timestamp == _observation.timestamp) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 141,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function currentCumulativePrices(\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 604,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        require(_valid(pair, periodSize.mul(granularity)), \"UniswapV2Oracle::quote: stale prices\");\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 216,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    function sub(uint256 a, uint256 b) internal pure returns (uint256) {\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Exception State (SWC 110)",
-                    "vulnerability_from_line": 485,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    mapping(address => Observation[]) public pairObservations;\n",
-                    "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
-                },
-                {
-                    "name": "Multiple Calls in a Single Transaction (SWC 113)",
-                    "vulnerability_from_line": 146,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        price1Cumulative = IUniswapV2Pair(pair).price1CumulativeLast();\n",
-                    "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
-                },
-                {
-                    "name": "Dependence on predictable environment variable (SWC 116)",
-                    "vulnerability_from_line": 150,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        if (blockTimestampLast != blockTimestamp) {\n",
-                    "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "yoracle.link-faf1309cbe7a05f70b338351315039eb8e5b9c09/contracts/UniswapInsuranceQuote.sol": {
@@ -3188,27 +2935,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solc experienced a fatal error"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     }
 }

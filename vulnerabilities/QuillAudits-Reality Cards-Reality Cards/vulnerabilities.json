@@ -74,77 +74,90 @@
             "successfull_analysis": true,
             "errors": [],
             "vulnerability_findings": []
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 23,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "        upgraded.setCompleted(last_completed_migration);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "UNKNOWN INSTRUCTION: SHR"
-            ],
-            "vulnerability_findings": []
         }
     },
     "RealityCards-Contracts-8c0b05b25a7deef25f98532ae2f8afd4f9a84360/contracts/lib/CloneFactory.sol": {
         "semgrep": {
-            "successfull_analysis": false,
-            "errors": [
-                "Smartbugs results not found"
-            ],
+            "successfull_analysis": true,
+            "errors": [],
             "vulnerability_findings": []
         },
         "slither": {
-            "successfull_analysis": false,
+            "successfull_analysis": true,
             "errors": [
-                "Smartbugs results not found"
+                "EXIT_CODE_4"
             ],
-            "vulnerability_findings": []
+            "vulnerability_findings": [
+                {
+                    "name": "constant-function",
+                    "vulnerability_from_line": 41,
+                    "vulnerability_to_line": 56,
+                    "vulnerability_code": "  function isClone(address target, address query) internal view returns (bool result) {\n\n    bytes20 targetBytes = bytes20(target);\n\n    assembly {\n\n      let clone := mload(0x40)\n\n      mstore(clone, 0x363d3d373d3d3d363d7300000000000000000000000000000000000000000000)\n\n      mstore(add(clone, 0xa), targetBytes)\n\n      mstore(add(clone, 0x1e), 0x5af43d82803e903d91602b57fd5bf30000000000000000000000000000000000)\n\n\n\n      let other := add(clone, 0x40)\n\n      extcodecopy(query, other, 0, 0x2d)\n\n      result := and(\n\n        eq(mload(clone), mload(other)),\n\n        eq(mload(add(clone, 0xd)), mload(add(other, 0xd)))\n\n      )\n\n    }\n",
+                    "message": "CloneFactory.isClone (CloneFactory.sol#41-56) is declared view but contains assembly code\n"
+                },
+                {
+                    "name": "assembly",
+                    "vulnerability_from_line": 30,
+                    "vulnerability_to_line": 39,
+                    "vulnerability_code": "  function createClone(address target) internal returns (address result) {\n\n    bytes20 targetBytes = bytes20(target);\n\n    assembly {\n\n      let clone := mload(0x40)\n\n      mstore(clone, 0x3d602d80600a3d3981f3363d3d373d3d3d363d73000000000000000000000000)\n\n      mstore(add(clone, 0x14), targetBytes)\n\n      mstore(add(clone, 0x28), 0x5af43d82803e903d91602b57fd5bf30000000000000000000000000000000000)\n\n      result := create(0, clone, 0x37)\n\n    }\n",
+                    "message": "CloneFactory.createClone uses assembly (CloneFactory.sol#30-39)\n\t- CloneFactory.sol#32-38\n"
+                },
+                {
+                    "name": "assembly",
+                    "vulnerability_from_line": 41,
+                    "vulnerability_to_line": 56,
+                    "vulnerability_code": "  function isClone(address target, address query) internal view returns (bool result) {\n\n    bytes20 targetBytes = bytes20(target);\n\n    assembly {\n\n      let clone := mload(0x40)\n\n      mstore(clone, 0x363d3d373d3d3d363d7300000000000000000000000000000000000000000000)\n\n      mstore(add(clone, 0xa), targetBytes)\n\n      mstore(add(clone, 0x1e), 0x5af43d82803e903d91602b57fd5bf30000000000000000000000000000000000)\n\n\n\n      let other := add(clone, 0x40)\n\n      extcodecopy(query, other, 0, 0x2d)\n\n      result := and(\n\n        eq(mload(clone), mload(other)),\n\n        eq(mload(add(clone, 0xd)), mload(add(other, 0xd)))\n\n      )\n\n    }\n",
+                    "message": "CloneFactory.isClone uses assembly (CloneFactory.sol#41-56)\n\t- CloneFactory.sol#43-55\n"
+                },
+                {
+                    "name": "solc-version",
+                    "vulnerability_from_line": 3,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "pragma solidity 0.5.13;\n",
+                    "message": "Detected issues with version pragma in CloneFactory.sol:\n\t- pragma solidity0.5.13 (CloneFactory.sol#3): it allows old versions\n"
+                }
+            ]
         },
         "smartcheck": {
-            "successfull_analysis": false,
-            "errors": [
-                "Smartbugs results not found"
-            ],
-            "vulnerability_findings": []
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "Smartbugs results not found"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "Smartbugs results not found"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Smartbugs results not found"
-            ],
-            "vulnerability_findings": []
+            "successfull_analysis": true,
+            "errors": [],
+            "vulnerability_findings": [
+                {
+                    "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+                    "vulnerability_from_line": 30,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "  function createClone(address target) internal returns (address result) {\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+                    "vulnerability_from_line": 41,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "  function isClone(address target, address query) internal view returns (bool result) {\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+                    "vulnerability_from_line": 41,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "  function isClone(address target, address query) internal view returns (bool result) {\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+                    "vulnerability_from_line": 32,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    assembly {\n",
+                    "message": null
+                },
+                {
+                    "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+                    "vulnerability_from_line": 43,
+                    "vulnerability_to_line": null,
+                    "vulnerability_code": "    assembly {\n",
+                    "message": null
+                }
+            ]
         }
     },
     "RealityCards-Contracts-8c0b05b25a7deef25f98532ae2f8afd4f9a84360/contracts/interfaces/ITreasury.sol": {
@@ -326,27 +339,6 @@
             "successfull_analysis": true,
             "errors": [],
             "vulnerability_findings": []
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "RealityCards-Contracts-8c0b05b25a7deef25f98532ae2f8afd4f9a84360/contracts/interfaces/IRCProxyMainnet.sol": {
@@ -417,27 +409,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "RealityCards-Contracts-8c0b05b25a7deef25f98532ae2f8afd4f9a84360/contracts/interfaces/IRCMarket.sol": {
@@ -550,27 +521,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "RealityCards-Contracts-8c0b05b25a7deef25f98532ae2f8afd4f9a84360/contracts/interfaces/IERC20Dai.sol": {
@@ -606,27 +556,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "RealityCards-Contracts-8c0b05b25a7deef25f98532ae2f8afd4f9a84360/contracts/interfaces/IFactory.sol": {
@@ -1026,27 +955,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "RealityCards-Contracts-8c0b05b25a7deef25f98532ae2f8afd4f9a84360/contracts/interfaces/IERC721.sol": {
@@ -1094,27 +1002,6 @@
         "smartcheck": {
             "successfull_analysis": true,
             "errors": [],
-            "vulnerability_findings": []
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
             "vulnerability_findings": []
         }
     },
@@ -1164,27 +1051,6 @@
             "successfull_analysis": true,
             "errors": [],
             "vulnerability_findings": []
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "RealityCards-Contracts-8c0b05b25a7deef25f98532ae2f8afd4f9a84360/contracts/interfaces/IAlternateReceiverBridge.sol": {
@@ -1211,27 +1077,6 @@
         "smartcheck": {
             "successfull_analysis": true,
             "errors": [],
-            "vulnerability_findings": []
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
             "vulnerability_findings": []
         }
     },
@@ -1337,27 +1182,6 @@
             "successfull_analysis": true,
             "errors": [],
             "vulnerability_findings": []
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "RealityCards-Contracts-8c0b05b25a7deef25f98532ae2f8afd4f9a84360/contracts/interfaces/IRCProxyXdai.sol": {
@@ -1435,27 +1259,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "RealityCards-Contracts-8c0b05b25a7deef25f98532ae2f8afd4f9a84360/contracts/interfaces/IRealitio.sol": {
@@ -1568,27 +1371,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     }
 }

@@ -549,7 +549,7 @@
                     "vulnerability_from_line": 362,
                     "vulnerability_to_line": 372,
                     "vulnerability_code": "    function withdraw() external returns (bool) {\n\n        address from = msg.sender;\n\n        require(hasStaked[from] == true, \"No stakes found for user\");\n\n        require(\n\n            block.timestamp >= deposits[from].endTime,\n\n            \"Requesting before lock time\"\n\n        );\n\n        require(deposits[from].paid == false, \"Already paid out\");\n\n\n\n        return (_withdraw(from));\n",
-                    "message": "Liquidity_v8.withdraw (Liquidity_v9(1).sol#362-372) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool,string)(block.timestamp >= deposits[from].endTime,Requesting before lock time) (Liquidity_v9(1).sol#365-368)\n\t- require(bool,string)(deposits[from].paid == false,Already paid out) (Liquidity_v9(1).sol#369)\n"
+                    "message": "Liquidity_v8.withdraw (Liquidity_v9(1).sol#362-372) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool,string)(deposits[from].paid == false,Already paid out) (Liquidity_v9(1).sol#369)\n\t- require(bool,string)(block.timestamp >= deposits[from].endTime,Requesting before lock time) (Liquidity_v9(1).sol#365-368)\n"
                 },
                 {
                     "name": "timestamp",
@@ -563,7 +563,7 @@
                     "vulnerability_from_line": 409,
                     "vulnerability_to_line": 419,
                     "vulnerability_code": "    function emergencyWithdraw() external returns (bool) {\n\n        address from = msg.sender;\n\n        require(hasStaked[from] == true, \"No stakes found for user\");\n\n        require(\n\n            block.timestamp >= deposits[from].endTime,\n\n            \"Requesting before lock time\"\n\n        );\n\n        require(deposits[from].paid == false, \"Already paid out\");\n\n\n\n        return (_emergencyWithdraw(from));\n",
-                    "message": "Liquidity_v8.emergencyWithdraw (Liquidity_v9(1).sol#409-419) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool,string)(deposits[from].paid == false,Already paid out) (Liquidity_v9(1).sol#416)\n\t- require(bool,string)(block.timestamp >= deposits[from].endTime,Requesting before lock time) (Liquidity_v9(1).sol#412-415)\n"
+                    "message": "Liquidity_v8.emergencyWithdraw (Liquidity_v9(1).sol#409-419) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool,string)(block.timestamp >= deposits[from].endTime,Requesting before lock time) (Liquidity_v9(1).sol#412-415)\n\t- require(bool,string)(deposits[from].paid == false,Already paid out) (Liquidity_v9(1).sol#416)\n"
                 },
                 {
                     "name": "timestamp",
@@ -577,7 +577,7 @@
                     "vulnerability_from_line": 443,
                     "vulnerability_to_line": 490,
                     "vulnerability_code": "    function _calculate(address from) private view returns (uint256) {\n\n        if (!hasStaked[from]) return 0;\n\n        (\n\n            uint256 amount,\n\n            uint256 depositTime,\n\n            uint256 endTime,\n\n            uint64 userIndex\n\n        ) =\n\n            (\n\n                deposits[from].depositAmount,\n\n                deposits[from].depositTime,\n\n                deposits[from].endTime,\n\n                deposits[from].userIndex\n\n            );\n\n\n\n        uint256 time;\n\n        uint256 interest;\n\n        uint256 _lockduration = endTime.sub(depositTime);\n\n        for (uint64 i = userIndex; i < index; i++) {\n\n            //loop runs till the latest index/interest rate change\n\n            if (endTime < rates[i + 1].timeStamp) {\n\n                //if the change occurs after the endTime loop breaks\n\n                break;\n\n            } else {\n\n                time = rates[i + 1].timeStamp.sub(depositTime);\n\n                interest = amount.mul(rates[i].newInterestRate).mul(time).div(\n\n                    _lockduration.mul(10000)\n\n                ); //replace with (_lockduration * 10000)\n\n                amount += interest;\n\n                depositTime = rates[i + 1].timeStamp;\n\n                userIndex++;\n\n            }\n\n        }\n\n\n\n        if (depositTime < endTime) {\n\n            //final calculation for the remaining time period\n\n            time = endTime.sub(depositTime);\n\n\n\n            interest = time\n\n                .mul(amount)\n\n                .mul(rates[userIndex].newInterestRate)\n\n                .div(_lockduration.mul(10000)); //replace with (lockduration * 10000)\n\n\n\n            amount += interest;\n\n        }\n\n\n\n        return (interest);\n",
-                    "message": "Liquidity_v8._calculate (Liquidity_v9(1).sol#443-490) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- endTime < rates[i + 1].timeStamp (Liquidity_v9(1).sol#463-474)\n\t- i < index (Liquidity_v9(1).sol#461-475)\n\t- depositTime < endTime (Liquidity_v9(1).sol#477-487)\n"
+                    "message": "Liquidity_v8._calculate (Liquidity_v9(1).sol#443-490) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- depositTime < endTime (Liquidity_v9(1).sol#477-487)\n\t- endTime < rates[i + 1].timeStamp (Liquidity_v9(1).sol#463-474)\n\t- i < index (Liquidity_v9(1).sol#461-475)\n"
                 },
                 {
                     "name": "external-function",
@@ -803,25 +803,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     }
 }

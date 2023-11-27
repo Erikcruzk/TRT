@@ -439,47 +439,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Delegatecall to user-supplied address (SWC 112)",
-                    "vulnerability_from_line": 279,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    (bool success,) = newImplementation.delegatecall(data);\n",
-                    "message": "The contract delegates execution to another contract with a user-supplied address.\nThe smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.\nClassification: SWC-112"
-                },
-                {
-                    "name": "Delegatecall to user-supplied address (SWC 112)",
-                    "vulnerability_from_line": 41,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "      let result := delegatecall(gas, implementation, 0, calldatasize, 0, 0)\n",
-                    "message": "The contract delegates execution to another contract with a user-supplied address.\nThe smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.\nClassification: SWC-112"
-                },
-                {
-                    "name": "Delegatecall to user-supplied address (SWC 112)",
-                    "vulnerability_from_line": 41,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "      let result := delegatecall(gas, implementation, 0, calldatasize, 0, 0)\n",
-                    "message": "The contract delegates execution to another contract with a user-supplied address.\nThe smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.\nClassification: SWC-112"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "xswap-326a3246b327cd2b8481fd8c22fe8d864e43b0da/contracts/XSwap.sol": {
@@ -1216,173 +1175,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 319,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\tNonStandardIERC20Token(_token).transfer(_receiver, _amount);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "Multiple Calls in a Single Transaction (SWC 113)",
-                    "vulnerability_from_line": 319,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\tNonStandardIERC20Token(_token).transfer(_receiver, _amount);\n",
-                    "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 336,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\tNonStandardIERC20Token(_token).transfer(_receiver, _balance);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "Multiple Calls in a Single Transaction (SWC 113)",
-                    "vulnerability_from_line": 336,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\tNonStandardIERC20Token(_token).transfer(_receiver, _balance);\n",
-                    "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 241,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\tIERC20Token(chai).approve(lendFMe, uint256(-1));\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 241,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\tIERC20Token(chai).approve(lendFMe, uint256(-1));\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "Multiple Calls in a Single Transaction (SWC 113)",
-                    "vulnerability_from_line": 241,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\tIERC20Token(chai).approve(lendFMe, uint256(-1));\n",
-                    "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 241,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\tIERC20Token(chai).approve(lendFMe, uint256(-1));\n",
-                    "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 244,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\tNonStandardIERC20Token(_token).approve(lendFMe, uint256(-1));\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "Multiple Calls in a Single Transaction (SWC 113)",
-                    "vulnerability_from_line": 247,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\tuint256 _balance = NonStandardIERC20Token(_token).balanceOf(address(this));\n",
-                    "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 249,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\tif (_token == dai) {\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 250,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\t\tIChai(chai).join(address(this), _balance);\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 250,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\t\tIChai(chai).join(address(this), _balance);\n",
-                    "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 251,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\t\tILendFMe(lendFMe).supply(chai, IERC20Token(chai).balanceOf(address(this)));\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 251,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\t\tILendFMe(lendFMe).supply(chai, IERC20Token(chai).balanceOf(address(this)));\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 251,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\t\tILendFMe(lendFMe).supply(chai, IERC20Token(chai).balanceOf(address(this)));\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 251,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\t\tILendFMe(lendFMe).supply(chai, IERC20Token(chai).balanceOf(address(this)));\n",
-                    "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 254,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\t\tILendFMe(lendFMe).supply(_token, _balance);\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 254,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\t\tILendFMe(lendFMe).supply(_token, _balance);\n",
-                    "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 343,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\tNonStandardIERC20Token(_token).transferFrom(msg.sender, address(this), _amount);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 344,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\tif(supportLending[_token]) {\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "xswap-326a3246b327cd2b8481fd8c22fe8d864e43b0da/contracts/interface/ILendFMe.sol": {
@@ -1418,27 +1210,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "xswap-326a3246b327cd2b8481fd8c22fe8d864e43b0da/contracts/interface/IXSwap.sol": {
@@ -1474,27 +1245,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "xswap-326a3246b327cd2b8481fd8c22fe8d864e43b0da/contracts/interface/IERC20Token.sol": {
@@ -1537,27 +1287,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "xswap-326a3246b327cd2b8481fd8c22fe8d864e43b0da/contracts/interface/IChai.sol": {
@@ -1593,27 +1322,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "xswap-326a3246b327cd2b8481fd8c22fe8d864e43b0da/contracts/utils/Address.sol": {
@@ -1670,25 +1378,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "xswap-326a3246b327cd2b8481fd8c22fe8d864e43b0da/contracts/Mockup/FakeLendFMe.sol": {
@@ -1816,75 +1505,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 46,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\tbalances[_token][_user] = balances[_token][_user] * (1000 + _percentrage) / 1000;\n",
-                    "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 24,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\trequire(IERC20(_token).transferFrom(msg.sender, address(this), _amounts));\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 25,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\tbalances[_token][msg.sender] += _amounts;\n",
-                    "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "Integer Arithmetic Bugs (SWC 101)",
-                    "vulnerability_from_line": 25,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\tbalances[_token][msg.sender] += _amounts;\n",
-                    "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
-                },
-                {
-                    "name": "State access after external call (SWC 107)",
-                    "vulnerability_from_line": 25,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\tbalances[_token][msg.sender] += _amounts;\n",
-                    "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 33,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\t\tIERC20(_token).transfer(msg.sender, toUser);\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                },
-                {
-                    "name": "External Call To User-Supplied Address (SWC 107)",
-                    "vulnerability_from_line": 38,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "\t\trequire(IERC20(_token).transfer(msg.sender, _amounts), \"contrract balance not enough\");\n",
-                    "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "xswap-326a3246b327cd2b8481fd8c22fe8d864e43b0da/contracts/Mockup/DSToken.sol": {
@@ -2383,27 +2003,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "DOCKER_TIMEOUT"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "xswap-326a3246b327cd2b8481fd8c22fe8d864e43b0da/contracts/DSLibrary/DSAuth.sol": {
@@ -2566,25 +2165,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "xswap-326a3246b327cd2b8481fd8c22fe8d864e43b0da/contracts/DSLibrary/DSGuard.sol": {
@@ -2796,25 +2376,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "xswap-326a3246b327cd2b8481fd8c22fe8d864e43b0da/contracts/upgradeability/AdminUpgradeabilityProxy.sol": {
@@ -3229,40 +2790,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHL) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": [
-                {
-                    "name": "Delegatecall to user-supplied address (SWC 112)",
-                    "vulnerability_from_line": 279,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "    (bool success,) = newImplementation.delegatecall(data);\n",
-                    "message": "The contract delegates execution to another contract with a user-supplied address.\nThe smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.\nClassification: SWC-112"
-                },
-                {
-                    "name": "Delegatecall to user-supplied address (SWC 112)",
-                    "vulnerability_from_line": 41,
-                    "vulnerability_to_line": null,
-                    "vulnerability_code": "      let result := delegatecall(gas, implementation, 0, calldatasize, 0, 0)\n",
-                    "message": "The contract delegates execution to another contract with a user-supplied address.\nThe smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.\nClassification: SWC-112"
-                }
-            ]
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "xswap-326a3246b327cd2b8481fd8c22fe8d864e43b0da/contracts/upgradeability/BaseUpgradeabilityProxy.sol": {
@@ -3481,25 +3008,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (IndexError: pop from empty list)"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "xswap-326a3246b327cd2b8481fd8c22fe8d864e43b0da/contracts/upgradeability/BaseAdminUpgradeabilityProxy.sol": {
@@ -3886,25 +3394,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "xswap-326a3246b327cd2b8481fd8c22fe8d864e43b0da/contracts/upgradeability/Proxy.sol": {
@@ -3996,27 +3485,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "execution failed"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": false,
-            "errors": [
-                "input files do not contain any valid contracts"
-            ],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     },
     "xswap-326a3246b327cd2b8481fd8c22fe8d864e43b0da/contracts/upgradeability/UpgradeabilityProxy.sol": {
@@ -4270,25 +3738,6 @@
                     "message": null
                 }
             ]
-        },
-        "oyente": {
-            "successfull_analysis": false,
-            "errors": [
-                "exception (RuntimeError: Source map error, unknown name(SHL) or instr_name(INVALID))"
-            ],
-            "vulnerability_findings": []
-        },
-        "mythril": {
-            "successfull_analysis": true,
-            "errors": [],
-            "vulnerability_findings": []
-        },
-        "osiris": {
-            "successfull_analysis": false,
-            "errors": [
-                "Solidity compilation failed"
-            ],
-            "vulnerability_findings": []
         }
     }
 }
