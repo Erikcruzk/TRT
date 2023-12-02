@@ -10,7 +10,7 @@ TRT is the first tool for Automatic Program Repair (APR) of Solidity Smart Contr
 1. Clone repo
 2. Add your openAI key in the .env file
 ```
-cd transformative_repair
+cd TRT
 touch .env
 echo "OPENAI_API_KEY=<your_openai_key>" > .env
 ```
@@ -21,14 +21,14 @@ echo "OPENAI_API_KEY=<your_openai_key>" > .env
 ### Docker compose
 
 ```
-cd transformative_repair
+cd TRT
 docker-compose up -d --build
 ```
 
 ### Docker
 
 ```
-cd transformative_repair
+cd TRT
 docker build -t trt:latest .
 docker run -tid\
   -v $(pwd)/config.yml:/app/config.yml \
@@ -50,8 +50,8 @@ python3 main.py
 
 1. Install smartbugs
 ```
-cd transformative_repair
-git clone https://github.com/smartbugs/smartbugs
+cd TRT
+git clone https://github.com/ASSERT-KTH/smartbugs
 cd smartbugs
 install/setup-venv.sh
 ```
