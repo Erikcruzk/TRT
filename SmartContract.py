@@ -101,7 +101,7 @@ class SmartContract:
         return list(tools)
 
     @staticmethod
-    def get_vulnerability_aliases() -> dict:
+    def _get_vulnerability_aliases() -> dict:
         vulnerabilities_aliases = {}
         # Mapping of vulnerabilities
         # https://github.com/smartbugs/smartbugs/wiki/Vulnerabilities-mapping
@@ -207,6 +207,94 @@ class SmartContract:
             dict.fromkeys([x.lower() for x in unhandled_exception_aliases], "unhandled_exception"))
 
         return vulnerabilities_aliases
+
+    @staticmethod
+    def get_vulnerability_aliases() -> dict:
+        vulnerabilities_aliases = {}
+        # Mapping of vulnerabilities
+        
+        # Reentrancy
+        reentrancy_aliases = ["compound-borrowfresh-reentrancy", "erc721-reentrancy", "curve-readonly-reentrancy", "erc777-reentrancy", "erc677-reentrancy" # Semgrep
+                              "reentrancy-benign", "Reentrancy-events", "reentrancy-no-eth", "reentrancy-unlimited-gas", "reentrancy-eth"] # Slither
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in reentrancy_aliases], "reentrancy"))
+
+        # Low level calls
+        low_level_calls_aliases = ["Arbitrary-low-level-call" # Semgrep
+                                   "SOLIDITY_CALL_WITHOUT_DATA"] # Smartcheck
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in low_level_calls_aliases], "unchecked_low_level_calls"))
+
+        # Access control
+        access_control_aliases = ["Compound-sweeptoken-not-restricted", "Erc20-public-burn", "Accessible-selfdestruct", "Oracle-price-update-not-restricted", "Uniswap-callback-not-protected", "Delegatecall-to-arbitrary-address", # Semgrep
+                                  "arbitrary-send-erc20", "arbitrary-send-eth", "suicidal", "arbitrary-send-erc20-permit", # Slither
+                                  "SOLIDITY_TX_ORIGIN"] # Smartcheck
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in access_control_aliases], "access_control"))
+
+        # Delegation 
+        delegation_aliases = ["Delegatecall-to-arbitrary-address", # Semgrep
+                              "controlled-delegatecall", "delegatecall-loop"] # Slither
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in delegation_aliases], "delegation"))
+
+        # Arithmetic
+        arithmetic_aliases = ["Basic-arithmetic-underflow", # Semgrep
+                              "SOLIDITY_DIV_MUL", # Smartcheck
+                              "divide-before-multiply"] # Slither
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in arithmetic_aliases], "arithmetic"))
+
+        # Oracle manipulation
+        oracle_manipulation_aliases = ["Keeper-network-oracle-manipulation"] # Semgrep
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in oracle_manipulation_aliases], "oracle_manipulation"))
+
+        # Input validation
+        input_validation_aliases = ["Missing-zero-check"] # Slither
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in input_validation_aliases], "input_validation"))
+
+        # Shadowing
+        shadowing_aliases = ["Shadowing-local", "shadowing-state", "shadowing-abstract"] # Slither
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in shadowing_aliases], "shadowing"))
+
+        # Compliance
+        compliance_aliases = ["erc20-interface", # Slither
+                              "SOLIDITY_ERC20_TRANSFER_SHOULD_THROW"] # Smartcheck
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in compliance_aliases], "compliance"))
+
+        # Timestamp
+        timestamp_aliases = ["timestamp", "weak-prng"] # Slither
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in timestamp_aliases], "timestamp"))
+
+        # Initialization
+        initialization_aliases = ["uninitialized-local", "uninitialized-state"] # Slither
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in initialization_aliases], "initialization"))
+
+        # Poor logic flaws
+        poor_logic_flaw_aliases = ["incorrect-use-of-blockhash", # Slither
+                                   "SOLIDITY_EXACT_TIME", "SOLIDITY_BALANCE_EQUALITY", # Smartcheck
+                                   "Incorrect-equality", "boolean-cst"] # Slither
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in poor_logic_flaw_aliases], "poor_logic_flaw"))
+
+        # Denial of service
+        denial_of_service_aliases = ["SOLIDITY_LOCKED_MONEY", "SOLIDITY_TRANSFER_IN_LOOP", # Smartcheck
+                                     "locked-ether", "calls-loop", "msg-value-loop"] # Slither
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in denial_of_service_aliases], "denial_of_service"))
+
+        # State Corruption
+        state_corruption_aliases = ["SOLIDITY_ARRAY_LENGTH_MANIPULATION", # Smartcheck
+                                    "controlled-array-length"] # Slither
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in state_corruption_aliases], "state_corruption"))
+
+        # Function Behavior
+        function_behavior_aliases = ["incorrect-modifier"] # Slither
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in function_behavior_aliases], "function_behavior"))
+
+        # Transaction Validation
+        transaction_validation_aliases = ["unchecked-transfer", "unchecked-lowlevel"] # Slither
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in transaction_validation_aliases], "transaction_validation"))
+
+        # Front Running
+        front_running_aliases = ["SOLIDITY_ERC20_APPROVE"]
+        vulnerabilities_aliases.update(dict.fromkeys([x.lower() for x in front_running_aliases], "front_running"))
+
+        return vulnerabilities_aliases
+
 
     @staticmethod
     def rename_findings_with_aliases(findings: List[dict]) -> list:

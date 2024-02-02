@@ -136,8 +136,6 @@ class PromptEngine:
 
         return analyzer_results_filtered
 
-        return non_empty_analyzers
-
     @staticmethod
     def format_analyzer_results(analyzer_results: dict, comment_symbol="/// ", comment_out_code=False):
         context = ""

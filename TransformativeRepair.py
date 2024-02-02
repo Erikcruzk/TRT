@@ -470,7 +470,8 @@ class TransformativeRepair:
                     patch_results = json.load(open(patch_results_path, 'r')) if os.path.isfile(
                         patch_results_path) else {}
                     # Check that all patch generations have completed
-                    if patch_results.get("patch_generation_completed", False) == "Contract too long. Reparing skipped":
+                    if patch_results.get("patch_generation_completed", False) == "Contract too long. Reparing skipped" or \
+                            patch_results.get("patch_generation_completed", False) == "No vulnerabilities found":
                         # skip this contract
                         print("Skipping contract: ", sc_dir)
                         continue
@@ -583,35 +584,41 @@ class TransformativeRepair:
             #### Step 1: Initialize SC
             sc = SmartContract(experiment_settings, sc_path)
 
-            #### Step 2: Create Prompt Engine and generate prompt
-            pe = PromptEngine(sc, experiment_settings)
-            prompt = pe.generate_prompt(experiment_settings["prompt_style"])
 
-            encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
-            if sc.length >= 3000:
-                sc.vulnerabilities["smartbugs_completed"] = "Contract too long. Reparing skipped"
+            if PromptEngine.delete_empty_analyzers_and_rename_findings_to_alias(sc.vulnerabilities["analyzer_results"], experiment_settings["target_vulnerabilities"]):
+                #### Step 2: Create Prompt Engine and generate prompt
+                pe = PromptEngine(sc, experiment_settings)
+                prompt = pe.generate_prompt(experiment_settings["prompt_style"])
+
+                encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
+
+                #### Step 3: Save prompt
+                with open(os.path.join(sc.results_dir, "prompt.txt"), 'w') as file:
+                    file.write(prompt)
+
+                #### Step 4: Repair smart contract
+                model_name = experiment_settings["llm_model_name"]
+                candidate_patches_paths = []
+                if model_name == "gpt-3.5-turbo":
+                    try:
+                        candidate_patches_paths = pe.get_codex_repaired_sc(experiment_settings, llm_settings[model_name],
+                                                                        sc, prompt)
+                    except Exception as e:
+                        # if contract too long 
+                        if isinstance(e, openai.error.InvalidRequestError):
+                            sc.vulnerabilities["smartbugs_completed"] = "Contract too long. Reparing skipped"
+                            sc.write_vulnerabilities_to_results_dir()
+                            progressbar.update(1)
+                            raise Exception("Contract too long. Reparing skipped")
+                        # logging.critical(f'An exception occurred when repairing contract={sc_path}: {str(e)}',
+                        #                 exc_info=True)
+                else:
+                    raise KeyError(f'model_name={model_name} not found!')
+            else:
+                sc.vulnerabilities["smartbugs_completed"] = "No vulnerabilities found"
                 sc.write_vulnerabilities_to_results_dir()
                 progressbar.update(1)
-                raise Exception("Contract too long. Reparing skipped")
-
-
-            #### Step 3: Save prompt
-            with open(os.path.join(sc.results_dir, "prompt.txt"), 'w') as file:
-                file.write(prompt)
-
-            #### Step 4: Repair smart contract
-            model_name = experiment_settings["llm_model_name"]
-            candidate_patches_paths = []
-            if model_name == "gpt-3.5-turbo":
-                try:
-                    candidate_patches_paths = pe.get_codex_repaired_sc(experiment_settings, llm_settings[model_name],
-                                                                       sc, prompt)
-                    pass
-                except Exception as e:
-                    logging.critical(f'An exception occurred when repairing contract={sc_path}: {str(e)}',
-                                     exc_info=True)
-            else:
-                raise KeyError(f'model_name={model_name} not found!')
+                raise Exception("No vulnerabilities found")
 
             #### Step 5: Find all unique patches and add them to the repair queue
             patches_results = {}
