@@ -473,7 +473,7 @@ class TransformativeRepair:
                     if patch_results.get("patch_generation_completed", False) == "Contract too long. Reparing skipped" or \
                             patch_results.get("patch_generation_completed", False) == "No vulnerabilities found":
                         # skip this contract
-                        print("Skipping contract: ", sc_dir)
+                        # print("Skipping contract: ", sc_dir)
                         continue
                     elif not patch_results.get("patch_generation_completed", False) == True:
                         print("Detected unfinished patch generation: ", sc_dir)   
@@ -599,7 +599,7 @@ class TransformativeRepair:
                 #### Step 4: Repair smart contract
                 model_name = experiment_settings["llm_model_name"]
                 candidate_patches_paths = []
-                if model_name == "gpt-3.5-turbo":
+                if model_name == "gpt-3.5-turbo" or model_name == "gpt-3.5-turbo-0125":
                     try:
                         candidate_patches_paths = pe.get_codex_repaired_sc(experiment_settings, llm_settings[model_name],
                                                                         sc, prompt)
@@ -657,7 +657,8 @@ class TransformativeRepair:
                 repair_sc_queue.put(sc.path)
                 return
             else:
-                logging.critical(f"An exception occurred for {sc_path}: {str(e)}", exc_info=True)
+                if str(e) != "No vulnerabilities found":
+                    logging.critical(f"An exception occurred for {sc_path}: {str(e)}", exc_info=True)
 
         # Write to patches_results.json
         with open(patches_results_path, "w") as outfile:

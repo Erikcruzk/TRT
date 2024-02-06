@@ -78,7 +78,6 @@ class PromptEngine:
                     {"role": "user", "content": prompt}
                 ],
                 temperature=llm_settings["temperature"],
-                max_tokens=1182,  # TODO: calculate tokens
                 top_p=llm_settings["top_p"],
                 frequency_penalty=0,
                 presence_penalty=0,
@@ -150,14 +149,14 @@ class PromptEngine:
                     context += f" at Line {vulnerability['vulnerability_from_line']}"
                     if vulnerability['vulnerability_to_line'] is not None:
                         context += f"-{vulnerability['vulnerability_to_line']}"
-                    context += f":"
+                    context += f":\n/*"
                 if vulnerability.get('vulnerability_code', None) is not None:
                     if comment_out_code:
                         context += f"{chr(10)}{comment_symbol}  {f'{chr(10)}{comment_symbol}  '.join(vulnerability['vulnerability_code'].splitlines())}"
                     else:
                         context += f"{chr(10)}{f'{chr(10)}'.join(vulnerability['vulnerability_code'].splitlines())}"
                 if vulnerability.get('message', None) is not None:
-                    context += f"\n{comment_symbol} Message:"
+                    context += f"\n*/\n{comment_symbol} Message:"
                     context += f"\n{comment_symbol}  ".join(vulnerability['message'].strip().split("\n"))
                 context += f"\n"
             context += f"\n"
@@ -190,10 +189,12 @@ class PromptEngine:
         templates["analyzers_natural_language_results"] = PromptTemplate(
                 input_variables=["sc_language", "sc_source_code", "analyzer_results"],
                 template="""/// Your task is to repair the following {sc_language} Smart Contract
-{sc_source_code}
-
+/// Please produce the full smart contract not just the fixed vulnerable function
 /// This {sc_language} Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
 {analyzer_results}
+
+{sc_source_code}
+
 
 /// Repaired {sc_language} Smart Contract""")
 
