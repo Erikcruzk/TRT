@@ -599,7 +599,7 @@ class TransformativeRepair:
                 #### Step 4: Repair smart contract
                 model_name = experiment_settings["llm_model_name"]
                 candidate_patches_paths = []
-                if model_name == "gpt-3.5-turbo" or model_name == "gpt-3.5-turbo-0125":
+                if model_name == "gpt-3.5-turbo" or model_name == "gpt-3.5-turbo-0125" or model_name == 'gpt-4-32k-0613':
                     try:
                         candidate_patches_paths = pe.get_codex_repaired_sc(experiment_settings, llm_settings[model_name],
                                                                         sc, prompt)
@@ -764,6 +764,8 @@ class TransformativeRepair:
 
                     # Create dir for contract and copy vulnerable sc to results
                     source_code_path = Path(os.path.join(self.vulnerable_contracts_dir, project, k))
+                    if not source_code_path.exists():
+                        continue
                     result_path = Path(os.path.join(results_dir, k))
                     file_name = os.path.basename(source_code_path)
                     result_path.mkdir(parents=True, exist_ok=True)
