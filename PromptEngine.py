@@ -75,14 +75,14 @@ class PromptEngine:
             response = self.completions_with_backoff(
                 model=llm_settings["model_name"],
                 messages=[
+                    {"role": "system", "content": """Your are an automated program repair tool for Solidity Smart Contracts. We need only FULL REPAIRED CONTRACT, no descriptions. Don't skip any portions of code. Don't write comments. Don't resolve dependencies."""},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=llm_settings["temperature"],
-                max_tokens=1182,  # TODO: calculate tokens
                 top_p=llm_settings["top_p"],
                 frequency_penalty=0,
                 presence_penalty=0,
-                stop=llm_settings["stop"],
+                # stop=llm_settings["stop"],
                 n=llm_settings["num_candidate_patches"],
             )
         except openai.error.InvalidRequestError as e:
@@ -150,14 +150,14 @@ class PromptEngine:
                     context += f" at Line {vulnerability['vulnerability_from_line']}"
                     if vulnerability['vulnerability_to_line'] is not None:
                         context += f"-{vulnerability['vulnerability_to_line']}"
-                    context += f":"
+                    context += f":\n/*"
                 if vulnerability.get('vulnerability_code', None) is not None:
                     if comment_out_code:
                         context += f"{chr(10)}{comment_symbol}  {f'{chr(10)}{comment_symbol}  '.join(vulnerability['vulnerability_code'].splitlines())}"
                     else:
                         context += f"{chr(10)}{f'{chr(10)}'.join(vulnerability['vulnerability_code'].splitlines())}"
                 if vulnerability.get('message', None) is not None:
-                    context += f"\n{comment_symbol} Message:"
+                    context += f"\n*/\n{comment_symbol} Message:"
                     context += f"\n{comment_symbol}  ".join(vulnerability['message'].strip().split("\n"))
                 context += f"\n"
             context += f"\n"
@@ -189,13 +189,15 @@ class PromptEngine:
 
         templates["analyzers_natural_language_results"] = PromptTemplate(
                 input_variables=["sc_language", "sc_source_code", "analyzer_results"],
-                template="""/// Your task is to repair the following {sc_language} Smart Contract
-{sc_source_code}
+                template="""
+/// The following {sc_language} Smart Contract has been analyzed by smart contract analyzers. Here are the results.
 
-/// This {sc_language} Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
 {analyzer_results}
 
-/// Repaired {sc_language} Smart Contract""")
+{sc_source_code}
+
+/// Please response with the FULL repaired version of the smart contract above (ONLY CODE): 
+""")
 
         return templates
 
