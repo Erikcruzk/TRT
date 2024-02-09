@@ -599,7 +599,7 @@ class TransformativeRepair:
                 #### Step 4: Repair smart contract
                 model_name = experiment_settings["llm_model_name"]
                 candidate_patches_paths = []
-                if model_name == "gpt-3.5-turbo" or model_name == "gpt-3.5-turbo-0125" or model_name == 'gpt-4-32k-0613':
+                if model_name == "gpt-3.5-turbo" or model_name == 'gpt-4-1106-preview':
                     try:
                         candidate_patches_paths = pe.get_codex_repaired_sc(experiment_settings, llm_settings[model_name],
                                                                         sc, prompt)

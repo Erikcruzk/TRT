@@ -75,13 +75,14 @@ class PromptEngine:
             response = self.completions_with_backoff(
                 model=llm_settings["model_name"],
                 messages=[
+                    {"role": "system", "content": """Your are an automated program repair tool for Solidity Smart Contracts. We need only FULL REPAIRED CONTRACT, no descriptions. Don't skip any portions of code. Don't write comments. Don't resolve dependencies."""},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=llm_settings["temperature"],
                 top_p=llm_settings["top_p"],
                 frequency_penalty=0,
                 presence_penalty=0,
-                stop=llm_settings["stop"],
+                # stop=llm_settings["stop"],
                 n=llm_settings["num_candidate_patches"],
             )
         except openai.error.InvalidRequestError as e:
@@ -188,15 +189,15 @@ class PromptEngine:
 
         templates["analyzers_natural_language_results"] = PromptTemplate(
                 input_variables=["sc_language", "sc_source_code", "analyzer_results"],
-                template="""/// Your task is to repair the following {sc_language} Smart Contract
-/// Please produce the full smart contract not just the fixed vulnerable function
-/// This {sc_language} Smart Contract has been analyzed by smart contract analyzers. Here are the results from these analyzers.
+                template="""
+/// The following {sc_language} Smart Contract has been analyzed by smart contract analyzers. Here are the results.
+
 {analyzer_results}
 
 {sc_source_code}
 
-
-/// Repaired {sc_language} Smart Contract""")
+/// Please response with the FULL repaired version of the smart contract above (ONLY CODE): 
+""")
 
         return templates
 
