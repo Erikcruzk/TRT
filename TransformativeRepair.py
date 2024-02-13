@@ -755,34 +755,38 @@ class TransformativeRepair:
             results_dir.mkdir(parents=True, exist_ok=True)
             
             project_vulnerabilities_src = Path(os.path.join(self.analysis_results_directory, project, "vulnerabilities.json"))
-
-            with open(project_vulnerabilities_src, 'r') as f:
-                
-                project_vulnerabilities = json.load(f)
-
-                for k, v in project_vulnerabilities.items():
-
-                    # Create dir for contract and copy vulnerable sc to results
-                    source_code_path = Path(os.path.join(self.vulnerable_contracts_dir, project, k))
-                    if not source_code_path.exists():
-                        continue
-                    result_path = Path(os.path.join(results_dir, k))
-                    file_name = os.path.basename(source_code_path)
-                    result_path.mkdir(parents=True, exist_ok=True)
-                    shutil.copyfile(source_code_path, os.path.join(result_path, file_name))
-                    
-                    # Add vulnerabilities to results
-                    with open(os.path.join(result_path, "vulnerabilities.json"), 'w') as vulnerabilities_file:
-                        vulnerabilites_formatted = {}
-                        vulnerabilites_formatted["smartbugs_completed"] = True
-                        vulnerabilites_formatted["analyzer_results"] = v
-                        json.dump(vulnerabilites_formatted, vulnerabilities_file, indent=2)
-                    
-                    sc_vulnerable_count += 1
-                    self.repair_sc_queue.put(Path(os.path.join(result_path, file_name)))
-            shutil.copyfile(project_vulnerabilities_src,
-                            os.path.join(results_dir, "project_vulnerabilities.json"))
             
+            try:
+                with open(project_vulnerabilities_src, 'r') as f:
+                    
+                    project_vulnerabilities = json.load(f)
+
+                    for k, v in project_vulnerabilities.items():
+
+                        # Create dir for contract and copy vulnerable sc to results
+                        source_code_path = Path(os.path.join(self.vulnerable_contracts_dir, project, k))
+                        if not source_code_path.exists():
+                            continue
+                        result_path = Path(os.path.join(results_dir, k))
+                        file_name = os.path.basename(source_code_path)
+                        result_path.mkdir(parents=True, exist_ok=True)
+                        shutil.copyfile(source_code_path, os.path.join(result_path, file_name))
+                        
+                        # Add vulnerabilities to results
+                        with open(os.path.join(result_path, "vulnerabilities.json"), 'w') as vulnerabilities_file:
+                            vulnerabilites_formatted = {}
+                            vulnerabilites_formatted["smartbugs_completed"] = True
+                            vulnerabilites_formatted["analyzer_results"] = v
+                            json.dump(vulnerabilites_formatted, vulnerabilities_file, indent=2)
+                        
+                        sc_vulnerable_count += 1
+                        self.repair_sc_queue.put(Path(os.path.join(result_path, file_name)))
+            except NotADirectoryError as e:
+                print(f'Skipping {project_vulnerabilities_src} project as no vulnerabilities.json detected.')
+            try: 
+                shutil.copyfile(project_vulnerabilities_src, os.path.join(results_dir, "project_vulnerabilities.json"))
+            except NotADirectoryError as e:
+                pass
         # Initialize progress bar
         n_candidate_patches = self.llm_settings[self.experiment_settings["llm_model_name"]]["num_candidate_patches"]
         progressbar = tqdm(total=sc_vulnerable_count + sc_vulnerable_count * n_candidate_patches,
