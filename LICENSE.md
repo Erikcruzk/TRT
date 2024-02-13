@@ -34,10 +34,6 @@ A Commercial License must be obtained from Erik Cruz ("The Licensor") for any co
 
 All other rights in the Software and related documentation not expressly granted under this License are reserved by The Licensor. Unauthorized commercial use or commercialization of derivative works is a violation of this license and legal action may be taken against violators.
 
-## Installation
-
-Python version required >= 3.10.x
-
 ## Contact Information
 
 If you wish to use this software for commercial purposes, or if you have any questions about the appropriate use of this software, please contact:
