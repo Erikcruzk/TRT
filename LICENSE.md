@@ -1,6 +1,6 @@
 # LICENSE.md
 
-This software is dual-licensed. Usage rights depend on whether it is used for academic/research purposes or for commercial purposes. 
+This software is dual-licensed. Usage rights depend on whether it is used for academic/research purposes or for commercial purposes.
 
 ## Academic Research License (ARL)
 
@@ -15,7 +15,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 1. The Software and any derivative works may only be used for non-commercial research and academic purposes. Any commercial use or commercialization, including but not limited to selling, licensing, or any form of exchange of the Software or any derivative works, is strictly prohibited without the prior written consent of the copyright holder.
 2. Any derivative works created for research or academic purposes must be made publicly available and licensed under the same ARL. The derivative works must recognize the original authorship of the software in the form of a citation: "Erik Cruz, TRT, 2023".
 3. In the case of publication, the source code of the derivative work used for producing results must be made publicly available and a citation to the Software should be included in the publication.
-   
+
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 
 ## Commercial License
@@ -33,6 +33,10 @@ A Commercial License must be obtained from Erik Cruz ("The Licensor") for any co
 3. This license does not grant the right to distribute derivative works of the Software or to commercialize such derivative works. If the Licensee wishes to create, distribute, and/or commercialize derivative works, they must negotiate a separate license agreement with the Licensor.
 
 All other rights in the Software and related documentation not expressly granted under this License are reserved by The Licensor. Unauthorized commercial use or commercialization of derivative works is a violation of this license and legal action may be taken against violators.
+
+## Installation
+
+Python version required >= 3.10.x
 
 ## Contact Information
 
