@@ -376,8 +376,7 @@ class SmartContract:
             source_code = f.read()
         lines = source_code.split("\n")
         tool_vulnerabilities = {}
-        tool_vulnerabilities["successfull_analysis"] = False if (tool_result["errors"] or tool_result["fails"]) and not \
-        tool_result["findings"] else True
+        tool_vulnerabilities["successfull_analysis"] = False if (tool_result["errors"] or tool_result["fails"]) and not tool_result["findings"] else True
         tool_vulnerabilities["errors"] = tool_result["errors"] + tool_result.get("fails", [])
 
         vulnerability_findings = []
