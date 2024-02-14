@@ -28,10 +28,10 @@ class PromptEngine:
 
     def __init__(self, sc: SmartContract, experiment_settings: dict):
         self.sc = sc
-        self.templates: Dict[str, PromptTemplate] = PromptEngine.get_templates()
+        self.templates: Dict[str, PromptTemplate] = PromptEngine.get_template(experiment_settings['prompt_style'])
         self.experiment_settings: dict = experiment_settings
 
-    def generate_prompt(self, prompt_style: str) -> str:
+    def generate_prompt(self, prompt_style: str, results:dict, repair_template_inputs:dict) -> str:        
         try:
             match prompt_style:
                 case "basic":
@@ -47,11 +47,6 @@ class PromptEngine:
                                 self.sc.vulnerabilities["analyzer_results"],
                                 self.experiment_settings["target_vulnerabilities"])
                             , indent=2))
-                # case "analyzers_json_results_slim":
-                #     return self.templates["analyzers_json_results"].format(
-                #         sc_language=self.sc.language, 
-                #         sc_source_code=self.sc.source_code,
-                #         analyzer_results=json.dumps(SmartContract.get_vulnerability_aliases(self.sc.vulnerabilities)["analyzer_results"], indent=2))
                 case "analyzers_natural_language_results":
                     return self.templates["analyzers_natural_language_results"].format(
                         sc_language=self.sc.language,
@@ -61,44 +56,71 @@ class PromptEngine:
                                 self.sc.vulnerabilities["analyzer_results"],
                                 self.experiment_settings["target_vulnerabilities"])
                         ))
+                case "flattened-src---function":
+                    return self.templates["flattened-src---function"].format(
+                        sc_language=self.sc.language,
+                        vulnerable_chunk=repair_template_inputs['vulnerable_chunk'],
+                        flattened_sc_source_code=repair_template_inputs['flattened_sc_source_code'],
+                        vulnerability_name=repair_template_inputs['vulnerability_name'],
+                        analyzer=repair_template_inputs['analyzer']
+                    )
+                
                 case _:
                     raise KeyError()
+                
         except Exception as e:
             logging.critical("An exception occurred: %s", str(e), exc_info=True)
             return ""
-
-    def get_codex_repaired_sc(self, experiment_settings: dict, llm_settings: dict, sc: SmartContract, prompt: str) -> \
+        
+    def get_codex_repaired_sc(self, experiment_settings: dict, llm_settings: dict, sc: SmartContract, prompt: str, this_vuln_results_directory: str) -> \
             List[str]:
         # Generate Repair
-        openai.api_key = os.environ.get(llm_settings["secret_api_key"])
+        #openai.api_key = os.environ.get(llm_settings["secret_api_key"])
+        openai.api_key = llm_settings["secret_api_key"]
+        
         try:
+
+            #print(f"api key environ: {openai.api_key}\nmodel: {llm_settings['model_name']}, temprature: {llm_settings['temperature']}, top_p: {llm_settings['top_p']}, n: {llm_settings['num_candidate_patches']}")
+            
             response = self.completions_with_backoff(
                 model=llm_settings["model_name"],
                 messages=[
-                    {"role": "system", "content": """Your are an automated program repair tool for Solidity Smart Contracts. We need only FULL REPAIRED CONTRACT, no descriptions. Don't skip any portions of code. Don't write comments. Don't resolve dependencies."""},
+                    {"role": "system", "content": """You are an automated program repair tool working on smart contracts in Solidity. 
+Your task is to help the user by fixing the vulnerabilities found on a funciton in the contract.
+The user will provide a contract with all dependencies and you have to reply with the code of the function beginMigration().   
+Please, reply to the user with the compilable version that fixes the vulnerability found in the function.
+DO NOT return natural language for explanations, only the Solidity code."""},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=llm_settings["temperature"],
-                top_p=llm_settings["top_p"],
+                #top_p=llm_settings["top_p"],
                 frequency_penalty=0,
                 presence_penalty=0,
                 # stop=llm_settings["stop"],
                 n=llm_settings["num_candidate_patches"],
             )
+            
+
+
         except openai.error.InvalidRequestError as e:
             logging.critical("An exception occurred: %s", str(e), exc_info=True)
             raise e
-
         # Save repair            
+
         candidate_patches_paths = []
+
         for i, choice in enumerate(response.choices):
             try:
                 # if content not empty
                 if choice["message"]["content"].strip():
-                    repaired_sc_dir = os.path.join(sc.results_dir,
+                    # repaired_sc_dir = os.path.join(sc.results_dir,
+                    #                             "candidate_patches",
+                    #                             f'patch_{i}')
+                    repaired_sc_dir = os.path.join(this_vuln_results_directory,
                                                 "candidate_patches",
                                                 f'patch_{i}')
-
+                    #print(f'repaired_sc_dir: \n {repaired_sc_dir}')
+                    
                     Path(repaired_sc_dir).mkdir(parents=True, exist_ok=True)  # TODO: minimize mkdir
 
                     patch_path = Path(os.path.join(repaired_sc_dir, f'patch_{i}.sol'))
@@ -112,8 +134,33 @@ class PromptEngine:
         return candidate_patches_paths
 
     @staticmethod
-    def delete_empty_analyzers_and_rename_findings_to_alias(analyzer_results: dict,
-                                                            target_vulnerabilities: list) -> dict:
+    def delete_empty_analyzers(analyzer_results: dict, target_vulnerabilities: list, sc_path: str) -> dict:
+        analyzer_results_filtered = {}
+        #print(f'SC: {sc_path} ---->>>> analyzer results: {analyzer_results}')
+        for tool_name, tool_results_dict in analyzer_results.items():
+            # Remove analyzers with empty reults
+            if tool_results_dict["successfull_analysis"] == False or not tool_results_dict["vulnerability_findings"]:
+                continue
+
+            # Remove all findings that are not known
+            if target_vulnerabilities:
+                findings = [vf for vf in tool_results_dict["vulnerability_findings"] if vf["name"] in target_vulnerabilities]
+                
+            # Do not add empty analyzer results              
+            if not findings:
+                continue
+            
+            
+            analyzer_results_filtered[tool_name] = copy.deepcopy(tool_results_dict)
+            
+            analyzer_results_filtered[tool_name]["vulnerability_findings"] = findings
+
+        return analyzer_results_filtered
+
+
+
+    @staticmethod
+    def delete_empty_analyzers_and_rename_findings_to_alias(analyzer_results: dict, target_vulnerabilities: list) -> dict:
         analyzer_results_filtered = {}
         for tool_name, tool_results_dict in analyzer_results.items():
             # Remove analyzers with empty reults
@@ -135,6 +182,8 @@ class PromptEngine:
             analyzer_results_filtered[tool_name]["vulnerability_findings"] = renamed_findings
 
         return analyzer_results_filtered
+
+
 
     @staticmethod
     def format_analyzer_results(analyzer_results: dict, comment_symbol="/// ", comment_out_code=False):
@@ -198,8 +247,31 @@ class PromptEngine:
 
 /// Please response with the FULL repaired version of the smart contract above (ONLY CODE): 
 """)
-
+        
         return templates
+
+    @staticmethod
+    def get_template(template_name=None) -> dict:
+        if template_name is None:
+            raise ValueError("No template supplied")
+        
+        templates = {}
+        template_variables = list(json.load(open(f'./prompt-templates/{template_name}/{template_name}.json', 'r'))["input-variables"])
+        template_text = open(f'./prompt-templates/{template_name}/{template_name}.txt', 'r').read()
+        
+        # print('template variables:')
+        # print(template_variables)
+
+        # print('template text:')
+        # print(template_text)
+        
+        templates[f"{template_name}"] = PromptTemplate(
+                input_variables=template_variables,
+                template=template_text, template_format="jinja2")
+        
+        
+        return templates
+
 
     @backoff.on_exception(backoff.expo, openai.error.RateLimitError)
     def completions_with_backoff(self, **kwargs):
