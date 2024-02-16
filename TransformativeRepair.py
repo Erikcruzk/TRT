@@ -516,9 +516,8 @@ class TransformativeRepair:
 
         try:
             #### Step 1: Initialize SC
-            print(f'Finding vulnerabilities for contract={sc_path}')
             sc = SmartContract(experiment_settings, sc_path)
-
+            
             if not sc.vulnerabilities.get("smartbugs_completed", False):
                 #### Step 2: Find Vulnerabilities
                 sc.run_smartbugs()
@@ -543,6 +542,7 @@ class TransformativeRepair:
         atexit.register(clear_queue, repair_sc_queue)
         while not stop_event.is_set():
             try:
+                
                 sc_path, do_repair_sc = smartbugs_sc_queue.get(block=False)
                 TransformativeRepair.find_vulnerabilities(experiment_setting, sc_path, do_repair_sc, repair_sc_queue,
                                                           progressbar)
@@ -617,6 +617,8 @@ class TransformativeRepair:
                                 patch_path = Path(os.path.join(candidate_patches_dir, patch_dir, patch_name))
 
                                 sc = SmartContract(experiment_settings, patch_path)
+                                sc.reduce_source_code_structure_preserving()
+                                
                                 if not sc.vulnerabilities.get("smartbugs_completed", False):
                                     smartbugs_sc_queue.put((patch_path, False))
                                 else:
@@ -647,9 +649,9 @@ class TransformativeRepair:
                         pe = PromptEngine(sc, experiment_settings)
                         
                         prompt = pe.generate_prompt(experiment_settings["prompt_style"], filtered_analysis_results, repair_template_inputs)
-                        #print('############################# 2')
                         encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
-                        #print('############################# 3')
+                        
+                        
                         
                         
                         this_vuln_results_directory = f"{sc.results_dir}/{analyzer}/vulnerability-{result_index}"
@@ -664,6 +666,7 @@ class TransformativeRepair:
                         
                         try:
                             candidate_patches_paths = pe.get_codex_repaired_sc(experiment_settings, llm_settings[model_name], sc, prompt, this_vuln_results_directory)
+                            progressbar.update(1)
                         except Exception as e:
                             # if contract too long 
                             if isinstance(e, openai.error.InvalidRequestError):
@@ -672,18 +675,12 @@ class TransformativeRepair:
                                 progressbar.update(1)
                                 raise Exception("Contract too long. Reparing skipped")
                             # logging.critical(f'An exception occurred when repairing contract={sc_path}: {str(e)}',
-                            #                 exc_info=True)
-                    
-                        
-                        
+                            #                 exc_info=True) 
             else:
-                '''
                 sc.vulnerabilities["smartbugs_completed"] = "No vulnerabilities found"
                 sc.write_vulnerabilities_to_results_dir()
                 progressbar.update(1)
                 raise Exception("No vulnerabilities found")
-                '''
-                pass
 
             #### Step 6: Find all unique patches and add them to the repair queue
             patches_results = {}
@@ -696,9 +693,10 @@ class TransformativeRepair:
                 if sc_candidate_patch.hash not in hash_to_first_patch:
                     hash_to_first_patch[sc_candidate_patch.hash] = sc_candidate_patch.filename
                     unique_patches[sc_candidate_patch.filename] = []
+                    print(f"\n&&&& Adding new candidate patch to sb queue: {candidate_patch_path}\n")
                     smartbugs_sc_queue.put((candidate_patch_path, False))
                     continue
-
+                
                 # Dubplicate patch has same hash
                 unique_contract = hash_to_first_patch[sc_candidate_patch.hash]
                 unique_patches[unique_contract].append(sc_candidate_patch.filename)
@@ -707,6 +705,7 @@ class TransformativeRepair:
                 progressbar.update(1)
                 # print(progressbar.n)
 
+            #print(f' ### For this series of patches, unique patches are only {len(unique_patches)}')
             patches_results["unique_patches"] = unique_patches
             patches_results["patch_generation_completed"] = True
         except Exception as e:
@@ -726,6 +725,7 @@ class TransformativeRepair:
                     logging.critical(f"An exception occurred for {sc_path}: {str(e)}", exc_info=True)
 
         # Write to patches_results.json
+        print('# LINE: 723 => trying to write to patches_results.json')
         with open(patches_results_path, "w") as outfile:
             outfile.write(json.dumps(patches_results, indent=2))
 
