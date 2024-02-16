@@ -22,6 +22,32 @@ def exit_handler(process):
         # If the process does not terminate in 5 seconds, kill it
         process.kill()
 
+class Stack:
+    def __init__(self):
+        self.items = []
+
+    def is_empty(self):
+        return self.items == []
+
+    def push(self, item):
+        self.items.append(item)
+
+    def pop(self):
+        if not self.is_empty():
+            return self.items.pop()
+        else:
+            raise Exception("Stack is empty!")
+
+    def peek(self):
+        if not self.is_empty():
+            return self.items[-1]
+        else:
+            return None
+
+    def size(self):
+        return len(self.items)
+
+
 
 class SmartContract:
     def __init__(self, experiment_settings: dict, sc_path: Path):
@@ -482,8 +508,9 @@ class SmartContract:
 
             # Run smartbugs
             # process = subprocess.Popen(f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}', shell=True, stdout=subprocess.DEVNULL)
-            process = subprocess.Popen(f'./smartbugs/smartbugs -c "{smartbugs_config_path}" -f "{self.path}"',
-                                       shell=True)  # DEBUG
+            sb_command = f'./smartbugs/smartbugs -c "{smartbugs_config_path}" -f "{self.path}"'
+            print(f'\n\n **** SB command is: {sb_command} ****')
+            process = subprocess.Popen(sb_command, shell=True)  # DEBUG
 
             atexit.register(exit_handler, process)
 
@@ -560,3 +587,29 @@ class SmartContract:
                 modified_lines.append(line)
         
         return '\n'.join(modified_lines)
+    
+    def reduce_source_code_structure_preserving(self):
+        def replace_with_newlines_or_space(match):
+            # Check if the match spans more than one line
+            num_newlines = match.group().count('\n')
+            if num_newlines:
+                # For multiline comments, replace with equivalent number of newlines
+                return '\n' * num_newlines
+            else:
+                # For single line (inline) comments, replace with a space to preserve the line
+                return ' '
+
+        def remove_NatSpec(sc):
+            # replaces docstrings in the solidity code, taking into account inline comments
+            pattern = r'\/\*\*.*?\*\/|\/\/\/.*?$'
+            sc = re.sub(pattern, replace_with_newlines_or_space, sc, flags=re.DOTALL | re.MULTILINE)    
+            return sc
+
+        def remove_comments(sc):
+            # replaces file directives and single line comments in the solidity code, considering inline comments
+            pattern = r'\/\*[\s\S]*?\*\/|\/\/.*?$'
+            sc = re.sub(pattern, replace_with_newlines_or_space, sc, flags=re.MULTILINE)
+            return sc
+        
+        code_without_NatSpec = remove_NatSpec(self.source_code)
+        self.source_code = remove_comments(code_without_NatSpec)

@@ -71,7 +71,8 @@ class PromptEngine:
         except Exception as e:
             logging.critical("An exception occurred: %s", str(e), exc_info=True)
             return ""
-        
+    
+
     def get_codex_repaired_sc(self, experiment_settings: dict, llm_settings: dict, sc: SmartContract, prompt: str, this_vuln_results_directory: str) -> \
             List[str]:
         # Generate Repair
@@ -119,11 +120,13 @@ DO NOT return natural language for explanations, only the Solidity code."""},
                     repaired_sc_dir = os.path.join(this_vuln_results_directory,
                                                 "candidate_patches",
                                                 f'patch_{i}')
-                    #print(f'repaired_sc_dir: \n {repaired_sc_dir}')
                     
                     Path(repaired_sc_dir).mkdir(parents=True, exist_ok=True)  # TODO: minimize mkdir
 
                     patch_path = Path(os.path.join(repaired_sc_dir, f'patch_{i}.sol'))
+                    
+                    # putting the repaired code chunk back into the original sc file
+                     
 
                     with open(patch_path, 'w') as repaired_sc:
                         repaired_sc.write(choice["message"]["content"].strip())
