@@ -1,24 +1,25 @@
-import re 
+import re
 
-def replace_with_newlines_or_space(match):
-    num_newlines = match.group().count('\n')
-    if num_newlines:
-        return '\n' * num_newlines
+def smart_replace(match):
+    if (match.group().startswith('"') and match.group().endswith('"')) or \
+       (match.group().startswith("'") and match.group().endswith("'")):
+        return match.group()  # Return the string literal unchanged
     else:
-        return ' '
+        # It's a comment; apply the original logic
+        num_newlines = match.group().count('\n')
+        if num_newlines:
+            return '\n' * num_newlines
+        else:
+            return ' '
 
-def remove_NatSpec(src:str) -> str:
-    pattern = r'\/\*\*.*?\*\/|\/\/\/.*?$'
-    src = re.sub(pattern, replace_with_newlines_or_space, src, flags=re.DOTALL | re.MULTILINE)    
+def remove_NatSpec_and_comments(src):
+    # This pattern tries to match strings or comments
+    pattern = r'".*?"|\'.*?\'|\/\/.*?$|\/\*[\s\S]*?\*\/'
+    src = re.sub(pattern, smart_replace, src, flags=re.MULTILINE)
     return src
 
-def remove_comments(src:str) -> str:
-    pattern = r'\/\*[\s\S]*?\*\/|\/\/.*?$'
-    src = re.sub(pattern, replace_with_newlines_or_space, src, flags=re.MULTILINE)
-    return src
 
 '''
 Sample usage:
-code_without_NatSpec = remove_NatSpec(source_code)
-source_code = remove_comments(code_without_NatSpec)
+source_code = remove_NatSpec_and_comments(source_code)
 '''
