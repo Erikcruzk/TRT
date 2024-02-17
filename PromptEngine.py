@@ -129,9 +129,28 @@ DO NOT return natural language for explanations, only the Solidity code."""},
                     # Applying the patch
                     # sc.source_code.replace(, choice['message']['content'])
 
+
+
+                    # Loading back the original vulnerability and file info
+                    vulnerable_chunk_info = dict()
+                    with open(os.path.join(f"{this_vuln_results_directory}", "vulnerable_chunk_info.json"), 'r') as file:
+                        vulnerable_chunk_info = json.load(file)
+                    
+                    # reduced_vulnerable_src_path = os.path.join(this_vuln_results_directory.parent.parent, "reduced-vulnerable-src.sol")
+                    # reduced_vulnerable_src = open(reduced_vulnerable_src_path, 'r').read()  
+                    
+                    # blind replacement
+                    lines = sc.source_code.split('\n')
+                    patch_lines = choice['message']['content'].split('\n')
+                    all_lines = lines[:vulnerable_chunk_info['start_line_in_source']] + patch_lines + lines[vulnerable_chunk_info['end_line_in_source']+1:]
+                    choice['message']['content'] =  '\n'.join(all_lines)
+
+
+
                     with open(patch_path, 'w') as repaired_sc:
                         repaired_sc.write(choice["message"]["content"].strip())
                     candidate_patches_paths.append(patch_path)
+
             except Exception as e:
                 raise IOError(f"Fail on '{patch_path}': {str(e)}")
 

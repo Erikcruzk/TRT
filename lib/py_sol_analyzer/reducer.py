@@ -1,21 +1,23 @@
 import re
 
-def smart_replace(match):
-    if (match.group().startswith('"') and match.group().endswith('"')) or \
-       (match.group().startswith("'") and match.group().endswith("'")):
-        return match.group()  # Return the string literal unchanged
+def replace_comments_with_newlines(match):
+    # Determine if it's a multiline comment/docstring
+    text = match.group(0)
+    if text.startswith('/*') or text.startswith('/**'):
+        # Count the number of newlines and replace with equivalent number of newlines
+        return '\n' * text.count('\n')
+    elif text.startswith('//'):
+        # For single-line comments, replace with a space (or nothing if you prefer)
+        return ' ' if '\n' in text else ''
     else:
-        # It's a comment; apply the original logic
-        num_newlines = match.group().count('\n')
-        if num_newlines:
-            return '\n' * num_newlines
-        else:
-            return ' '
+        # For strings, return them unchanged
+        return text
 
 def remove_NatSpec_and_comments(src):
-    # This pattern tries to match strings or comments
-    pattern = r'".*?"|\'.*?\'|\/\/.*?$|\/\*[\s\S]*?\*\/'
-    src = re.sub(pattern, smart_replace, src, flags=re.MULTILINE)
+    # Updated pattern to match docstrings (/** ... */), multiline comments (/* ... */), single-line comments (// ...),
+    # and strings (both "..." and '...')
+    pattern = r'\/\*\*[\s\S]*?\*\/|\/\*[\s\S]*?\*\/|\/\/[^\n]*|$|".*?"|\'.*?\''
+    src = re.sub(pattern, replace_comments_with_newlines, src, flags=re.MULTILINE)
     return src
 
 

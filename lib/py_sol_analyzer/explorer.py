@@ -1,6 +1,12 @@
 from .stack import Stack
 import re
 
+DEBUG = False
+
+def dprint(arg):
+    if DEBUG:
+        print(arg)
+
 def get_node_info(statement: str) -> dict:
     enclosing_node = {
         'type': None,
@@ -59,7 +65,16 @@ def get_node_info(statement: str) -> dict:
 
     return enclosing_node
     
-def get_enclosing_nodes(src: str, start: int, end: int) -> dict:
+
+def get_enclosing_nodes(src, start, end) -> dict:
+    if end is None and start is not None:
+        end = start
+    if end is None and start is None:
+        return {
+            'function': None,
+            'contract': None
+        }
+
     if start > end:
         raise ValueError("Start line cannot be greater than the end line.")
     function_keywords = [
@@ -99,27 +114,30 @@ def get_enclosing_nodes(src: str, start: int, end: int) -> dict:
     while down < len_src_lines - 1 or up > 0:
         if direction == 'down':
             down += 1
+            dprint(f'-    -     -    -     -    -     -    -     -   c_down: {c_down}, down: {down}')
             if down > len_src_lines - 1:
-                print(f"Reaching the end of the file, going up (next up is {up-1})...")
+                dprint(f"Reaching the end of the file, going up (next up is {up-1})...")
                 direction = 'up'
                 continue
             if "}" in src_lines[down] and c_down == 0:
-                print(f"Just saw a }} going down at line {down}, going up (next up is {up-1})")
+                dprint(f"Just saw a }} going down at line {down}, going up (next up is {up-1})")
                 stack.push({
                     'token': "}",
                     'line': down
                 })
                 direction = 'up'
+            elif "{" in src_lines[down] and "}" in src_lines[down]:
+                pass
             elif "{" in src_lines[down]:
-                print(f"Saw a {{ at line {down} (going down), and skipping it...")
+                dprint(f"Saw a {{ at line {down} (going down), and skipping it...")
                 c_down += 1
             elif "}" in src_lines[down] and c_down > 0:
-                print(f"Saw a }} at line {down} (going down), and skipping it...")
+                dprint(f"Saw a }} at line {down} (going down), and skipping it...")
                 c_down -= 1
         if direction == 'up':
             up -= 1
             if up <= 0:
-                print(f"Reaching the begining of the file going up, going down (next down is {down+1}) ")
+                dprint(f"Reaching the begining of the file going up, going down (next down is {down+1}) ")
                 direction = 'down'
                 continue
             if "{" in src_lines[up] and c_up == 0:
@@ -146,20 +164,22 @@ def get_enclosing_nodes(src: str, start: int, end: int) -> dict:
                     }
 
                     if len(to_find) > 0:
-                        print(f"Just identified an enclosing node (at line {up}) while moving up, going down now (next down is: {down+1})")
+                        dprint(f"Just identified an enclosing node (at line {up}) while moving up, going down now (next down is: {down+1})")
                         direction = 'down'
                         continue
                 elif len(to_find) > 0:
-                    print(f"Just skipped a symbol, going down now, (next down is {down+1})")
+                    dprint(f"Just skipped a symbol, going down now, (next down is {down+1})")
                     direction = 'down'
                     continue
                 else:
                     break
+            elif "{" in src_lines[up] and "}" in src_lines[up]:
+                pass    
             elif "}" in src_lines[up]:
-                print(f"Saw a }} going up (at line {up}); now skipping it...")
+                dprint(f"Saw a }} going up (at line {up}); now skipping it...")
                 c_up += 1
             elif "{" in src_lines[up] and c_up > 0:
-                print(f"Saw a {{ going up (at line {up}); skpping it...")
+                dprint(f"Saw a {{ going up (at line {up}); skpping it...")
                 c_up -= 1
     
     return enclosing_nodes
