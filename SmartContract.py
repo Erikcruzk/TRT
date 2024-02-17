@@ -12,6 +12,8 @@ import yaml
 import re
 import atexit
 import tiktoken
+from lib.py_sol_analyzer import reducer
+
 
 def exit_handler(process):
     # Try to gracefully terminate the process
@@ -62,7 +64,8 @@ class SmartContract:
 
         self.length = 0
 
-        self.source_code = self.reduce_source_code(self.source_code, self.experiment_settings["shave"], self.experiment_settings["threshold"])
+        # self.source_code = self.reduce_source_code(self.source_code, self.experiment_settings["shave"], self.experiment_settings["threshold"])
+        self.source_code = reducer.remove_NatSpec_and_comments(self.source_code)
 
         self.hash = SmartContract.get_stripped_source_code_hash(self.source_code)
 
@@ -588,6 +591,7 @@ class SmartContract:
         
         return '\n'.join(modified_lines)
     
+    '''
     def reduce_source_code_structure_preserving(self):
         def replace_with_newlines_or_space(match):
             # Check if the match spans more than one line
@@ -613,3 +617,4 @@ class SmartContract:
         
         code_without_NatSpec = remove_NatSpec(self.source_code)
         self.source_code = remove_comments(code_without_NatSpec)
+    '''

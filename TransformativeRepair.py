@@ -21,7 +21,7 @@ import queue
 import shutil
 from tqdm import tqdm
 import difflib
-from lib.py_sol_analyzer import explorer
+from lib.py_sol_analyzer import explorer, reducer
 
 
 def clear_queue(queue: queue.Queue):
@@ -581,12 +581,16 @@ class TransformativeRepair:
         #         # print(progressbar.n)
         #     return
 
-        sc = SmartContract(experiment_settings, sc_path)
-
+        
         try:
             #### Step 1: Initialize SC
             sc = SmartContract(experiment_settings, sc_path)
+            #sc.source_code = reducer.remove_NatSpec_and_comments(sc.source_code)
+            with open(os.path.join(str(sc_path.parent.absolute()), "reduced-vulnerable-src.sol"), 'w') as reduced_vuln_file:
+                reduced_vuln_file.write(sc.source_code)
             
+            #Path(os.path.join(sc_path.parent.absolute(), f"{analyzer}", f"vulnerability-{result_index}", "candidate_patches"))
+
             
             filtered_analysis_results = PromptEngine.delete_empty_analyzers(sc.vulnerabilities["analyzer_results"], experiment_settings["target_vulnerabilities"], sc.path)
             
@@ -653,15 +657,41 @@ class TransformativeRepair:
                         encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
                         
                         
-                        # collect information about the vulnerable chunk
-                        chunk_info = explorer.detect_solidity_definition_and_name(vulnerable_chunk)
-                        vulnerable_chunk_type, vulnerable_chunk_name = chunk_info['type'], chunk_info['name']
-                        #print(f'\n\nATTENTION: Vulnerable chunk (following) has type {vulnerable_chunk_type} and name {vulnerable_chunk_name}')
-                        #print(vulnerable_chunk)
-                        #print('---- ---- --------- ---- --------- ---- --------- ---- --------- ---- -----')
-                        
+                        #print(f'For file {sc.path}\n')
+                        #print(f'Investigating result: \n{result}\n')
+
+                        # assumption: whatever immediately encloses the vulnerable chunk will be what LLM will return to us as the repaired chunk
+                        vulnerable_chunk_enclosing_nodes = explorer.get_enclosing_nodes(sc.source_code, result['vulnerability_from_line']-1 if result['vulnerability_from_line'] is not None else None, result['vulnerability_to_line']-1 if result['vulnerability_to_line'] is not None else None)
+                        # print('\n\nfor the following chunk:')
+                        # print(result['vulnerability_code'])
+                        # print(f'\n The enclosing information is: ')
+                        # print(f"\n{vulnerable_chunk_enclosing_nodes}\nfile name is: {sc.filename}")
+
+                        #print(f"\n\n{'*'*50}The information is: {vulnerable_chunk_enclosing_nodes}\n\n")
+
+                        if vulnerable_chunk_enclosing_nodes['function'] is not None:
+                            vulnerable_chunk_enclosing_type = 'function'
+                        elif vulnerable_chunk_enclosing_nodes['contract'] is not None:
+                            vulnerable_chunk_enclosing_type = 'contract' 
+                        else:
+                            # code chunk lies outside of real function boundries; we categorize this as another failure & log it
+                            # FAILURE
+                            pass
+
+                        vulnerable_chunk_enclosing_start = vulnerable_chunk_enclosing_nodes[vulnerable_chunk_enclosing_type]['start_line']      
+                        vulnerable_chunk_enclosing_end = vulnerable_chunk_enclosing_nodes[vulnerable_chunk_enclosing_type]['end_line']     
+
+                        vulnerable_chunk_info = {
+                            'type': vulnerable_chunk_enclosing_type,
+                            'start_line_in_source': vulnerable_chunk_enclosing_start,
+                            'end_line_in_source': vulnerable_chunk_enclosing_end
+                        }
                         
                         this_vuln_results_directory = f"{sc.results_dir}/{analyzer}/vulnerability-{result_index}"
+
+                        #### Store vulnerable chunk info to be retrieved later for analysis and comparison
+                        with open(os.path.join(this_vuln_results_directory, "vulnerable_chunk_info.json"), "w") as vulnerable_chunk_info_file: 
+                            json.dump(vulnerable_chunk_info, vulnerable_chunk_info_file)
 
                         #### Step 4: Save prompt
                         with open(os.path.join(this_vuln_results_directory, "prompt.txt"), 'w') as file:
@@ -680,7 +710,7 @@ class TransformativeRepair:
                                 sc.vulnerabilities["smartbugs_completed"] = "Contract too long. Reparing skipped"
                                 sc.write_vulnerabilities_to_results_dir()
                                 progressbar.update(1)
-                                raise Exception("Contract too long. Reparing skipped")
+                                raise Exception("Contract too long. Repairing skipped")
                             # logging.critical(f'An exception occurred when repairing contract={sc_path}: {str(e)}',
                             #                 exc_info=True) 
             else:
@@ -688,19 +718,53 @@ class TransformativeRepair:
                 sc.write_vulnerabilities_to_results_dir()
                 progressbar.update(1)
                 raise Exception("No vulnerabilities found")
-
+        except:
+            pass
+            """
             #### Step 6: Find all unique patches and add them to the repair queue
+            
             patches_results = {}
             unique_patches = {}
             hash_to_first_patch = {}
             for candidate_patch_path in candidate_patches_paths:
                 sc_candidate_patch = SmartContract(experiment_settings, candidate_patch_path)
 
+                # Loading back the original vulnerability and file info
+                vulnerable_chunk_info = dict()
+                with open(os.path.join(f"{sc_candidate_patch.path.parent.parent.parent}", "vulnerable_chunk_info.json"), 'r') as file:
+                    vulnerable_chunk_info = json.load(file)
+                
+                reduced_vulnerable_src_path = os.path.join(sc_candidate_patch.path.parent.parent.parent.parent.parent, "reduced-vulnerable-src.sol")
+                reduced_vulnerable_src = open(reduced_vulnerable_src_path, 'r').read()  
+                
+                # blind replacement
+                lines = reduced_vulnerable_src.split('\n')
+                patch_lines = sc_candidate_patch.source_code.split('\n')
+                all_lines = lines[:vulnerable_chunk_info['start_line_in_source']] + patch_lines + lines[vulnerable_chunk_info['end_line_in_source']:]
+                sc_candidate_patch.source_code =  '\n'.join(all_lines)
+
                 # Unique patch
                 if sc_candidate_patch.hash not in hash_to_first_patch:
                     hash_to_first_patch[sc_candidate_patch.hash] = sc_candidate_patch.filename
                     unique_patches[sc_candidate_patch.filename] = []
-                    print(f"\n&&&& Adding new candidate patch to sb queue: {candidate_patch_path}\n")
+                    
+                    
+                    # buggy, let's comment and proceed with blind replacement
+                    '''
+                    patch_chunk_info = explorer.detect_solidity_definition_and_name(reduced_vulnerable_src)
+                    print('\n\n')
+                    if patch_chunk_info['type'] == vulnerable_chunk_info['type']:
+                        lines = reduced_vulnerable_src.split('\n')
+                        patch_lines = sc_candidate_patch.source_code.split('\n')
+                        all_lines = lines[:vulnerable_chunk_info['start_line_in_source']] + patch_lines + lines[vulnerable_chunk_info['end_line_in_source']:]
+                        sc_candidate_patch.source_code =  '\n'.join(all_lines)
+                    else:
+                        print('FAILURE: The patch and vulnerable code chunk are not part of the same node')
+                    '''
+
+                    
+                    
+
                     smartbugs_sc_queue.put((candidate_patch_path, False))
                     continue
                 
@@ -708,6 +772,7 @@ class TransformativeRepair:
                 unique_contract = hash_to_first_patch[sc_candidate_patch.hash]
                 unique_patches[unique_contract].append(sc_candidate_patch.filename)
                 sc_candidate_patch.vulnerabilities["smartbugs_completed"] = "Duplicate patch. Smartbugs skipped"
+                
                 sc_candidate_patch.write_vulnerabilities_to_results_dir()
                 progressbar.update(1)
                 # print(progressbar.n)
@@ -715,6 +780,7 @@ class TransformativeRepair:
             #print(f' ### For this series of patches, unique patches are only {len(unique_patches)}')
             patches_results["unique_patches"] = unique_patches
             patches_results["patch_generation_completed"] = True
+
         except Exception as e:
             patches_results["unique_patches"] = {}
             patches_results["patch_generation_completed"] = str(e)
@@ -735,7 +801,8 @@ class TransformativeRepair:
         print('# LINE: 723 => trying to write to patches_results.json')
         with open(patches_results_path, "w") as outfile:
             outfile.write(json.dumps(patches_results, indent=2))
-
+        """
+        
     @staticmethod
     def consumer_of_repair_queue(experiment_setting: dict, llm_settings: dict, smartbugs_sc_queue: queue.Queue,
                                  repair_sc_queue: queue.Queue, stop_event: threading.Event, progressbar: tqdm, ):
@@ -843,6 +910,9 @@ class TransformativeRepair:
                         file_name = os.path.basename(source_code_path)
                         result_path.mkdir(parents=True, exist_ok=True)
                         shutil.copyfile(source_code_path, os.path.join(result_path, file_name))
+
+                        # Retrieve the reduced version of the original code and copy it alongside the original vulnerable code
+                        #shutil.copyfile(source_code_path, os.path.join(result_path, "original-src-reduced.sol"))
                         
                         # Add vulnerabilities to results
                         with open(os.path.join(result_path, "vulnerabilities.json"), 'w') as vulnerabilities_file:
