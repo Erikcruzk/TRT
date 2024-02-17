@@ -125,8 +125,9 @@ DO NOT return natural language for explanations, only the Solidity code."""},
 
                     patch_path = Path(os.path.join(repaired_sc_dir, f'patch_{i}.sol'))
                     
-                    # putting the repaired code chunk back into the original sc file
-                     
+                    choice['message']['content'] = choice['message']['content'].replace("```solidity\n", "").replace("\n```", "")
+                    # Applying the patch
+                    # sc.source_code.replace(, choice['message']['content'])
 
                     with open(patch_path, 'w') as repaired_sc:
                         repaired_sc.write(choice["message"]["content"].strip())

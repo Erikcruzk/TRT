@@ -21,6 +21,7 @@ import queue
 import shutil
 from tqdm import tqdm
 import difflib
+from lib.py_sol_analyzer import explorer
 
 
 def clear_queue(queue: queue.Queue):
@@ -617,7 +618,7 @@ class TransformativeRepair:
                                 patch_path = Path(os.path.join(candidate_patches_dir, patch_dir, patch_name))
 
                                 sc = SmartContract(experiment_settings, patch_path)
-                                sc.reduce_source_code_structure_preserving()
+                                
                                 
                                 if not sc.vulnerabilities.get("smartbugs_completed", False):
                                     smartbugs_sc_queue.put((patch_path, False))
@@ -652,6 +653,12 @@ class TransformativeRepair:
                         encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
                         
                         
+                        # collect information about the vulnerable chunk
+                        chunk_info = explorer.detect_solidity_definition_and_name(vulnerable_chunk)
+                        vulnerable_chunk_type, vulnerable_chunk_name = chunk_info['type'], chunk_info['name']
+                        #print(f'\n\nATTENTION: Vulnerable chunk (following) has type {vulnerable_chunk_type} and name {vulnerable_chunk_name}')
+                        #print(vulnerable_chunk)
+                        #print('---- ---- --------- ---- --------- ---- --------- ---- --------- ---- -----')
                         
                         
                         this_vuln_results_directory = f"{sc.results_dir}/{analyzer}/vulnerability-{result_index}"
