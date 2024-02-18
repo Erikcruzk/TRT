@@ -125,11 +125,10 @@ DO NOT return natural language for explanations, only the Solidity code."""},
 
                     patch_path = Path(os.path.join(repaired_sc_dir, f'patch_{i}.sol'))
                     
+                    
                     choice['message']['content'] = choice['message']['content'].replace("```solidity\n", "").replace("\n```", "")
-                    # Applying the patch
-                    # sc.source_code.replace(, choice['message']['content'])
-
-
+                    
+                    patch_chunk = choice['message']['content']
 
                     # Loading back the original vulnerability and file info
                     vulnerable_chunk_info = dict()
@@ -142,13 +141,16 @@ DO NOT return natural language for explanations, only the Solidity code."""},
                     # blind replacement
                     lines = sc.source_code.split('\n')
                     patch_lines = choice['message']['content'].split('\n')
-                    all_lines = lines[:vulnerable_chunk_info['start_line_in_source']] + patch_lines + lines[vulnerable_chunk_info['end_line_in_source']+1:]
+                    all_lines = lines[:vulnerable_chunk_info['enclosing_start_line_in_source']] + patch_lines + lines[vulnerable_chunk_info['enclosing_end_line_in_source']+1:]
                     choice['message']['content'] =  '\n'.join(all_lines)
-
 
 
                     with open(patch_path, 'w') as repaired_sc:
                         repaired_sc.write(choice["message"]["content"].strip())
+
+                    with open(Path(os.path.join(repaired_sc_dir, f'patch_chunk_{i}.sol')), 'w') as patch_chunk_file:
+                        patch_chunk_file.write(patch_chunk.strip())
+
                     candidate_patches_paths.append(patch_path)
 
             except Exception as e:

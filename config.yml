@@ -2,14 +2,15 @@
 
 # Folder name for results
 experiment_settings:
-  experiment_name: "1-project" # Folder name for results
+  experiment_name: "project-random-subset" # Folder name for results
   delete_old_experiment_name: false
   llm_model_name: "gpt-4-0125-preview"
   vulnerable_contracts_directory: "sc_datasets/DAppSCAN_processed" #"smartbugs_reentrancy_short_no_comments_test" # Folder name for buggy smart contracts
-  target_vulnerabilities:
-    [reentrancy-benign, SOLIDITY_ARRAY_LENGTH_MANIPULATION]
+  target_vulnerabilities: [reentrancy-benign, reentrancy-events, reentrancy-no-eth, reentrancy-unlimited-gas, reentrancy-eth, compound-borrowfresh-reentrancy, erc721-reentrancy, curve-readonly-reentrancy, erc777-reentrancy, erc677-reentrancy, arbitrary-low-level-call, SOLIDITY_CALL_WITHOUT_DATA, arbitrary-send-erc20, arbitrary-send-eth, suicidal, arbitrary-send-erc20-permit, compound-sweeptoken-not-restricted, erc20-public-burn, accessible-selfdestruct, oracle-price-update-not-restricted, uniswap-callback-not-protected, SOLIDITY_TX_ORIGIN, controlled-delegatecall, delegatecall-loop, delegatecall-to-arbitrary-address, divide-before-multiply, basic-arithmetic-underflow, SOLIDITY_DIV_MUL, keeper-network-oracle-manipulation, missing-zero-check, shadowing-local, shadowing-state, shadowing-abstract, erc20-interface, SOLIDITY_ERC20_TRANSFER_SHOULD_THROW,  timestamp, weak-prng, uninitialized-local, uninitialized-state, incorrect-equality, boolean-cst, incorrect-use-of-blockhash, SOLIDITY_EXACT_TIME, SOLIDITY_BALANCE_EQUALITY, locked-ether, calls-loop, msg-value-loop, SOLIDITY_LOCKED_MONEY, SOLIDITY_TRANSFER_IN_LOOP, controlled-array-length, SOLIDITY_ARRAY_LENGTH_MANIPULATION, incorrect-modifier, unchecked-transfer,
+ unchecked-lowlevel, SOLIDITY_ERC20_APPROVE]
+    # [reentrancy-benign, SOLIDITY_ARRAY_LENGTH_MANIPULATION]
   n_smartbugs_threads: 60
-  n_repair_threads: 10 # n_repair_threads: 10
+  n_repair_threads: 20 # n_repair_threads: 10
   # smartbugs_tools: [oyente, slither, confuzzius, conkas, honeybadger, maian, mythril, osiris, securify, sFuzz, solhint]
   smartbugs_tools: [slither, semgrep, smartcheck]
   smartbugs_timeout: 3600
@@ -19,7 +20,7 @@ experiment_settings:
   shave: [comments, NatSpec, file_directives] # sahving configurations
   threshold: 200 # number of tokens that trigger the shaving
   preanalized: True # if the smart contracts have been already analyzed by the sartbugs
-  analysis_results_directory: "sc_datasets/1-project" # directory with the analysis results if preanalized is True
+  analysis_results_directory: "sc_datasets/vulnerabilities_test" # directory with the analysis results if preanalized is True
 
 # LLM model and settings
 llm_settings:
