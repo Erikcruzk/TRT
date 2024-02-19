@@ -769,7 +769,7 @@ class TransformativeRepair:
                     try: 
                         vulnerable_chunk_enclosing_nodes = explorer.Explorer.get_enclosing_nodes(sc.source_code, result['vulnerability_from_line']-1 if result['vulnerability_from_line'] is not None else None, result['vulnerability_to_line']-1 if result['vulnerability_to_line'] is not None else None)
                     except stack.StackEmptyError as e:
-                        TransformativeRepair.failed_enclosing_nodes_list({
+                        TransformativeRepair.failed_enclosing_nodes_list.append({
                             'sc_path': str(sc_path),
                             'analyzer': analyzer,
                             'detection': result
