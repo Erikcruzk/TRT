@@ -700,7 +700,7 @@ class TransformativeRepair:
         with open(os.path.join(str(sc_path.parent.absolute()), "reduced-vulnerable-src.sol"), 'w') as reduced_vuln_file:
             reduced_vuln_file.write(sc.source_code)
         
-        print(f'{"= = "*5} \nsc.path: {sc.path} ')
+        
 
                     
         filtered_analysis_results = PromptEngine.delete_empty_analyzers(sc.vulnerabilities["analyzer_results"], experiment_settings["target_vulnerabilities"], sc.path)
@@ -724,7 +724,7 @@ class TransformativeRepair:
                     patches_results = json.load(open(patches_results_path, 'r')) if os.path.isfile(patches_results_path) else {}
                     patches_results["patch_generation_completed"] = patches_results.get("patch_generation_completed", False) == True
                     
-                    
+                    '''
                     if patches_results["patch_generation_completed"]:
                         for patch_name, duplicate_list in patches_results["unique_patches"].items():
                             patch_dir, _ = os.path.splitext(patch_name)
@@ -742,6 +742,7 @@ class TransformativeRepair:
                             progressbar.update(len(duplicate_list))
                             # print(progressbar.n)
                         continue
+                    '''
 
                     vulnerability_name = result['name']
                     # Shaved source code should be available via sc.source_code
@@ -825,7 +826,7 @@ class TransformativeRepair:
                     candidate_patches_paths = []
                     
                     try:
-                        print(f'{"* * "*5}\nSending the following smart contract for patching the {result_index}-th vulnerability. Original contract is: {sc.path};') #\nVulnerability is: {result} \n{"* * "*100}\n\n\n')
+                        #print(f'{"* * "*5}\nSending the following smart contract for patching the {result_index}-th vulnerability. Original contract is: {sc.path};') #\nVulnerability is: {result} \n{"* * "*100}\n\n\n')
                         candidate_patches_paths = pe.get_codex_repaired_sc(experiment_settings, llm_settings[model_name], sc, prompt, this_vuln_results_directory)
                         TransformativeRepair.successful_repair_list.append({
                             'sc_path': str(sc_path),
@@ -839,7 +840,6 @@ class TransformativeRepair:
                         if isinstance(e, openai.error.InvalidRequestError):
                             sc.vulnerabilities["smartbugs_completed"] = "Contract too long. Reparing skipped"
                             sc.write_vulnerabilities_to_results_dir()
-                            progressbar.update(1)
                             raise Exception("Contract too long. Repairing skipped")
                         logging.critical(f'An exception occurred when repairing contract={sc_path}: {str(e)}', exc_info=True)
                         TransformativeRepair.failed_llm_repair_list.append({
@@ -847,6 +847,7 @@ class TransformativeRepair:
                             'analyzer': analyzer,
                             'detection': result
                         })
+                        progressbar.update(1)
                         #exit()
                     
                     
@@ -870,7 +871,7 @@ class TransformativeRepair:
                             unique_patches[unique_contract].append(sc_candidate_patch.filename)
                             sc_candidate_patch.vulnerabilities["smartbugs_completed"] = "Duplicate patch. Smartbugs skipped"
                             sc_candidate_patch.write_vulnerabilities_to_results_dir()
-                            progressbar.update(1)
+                            #progressbar.update(1)
                             # print(progressbar.n)
 
                         patches_results["unique_patches"] = unique_patches
@@ -896,8 +897,8 @@ class TransformativeRepair:
         else:
             sc.vulnerabilities["smartbugs_completed"] = "No vulnerabilities found"
             sc.write_vulnerabilities_to_results_dir()
-            progressbar.update(1)
-            print(f'\nFor file: {sc.path}\n     > No target vulnerabilities found to fix')
+            #progressbar.update(1)
+            #print(f'\nFor file: {sc.path}\n     > No target vulnerabilities found to fix')
             #raise Exception("No vulnerabilities found")
         
             """
@@ -993,7 +994,7 @@ class TransformativeRepair:
                 sc_path = repair_sc_queue.get(block=False)
                 TransformativeRepair.repair_sc(experiment_setting, llm_settings, sc_path, smartbugs_sc_queue,
                                                progressbar, repair_sc_queue)
-                print(f'\n### Items currently left in repair_sc_queue are: {repair_sc_queue.qsize()} ;;; stop_event is not set! \n')
+                #print(f'\n### Items currently left in repair_sc_queue are: {repair_sc_queue.qsize()} ;;; stop_event is not set! \n')
                 if repair_sc_queue.qsize() == 0:
 
                     TransformativeRepair.failed_enclosing_nodes_list
@@ -1160,13 +1161,15 @@ class TransformativeRepair:
         return
    
     def minimal_analysis(self):
-
+        
         #### Step 1: Add all vulnerable sc to smartbugs_sc_queue
         self.experiment_results_dir.mkdir(parents=True, exist_ok=True)
 
         shutil.copyfile('config.yml', os.path.join(self.experiment_results_dir, "config.yml"))
 
         sc_vulnerable_count = 0
+        target_vulnerabilities_found = 0
+        count_srcs_containing_at_least_one_vulnerability = 0
 
         for project in os.listdir(self.analysis_results_directory):
 
@@ -1181,6 +1184,25 @@ class TransformativeRepair:
                     project_vulnerabilities = json.load(f)
                     
                     for k, v in project_vulnerabilities.items():
+                        #print(f"\n\n source file: {k}\n\n")    
+                        
+                        filtered_analysis_results = PromptEngine.delete_empty_analyzers(v, self.experiment_settings["target_vulnerabilities"], "")
+                        
+                        if filtered_analysis_results:
+                            count_srcs_containing_at_least_one_vulnerability += 1
+                        
+                        if v:
+                            #### Step 2: Iterate over all target analyzers as well as their detected vulnerabilities
+                            for analyzer, results in filtered_analysis_results.items():
+
+                                if analyzer not in self.experiment_settings["smartbugs_tools"]:
+                                    continue
+                                
+                                # vulnerability array is accessible through results['vulnerability_findings']
+                                for result in results['vulnerability_findings']:
+                                    #print(f"\n\n Vulnerability: {result}\n\n")        
+                                    target_vulnerabilities_found += 1
+                                
 
                         # Create dir for contract and copy vulnerable sc to results
                         source_code_path = Path(os.path.join(self.vulnerable_contracts_dir, project, k))
@@ -1201,9 +1223,12 @@ class TransformativeRepair:
                             vulnerabilites_formatted["analyzer_results"] = v
                             json.dump(vulnerabilites_formatted, vulnerabilities_file, indent=2)
                         
+                        #print(f'\nk is: {k}\n\nv is: {v}\n\n')
 
                         sc_vulnerable_count += 1
                         self.repair_sc_queue.put(Path(os.path.join(result_path, file_name)))
+                # print(f'The total target_vulnerabilities_found is: {target_vulnerabilities_found}')
+                # print(f'Total number of files at least contained one vulnerability: {count_srcs_containing_at_least_one_vulnerability}')
 
             except NotADirectoryError as e:
                 print(f'Skipping {project_vulnerabilities_src} project as no vulnerabilities.json detected.')
@@ -1213,12 +1238,10 @@ class TransformativeRepair:
                 print(f'Skipping {project_vulnerabilities_src} project as no vulnerabilities.json detected.')
         # Initialize progress bar
         n_candidate_patches = self.llm_settings[self.experiment_settings["llm_model_name"]]["num_candidate_patches"]
-        print(f"Vulnerability count is {sc_vulnerable_count * n_candidate_patches}")
-        #progressbar = tqdm(total=sc_vulnerable_count + sc_vulnerable_count * n_candidate_patches,
-        #                   desc="Smartbugs processes", colour='#ff5a5f')
-        progressbar = tqdm(total=sc_vulnerable_count * n_candidate_patches,
-                          desc="Smartbugs processes", colour='#ff5a5f')
-
+        #print(f"Vulnerability count is {sc_vulnerable_count * n_candidate_patches}")
+        progressbar = tqdm(total=target_vulnerabilities_found,
+                           desc="Smartbugs processes", colour='#ff5a5f')
+        
         stop_event = threading.Event()
         atexit.register(close_all_threads, stop_event)
 
@@ -1229,6 +1252,7 @@ class TransformativeRepair:
         #     smartbugs_thread.start()
 
         #### Step 2: Consume smart repair_sc_queue
+
         for i in range(self.experiment_settings["n_repair_threads"]):
             repair_thread = threading.Thread(target=TransformativeRepair.consumer_of_repair_queue, args=(
                 self.experiment_settings, self.llm_settings, self.smartbugs_sc_queue, self.repair_sc_queue, stop_event,
