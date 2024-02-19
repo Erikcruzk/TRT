@@ -21,7 +21,7 @@ import queue
 import shutil
 from tqdm import tqdm
 import difflib
-from lib.py_sol_analyzer import explorer, reducer
+from lib.py_sol_analyzer import explorer, reducer, stack
 
 
 def clear_queue(queue: queue.Queue):
@@ -37,6 +37,11 @@ def close_all_threads(stop_event: threading.Event, sleep=0):
 
 
 class TransformativeRepair:
+
+    failed_llm_repair_list = []
+    successful_repair_list = []
+    failed_enclosing_nodes_list = []
+
     def __init__(self, experiment_settings: dict, llm_settings: dict) -> None:
         """
         Initialize an Experiment object with experiment settings and LLM (Language Model) settings.
@@ -49,6 +54,8 @@ class TransformativeRepair:
         self.experiment_settings = experiment_settings
         self.llm_settings = llm_settings
         self.llm_model_name = experiment_settings["llm_model_name"]
+
+
 
         # Get the list of smartbugs tools
         self.smartbugs_tools = SmartContract.get_smartbugs_tools(experiment_settings["smartbugs_tools"])
@@ -435,7 +442,6 @@ class TransformativeRepair:
     @staticmethod
     def shutdown_thread(experiment_settings: dict, llm_settings: dict, stop_event: threading.Event = None,
                         finished=False):
-
         atexit.register(close_all_threads, stop_event)
         start_time = datetime.datetime.utcnow()
 
@@ -447,13 +453,14 @@ class TransformativeRepair:
         results_dir: Path = Path(os.path.join("experiment_results",
                                               extended_experiment_name,
                                               child_dirs))
-
+                                              
         # Loop that checks that all patches have got their vulnerablities.json => they are done
         sleep = 0
         while not finished:
             time.sleep(sleep)
             try:
                 finished = True
+                
                 
                 if experiment_settings['preanalized']:
                     sc_result_dirs = []
@@ -464,7 +471,7 @@ class TransformativeRepair:
                 else:
                     sc_result_dirs = [os.path.join(results_dir, item) for item in os.listdir(results_dir) if
                                     os.path.isdir(os.path.join(results_dir, item))]
-
+                    
                 for sc_dir in sc_result_dirs:
                     candidate_patches_dir = os.path.join(sc_dir, "candidate_patches")
                     patch_results_path = os.path.join(candidate_patches_dir, "patch_results.json")
@@ -510,6 +517,110 @@ class TransformativeRepair:
 
         # Stop all threads and finish program
         close_all_threads(stop_event, 5)
+
+
+    @staticmethod
+    def shutdown_thread_v2(experiment_settings: dict, llm_settings: dict, stop_event: threading.Event = None,
+                        finished=False):
+        
+        atexit.register(close_all_threads, stop_event)
+        start_time = datetime.datetime.utcnow()
+
+        # Add more info to dir
+        extended_experiment_name = os.path.join(
+            f'{Path(experiment_settings["experiment_name"]).parts[0]}_patches{llm_settings[experiment_settings["llm_model_name"]]["num_candidate_patches"]}_tmp{llm_settings[experiment_settings["llm_model_name"]]["temperature"]}_topp{llm_settings[experiment_settings["llm_model_name"]]["top_p"]}_{experiment_settings["llm_model_name"]}')
+        child_dirs = os.path.join(*(Path(experiment_settings.get("experiment_name", "")).parts[1:])) if len(
+            Path(experiment_settings.get("experiment_name", "")).parts) > 1 else ""
+        results_dir: Path = Path(os.path.join("experiment_results",
+                                              extended_experiment_name,
+                                              child_dirs))
+                                              
+        # Loop that checks that all patches have got their vulnerablities.json => they are done
+        sleep = 0
+        while not finished:
+            time.sleep(sleep)
+            try:
+                finished = True
+                
+                print('` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` line 456` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ')
+
+                if experiment_settings['preanalized']:
+                    print('` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` line 459` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ')
+                    sc_result_dirs = []
+                    for root, dirs, files in os.walk(results_dir):
+                        for item in dirs:
+                            if item.endswith(".sol"):
+                                print(f'$ $ $ $ $\n$ $ $ $ $  item: {item}')
+                                print(f"smartbugs_tools: {experiment_settings['smartbugs_tools']}")
+                                for analyzer in experiment_settings['smartbugs_tools']:
+                                    print(f'$ $ $ $ $\n$ $ $ $ $  analyzer: {analyzer}')
+                                    for analyzer_root, vulnerability_dirs, _ in os.walk(os.path.join(root, item, analyzer)):
+                                        print(f'$ $ $ $ $\n$ $ $ $ $  vulnerability_dirs: {vulnerability_dirs}')
+                                        for vulnerability_dir in vulnerability_dirs:
+                                            vulnerability_dir_path =  os.path.join(root, item, analyzer, vulnerability_dir)
+                                            sc_result_dirs.append(vulnerability_dir_path)
+                                            print(f'$ $ $ $ $\n$ $ $ $ $  discovered: {vulnerability_dir_path}\n')
+                                
+                else:
+                    print('` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` line 466` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ')
+                    sc_result_dirs = [os.path.join(results_dir, item) for item in os.listdir(results_dir) if
+                                    os.path.isdir(os.path.join(results_dir, item))]
+                    
+                print('` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` line 469` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ')
+                for sc_dir in sc_result_dirs:
+                    print(f'::::::::>>>> sc_dir is: {sc_dir}')
+                    candidate_patches_dir = os.path.join(sc_dir, "candidate_patches")
+                    patch_results_path = os.path.join(candidate_patches_dir, "patch_results.json")
+                    patch_results = json.load(open(patch_results_path, 'r')) if os.path.isfile(
+                        patch_results_path) else {}
+                    # Check that all patch generations have completed
+                    if patch_results.get("patch_generation_completed", False) == "Contract too long. Reparing skipped" or \
+                            patch_results.get("patch_generation_completed", False) == "No vulnerabilities found":
+                        # skip this contract
+                        # print("Skipping contract: ", sc_dir)
+                        print('` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` line 481` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ')
+                        continue
+                    elif not patch_results.get("patch_generation_completed", False) == True:
+                        # print("Detected unfinished patch generation: ", sc_dir)   
+                        print('` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` line 485` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ')
+                        finished = False
+                        break
+
+                    # Check that all unique contracts have run smartbugs
+                    for patch_vulnerability_path in [
+                        os.path.join(candidate_patches_dir, key.replace('.sol', ''), "vulnerabilities.json") for key in
+                        patch_results["unique_patches"].keys()]:
+                        patch_vulnerability = json.load(open(patch_vulnerability_path, 'r')) if os.path.isfile(
+                            patch_vulnerability_path) else {}
+                        if not patch_vulnerability.get("smartbugs_completed", False) == True:
+                            finished = False
+                            break
+                        elif patch_vulnerability.get("smartbugs_completed", False) == "Contract too long. Reparing skipped":
+                            # Move directory to unfinished
+                            print("Moving contract to unfinished: ", sc_dir)
+                            unfinished_dir = os.path.join(results_dir, "unfinished")
+                            print("Moving to: ", unfinished_dir)
+                            Path(unfinished_dir).mkdir(parents=True, exist_ok=True)
+                            shutil.move(sc_dir, unfinished_dir)
+                            print('` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` line 505` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ')
+                            finished = False
+                            break
+                            
+            except Exception as e:
+                print(f'An exception occurred when checking if all patches have finished: {str(e)}')
+                print('` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` line 511` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ')
+                print(e)
+                finished = False
+            sleep = 5
+
+        # Create summary
+        TransformativeRepair.create_summary(experiment_settings, llm_settings, start_time)
+
+        # Stop all threads and finish program
+        close_all_threads(stop_event, 5)
+
+
+
 
     @staticmethod
     def find_vulnerabilities(experiment_settings: dict, sc_path: Path, do_repair_sc: bool, repair_sc_queue: queue.Queue,
@@ -582,144 +693,214 @@ class TransformativeRepair:
         #     return
 
         
-        try:
-            #### Step 1: Initialize SC
-            sc = SmartContract(experiment_settings, sc_path)
-            #sc.source_code = reducer.remove_NatSpec_and_comments(sc.source_code)
-            with open(os.path.join(str(sc_path.parent.absolute()), "reduced-vulnerable-src.sol"), 'w') as reduced_vuln_file:
-                reduced_vuln_file.write(sc.source_code)
-            
-            #Path(os.path.join(sc_path.parent.absolute(), f"{analyzer}", f"vulnerability-{result_index}", "candidate_patches"))
+        
+        #### Step 1: Initialize SC
+        sc = SmartContract(experiment_settings, sc_path)
+        #sc.source_code = reducer.remove_NatSpec_and_comments(sc.source_code)
+        with open(os.path.join(str(sc_path.parent.absolute()), "reduced-vulnerable-src.sol"), 'w') as reduced_vuln_file:
+            reduced_vuln_file.write(sc.source_code)
+        
+        
 
-            
-            filtered_analysis_results = PromptEngine.delete_empty_analyzers(sc.vulnerabilities["analyzer_results"], experiment_settings["target_vulnerabilities"], sc.path)
-            
-            
-            if filtered_analysis_results:
-                #### Step 2: Iterate over all target analyzers as well as their detected vulnerabilities
-                for analyzer, results in filtered_analysis_results.items():
+                    
+        filtered_analysis_results = PromptEngine.delete_empty_analyzers(sc.vulnerabilities["analyzer_results"], experiment_settings["target_vulnerabilities"], sc.path)
+        
+        
+        if filtered_analysis_results:
+            #### Step 2: Iterate over all target analyzers as well as their detected vulnerabilities
+            for analyzer, results in filtered_analysis_results.items():
 
-                    if analyzer not in experiment_settings["smartbugs_tools"]:
-                        continue
+                if analyzer not in experiment_settings["smartbugs_tools"]:
+                    continue
 
-                    result_index = -1 # the index of this vulnerability specific to {analyzer} for this specific Solidity file
-                    for result in results['vulnerability_findings']:
-                        result_index += 1
+                result_index = -1 # the index of this vulnerability specific to {analyzer} for this specific Solidity file
+                for result in results['vulnerability_findings']:
+                    result_index += 1
 
-                        candidate_patches_dir = Path(os.path.join(sc_path.parent.absolute(), f"{analyzer}", f"vulnerability-{result_index}", "candidate_patches"))
-                        candidate_patches_dir.mkdir(parents=True, exist_ok=True)
+                    candidate_patches_dir = Path(os.path.join(sc_path.parent.absolute(), f"{analyzer}", f"vulnerability-{result_index}", "candidate_patches"))
+                    candidate_patches_dir.mkdir(parents=True, exist_ok=True)
 
-                        patches_results_path = os.path.join(candidate_patches_dir, "patch_results.json")
-                        #print(f'patch-results-path: {patches_results_path}')
-                        patches_results = json.load(open(patches_results_path, 'r')) if os.path.isfile(patches_results_path) else {}
-                        patches_results["patch_generation_completed"] = patches_results.get("patch_generation_completed", False) == True
-                        #print(f'patches_results["patch_generation_completed"] is: {patches_results["patch_generation_completed"]}')
-                        
-                        
-                        if patches_results["patch_generation_completed"]:
-                            for patch_name, duplicate_list in patches_results["unique_patches"].items():
-                                patch_dir, _ = os.path.splitext(patch_name)
-                                patch_path = Path(os.path.join(candidate_patches_dir, patch_dir, patch_name))
+                    patches_results_path = os.path.join(candidate_patches_dir, "patch_results.json")
+                    patches_results = json.load(open(patches_results_path, 'r')) if os.path.isfile(patches_results_path) else {}
+                    patches_results["patch_generation_completed"] = patches_results.get("patch_generation_completed", False) == True
+                    
+                    '''
+                    if patches_results["patch_generation_completed"]:
+                        for patch_name, duplicate_list in patches_results["unique_patches"].items():
+                            patch_dir, _ = os.path.splitext(patch_name)
+                            patch_path = Path(os.path.join(candidate_patches_dir, patch_dir, patch_name))
 
-                                sc = SmartContract(experiment_settings, patch_path)
-                                
-                                
-                                if not sc.vulnerabilities.get("smartbugs_completed", False):
-                                    smartbugs_sc_queue.put((patch_path, False))
-                                else:
-                                    sc.remove_old_smartbugs_directories()
-                                    progressbar.update(1)
-
-                                    # Add duplicate patches as completed
-                                progressbar.update(len(duplicate_list))
-                                # print(progressbar.n)
-                            continue
-
-                        vulnerability_name = result['name']
-                        # Shaved source code should be available via sc.source_code
-                        sc_language = 'Solidity'
-                        vulnerable_chunk = result['vulnerability_code']
-                        analyzer_message = result['message']
-                        
-                        repair_template_inputs = {
-                            "sc_language": sc_language,
-                            "vulnerable_chunk": vulnerable_chunk,
-                            "flattened_sc_source_code": sc.source_code,
-                            "vulnerability_name": vulnerability_name,
-                            "analyzer_message": analyzer_message,
-                            "analyzer": analyzer
-                        }
-
-                        #### Step 3: Create Prompt Engine and generate prompt
-                        pe = PromptEngine(sc, experiment_settings)
-                        
-                        prompt = pe.generate_prompt(experiment_settings["prompt_style"], filtered_analysis_results, repair_template_inputs)
-                        encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
-                        
-                        
-                        #print(f'For file {sc.path}\n')
-                        #print(f'Investigating result: \n{result}\n')
-
-                        # assumption: whatever immediately encloses the vulnerable chunk will be what LLM will return to us as the repaired chunk
-                        vulnerable_chunk_enclosing_nodes = explorer.get_enclosing_nodes(sc.source_code, result['vulnerability_from_line']-1 if result['vulnerability_from_line'] is not None else None, result['vulnerability_to_line']-1 if result['vulnerability_to_line'] is not None else None)
-                        # print('\n\nfor the following chunk:')
-                        # print(result['vulnerability_code'])
-                        # print(f'\n The enclosing information is: ')
-                        # print(f"\n{vulnerable_chunk_enclosing_nodes}\nfile name is: {sc.filename}")
-
-                        #print(f"\n\n{'*'*50}The information is: {vulnerable_chunk_enclosing_nodes}\n\n")
-
-                        if vulnerable_chunk_enclosing_nodes['function'] is not None:
-                            vulnerable_chunk_enclosing_type = 'function'
-                        elif vulnerable_chunk_enclosing_nodes['contract'] is not None:
-                            vulnerable_chunk_enclosing_type = 'contract' 
-                        else:
-                            # code chunk lies outside of real function boundries; we categorize this as another failure & log it
-                            # FAILURE
-                            pass
-
-                        vulnerable_chunk_enclosing_start = vulnerable_chunk_enclosing_nodes[vulnerable_chunk_enclosing_type]['start_line']      
-                        vulnerable_chunk_enclosing_end = vulnerable_chunk_enclosing_nodes[vulnerable_chunk_enclosing_type]['end_line']     
-
-                        vulnerable_chunk_info = {
-                            'type': vulnerable_chunk_enclosing_type,
-                            'start_line_in_source': vulnerable_chunk_enclosing_start,
-                            'end_line_in_source': vulnerable_chunk_enclosing_end
-                        }
-                        
-                        this_vuln_results_directory = f"{sc.results_dir}/{analyzer}/vulnerability-{result_index}"
-
-                        #### Store vulnerable chunk info to be retrieved later for analysis and comparison
-                        with open(os.path.join(this_vuln_results_directory, "vulnerable_chunk_info.json"), "w") as vulnerable_chunk_info_file: 
-                            json.dump(vulnerable_chunk_info, vulnerable_chunk_info_file)
-
-                        #### Step 4: Save prompt
-                        with open(os.path.join(this_vuln_results_directory, "prompt.txt"), 'w') as file:
-                            file.write(prompt)
-
-                        #### Step 5: Repair smart contract
-                        model_name = experiment_settings["llm_model_name"]
-                        candidate_patches_paths = []
-                        
-                        try:
-                            candidate_patches_paths = pe.get_codex_repaired_sc(experiment_settings, llm_settings[model_name], sc, prompt, this_vuln_results_directory)
-                            progressbar.update(1)
-                        except Exception as e:
-                            # if contract too long 
-                            if isinstance(e, openai.error.InvalidRequestError):
-                                sc.vulnerabilities["smartbugs_completed"] = "Contract too long. Reparing skipped"
-                                sc.write_vulnerabilities_to_results_dir()
+                            sc = SmartContract(experiment_settings, patch_path)
+                            
+                            if not sc.vulnerabilities.get("smartbugs_completed", False):
+                                smartbugs_sc_queue.put((patch_path, False))
+                            else:
+                                sc.remove_old_smartbugs_directories()
                                 progressbar.update(1)
-                                raise Exception("Contract too long. Repairing skipped")
-                            # logging.critical(f'An exception occurred when repairing contract={sc_path}: {str(e)}',
-                            #                 exc_info=True) 
-            else:
-                sc.vulnerabilities["smartbugs_completed"] = "No vulnerabilities found"
-                sc.write_vulnerabilities_to_results_dir()
-                progressbar.update(1)
-                raise Exception("No vulnerabilities found")
-        except:
-            pass
+
+                                # Add duplicate patches as completed
+                            progressbar.update(len(duplicate_list))
+                            # print(progressbar.n)
+                        continue
+                    '''
+
+                    vulnerability_name = result['name']
+                    # Shaved source code should be available via sc.source_code
+                    sc_language = 'Solidity'
+                    vulnerable_chunk = result['vulnerability_code']
+                    analyzer_message = result['message']
+                    
+                    repair_template_inputs = {
+                        "sc_language": sc_language,
+                        "vulnerable_chunk": vulnerable_chunk,
+                        "flattened_sc_source_code": sc.source_code,
+                        "vulnerability_name": vulnerability_name,
+                        "analyzer_message": analyzer_message,
+                        "analyzer": analyzer
+                    }
+
+                    #### Step 3: Create Prompt Engine and generate prompt
+                    pe = PromptEngine(sc, experiment_settings)
+                    
+                    prompt = pe.generate_prompt(experiment_settings["prompt_style"], filtered_analysis_results, repair_template_inputs)
+                    encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
+                    
+                    # assumption: whatever immediately encloses the vulnerable chunk will be what LLM will return to us as the repaired chunk
+                    try: 
+                        vulnerable_chunk_enclosing_nodes = explorer.Explorer.get_enclosing_nodes(sc.source_code, result['vulnerability_from_line']-1 if result['vulnerability_from_line'] is not None else None, result['vulnerability_to_line']-1 if result['vulnerability_to_line'] is not None else None)
+                    except stack.StackEmptyError as e:
+                        TransformativeRepair.failed_enclosing_nodes_list({
+                            'sc_path': str(sc_path),
+                            'analyzer': analyzer,
+                            'detection': result
+                        })
+                        #exit()
+
+                        print(f'\nError: {e}\n')
+                        print('Trying again with debugging enabled')
+                        print(f'\n\nFile: {sc.path}\n\n')
+                        explorer.Explorer.DEBUG = True
+                        vulnerable_chunk_enclosing_nodes = explorer.Explorer.get_enclosing_nodes(sc.source_code, result['vulnerability_from_line']-1 if result['vulnerability_from_line'] is not None else None, result['vulnerability_to_line']-1 if result['vulnerability_to_line'] is not None else None)
+                        
+
+                    # print('\n\nfor the following chunk:')
+                    # print(result['vulnerability_code'])
+                    # print(f'\n The enclosing information is: ')
+                    # print(f"\n{vulnerable_chunk_enclosing_nodes}\nfile name is: {sc.filename}")
+
+                    #print(f"\n\n{'*'*50}The information is: {vulnerable_chunk_enclosing_nodes}\n\n")
+
+                    if vulnerable_chunk_enclosing_nodes['function'] is not None:
+                        vulnerable_chunk_enclosing_type = 'function'
+                    elif vulnerable_chunk_enclosing_nodes['contract'] is not None:
+                        vulnerable_chunk_enclosing_type = 'contract' 
+                    else:
+                        # code chunk lies outside of real function boundries; we categorize this as another failure & log it
+                        # FAILURE
+                        pass
+
+                    vulnerable_chunk_enclosing_start = vulnerable_chunk_enclosing_nodes[vulnerable_chunk_enclosing_type]['start_line']      
+                    vulnerable_chunk_enclosing_end = vulnerable_chunk_enclosing_nodes[vulnerable_chunk_enclosing_type]['end_line']     
+
+                    vulnerable_chunk_info = {
+                        'enclosing_type': vulnerable_chunk_enclosing_type,
+                        'enclosing_start_line_in_source': vulnerable_chunk_enclosing_start,
+                        'enclosing_end_line_in_source': vulnerable_chunk_enclosing_end,
+                        'detector': result['name'],
+                        'vulnerable_chunk_start_line_in_source': result['vulnerability_from_line']-1 if result['vulnerability_from_line'] is not None else None, 
+                        'vulnerable_chunk_end_line_in_source': result['vulnerability_to_line']-1 if result['vulnerability_to_line'] is not None else None
+                    }
+                    
+                    this_vuln_results_directory = f"{sc.results_dir}/{analyzer}/vulnerability-{result_index}"
+
+                    #### Store vulnerable chunk info to be retrieved later for analysis and comparison
+                    with open(os.path.join(this_vuln_results_directory, "vulnerable_chunk_info.json"), "w") as vulnerable_chunk_info_file: 
+                        json.dump(vulnerable_chunk_info, vulnerable_chunk_info_file)
+
+                    #### Step 4: Save prompt
+                    with open(os.path.join(this_vuln_results_directory, "prompt.txt"), 'w') as file:
+                        file.write(prompt)
+
+                    #### Step 5: Repair smart contract
+                    model_name = experiment_settings["llm_model_name"]
+                    candidate_patches_paths = []
+                    
+                    try:
+                        #print(f'{"* * "*5}\nSending the following smart contract for patching the {result_index}-th vulnerability. Original contract is: {sc.path};') #\nVulnerability is: {result} \n{"* * "*100}\n\n\n')
+                        candidate_patches_paths = pe.get_codex_repaired_sc(experiment_settings, llm_settings[model_name], sc, prompt, this_vuln_results_directory)
+                        TransformativeRepair.successful_repair_list.append({
+                            'sc_path': str(sc_path),
+                            'analyzer': analyzer,
+                            'detection': result
+                        })
+                        progressbar.update(1)
+                        #exit()
+                    except Exception as e:
+                        # if contract too long 
+                        if isinstance(e, openai.error.InvalidRequestError):
+                            sc.vulnerabilities["smartbugs_completed"] = "Contract too long. Reparing skipped"
+                            sc.write_vulnerabilities_to_results_dir()
+                            raise Exception("Contract too long. Repairing skipped")
+                        logging.critical(f'An exception occurred when repairing contract={sc_path}: {str(e)}', exc_info=True)
+                        TransformativeRepair.failed_llm_repair_list.append({
+                            'sc_path': str(sc_path),
+                            'analyzer': analyzer,
+                            'detection': result
+                        })
+                        progressbar.update(1)
+                        #exit()
+                    
+                    
+                    # Step 6: Find all unique patches and add them to the repair queue
+                    try:
+                        patches_results = {}
+                        unique_patches = {}
+                        hash_to_first_patch = {}
+                        for candidate_patch_path in candidate_patches_paths:
+                            sc_candidate_patch = SmartContract(experiment_settings, candidate_patch_path)
+
+                            # Unique patch
+                            if sc_candidate_patch.hash not in hash_to_first_patch:
+                                hash_to_first_patch[sc_candidate_patch.hash] = sc_candidate_patch.filename
+                                unique_patches[sc_candidate_patch.filename] = []
+                                smartbugs_sc_queue.put((candidate_patch_path, False))
+                                continue
+
+                            # Dubplicate patch has same hash
+                            unique_contract = hash_to_first_patch[sc_candidate_patch.hash]
+                            unique_patches[unique_contract].append(sc_candidate_patch.filename)
+                            sc_candidate_patch.vulnerabilities["smartbugs_completed"] = "Duplicate patch. Smartbugs skipped"
+                            sc_candidate_patch.write_vulnerabilities_to_results_dir()
+                            #progressbar.update(1)
+                            # print(progressbar.n)
+
+                        patches_results["unique_patches"] = unique_patches
+                        patches_results["patch_generation_completed"] = True
+                    except Exception as e:
+                        patches_results["unique_patches"] = {}
+                        patches_results["patch_generation_completed"] = str(e)
+                        if isinstance(e, openai.error.RateLimitError):
+                            sleep = 100 * random.random()
+                            logging.info(f"RateLimit error sleep={sleep}s. Enqueueing for repair again {sc_path}: {str(e)}",
+                                        exc_info=True)
+                            time.sleep(sleep)
+                            with open(patches_results_path, "w") as outfile:
+                                outfile.write(json.dumps(patches_results, indent=2))
+                            repair_sc_queue.put(sc.path)
+                            return
+                        else:
+                            if str(e) != "No vulnerabilities found":
+                                logging.critical(f"An exception occurred for {sc_path}: {str(e)}", exc_info=True)
+                    
+                    with open(patches_results_path, "w") as outfile:
+                        outfile.write(json.dumps(patches_results, indent=2))              
+        else:
+            sc.vulnerabilities["smartbugs_completed"] = "No vulnerabilities found"
+            sc.write_vulnerabilities_to_results_dir()
+            #progressbar.update(1)
+            #print(f'\nFor file: {sc.path}\n     > No target vulnerabilities found to fix')
+            #raise Exception("No vulnerabilities found")
+        
             """
             #### Step 6: Find all unique patches and add them to the repair queue
             
@@ -813,6 +994,23 @@ class TransformativeRepair:
                 sc_path = repair_sc_queue.get(block=False)
                 TransformativeRepair.repair_sc(experiment_setting, llm_settings, sc_path, smartbugs_sc_queue,
                                                progressbar, repair_sc_queue)
+                #print(f'\n### Items currently left in repair_sc_queue are: {repair_sc_queue.qsize()} ;;; stop_event is not set! \n')
+                if repair_sc_queue.qsize() == 0:
+
+                    TransformativeRepair.failed_enclosing_nodes_list
+                    TransformativeRepair.failed_llm_repair_list
+                    TransformativeRepair.successful_repair_list
+
+                    with open(f"{os.path.join('failed_enclosing_nodes_list.json')}", 'w') as file:
+                        json.dump(TransformativeRepair.failed_enclosing_nodes_list, file, indent=4) 
+
+                    with open(f"{os.path.join('failed_llm_repair_list.json')}", 'w') as file:
+                        json.dump(TransformativeRepair.failed_llm_repair_list, file, indent=4) 
+
+                    with open(f"{os.path.join('successful_repair_list.json')}", 'w') as file:
+                        json.dump(TransformativeRepair.successful_repair_list, file, indent=4) 
+
+                    exit()
             except queue.Empty:
                 time.sleep(1)
 
@@ -823,7 +1021,8 @@ class TransformativeRepair:
         if not self.preanalized:
             self.full_analysis()
         else:
-            self.partial_analysis()
+            self.minimal_analysis()
+            #self.partial_analysis()
 
     def full_analysis(self):
 
@@ -932,8 +1131,11 @@ class TransformativeRepair:
                 print(f'Skipping {project_vulnerabilities_src} project as no vulnerabilities.json detected.')
         # Initialize progress bar
         n_candidate_patches = self.llm_settings[self.experiment_settings["llm_model_name"]]["num_candidate_patches"]
-        progressbar = tqdm(total=sc_vulnerable_count + sc_vulnerable_count * n_candidate_patches,
-                           desc="Smartbugs processes", colour='#ff5a5f')
+        print(f"Vulnerability count is {sc_vulnerable_count * n_candidate_patches}")
+        #progressbar = tqdm(total=sc_vulnerable_count + sc_vulnerable_count * n_candidate_patches,
+        #                   desc="Smartbugs processes", colour='#ff5a5f')
+        progressbar = tqdm(total=sc_vulnerable_count * n_candidate_patches,
+                          desc="Smartbugs processes", colour='#ff5a5f')
 
         stop_event = threading.Event()
         atexit.register(close_all_threads, stop_event)
@@ -958,23 +1160,108 @@ class TransformativeRepair:
 
         return
    
-        # Create sc_dirs
-        for root, dirs, files in os.walk(self.vulnerable_contracts_dir):
-            for sc_filename in files:
-                sc_name, file_extension = os.path.splitext(os.path.basename(sc_filename))
-                sc_path = os.path.join(root, sc_filename)
-                if file_extension == ".sol":
-                    # Create dir for contract
-                    results_dir = Path(os.path.join(self.experiment_results_dir, sc_name))
-
-                    results_dir.mkdir(parents=True, exist_ok=True)
-
-                    # Copy vulnerable sc to results
-                    sc_results_path = Path(os.path.join(results_dir, sc_filename))
-                    shutil.copyfile(sc_path, sc_results_path)
-
-                    # Add to results
-                    sc_vulnerable_count += 1
-                    self.smartbugs_sc_queue.put((sc_results_path, True))
-
+    def minimal_analysis(self):
         
+        #### Step 1: Add all vulnerable sc to smartbugs_sc_queue
+        self.experiment_results_dir.mkdir(parents=True, exist_ok=True)
+
+        shutil.copyfile('config.yml', os.path.join(self.experiment_results_dir, "config.yml"))
+
+        sc_vulnerable_count = 0
+        target_vulnerabilities_found = 0
+        count_srcs_containing_at_least_one_vulnerability = 0
+
+        for project in os.listdir(self.analysis_results_directory):
+
+            results_dir = Path(os.path.join(self.experiment_results_dir, project))
+            results_dir.mkdir(parents=True, exist_ok=True)
+            
+            project_vulnerabilities_src = Path(os.path.join(self.analysis_results_directory, project, "vulnerabilities.json"))
+            
+            try:
+                with open(project_vulnerabilities_src, 'r') as f:
+                    
+                    project_vulnerabilities = json.load(f)
+                    
+                    for k, v in project_vulnerabilities.items():
+                        #print(f"\n\n source file: {k}\n\n")    
+                        
+                        filtered_analysis_results = PromptEngine.delete_empty_analyzers(v, self.experiment_settings["target_vulnerabilities"], "")
+                        
+                        if filtered_analysis_results:
+                            count_srcs_containing_at_least_one_vulnerability += 1
+                        
+                        if v:
+                            #### Step 2: Iterate over all target analyzers as well as their detected vulnerabilities
+                            for analyzer, results in filtered_analysis_results.items():
+
+                                if analyzer not in self.experiment_settings["smartbugs_tools"]:
+                                    continue
+                                
+                                # vulnerability array is accessible through results['vulnerability_findings']
+                                for result in results['vulnerability_findings']:
+                                    #print(f"\n\n Vulnerability: {result}\n\n")        
+                                    target_vulnerabilities_found += 1
+                                
+
+                        # Create dir for contract and copy vulnerable sc to results
+                        source_code_path = Path(os.path.join(self.vulnerable_contracts_dir, project, k))
+                        if not source_code_path.exists():
+                            continue
+                        result_path = Path(os.path.join(results_dir, k))
+                        file_name = os.path.basename(source_code_path)
+                        result_path.mkdir(parents=True, exist_ok=True)
+                        shutil.copyfile(source_code_path, os.path.join(result_path, file_name))
+
+                        # Retrieve the reduced version of the original code and copy it alongside the original vulnerable code
+                        #shutil.copyfile(source_code_path, os.path.join(result_path, "original-src-reduced.sol"))
+                        
+                        # Add vulnerabilities to results
+                        with open(os.path.join(result_path, "vulnerabilities.json"), 'w') as vulnerabilities_file:
+                            vulnerabilites_formatted = {}
+                            vulnerabilites_formatted["smartbugs_completed"] = True
+                            vulnerabilites_formatted["analyzer_results"] = v
+                            json.dump(vulnerabilites_formatted, vulnerabilities_file, indent=2)
+                        
+                        #print(f'\nk is: {k}\n\nv is: {v}\n\n')
+
+                        sc_vulnerable_count += 1
+                        self.repair_sc_queue.put(Path(os.path.join(result_path, file_name)))
+                # print(f'The total target_vulnerabilities_found is: {target_vulnerabilities_found}')
+                # print(f'Total number of files at least contained one vulnerability: {count_srcs_containing_at_least_one_vulnerability}')
+
+            except NotADirectoryError as e:
+                print(f'Skipping {project_vulnerabilities_src} project as no vulnerabilities.json detected.')
+            try: 
+                shutil.copyfile(project_vulnerabilities_src, os.path.join(results_dir, "project_vulnerabilities.json"))
+            except NotADirectoryError as e:
+                print(f'Skipping {project_vulnerabilities_src} project as no vulnerabilities.json detected.')
+        # Initialize progress bar
+        n_candidate_patches = self.llm_settings[self.experiment_settings["llm_model_name"]]["num_candidate_patches"]
+        #print(f"Vulnerability count is {sc_vulnerable_count * n_candidate_patches}")
+        progressbar = tqdm(total=target_vulnerabilities_found,
+                           desc="Smartbugs processes", colour='#ff5a5f')
+        
+        stop_event = threading.Event()
+        atexit.register(close_all_threads, stop_event)
+
+        #### Step 2: Consume smartbugs_queue
+        # for i in range(self.experiment_settings["n_smartbugs_threads"]):
+        #     smartbugs_thread = threading.Thread(target=TransformativeRepair.consumer_of_vulnerabilities_queue, args=(
+        #         self.experiment_settings, self.smartbugs_sc_queue, self.repair_sc_queue, stop_event, progressbar))
+        #     smartbugs_thread.start()
+
+        #### Step 2: Consume smart repair_sc_queue
+
+        for i in range(self.experiment_settings["n_repair_threads"]):
+            repair_thread = threading.Thread(target=TransformativeRepair.consumer_of_repair_queue, args=(
+                self.experiment_settings, self.llm_settings, self.smartbugs_sc_queue, self.repair_sc_queue, stop_event,
+                progressbar))
+            repair_thread.start()
+
+        #### Start Summary Thread
+        shutdown_thread = threading.Thread(target=TransformativeRepair.shutdown_thread,
+                                           args=(self.experiment_settings, self.llm_settings, stop_event))
+        shutdown_thread.start()
+
+        return   
