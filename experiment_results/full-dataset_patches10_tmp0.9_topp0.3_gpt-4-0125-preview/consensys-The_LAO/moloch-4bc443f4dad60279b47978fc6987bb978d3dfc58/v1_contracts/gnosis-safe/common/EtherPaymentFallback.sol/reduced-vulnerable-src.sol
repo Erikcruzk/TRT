@@ -1,0 +1,17 @@
+
+
+pragma solidity ^0.5.0;
+
+
+
+
+contract EtherPaymentFallback {
+
+    
+    function ()
+        external
+        payable
+    {
+
+    }
+}

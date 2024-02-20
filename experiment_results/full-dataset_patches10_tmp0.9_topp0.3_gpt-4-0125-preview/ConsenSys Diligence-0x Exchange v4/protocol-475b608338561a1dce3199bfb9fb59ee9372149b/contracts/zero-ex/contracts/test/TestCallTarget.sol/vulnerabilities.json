@@ -1,0 +1,149 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            revert(\"TestCallTarget/REVERT\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": 52,
+          "vulnerability_code": "    fallback() external payable {\n\n        if (keccak256(msg.data) == keccak256(REVERTING_DATA)) {\n\n            revert(\"TestCallTarget/REVERT\");\n\n        }\n\n        emit CallTargetCalled(\n\n            address(this),\n\n            msg.sender,\n\n            msg.data,\n\n            msg.value\n\n        );\n\n        bytes4 rval = MAGIC_BYTES;\n\n        assembly {\n\n            mstore(0, rval)\n\n            return(0, 32)\n\n        }\n",
+          "message": "Contract locking ether found in TestCallTarget.sol:\n\tContract TestCallTarget has payable functions:\n\t - fallback (TestCallTarget.sol#37-52)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": 52,
+          "vulnerability_code": "    fallback() external payable {\n\n        if (keccak256(msg.data) == keccak256(REVERTING_DATA)) {\n\n            revert(\"TestCallTarget/REVERT\");\n\n        }\n\n        emit CallTargetCalled(\n\n            address(this),\n\n            msg.sender,\n\n            msg.data,\n\n            msg.value\n\n        );\n\n        bytes4 rval = MAGIC_BYTES;\n\n        assembly {\n\n            mstore(0, rval)\n\n            return(0, 32)\n\n        }\n",
+          "message": "TestCallTarget.fallback uses assembly (TestCallTarget.sol#37-52)\n\t- TestCallTarget.sol#48-51\n"
+        },
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.5;\n",
+          "message": "Different versions of Solidity is used in TestCallTarget.sol:\n\t- Version used: ['ABIEncoderV2', '^0.6.5']\n\t- TestCallTarget.sol#21 declares pragma solidity^0.6.5\n\t- TestCallTarget.sol#22 declares pragma experimentalABIEncoderV2\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.5;\n",
+          "message": "Detected issues with version pragma in TestCallTarget.sol:\n\t- pragma solidity^0.6.5 (TestCallTarget.sol#21): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes4 private constant MAGIC_BYTES = 0x12345678;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.5;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes4 private constant MAGIC_BYTES = 0x12345678;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes private constant REVERTING_DATA = hex\"1337\";\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    fallback() external payable {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (keccak256(msg.data) == keccak256(REVERTING_DATA)) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (keccak256(msg.data) == keccak256(REVERTING_DATA)) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (keccak256(msg.data) == keccak256(REVERTING_DATA)) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            revert(\"TestCallTarget/REVERT\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            revert(\"TestCallTarget/REVERT\");\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHL) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

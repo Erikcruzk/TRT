@@ -1,0 +1,189 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(address(this).balance >= amount, \"Address: insufficient balance\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(success, \"Address: unable to send value, recipient may have reverted\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(success, \"Address: unable to send value, recipient may have reverted\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": 35,
+          "vulnerability_code": "    function isContract(address account) internal view returns (bool) {\n\n        // According to EIP-1052, 0x0 is the value returned for not-yet created accounts\n\n        // and 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470 is returned\n\n        // for accounts without code, i.e. `keccak256('')`\n\n        bytes32 codehash;\n\n        bytes32 accountHash = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;\n\n        // solhint-disable-next-line no-inline-assembly\n\n        assembly { codehash := extcodehash(account) }\n\n        return (codehash != accountHash && codehash != 0x0);\n",
+          "message": "Address.isContract (Address.sol#26-35) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": 35,
+          "vulnerability_code": "    function isContract(address account) internal view returns (bool) {\n\n        // According to EIP-1052, 0x0 is the value returned for not-yet created accounts\n\n        // and 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470 is returned\n\n        // for accounts without code, i.e. `keccak256('')`\n\n        bytes32 codehash;\n\n        bytes32 accountHash = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;\n\n        // solhint-disable-next-line no-inline-assembly\n\n        assembly { codehash := extcodehash(account) }\n\n        return (codehash != accountHash && codehash != 0x0);\n",
+          "message": "Address.isContract uses assembly (Address.sol#26-35)\n\t- Address.sol#33\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.5;\n",
+          "message": "Detected issues with version pragma in Address.sol:\n\t- pragma solidity^0.5.5 (Address.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": 72,
+          "vulnerability_code": "    function sendValue(address payable recipient, uint256 amount) internal {\n\n        require(address(this).balance >= amount, \"Address: insufficient balance\");\n\n\n\n        // solhint-disable-next-line avoid-call-value\n\n        // solium-disable-next-line security/no-call-value\n\n        (bool success, ) = recipient.call.value(amount)(\"\");\n\n        require(success, \"Address: unable to send value, recipient may have reverted\");\n",
+          "message": "Low level call in Address.sendValue (Address.sol#65-72):\n\t-(success) = recipient.call.value(amount)() Address.sol#70\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.5;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function isContract(address account) internal view returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { codehash := extcodehash(account) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function sendValue(address payable recipient, uint256 amount) internal {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function sendValue(address payable recipient, uint256 amount) internal {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function sendValue(address payable recipient, uint256 amount) internal {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(address(this).balance >= amount, \"Address: insufficient balance\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(address(this).balance >= amount, \"Address: insufficient balance\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(address(this).balance >= amount, \"Address: insufficient balance\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(address(this).balance >= amount, \"Address: insufficient balance\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = recipient.call.value(amount)(\"\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = recipient.call.value(amount)(\"\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = recipient.call.value(amount)(\"\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(success, \"Address: unable to send value, recipient may have reverted\");\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

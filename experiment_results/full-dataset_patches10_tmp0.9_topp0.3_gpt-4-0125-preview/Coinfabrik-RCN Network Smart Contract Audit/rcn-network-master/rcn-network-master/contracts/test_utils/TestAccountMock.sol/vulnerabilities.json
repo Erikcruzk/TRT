@@ -1,0 +1,129 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(success == 1, \"Tx reverted\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 34,
+          "vulnerability_code": "    function _safeCall(\n\n        address _contract,\n\n        bytes memory _data\n\n    ) internal returns (uint256 success, bytes32 result) {\n\n        assembly {\n\n            let x := mload(0x40)\n\n            success := call(\n\n                            gas,                 // Send almost all gas\n\n                            _contract,            // To addr\n\n                            0,                    // Send ETH\n\n                            add(0x20, _data),     // Input is data past the first 32 bytes\n\n                            mload(_data),         // Input size is the lenght of data\n\n                            x,                    // Store the ouput on x\n\n                            0x20                  // Output is a single bytes32, has 32 bytes\n\n                        )\n\n\n\n            result := mload(x)\n\n        }\n",
+          "message": "TestAccountMock._safeCall uses assembly (TestAccountMock.sol#16-34)\n\t- TestAccountMock.sol#20-33\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function send(\n\n        address _to,\n\n        bytes memory _data\n\n    ) public returns (bytes32) {\n\n        (uint256 success, bytes32 result) = _safeCall(_to, _data);\n\n        require(success == 1, \"Tx reverted\");\n\n        return result;\n",
+          "message": "TestAccountMock.send (TestAccountMock.sol#7-14) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.11;\n",
+          "message": "Detected issues with version pragma in TestAccountMock.sol:\n\t- pragma solidity^0.5.11 (TestAccountMock.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _to,\n",
+          "message": "Parameter '_to' of TestAccountMock.send (TestAccountMock.sol#8) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes memory _data\n",
+          "message": "Parameter '_data' of TestAccountMock.send (TestAccountMock.sol#9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 34,
+          "vulnerability_code": "    function _safeCall(\n\n        address _contract,\n\n        bytes memory _data\n\n    ) internal returns (uint256 success, bytes32 result) {\n\n        assembly {\n\n            let x := mload(0x40)\n\n            success := call(\n\n                            gas,                 // Send almost all gas\n\n                            _contract,            // To addr\n\n                            0,                    // Send ETH\n\n                            add(0x20, _data),     // Input is data past the first 32 bytes\n\n                            mload(_data),         // Input size is the lenght of data\n\n                            x,                    // Store the ouput on x\n\n                            0x20                  // Output is a single bytes32, has 32 bytes\n\n                        )\n\n\n\n            result := mload(x)\n\n        }\n",
+          "message": "Function 'TestAccountMock._safeCall' (TestAccountMock.sol#16-34) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _safeCall(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.11;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ) internal returns (uint256 success, bytes32 result) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            success := call(\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

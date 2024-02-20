@@ -1,0 +1,177 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < calls.length; i++) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < calls.length; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < calls.length; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_12"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "calls-loop",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            (bool success, bytes memory ret) = calls[i].target.call(calls[i].callData);\n",
+          "message": "Multicall.aggregate has external calls inside a loop:\n\t- (success,ret) = calls[i].target.call(calls[i].callData) (Multicall.sol#24)\n"
+        },
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity 0.6.9;\n",
+          "message": "Different versions of Solidity is used in Multicall.sol:\n\t- Version used: ['0.6.9', 'ABIEncoderV2']\n\t- Multicall.sol#7 declares pragma solidity0.6.9\n\t- Multicall.sol#8 declares pragma experimentalABIEncoderV2\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes[] memory returnData) {\n\n        blockNumber = block.number;\n\n        returnData = new bytes[](calls.length);\n\n        for(uint256 i = 0; i < calls.length; i++) {\n\n            (bool success, bytes memory ret) = calls[i].target.call(calls[i].callData);\n\n            require(success);\n\n            returnData[i] = ret;\n\n        }\n",
+          "message": "Multicall.aggregate (Multicall.sol#20-28) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": 32,
+          "vulnerability_code": "    function getEthBalance(address addr) public view returns (uint256 balance) {\n\n        balance = addr.balance;\n",
+          "message": "Multicall.getEthBalance (Multicall.sol#30-32) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": 35,
+          "vulnerability_code": "    function getBlockHash(uint256 blockNumber) public view returns (bytes32 blockHash) {\n\n        blockHash = blockhash(blockNumber);\n",
+          "message": "Multicall.getBlockHash (Multicall.sol#33-35) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": 38,
+          "vulnerability_code": "    function getLastBlockHash() public view returns (bytes32 blockHash) {\n\n        blockHash = blockhash(block.number - 1);\n",
+          "message": "Multicall.getLastBlockHash (Multicall.sol#36-38) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 41,
+          "vulnerability_code": "    function getCurrentBlockTimestamp() public view returns (uint256 timestamp) {\n\n        timestamp = block.timestamp;\n",
+          "message": "Multicall.getCurrentBlockTimestamp (Multicall.sol#39-41) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": 44,
+          "vulnerability_code": "    function getCurrentBlockDifficulty() public view returns (uint256 difficulty) {\n\n        difficulty = block.difficulty;\n",
+          "message": "Multicall.getCurrentBlockDifficulty (Multicall.sol#42-44) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": 47,
+          "vulnerability_code": "    function getCurrentBlockGasLimit() public view returns (uint256 gaslimit) {\n\n        gaslimit = block.gaslimit;\n",
+          "message": "Multicall.getCurrentBlockGasLimit (Multicall.sol#45-47) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": 50,
+          "vulnerability_code": "    function getCurrentBlockCoinbase() public view returns (address coinbase) {\n\n        coinbase = block.coinbase;\n",
+          "message": "Multicall.getCurrentBlockCoinbase (Multicall.sol#48-50) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity 0.6.9;\n",
+          "message": "Detected issues with version pragma in Multicall.sol:\n\t- pragma solidity0.6.9 (Multicall.sol#7): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes[] memory returnData) {\n\n        blockNumber = block.number;\n\n        returnData = new bytes[](calls.length);\n\n        for(uint256 i = 0; i < calls.length; i++) {\n\n            (bool success, bytes memory ret) = calls[i].target.call(calls[i].callData);\n\n            require(success);\n\n            returnData[i] = ret;\n\n        }\n",
+          "message": "Low level call in Multicall.aggregate (Multicall.sol#20-28):\n\t-(success,ret) = calls[i].target.call(calls[i].callData) Multicall.sol#24\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < calls.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < calls.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes[] memory returnData) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UNCHECKED_CALL",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            (bool success, bytes memory ret) = calls[i].target.call(calls[i].callData);\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

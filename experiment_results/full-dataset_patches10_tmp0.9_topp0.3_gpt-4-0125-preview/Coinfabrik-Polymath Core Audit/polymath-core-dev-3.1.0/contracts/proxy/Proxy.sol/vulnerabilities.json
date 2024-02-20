@@ -1,0 +1,101 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": 49,
+          "vulnerability_code": "    function() external payable {\n\n        _fallback();\n",
+          "message": "Contract locking ether found in Proxy.sol:\n\tContract Proxy has payable functions:\n\t - fallback (Proxy.sol#47-49)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function _delegate(address implementation) internal {\n\n        /*solium-disable-next-line security/no-inline-assembly*/\n\n        assembly {\n\n            // Copy msg.data. We take full control of memory in this inline assembly\n\n            // block because it will not return to Solidity code. We overwrite the\n\n            // Solidity scratch pad at memory position 0.\n\n            calldatacopy(0, 0, calldatasize)\n\n            // Call the implementation.\n\n            // out and outsize are 0 because we don't know the size yet.\n\n            let result := delegatecall(gas, implementation, 0, calldatasize, 0, 0)\n\n            // Copy the returned data.\n\n            returndatacopy(0, 0, returndatasize)\n\n            switch result\n\n            // delegatecall returns 0 on error.\n\n            case 0 { revert(0, returndatasize) }\n\n            default { return(0, returndatasize) }\n\n        }\n",
+          "message": "Proxy._delegate uses assembly (Proxy.sol#28-45)\n\t- Proxy.sol#30-44\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity 0.5.8;\n",
+          "message": "Detected issues with version pragma in Proxy.sol:\n\t- pragma solidity0.5.8 (Proxy.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _implementation() internal view returns(address);\n",
+          "message": "Function 'Proxy._implementation' (Proxy.sol#14) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 22,
+          "vulnerability_code": "    function _fallback() internal {\n\n        _delegate(_implementation());\n",
+          "message": "Function 'Proxy._fallback' (Proxy.sol#20-22) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function _delegate(address implementation) internal {\n\n        /*solium-disable-next-line security/no-inline-assembly*/\n\n        assembly {\n\n            // Copy msg.data. We take full control of memory in this inline assembly\n\n            // block because it will not return to Solidity code. We overwrite the\n\n            // Solidity scratch pad at memory position 0.\n\n            calldatacopy(0, 0, calldatasize)\n\n            // Call the implementation.\n\n            // out and outsize are 0 because we don't know the size yet.\n\n            let result := delegatecall(gas, implementation, 0, calldatasize, 0, 0)\n\n            // Copy the returned data.\n\n            returndatacopy(0, 0, returndatasize)\n\n            switch result\n\n            // delegatecall returns 0 on error.\n\n            case 0 { revert(0, returndatasize) }\n\n            default { return(0, returndatasize) }\n\n        }\n",
+          "message": "Function 'Proxy._delegate' (Proxy.sol#28-45) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Proxy {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "execution failed"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": false,
+      "errors": [
+        "input files do not contain any valid contracts"
+      ],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

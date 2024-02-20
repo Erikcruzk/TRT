@@ -1,0 +1,121 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 39,
+          "vulnerability_code": "    function multiSend(bytes memory transactions)\n\n        public\n\n    {\n\n        // solium-disable-next-line security/no-inline-assembly\n\n        assembly {\n\n            let length := mload(transactions)\n\n            let i := 0x20\n\n            for { } lt(i, length) { } {\n\n                let operation := mload(add(transactions, i))\n\n                let to := mload(add(transactions, add(i, 0x20)))\n\n                let value := mload(add(transactions, add(i, 0x40)))\n\n                let dataLength := mload(add(transactions, add(i, 0x80)))\n\n                let data := add(transactions, add(i, 0xa0))\n\n                let success := 0\n\n                switch operation \n\n                case 0 { success := call(gas, to, value, data, dataLength, 0, 0) }\n\n                case 1 { success := delegatecall(gas, to, data, dataLength, 0, 0) }\n\n                if eq(success, 0) { revert(0, 0) }\n\n                i := add(i, add(0xa0, mul(div(add(dataLength, 0x1f), 0x20), 0x20)))\n\n            }\n\n        }\n\n    }\n",
+          "message": "MultiSend.multiSend uses assembly (MultiSend.sol#17-39)\n\t- MultiSend.sol#21-38\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 39,
+          "vulnerability_code": "    function multiSend(bytes memory transactions)\n\n        public\n\n    {\n\n        // solium-disable-next-line security/no-inline-assembly\n\n        assembly {\n\n            let length := mload(transactions)\n\n            let i := 0x20\n\n            for { } lt(i, length) { } {\n\n                let operation := mload(add(transactions, i))\n\n                let to := mload(add(transactions, add(i, 0x20)))\n\n                let value := mload(add(transactions, add(i, 0x40)))\n\n                let dataLength := mload(add(transactions, add(i, 0x80)))\n\n                let data := add(transactions, add(i, 0xa0))\n\n                let success := 0\n\n                switch operation \n\n                case 0 { success := call(gas, to, value, data, dataLength, 0, 0) }\n\n                case 1 { success := delegatecall(gas, to, data, dataLength, 0, 0) }\n\n                if eq(success, 0) { revert(0, 0) }\n\n                i := add(i, add(0xa0, mul(div(add(dataLength, 0x1f), 0x20), 0x20)))\n\n            }\n\n        }\n\n    }\n",
+          "message": "MultiSend.multiSend (MultiSend.sol#17-39) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 4,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": "Detected issues with version pragma in MultiSend.sol:\n\t- pragma solidity^0.5.0 (MultiSend.sol#3-4): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                case 0 { success := call(gas, to, value, data, dataLength, 0, 0) }\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                case 0 { success := call(gas, to, value, data, dataLength, 0, 0) }\n",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "Delegatecall to user-supplied address (SWC 112)",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                case 1 { success := delegatecall(gas, to, data, dataLength, 0, 0) }\n",
+          "message": "The contract delegates execution to another contract with a user-supplied address.\nThe smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.\nClassification: SWC-112"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                i := add(i, add(0xa0, mul(div(add(dataLength, 0x1f), 0x20), 0x20)))\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                i := add(i, add(0xa0, mul(div(add(dataLength, 0x1f), 0x20), 0x20)))\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                i := add(i, add(0xa0, mul(div(add(dataLength, 0x1f), 0x20), 0x20)))\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

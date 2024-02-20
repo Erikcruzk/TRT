@@ -1,0 +1,295 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 85,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Pausable is Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 296,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract FeeCollector is Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bool public paused = false;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 298,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint256 feeBalance = 0;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 238,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address _cryptoKittyAddress) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 239,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    cryptoKittyAddress = _cryptoKittyAddress;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 240,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 421,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address _cryptoKittyAddress) CryptoKittyAuction(_cryptoKittyAddress) public { }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-multiple-require",
+          "vulnerability_from_line": 398,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(startPrice > 0 && priceFloor < startPrice && priceFloor >= 0 && duration > 0);\n",
+          "message": "Using multiple require statements is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_13"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "erc20-interface",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 35,
+          "vulnerability_code": "contract CKERC721 {\n\n    // Required methods\n\n    function totalSupply() public view returns (uint256 total);\n\n    function balanceOf(address _owner) public view returns (uint256 balance);\n\n    function ownerOf(uint256 _tokenId) external view returns (address owner);\n\n    function approve(address _to, uint256 _tokenId) external;\n\n    function transfer(address _to, uint256 _tokenId) external;\n\n    function transferFrom(address _from, address _to, uint256 _tokenId) external;\n\n\n\n    // Events\n\n    event Transfer(address from, address to, uint256 tokenId);\n\n    event Approval(address owner, address approved, uint256 tokenId);\n\n\n\n    // Optional\n\n    // function name() public view returns (string name);\n\n    // function symbol() public view returns (string symbol);\n\n    // function tokensOfOwner(address _owner) external view returns (uint256[] tokenIds);\n\n    // function tokenMetadata(uint256 _tokenId, string _preferredTransport) public view returns (string infoUrl);\n\n\n\n    // ERC-165 Compatibility (https://github.com/ethereum/EIPs/issues/165)\n\n    function supportsInterface(bytes4 _interfaceID) external view returns (bool);\n",
+          "message": "CKERC721 (DescendingPriceCryptoKitty.sol#14-35) has incorrect ERC20 function interface(s):\n\t-approve (DescendingPriceCryptoKitty.sol#19)\n\t-transfer (DescendingPriceCryptoKitty.sol#20)\n\t-transferFrom (DescendingPriceCryptoKitty.sol#21)\n"
+        },
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;\n",
+          "message": "Different versions of Solidity is used in DescendingPriceCryptoKitty.sol:\n\t- Version used: ['^0.4.11', '^0.4.23']\n\t- DescendingPriceCryptoKitty.sol#3 declares pragma solidity^0.4.23\n\t- DescendingPriceCryptoKitty.sol#10 declares pragma solidity^0.4.11\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function totalSupply() public view returns (uint256 total);\n",
+          "message": "CKERC721.totalSupply (DescendingPriceCryptoKitty.sol#16) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address _owner) public view returns (uint256 balance);\n",
+          "message": "CKERC721.balanceOf (DescendingPriceCryptoKitty.sol#17) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": 75,
+          "vulnerability_code": "  function transferOwnership(address newOwner) public onlyOwner {\n\n    require(newOwner != address(0));\n\n    emit OwnershipTransferred(owner, newOwner);\n\n    owner = newOwner;\n",
+          "message": "Ownable.transferOwnership (DescendingPriceCryptoKitty.sol#71-75) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 111,
+          "vulnerability_to_line": 114,
+          "vulnerability_code": "  function pause() onlyOwner whenNotPaused public {\n\n    paused = true;\n\n    emit Pause();\n",
+          "message": "Pausable.pause (DescendingPriceCryptoKitty.sol#111-114) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 119,
+          "vulnerability_to_line": 122,
+          "vulnerability_code": "  function unpause() onlyOwner whenPaused public {\n\n    paused = false;\n\n    emit Unpause();\n",
+          "message": "Pausable.unpause (DescendingPriceCryptoKitty.sol#119-122) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 366,
+          "vulnerability_to_line": 369,
+          "vulnerability_code": "  function cancel(uint256 auctionId) whenNotPaused public onlySeller(auctionId) {\n\n    transferWinnings(auctionIdToSeller[auctionId], auctionId);\n\n    auctionIdToAcceptingBids[auctionId] = false;\n",
+          "message": "DescendingPriceAuction.cancel (DescendingPriceCryptoKitty.sol#366-369) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 427,
+          "vulnerability_to_line": 432,
+          "vulnerability_code": "  function createAuction(uint256 startPrice, uint256 priceFloor, uint256 duration, uint256 kittyId) whenNotPaused public payable returns (uint256) {\n\n    uint256 auctionId = createEmptyAuction();\n\n    setAuctionPricing(startPrice, priceFloor, duration, auctionId);\n\n    setAuctionAsset(kittyId, auctionId);\n\n    return auctionId;\n",
+          "message": "DescendingPriceCryptoKittyAuction.createAuction (DescendingPriceCryptoKitty.sol#427-432) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;\n",
+          "message": "Detected issues with version pragma in DescendingPriceCryptoKitty.sol:\n\t- pragma solidity^0.4.23 (DescendingPriceCryptoKitty.sol#3): it allows old versions\n\t- pragma solidity^0.4.11 (DescendingPriceCryptoKitty.sol#10): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": 57,
+          "vulnerability_code": "  function Ownable() public {\n\n    owner = msg.sender;\n",
+          "message": "Function 'Ownable.Ownable' (DescendingPriceCryptoKitty.sol#55-57) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 238,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address _cryptoKittyAddress) public {\n",
+          "message": "Parameter '_cryptoKittyAddress' of CryptoKittyAuction. (DescendingPriceCryptoKitty.sol#238) is not in mixedCase\n"
+        },
+        {
+          "name": "erc20-indexed",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 35,
+          "vulnerability_code": "contract CKERC721 {\n\n    // Required methods\n\n    function totalSupply() public view returns (uint256 total);\n\n    function balanceOf(address _owner) public view returns (uint256 balance);\n\n    function ownerOf(uint256 _tokenId) external view returns (address owner);\n\n    function approve(address _to, uint256 _tokenId) external;\n\n    function transfer(address _to, uint256 _tokenId) external;\n\n    function transferFrom(address _from, address _to, uint256 _tokenId) external;\n\n\n\n    // Events\n\n    event Transfer(address from, address to, uint256 tokenId);\n\n    event Approval(address owner, address approved, uint256 tokenId);\n\n\n\n    // Optional\n\n    // function name() public view returns (string name);\n\n    // function symbol() public view returns (string symbol);\n\n    // function tokensOfOwner(address _owner) external view returns (uint256[] tokenIds);\n\n    // function tokenMetadata(uint256 _tokenId, string _preferredTransport) public view returns (string infoUrl);\n\n\n\n    // ERC-165 Compatibility (https://github.com/ethereum/EIPs/issues/165)\n\n    function supportsInterface(bytes4 _interfaceID) external view returns (bool);\n",
+          "message": "CKERC721 (DescendingPriceCryptoKitty.sol#14-35) does not mark important ERC20 parameters as 'indexed':\n\t-Transfer (DescendingPriceCryptoKitty.sol#24) does not index parameter 'from'\n\t-Transfer (DescendingPriceCryptoKitty.sol#24) does not index parameter 'to'\n\t-Approval (DescendingPriceCryptoKitty.sol#25) does not index parameter 'owner'\n\t-Approval (DescendingPriceCryptoKitty.sol#25) does not index parameter 'approved'\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_DIV_MUL",
+          "vulnerability_from_line": 388,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 priceDecrease = numberOfBlocksElapsed.mul(priceDifference.div(blockDifference));\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 420,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract DescendingPriceCryptoKittyAuction is DescendingPriceAuction, CryptoKittyAuction {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.11;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 185,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 229,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 297,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 330,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 298,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint256 feeBalance = 0;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Transaction-Ordering Dependence (TOD)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Dependence on predictable environment variable (SWC 120)",
+          "vulnerability_from_line": 376,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    if (block.number >= priceFloorBlock) {\n",
+          "message": "A control flow decision is made based on The block.number environment variable.\nThe block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-120"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 120)",
+          "vulnerability_from_line": 168,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assert(c >= a);\n",
+          "message": "A control flow decision is made based on The block.number environment variable.\nThe block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-120"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Concurrency bug",
+          "vulnerability_from_line": 361,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      msg.sender.transfer(overbidAmount);\n",
+          "message": null
+        },
+        {
+          "name": "Concurrency bug",
+          "vulnerability_from_line": 363,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    auctionIdToSeller[auctionId].transfer(currentPrice);\n",
+          "message": null
+        }
+      ]
+    }
+  }
+}

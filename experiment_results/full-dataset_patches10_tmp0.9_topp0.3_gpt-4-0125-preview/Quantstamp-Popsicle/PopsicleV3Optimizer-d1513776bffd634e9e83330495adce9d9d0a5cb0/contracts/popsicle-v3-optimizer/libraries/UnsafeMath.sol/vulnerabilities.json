@@ -1,0 +1,135 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "    function divRoundingUp(uint256 x, uint256 y) internal pure returns (uint256 z) {\n\n        assembly {\n\n            z := add(div(x, y), gt(mod(x, y), 0))\n\n        }\n",
+          "message": "UnsafeMath.divRoundingUp (UnsafeMath.sol#14-18) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function unsafeDiv(uint256 x, uint256 y) internal pure returns (uint256 z) {\n\n        assembly {\n\n            z := div(x, y)\n\n        }\n",
+          "message": "UnsafeMath.unsafeDiv (UnsafeMath.sol#25-29) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 18,
+          "vulnerability_code": "    function divRoundingUp(uint256 x, uint256 y) internal pure returns (uint256 z) {\n\n        assembly {\n\n            z := add(div(x, y), gt(mod(x, y), 0))\n\n        }\n",
+          "message": "UnsafeMath.divRoundingUp uses assembly (UnsafeMath.sol#14-18)\n\t- UnsafeMath.sol#15-17\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function unsafeDiv(uint256 x, uint256 y) internal pure returns (uint256 z) {\n\n        assembly {\n\n            z := div(x, y)\n\n        }\n",
+          "message": "UnsafeMath.unsafeDiv uses assembly (UnsafeMath.sol#25-29)\n\t- UnsafeMath.sol#26-28\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.5.0;\n",
+          "message": "Detected issues with version pragma in UnsafeMath.sol:\n\t- pragma solidity>=0.5.0 (UnsafeMath.sol#4): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divRoundingUp(uint256 x, uint256 y) internal pure returns (uint256 z) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function unsafeDiv(uint256 x, uint256 y) internal pure returns (uint256 z) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divRoundingUp(uint256 x, uint256 y) internal pure returns (uint256 z) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function unsafeDiv(uint256 x, uint256 y) internal pure returns (uint256 z) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values). This issue is reported for internal compiler generated code.\nClassification: SWC-110"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

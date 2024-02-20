@@ -1,0 +1,497 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 167,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=0; i<_maintainers.length; i++) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 167,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=0; i<_maintainers.length; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 191,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=0; i<numberOfMaintainers; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 209,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=0; i<numberOfMaintainers; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 167,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=0; i<_maintainers.length; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 191,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=0; i<numberOfMaintainers; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 209,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=0; i<numberOfMaintainers; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_26"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "uninitialized-state",
+          "vulnerability_from_line": 110,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ITwoKeySingletonesRegistry internal registry;\n",
+          "message": "UpgradeabilityStorage.registry (TwoKeyPlasmaMaintainersRegistry.sol#110) is never initialized. It is used in:\n\t- initialize (TwoKeyPlasmaMaintainersRegistry.sol#133-135)\n"
+        },
+        {
+          "name": "uninitialized-state",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address internal _implementation;\n",
+          "message": "UpgradeabilityStorage._implementation (TwoKeyPlasmaMaintainersRegistry.sol#113) is never initialized. It is used in:\n\t- implementation (TwoKeyPlasmaMaintainersRegistry.sol#119-121)\n"
+        },
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 133,
+          "vulnerability_to_line": 135,
+          "vulnerability_code": "    function initialize(address sender) public payable {\n\n        require(msg.sender == address(registry));\n",
+          "message": "Contract locking ether found in TwoKeyPlasmaMaintainersRegistry.sol:\n\tContract TwoKeyPlasmaMaintainersRegistry has payable functions:\n\t - initialize (TwoKeyPlasmaMaintainersRegistry.sol#133-135)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "reentrancy-no-eth",
+          "vulnerability_from_line": 151,
+          "vulnerability_to_line": 172,
+          "vulnerability_code": "    function setInitialParams(\n\n        address _twoKeySingletonRegistryPlasma,\n\n        address _proxyStorage,\n\n        address[] _maintainers\n\n    )\n\n    public\n\n    {\n\n        require(initialized == false);\n\n\n\n        TWO_KEY_PLASMA_SINGLETON_REGISTRY = _twoKeySingletonRegistryPlasma;\n\n\n\n        PROXY_STORAGE_CONTRACT = ITwoKeyPlasmaMaintainersRegistryStorage(_proxyStorage);\n\n\n\n        //Set deployer to be also a maintainer\n\n        addMaintainer(msg.sender);\n\n\n\n        for(uint i=0; i<_maintainers.length; i++) {\n\n            addMaintainer(_maintainers[i]);\n\n        }\n\n\n\n        initialized = true;\n",
+          "message": "Reentrancy in TwoKeyPlasmaMaintainersRegistry.setInitialParams (TwoKeyPlasmaMaintainersRegistry.sol#151-172):\n\tExternal calls:\n\t- addMaintainer(msg.sender) (TwoKeyPlasmaMaintainersRegistry.sol#165)\n\tState variables written after the call(s):\n\t- initialized (TwoKeyPlasmaMaintainersRegistry.sol#171)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address internal _implementation;\n",
+          "message": "UpgradeabilityStorage._implementation should be constant (TwoKeyPlasmaMaintainersRegistry.sol#113)\n"
+        },
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;\n",
+          "message": "Different versions of Solidity is used in TwoKeyPlasmaMaintainersRegistry.sol:\n\t- Version used: ['^0.4.0', '^0.4.24']\n\t- TwoKeyPlasmaMaintainersRegistry.sol#3 declares pragma solidity^0.4.0\n\t- TwoKeyPlasmaMaintainersRegistry.sol#54 declares pragma solidity^0.4.24\n\t- TwoKeyPlasmaMaintainersRegistry.sol#62 declares pragma solidity^0.4.24\n\t- TwoKeyPlasmaMaintainersRegistry.sol#102 declares pragma solidity^0.4.24\n\t- TwoKeyPlasmaMaintainersRegistry.sol#126 declares pragma solidity^0.4.24\n\t- TwoKeyPlasmaMaintainersRegistry.sol#140 declares pragma solidity^0.4.24\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addVersion(string _contractName, string version, address implementation) public;\n",
+          "message": "ITwoKeySingletonesRegistry.addVersion (TwoKeyPlasmaMaintainersRegistry.sol#89) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getVersion(string _contractName, string version) public view returns (address);\n",
+          "message": "ITwoKeySingletonesRegistry.getVersion (TwoKeyPlasmaMaintainersRegistry.sol#97) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 119,
+          "vulnerability_to_line": 121,
+          "vulnerability_code": "    function implementation() public view returns (address) {\n\n        return _implementation;\n",
+          "message": "UpgradeabilityStorage.implementation (TwoKeyPlasmaMaintainersRegistry.sol#119-121) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 133,
+          "vulnerability_to_line": 135,
+          "vulnerability_code": "    function initialize(address sender) public payable {\n\n        require(msg.sender == address(registry));\n",
+          "message": "Upgradeable.initialize (TwoKeyPlasmaMaintainersRegistry.sol#133-135) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 151,
+          "vulnerability_to_line": 172,
+          "vulnerability_code": "    function setInitialParams(\n\n        address _twoKeySingletonRegistryPlasma,\n\n        address _proxyStorage,\n\n        address[] _maintainers\n\n    )\n\n    public\n\n    {\n\n        require(initialized == false);\n\n\n\n        TWO_KEY_PLASMA_SINGLETON_REGISTRY = _twoKeySingletonRegistryPlasma;\n\n\n\n        PROXY_STORAGE_CONTRACT = ITwoKeyPlasmaMaintainersRegistryStorage(_proxyStorage);\n\n\n\n        //Set deployer to be also a maintainer\n\n        addMaintainer(msg.sender);\n\n\n\n        for(uint i=0; i<_maintainers.length; i++) {\n\n            addMaintainer(_maintainers[i]);\n\n        }\n\n\n\n        initialized = true;\n",
+          "message": "TwoKeyPlasmaMaintainersRegistry.setInitialParams (TwoKeyPlasmaMaintainersRegistry.sol#151-172) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 183,
+          "vulnerability_to_line": 194,
+          "vulnerability_code": "    function addMaintainers(\n\n        address [] _maintainers\n\n    )\n\n    public\n\n    {\n\n        require(onlyMaintainer(msg.sender) == true);\n\n        //If state variable, .balance, or .length is used several times, holding its value in a local variable is more gas efficient.\n\n        uint numberOfMaintainers = _maintainers.length;\n\n        for(uint i=0; i<numberOfMaintainers; i++) {\n\n            addMaintainer(_maintainers[i]);\n\n        }\n",
+          "message": "TwoKeyPlasmaMaintainersRegistry.addMaintainers (TwoKeyPlasmaMaintainersRegistry.sol#183-194) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 201,
+          "vulnerability_to_line": 212,
+          "vulnerability_code": "    function removeMaintainers(\n\n        address [] _maintainers\n\n    )\n\n    public\n\n    {\n\n        require(onlyMaintainer(msg.sender) == true);\n\n        //If state variable, .balance, or .length is used several times, holding its value in a local variable is more gas efficient.\n\n        uint numberOfMaintainers = _maintainers.length;\n\n        for(uint i=0; i<numberOfMaintainers; i++) {\n\n            removeMaintainer(_maintainers[i]);\n\n        }\n",
+          "message": "TwoKeyPlasmaMaintainersRegistry.removeMaintainers (TwoKeyPlasmaMaintainersRegistry.sol#201-212) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;\n",
+          "message": "Detected issues with version pragma in TwoKeyPlasmaMaintainersRegistry.sol:\n\t- pragma solidity^0.4.0 (TwoKeyPlasmaMaintainersRegistry.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address internal _implementation;\n",
+          "message": "Variable 'UpgradeabilityStorage._implementation' (TwoKeyPlasmaMaintainersRegistry.sol#113) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 152,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _twoKeySingletonRegistryPlasma,\n",
+          "message": "Parameter '_twoKeySingletonRegistryPlasma' of TwoKeyPlasmaMaintainersRegistry.setInitialParams (TwoKeyPlasmaMaintainersRegistry.sol#152) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 153,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _proxyStorage,\n",
+          "message": "Parameter '_proxyStorage' of TwoKeyPlasmaMaintainersRegistry.setInitialParams (TwoKeyPlasmaMaintainersRegistry.sol#153) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address[] _maintainers\n",
+          "message": "Parameter '_maintainers' of TwoKeyPlasmaMaintainersRegistry.setInitialParams (TwoKeyPlasmaMaintainersRegistry.sol#154) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 174,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function onlyMaintainer(address _sender) public view returns (bool) {\n",
+          "message": "Parameter '_sender' of TwoKeyPlasmaMaintainersRegistry.onlyMaintainer (TwoKeyPlasmaMaintainersRegistry.sol#174) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 184,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address [] _maintainers\n",
+          "message": "Parameter '_maintainers' of TwoKeyPlasmaMaintainersRegistry.addMaintainers (TwoKeyPlasmaMaintainersRegistry.sol#184) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 202,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address [] _maintainers\n",
+          "message": "Parameter '_maintainers' of TwoKeyPlasmaMaintainersRegistry.removeMaintainers (TwoKeyPlasmaMaintainersRegistry.sol#202) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 215,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _address\n",
+          "message": "Parameter '_address' of TwoKeyPlasmaMaintainersRegistry.isMaintainer (TwoKeyPlasmaMaintainersRegistry.sol#215) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 226,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _maintainer\n",
+          "message": "Parameter '_maintainer' of TwoKeyPlasmaMaintainersRegistry.addMaintainer (TwoKeyPlasmaMaintainersRegistry.sol#226) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 235,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _maintainer\n",
+          "message": "Parameter '_maintainer' of TwoKeyPlasmaMaintainersRegistry.removeMaintainer (TwoKeyPlasmaMaintainersRegistry.sol#235) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public TWO_KEY_PLASMA_SINGLETON_REGISTRY;\n",
+          "message": "Variable 'TwoKeyPlasmaMaintainersRegistry.TWO_KEY_PLASMA_SINGLETON_REGISTRY' (TwoKeyPlasmaMaintainersRegistry.sol#146) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 148,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ITwoKeyPlasmaMaintainersRegistryStorage public PROXY_STORAGE_CONTRACT;\n",
+          "message": "Variable 'TwoKeyPlasmaMaintainersRegistry.PROXY_STORAGE_CONTRACT' (TwoKeyPlasmaMaintainersRegistry.sol#148) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 167,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=0; i<_maintainers.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 167,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=0; i<_maintainers.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 191,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=0; i<numberOfMaintainers; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 209,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=0; i<numberOfMaintainers; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 128,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Upgradeable is UpgradeabilityStorage {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 126,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 140,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 221,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes32 keyHash = keccak256(\"isMaintainer\", _address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 230,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes32 keyHash = keccak256(\"isMaintainer\", _maintainer);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 239,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes32 keyHash = keccak256(\"isMaintainer\", _maintainer);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addVersion(string _contractName, string version, address implementation) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addVersion(string _contractName, string version, address implementation) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getVersion(string _contractName, string version) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getVersion(string _contractName, string version) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address[] _maintainers\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 184,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address [] _maintainers\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 202,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address [] _maintainers\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addVersion(string _contractName, string version, address implementation) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getVersion(string _contractName, string version) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 144,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool initialized;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 183,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addMaintainers(\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 171,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        initialized = true;\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 171,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        initialized = true;\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 231,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        PROXY_STORAGE_CONTRACT.setBool(keyHash, true);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 231,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        PROXY_STORAGE_CONTRACT.setBool(keyHash, true);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 231,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        PROXY_STORAGE_CONTRACT.setBool(keyHash, true);\n",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 231,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        PROXY_STORAGE_CONTRACT.setBool(keyHash, true);\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 222,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return PROXY_STORAGE_CONTRACT.getBool(keyHash);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

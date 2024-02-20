@@ -1,0 +1,303 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 123,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes memory encodedParams = abi.encodeWithSelector(\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      _InterfaceId_ERC165,\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      interfaceId\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 126,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    );\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < interfaceIds.length; i++) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < interfaceIds.length; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < interfaceIds.length; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_12"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": 147,
+          "vulnerability_code": "  function _callERC165SupportsInterface(\n\n    address account,\n\n    bytes4 interfaceId\n\n  )\n\n    private\n\n    view\n\n    returns (bool success, bool result)\n\n  {\n\n    bytes memory encodedParams = abi.encodeWithSelector(\n\n      _InterfaceId_ERC165,\n\n      interfaceId\n\n    );\n\n\n\n    // solium-disable-next-line security/no-inline-assembly\n\n    assembly {\n\n      let encodedParams_data := add(0x20, encodedParams)\n\n      let encodedParams_size := mload(encodedParams)\n\n\n\n      let output := mload(0x40)  // Find empty storage location using \"free memory pointer\"\n\n      mstore(output, 0x0)\n\n\n\n      success := staticcall(\n\n        30000,                 // 30k gas\n\n        account,              // To addr\n\n        encodedParams_data,\n\n        encodedParams_size,\n\n        output,\n\n        0x20                   // Outputs are 32 bytes long\n\n      )\n\n\n\n      result := mload(output)  // Load the result\n\n    }\n",
+          "message": "ERC165Checker._callERC165SupportsInterface (ERC165CheckerMock.sol#115-147) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": 147,
+          "vulnerability_code": "  function _callERC165SupportsInterface(\n\n    address account,\n\n    bytes4 interfaceId\n\n  )\n\n    private\n\n    view\n\n    returns (bool success, bool result)\n\n  {\n\n    bytes memory encodedParams = abi.encodeWithSelector(\n\n      _InterfaceId_ERC165,\n\n      interfaceId\n\n    );\n\n\n\n    // solium-disable-next-line security/no-inline-assembly\n\n    assembly {\n\n      let encodedParams_data := add(0x20, encodedParams)\n\n      let encodedParams_size := mload(encodedParams)\n\n\n\n      let output := mload(0x40)  // Find empty storage location using \"free memory pointer\"\n\n      mstore(output, 0x0)\n\n\n\n      success := staticcall(\n\n        30000,                 // 30k gas\n\n        account,              // To addr\n\n        encodedParams_data,\n\n        encodedParams_size,\n\n        output,\n\n        0x20                   // Outputs are 32 bytes long\n\n      )\n\n\n\n      result := mload(output)  // Load the result\n\n    }\n",
+          "message": "ERC165Checker._callERC165SupportsInterface uses assembly (ERC165CheckerMock.sol#115-147)\n\t- ERC165CheckerMock.sol#129-147\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 157,
+          "vulnerability_to_line": 163,
+          "vulnerability_code": "  function supportsERC165(address account)\n\n    public\n\n    view\n\n    returns (bool)\n\n  {\n\n    return account._supportsERC165();\n",
+          "message": "ERC165CheckerMock.supportsERC165 (ERC165CheckerMock.sol#157-163) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 165,
+          "vulnerability_to_line": 171,
+          "vulnerability_code": "  function supportsInterface(address account, bytes4 interfaceId)\n\n    public\n\n    view\n\n    returns (bool)\n\n  {\n\n    return account._supportsInterface(interfaceId);\n",
+          "message": "ERC165CheckerMock.supportsInterface (ERC165CheckerMock.sol#165-171) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 173,
+          "vulnerability_to_line": 179,
+          "vulnerability_code": "  function supportsAllInterfaces(address account, bytes4[] interfaceIds)\n\n    public\n\n    view\n\n    returns (bool)\n\n  {\n\n    return account._supportsAllInterfaces(interfaceIds);\n",
+          "message": "ERC165CheckerMock.supportsAllInterfaces (ERC165CheckerMock.sol#173-179) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 34,
+          "vulnerability_code": "  function _supportsERC165(address account)\n\n    internal\n\n    view\n\n    returns (bool)\n\n  {\n\n    // Any contract that implements ERC165 must explicitly indicate support of\n\n    // InterfaceId_ERC165 and explicitly indicate non-support of InterfaceId_Invalid\n\n    return _supportsERC165Interface(account, _InterfaceId_ERC165) &&\n\n      !_supportsERC165Interface(account, _InterfaceId_Invalid);\n",
+          "message": "Function 'ERC165Checker._supportsERC165' (ERC165CheckerMock.sol#25-34) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": 52,
+          "vulnerability_code": "  function _supportsInterface(address account, bytes4 interfaceId)\n\n    internal\n\n    view\n\n    returns (bool)\n\n  {\n\n    // query support of both ERC165 as per the spec and support of _interfaceId\n\n    return _supportsERC165(account) &&\n\n      _supportsERC165Interface(account, interfaceId);\n",
+          "message": "Function 'ERC165Checker._supportsInterface' (ERC165CheckerMock.sol#44-52) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": 81,
+          "vulnerability_code": "  function _supportsAllInterfaces(address account, bytes4[] interfaceIds)\n\n    internal\n\n    view\n\n    returns (bool)\n\n  {\n\n    // query support of ERC165 itself\n\n    if (!_supportsERC165(account)) {\n\n      return false;\n\n    }\n\n\n\n    // query support of each interface in _interfaceIds\n\n    for (uint256 i = 0; i < interfaceIds.length; i++) {\n\n      if (!_supportsERC165Interface(account, interfaceIds[i])) {\n\n        return false;\n\n      }\n\n    }\n\n\n\n    // all interfaces supported\n\n    return true;\n",
+          "message": "Function 'ERC165Checker._supportsAllInterfaces' (ERC165CheckerMock.sol#62-81) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": 105,
+          "vulnerability_code": "  function _supportsERC165Interface(address account, bytes4 interfaceId)\n\n    private\n\n    view\n\n    returns (bool)\n\n  {\n\n    // success determines whether the staticcall succeeded and result determines\n\n    // whether the contract at account indicates support of _interfaceId\n\n    (bool success, bool result) = _callERC165SupportsInterface(\n\n      account, interfaceId);\n\n\n\n    return (success && result);\n",
+          "message": "Function 'ERC165Checker._supportsERC165Interface' (ERC165CheckerMock.sol#94-105) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": 147,
+          "vulnerability_code": "  function _callERC165SupportsInterface(\n\n    address account,\n\n    bytes4 interfaceId\n\n  )\n\n    private\n\n    view\n\n    returns (bool success, bool result)\n\n  {\n\n    bytes memory encodedParams = abi.encodeWithSelector(\n\n      _InterfaceId_ERC165,\n\n      interfaceId\n\n    );\n\n\n\n    // solium-disable-next-line security/no-inline-assembly\n\n    assembly {\n\n      let encodedParams_data := add(0x20, encodedParams)\n\n      let encodedParams_size := mload(encodedParams)\n\n\n\n      let output := mload(0x40)  // Find empty storage location using \"free memory pointer\"\n\n      mstore(output, 0x0)\n\n\n\n      success := staticcall(\n\n        30000,                 // 30k gas\n\n        account,              // To addr\n\n        encodedParams_data,\n\n        encodedParams_size,\n\n        output,\n\n        0x20                   // Outputs are 32 bytes long\n\n      )\n\n\n\n      result := mload(output)  // Load the result\n\n    }\n",
+          "message": "Function 'ERC165Checker._callERC165SupportsInterface' (ERC165CheckerMock.sol#115-147) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 private constant _InterfaceId_Invalid = 0xffffffff;\n",
+          "message": "Constant 'ERC165Checker._InterfaceId_Invalid' (ERC165CheckerMock.sol#12) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 private constant _InterfaceId_ERC165 = 0x01ffc9a7;\n",
+          "message": "Constant 'ERC165Checker._InterfaceId_ERC165' (ERC165CheckerMock.sol#14) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 private constant _InterfaceId_Invalid = 0xffffffff;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 private constant _InterfaceId_ERC165 = 0x01ffc9a7;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < interfaceIds.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _callERC165SupportsInterface(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < interfaceIds.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 152,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 private constant _InterfaceId_Invalid = 0xffffffff;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 private constant _InterfaceId_ERC165 = 0x01ffc9a7;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _callERC165SupportsInterface(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 121,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    returns (bool success, bool result)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UNCHECKED_CALL",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    (bool success, bool result) = _callERC165SupportsInterface(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _supportsAllInterfaces(address account, bytes4[] interfaceIds)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 173,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function supportsAllInterfaces(address account, bytes4[] interfaceIds)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 173,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function supportsAllInterfaces(address account, bytes4[] interfaceIds)\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 136,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      success := staticcall(\n",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 136,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      success := staticcall(\n",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "UNKNOWN INSTRUCTION: STATICCALL"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

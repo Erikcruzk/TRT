@@ -1,0 +1,301 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 144,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract MintableToken is Mintable, Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 148,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bool public mintingFinished = false;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_13"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": 44,
+          "vulnerability_code": "  function transferOwnership(address newOwner) onlyOwner public {\n\n    require(newOwner != address(0));\n\n    owner = newOwner;\n",
+          "message": "Ownable.transferOwnership (MintableTokenMock.sol#41-44) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 172,
+          "vulnerability_to_line": 174,
+          "vulnerability_code": "  function mint(address receiver, uint amount) onlyMintAgent canMint public {\n\n    mintInternal(receiver, amount);\n",
+          "message": "MintableToken.mint (MintableTokenMock.sol#172-174) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": 182,
+          "vulnerability_code": "  function setMintAgent(address addr, bool state) onlyOwner canMint public {\n\n    mintAgents[addr] = state;\n\n    MintingAgentChanged(addr, state);\n",
+          "message": "MintableToken.setMintAgent (MintableTokenMock.sol#179-182) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 214,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function totalSupply() public constant returns (uint) { return total_supply; }\n",
+          "message": "MintableTokenMock.totalSupply (MintableTokenMock.sol#214) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 215,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address customer) public constant returns (uint) { return balances[customer]; }\n",
+          "message": "MintableTokenMock.balanceOf (MintableTokenMock.sol#215) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 216,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address, uint) public returns (bool) { revert(); }\n",
+          "message": "MintableTokenMock.transfer (MintableTokenMock.sol#216) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": "Detected issues with version pragma in MintableTokenMock.sol:\n\t- pragma solidity^0.4.15 (MintableTokenMock.sol#3): it allows old versions\n\t- pragma solidity^0.4.15 (MintableTokenMock.sol#50): it allows old versions\n\t- pragma solidity^0.4.15 (MintableTokenMock.sol#104): it allows old versions\n\t- pragma solidity^0.4.15 (MintableTokenMock.sol#128): it allows old versions\n\t- pragma solidity^0.4.15 (MintableTokenMock.sol#199): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "  function Ownable() internal {\n\n    owner = msg.sender;\n",
+          "message": "Function 'Ownable.Ownable' (MintableTokenMock.sol#23-25) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 156,
+          "vulnerability_to_line": 165,
+          "vulnerability_code": "  function MintableToken(uint initialSupply, address multisig, bool mintable) internal {\n\n    require(multisig != address(0));\n\n    // Cannot create a token without supply and no minting\n\n    require(mintable || initialSupply != 0);\n\n    // Create initially all balance on the team multisig\n\n    if (initialSupply > 0)\n\n      mintInternal(multisig, initialSupply);\n\n    // No more new supply allowed after the token creation\n\n    mintingFinished = !mintable;\n",
+          "message": "Function 'MintableToken.MintableToken' (MintableTokenMock.sol#156-165) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 207,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function MintableTokenMock(uint initialSupply, address multisig, bool mintable) MintableToken(initialSupply, multisig, mintable) public {}\n",
+          "message": "Function 'MintableTokenMock.MintableTokenMock' (MintableTokenMock.sol#207) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 216,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address, uint) public returns (bool) { revert(); }\n",
+          "message": "Parameter '' of MintableTokenMock.transfer (MintableTokenMock.sol#216) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 216,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address, uint) public returns (bool) { revert(); }\n",
+          "message": "Parameter '_scope_0' of MintableTokenMock.transfer (MintableTokenMock.sol#216) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 204,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint private total_supply;\n",
+          "message": "Variable 'MintableTokenMock.total_supply' (MintableTokenMock.sol#204) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function mul(uint a, uint b) internal constant returns (uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function div(uint a, uint b) internal constant returns (uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 74,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function sub(uint a, uint b) internal constant returns (uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function add(uint a, uint b) internal constant returns (uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 85,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function max64(uint64 a, uint64 b) internal constant returns (uint64) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function min64(uint64 a, uint64 b) internal constant returns (uint64) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 93,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function max256(uint a, uint b) internal constant returns (uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function min256(uint a, uint b) internal constant returns (uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 214,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function totalSupply() public constant returns (uint) { return total_supply; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 215,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address customer) public constant returns (uint) { return balances[customer]; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ERC20_FUNCTIONS_ALWAYS_RETURN_FALSE",
+          "vulnerability_from_line": 216,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address, uint) public returns (bool) { revert(); }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 216,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address, uint) public returns (bool) { revert(); }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_OVERPOWERED_ROLE",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setMintAgent(address addr, bool state) onlyOwner canMint public {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 104,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 128,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 199,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 204,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint private total_supply;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint c = a + b;\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 210,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    total_supply = total_supply.add(amount);\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

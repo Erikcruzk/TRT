@@ -1,0 +1,118 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "  function parseStorageExceptionData(bytes memory _data) public pure returns (address sender, uint wei_sent) {\n\n    require(_data.length == 64);\n\n    assembly {\n\n      sender := mload(add(0x20, _data))\n\n      wei_sent := mload(add(0x40, _data))\n\n    }\n",
+          "message": "TestUtils.parseStorageExceptionData (TestUtils.sol#7-13) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "  function parseStorageExceptionData(bytes memory _data) public pure returns (address sender, uint wei_sent) {\n\n    require(_data.length == 64);\n\n    assembly {\n\n      sender := mload(add(0x20, _data))\n\n      wei_sent := mload(add(0x40, _data))\n\n    }\n",
+          "message": "TestUtils.parseStorageExceptionData uses assembly (TestUtils.sol#7-13)\n\t- TestUtils.sol#9-13\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "  function parseStorageExceptionData(bytes memory _data) public pure returns (address sender, uint wei_sent) {\n\n    require(_data.length == 64);\n\n    assembly {\n\n      sender := mload(add(0x20, _data))\n\n      wei_sent := mload(add(0x40, _data))\n\n    }\n",
+          "message": "TestUtils.parseStorageExceptionData (TestUtils.sol#7-13) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;\n",
+          "message": "Detected issues with version pragma in TestUtils.sol:\n\t- pragma solidity^0.4.23 (TestUtils.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function parseStorageExceptionData(bytes memory _data) public pure returns (address sender, uint wei_sent) {\n",
+          "message": "Parameter '_data' of TestUtils.parseStorageExceptionData (TestUtils.sol#7) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function parseStorageExceptionData(bytes memory _data) public pure returns (address sender, uint wei_sent) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function parseStorageExceptionData(bytes memory _data) public pure returns (address sender, uint wei_sent) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function parseStorageExceptionData(bytes memory _data) public pure returns (address sender, uint wei_sent) {\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function parseStorageExceptionData(bytes memory _data) public pure returns (address sender, uint wei_sent) {\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -1,0 +1,465 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(false, \"Failed to calculate legendre.\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 337,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(isG1PointOnCurve(G1Point(x, y)), \"Malformed bn256.G1 point.\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 411,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(isG2PointOnCurve(G2Point(x, y)), \"Malformed bn256.G2 point.\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            for (m = 0; m < r; m++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_23"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 35,
+          "vulnerability_code": "    function modExp(uint256 base, uint256 exponent, uint256 p)\n\n        internal\n\n        view returns(uint256)\n\n    {\n\n        uint256[1] memory output;\n\n        /* solium-disable-next-line */\n\n        assembly {\n\n            // Args for the precompile: [<length_of_BASE> <length_of_EXPONENT>\n\n            // <length_of_MODULUS> <BASE> <EXPONENT> <MODULUS>]\n\n            let args := mload(0x40)\n\n            mstore(args, 0x20)\n\n            mstore(add(args, 0x20), 0x20)\n\n            mstore(add(args, 0x40), 0x20)\n\n            mstore(add(args, 0x60), base)\n\n            mstore(add(args, 0x80), exponent)\n\n            mstore(add(args, 0xa0), p)\n\n\n\n            // 0x05 is the modular exponent contract address\n\n            if iszero(staticcall(not(0), 0x05, args, 0xc0, output, 0x20)) {\n\n                revert(0, 0)\n\n            }\n\n        }\n\n        return output[0];\n",
+          "message": "ModUtils.modExp (BLS.sol#12-35) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 345,
+          "vulnerability_to_line": 357,
+          "vulnerability_code": "    function g1Unmarshal(bytes memory m) internal pure returns(G1Point memory) {\n\n        bytes32 x;\n\n        bytes32 y;\n\n\n\n        /* solium-disable-next-line */\n\n        assembly {\n\n            x := mload(add(m, 0x20))\n\n            y := mload(add(m, 0x40))\n\n        }\n\n\n\n        return G1Point(uint256(x), uint256(y));\n\n    }\n",
+          "message": "AltBn128.g1Unmarshal (BLS.sol#345-357) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 361,
+          "vulnerability_to_line": 377,
+          "vulnerability_code": "    function g2Unmarshal(bytes memory m) internal pure returns(G2Point memory) {\n\n        bytes32 xx;\n\n        bytes32 xy;\n\n        bytes32 yx;\n\n        bytes32 yy;\n\n\n\n        /* solium-disable-next-line */\n\n        assembly {\n\n            xx := mload(add(m, 0x20))\n\n            xy := mload(add(m, 0x40))\n\n            yx := mload(add(m, 0x60))\n\n            yy := mload(add(m, 0x80))\n\n        }\n\n\n\n        return G2Point(gfP2(uint256(xx), uint256(xy)), gfP2(uint256(yx),uint256(yy)));\n\n    }\n",
+          "message": "AltBn128.g2Unmarshal (BLS.sol#361-377) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 381,
+          "vulnerability_to_line": 414,
+          "vulnerability_code": "    function g2Decompress(bytes memory m)\n\n        internal\n\n        pure returns(G2Point memory)\n\n    {\n\n        bytes32 x1;\n\n        bytes32 x2;\n\n        uint256 temp;\n\n\n\n        // Extract two bytes32 from bytes array\n\n        /* solium-disable-next-line */\n\n        assembly {\n\n            temp := add(m, 32)\n\n            x1 := mload(temp)\n\n            temp := add(m, 64)\n\n            x2 := mload(temp)\n\n        }\n\n\n\n        bytes32 mX = bytes32(0);\n\n        byte leadX = x1[0] & 0x7f;\n\n        uint256 mask = 0xff << 31*8;\n\n        mX = (x1 & ~bytes32(mask)) | (leadX >> 0);\n\n\n\n        gfP2 memory x = gfP2(uint256(mX), uint256(x2));\n\n        gfP2 memory y = g2YFromX(x);\n\n\n\n        if (parity(y.x) != (m[0] & 0x80) >> 7) {\n\n            y.x = p - y.x;\n\n            y.y = p - y.y;\n\n        }\n\n\n\n        require(isG2PointOnCurve(G2Point(x, y)), \"Malformed bn256.G2 point.\");\n\n        return G2Point(x, y);\n\n    }\n",
+          "message": "AltBn128.g2Decompress (BLS.sol#381-414) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 420,
+          "vulnerability_to_line": 438,
+          "vulnerability_code": "    function g1Add(G1Point memory a, G1Point memory b) internal view returns (G1Point memory) {\n\n        uint256[4] memory arg;\n\n        arg[0] = a.x;\n\n        arg[1] = a.y;\n\n        arg[2] = b.x;\n\n        arg[3] = b.y;\n\n        uint256[2] memory c;\n\n\n\n        /* solium-disable-next-line */\n\n        assembly {\n\n            // 0x60 is the ECADD precompile address\n\n            if iszero(staticcall(not(0), 0x06, arg, 0x80, c, 0x40)) {\n\n                revert(0, 0)\n\n            }\n\n        }\n\n\n\n        return G1Point(c[0], c[1]);\n\n    }\n",
+          "message": "AltBn128.g1Add (BLS.sol#420-438) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 520,
+          "vulnerability_to_line": 535,
+          "vulnerability_code": "    function scalarMultiply(G1Point memory p_1, uint256 scalar) internal view returns (G1Point memory) {\n\n        uint256[3] memory arg;\n\n        arg[0] = p_1.x;\n\n        arg[1] = p_1.y;\n\n        arg[2] = scalar;\n\n        uint256[2] memory p_2;\n\n        /* solium-disable-next-line */\n\n        assembly {\n\n            // 0x70 is the ECMUL precompile address\n\n            if iszero(staticcall(not(0), 0x07, arg, 0x60, p_2, 0x40)) {\n\n                revert(0, 0)\n\n            }\n\n        }\n\n        return G1Point(p_2[0], p_2[1]);\n\n    }\n",
+          "message": "AltBn128.scalarMultiply (BLS.sol#520-535) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 540,
+          "vulnerability_to_line": 554,
+          "vulnerability_code": "    function pairing(G1Point memory p1, G2Point memory p2, G1Point memory p3, G2Point memory p4) internal view returns (bool) {\n\n        uint256[12] memory arg = [\n\n            p1.x, p1.y, p2.x.x, p2.x.y, p2.y.x, p2.y.y, p3.x, p3.y, p4.x.x, p4.x.y, p4.y.x, p4.y.y\n\n        ];\n\n        uint[1] memory c;\n\n        /* solium-disable-next-line */\n\n        assembly {\n\n            // call(gasLimit, to, value, inputOffset, inputSize, outputOffset, outputSize)\n\n            if iszero(staticcall(not(0), 0x08, arg, 0x180, c, 0x20)) {\n\n                revert(0, 0)\n\n            }\n\n        }\n\n        return c[0] != 0;\n\n    }\n",
+          "message": "AltBn128.pairing (BLS.sol#540-554) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "uninitialized-local",
+          "vulnerability_from_line": 464,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        gfP2 memory a;\n",
+          "message": "a in AltBn128.gfP2Pow (BLS.sol#464) is a local variable never initialiazed\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 35,
+          "vulnerability_code": "    function modExp(uint256 base, uint256 exponent, uint256 p)\n\n        internal\n\n        view returns(uint256)\n\n    {\n\n        uint256[1] memory output;\n\n        /* solium-disable-next-line */\n\n        assembly {\n\n            // Args for the precompile: [<length_of_BASE> <length_of_EXPONENT>\n\n            // <length_of_MODULUS> <BASE> <EXPONENT> <MODULUS>]\n\n            let args := mload(0x40)\n\n            mstore(args, 0x20)\n\n            mstore(add(args, 0x20), 0x20)\n\n            mstore(add(args, 0x40), 0x20)\n\n            mstore(add(args, 0x60), base)\n\n            mstore(add(args, 0x80), exponent)\n\n            mstore(add(args, 0xa0), p)\n\n\n\n            // 0x05 is the modular exponent contract address\n\n            if iszero(staticcall(not(0), 0x05, args, 0xc0, output, 0x20)) {\n\n                revert(0, 0)\n\n            }\n\n        }\n\n        return output[0];\n",
+          "message": "ModUtils.modExp uses assembly (BLS.sol#12-35)\n\t- BLS.sol#18-33\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 345,
+          "vulnerability_to_line": 357,
+          "vulnerability_code": "    function g1Unmarshal(bytes memory m) internal pure returns(G1Point memory) {\n\n        bytes32 x;\n\n        bytes32 y;\n\n\n\n        /* solium-disable-next-line */\n\n        assembly {\n\n            x := mload(add(m, 0x20))\n\n            y := mload(add(m, 0x40))\n\n        }\n\n\n\n        return G1Point(uint256(x), uint256(y));\n\n    }\n",
+          "message": "AltBn128.g1Unmarshal uses assembly (BLS.sol#345-357)\n\t- BLS.sol#350-354\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 361,
+          "vulnerability_to_line": 377,
+          "vulnerability_code": "    function g2Unmarshal(bytes memory m) internal pure returns(G2Point memory) {\n\n        bytes32 xx;\n\n        bytes32 xy;\n\n        bytes32 yx;\n\n        bytes32 yy;\n\n\n\n        /* solium-disable-next-line */\n\n        assembly {\n\n            xx := mload(add(m, 0x20))\n\n            xy := mload(add(m, 0x40))\n\n            yx := mload(add(m, 0x60))\n\n            yy := mload(add(m, 0x80))\n\n        }\n\n\n\n        return G2Point(gfP2(uint256(xx), uint256(xy)), gfP2(uint256(yx),uint256(yy)));\n\n    }\n",
+          "message": "AltBn128.g2Unmarshal uses assembly (BLS.sol#361-377)\n\t- BLS.sol#368-374\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 381,
+          "vulnerability_to_line": 414,
+          "vulnerability_code": "    function g2Decompress(bytes memory m)\n\n        internal\n\n        pure returns(G2Point memory)\n\n    {\n\n        bytes32 x1;\n\n        bytes32 x2;\n\n        uint256 temp;\n\n\n\n        // Extract two bytes32 from bytes array\n\n        /* solium-disable-next-line */\n\n        assembly {\n\n            temp := add(m, 32)\n\n            x1 := mload(temp)\n\n            temp := add(m, 64)\n\n            x2 := mload(temp)\n\n        }\n\n\n\n        bytes32 mX = bytes32(0);\n\n        byte leadX = x1[0] & 0x7f;\n\n        uint256 mask = 0xff << 31*8;\n\n        mX = (x1 & ~bytes32(mask)) | (leadX >> 0);\n\n\n\n        gfP2 memory x = gfP2(uint256(mX), uint256(x2));\n\n        gfP2 memory y = g2YFromX(x);\n\n\n\n        if (parity(y.x) != (m[0] & 0x80) >> 7) {\n\n            y.x = p - y.x;\n\n            y.y = p - y.y;\n\n        }\n\n\n\n        require(isG2PointOnCurve(G2Point(x, y)), \"Malformed bn256.G2 point.\");\n\n        return G2Point(x, y);\n\n    }\n",
+          "message": "AltBn128.g2Decompress uses assembly (BLS.sol#381-414)\n\t- BLS.sol#391-397\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 420,
+          "vulnerability_to_line": 438,
+          "vulnerability_code": "    function g1Add(G1Point memory a, G1Point memory b) internal view returns (G1Point memory) {\n\n        uint256[4] memory arg;\n\n        arg[0] = a.x;\n\n        arg[1] = a.y;\n\n        arg[2] = b.x;\n\n        arg[3] = b.y;\n\n        uint256[2] memory c;\n\n\n\n        /* solium-disable-next-line */\n\n        assembly {\n\n            // 0x60 is the ECADD precompile address\n\n            if iszero(staticcall(not(0), 0x06, arg, 0x80, c, 0x40)) {\n\n                revert(0, 0)\n\n            }\n\n        }\n\n\n\n        return G1Point(c[0], c[1]);\n\n    }\n",
+          "message": "AltBn128.g1Add uses assembly (BLS.sol#420-438)\n\t- BLS.sol#429-435\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 520,
+          "vulnerability_to_line": 535,
+          "vulnerability_code": "    function scalarMultiply(G1Point memory p_1, uint256 scalar) internal view returns (G1Point memory) {\n\n        uint256[3] memory arg;\n\n        arg[0] = p_1.x;\n\n        arg[1] = p_1.y;\n\n        arg[2] = scalar;\n\n        uint256[2] memory p_2;\n\n        /* solium-disable-next-line */\n\n        assembly {\n\n            // 0x70 is the ECMUL precompile address\n\n            if iszero(staticcall(not(0), 0x07, arg, 0x60, p_2, 0x40)) {\n\n                revert(0, 0)\n\n            }\n\n        }\n\n        return G1Point(p_2[0], p_2[1]);\n\n    }\n",
+          "message": "AltBn128.scalarMultiply uses assembly (BLS.sol#520-535)\n\t- BLS.sol#527-533\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 540,
+          "vulnerability_to_line": 554,
+          "vulnerability_code": "    function pairing(G1Point memory p1, G2Point memory p2, G1Point memory p3, G2Point memory p4) internal view returns (bool) {\n\n        uint256[12] memory arg = [\n\n            p1.x, p1.y, p2.x.x, p2.x.y, p2.y.x, p2.y.y, p3.x, p3.y, p4.x.x, p4.x.y, p4.y.x, p4.y.y\n\n        ];\n\n        uint[1] memory c;\n\n        /* solium-disable-next-line */\n\n        assembly {\n\n            // call(gasLimit, to, value, inputOffset, inputSize, outputOffset, outputSize)\n\n            if iszero(staticcall(not(0), 0x08, arg, 0x180, c, 0x20)) {\n\n                revert(0, 0)\n\n            }\n\n        }\n\n        return c[0] != 0;\n\n    }\n",
+          "message": "AltBn128.pairing uses assembly (BLS.sol#540-554)\n\t- BLS.sol#546-552\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 576,
+          "vulnerability_to_line": 591,
+          "vulnerability_code": "    function verify(\n\n        bytes memory publicKey,\n\n        bytes memory message,\n\n        bytes memory signature\n\n    ) public view returns (bool) {\n\n\n\n        AltBn128.G1Point memory _signature = AltBn128.g1Unmarshal(signature);\n\n\n\n        return AltBn128.pairing(\n\n            AltBn128.G1Point(_signature.x, AltBn128.getP() - _signature.y),\n\n            AltBn128.g2(),\n\n            AltBn128.g1Unmarshal(message),\n\n            AltBn128.g2Unmarshal(publicKey)\n\n        );\n\n    }\n",
+          "message": "BLS.verify (BLS.sol#576-591) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": "Detected issues with version pragma in BLS.sol:\n\t- pragma solidity^0.5.4 (BLS.sol#3): it allows old versions\n\t- pragma solidity^0.5.4 (BLS.sol#131): it allows old versions\n\t- pragma solidity^0.5.4 (BLS.sol#559-560): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 151,
+          "vulnerability_to_line": 155,
+          "vulnerability_code": "    struct gfP2 {\n\n        uint256 x;\n\n        uint256 y;\n\n    }\n",
+          "message": "Struct 'AltBn128.gfP2' (BLS.sol#151-155) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 235,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function g2YFromX(gfP2 memory _x)\n",
+          "message": "Parameter '_x' of AltBn128.g2YFromX (BLS.sol#235) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 462,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function gfP2Pow(gfP2 memory _a, uint256 _exp) internal pure returns(gfP2 memory result) {\n",
+          "message": "Parameter '_a' of AltBn128.gfP2Pow (BLS.sol#462) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 462,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function gfP2Pow(gfP2 memory _a, uint256 _exp) internal pure returns(gfP2 memory result) {\n",
+          "message": "Parameter '_exp' of AltBn128.gfP2Pow (BLS.sol#462) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 520,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function scalarMultiply(G1Point memory p_1, uint256 scalar) internal view returns (G1Point memory) {\n",
+          "message": "Parameter 'p_1' of AltBn128.scalarMultiply (BLS.sol#520) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 164,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 constant p = 21888242871839275222246405745257275088696311157297823662689037894645226208583;\n",
+          "message": "Constant 'AltBn128.p' (BLS.sol#164) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 283,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return bytes32(value)[31] & 0x01;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 296,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 mask = 0xff << 31*8;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 312,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 mask = 0xff << 31*8;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 326,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        byte leadX = m[0] & 0x7f;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 327,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 mask = 0xff << 31*8;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 333,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (parity(y) != (m[0] & 0x80) >> 7) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 399,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        byte leadX = x1[0] & 0x7f;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 400,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 mask = 0xff << 31*8;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 406,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (parity(y.x) != (m[0] & 0x80) >> 7) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 473,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            if (parity(exp) == 0x01) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 85,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        while (true) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 269,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        while (true) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        while (legendre(n, p) != -1) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 250,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        while (!g2X2y(x, y)) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 131,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 559,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 345,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function g1Unmarshal(bytes memory m) internal pure returns(G1Point memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 361,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function g2Unmarshal(bytes memory m) internal pure returns(G2Point memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 381,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function g2Decompress(bytes memory m)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function modExp(uint256 base, uint256 exponent, uint256 p)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 420,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function g1Add(G1Point memory a, G1Point memory b) internal view returns (G1Point memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 520,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function scalarMultiply(G1Point memory p_1, uint256 scalar) internal view returns (G1Point memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 540,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function pairing(G1Point memory p1, G2Point memory p2, G1Point memory p3, G2Point memory p4) internal view returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 350,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 368,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 391,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 429,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 527,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 546,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 164,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 constant p = 21888242871839275222246405745257275088696311157297823662689037894645226208583;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Jump to an arbitrary instruction (SWC 127)",
+          "vulnerability_from_line": 540,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function pairing(G1Point memory p1, G2Point memory p2, G1Point memory p3, G2Point memory p4) internal view returns (bool) {\n",
+          "message": "The caller can redirect execution to arbitrary bytecode locations.\nIt is possible to redirect the control flow to arbitrary locations in the code. This may allow an attacker to bypass security controls or manipulate the business logic of the smart contract. Avoid using low-level-operations and assembly to prevent this issue.\nClassification: SWC-127"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -1,0 +1,199 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i; i < n; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(contains(set, element), \"Element not in set.\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i; i < n; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_15"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "uninitialized-local",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i; i < n; i++) {\n",
+          "message": "i in Bytes32SetLib.getPage (TestableBytes32Set.sol#39) is a local variable never initialiazed\n"
+        },
+        {
+          "name": "unused-return",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": 66,
+          "vulnerability_code": "    function remove(Bytes32Set storage set, bytes32 element) internal {\n\n        require(contains(set, element), \"Element not in set.\");\n\n        // Replace the removed element with the last element of the list.\n\n        uint index = set.indices[element];\n\n        uint lastIndex = set.elements.length - 1; // We required that element is in the list, so it is not empty.\n\n        if (index != lastIndex) {\n\n            // No need to shift the last element if it is the one we want to delete.\n\n            bytes32 shiftedElement = set.elements[lastIndex];\n\n            set.elements[index] = shiftedElement;\n\n            set.indices[shiftedElement] = index;\n\n        }\n\n        set.elements.pop();\n\n        delete set.indices[element];\n",
+          "message": "Bytes32SetLib.remove (TestableBytes32Set.sol#53-66) does not use the value returned by external calls:\n\t-set.elements.pop() (TestableBytes32Set.sol#64)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getPage(uint index, uint pageSize) public view returns (bytes32[] memory) {\n",
+          "message": "TestableBytes32Set.getPage.index (local variable @ TestableBytes32Set.sol#82) shadows:\n\t- TestableBytes32Set.index (function @ TestableBytes32Set.sol#102-104)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function add(bytes32 element) public {\n",
+          "message": "TestableBytes32Set.add.element (local variable @ TestableBytes32Set.sol#86) shadows:\n\t- TestableBytes32Set.element (function @ TestableBytes32Set.sol#98-100)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function remove(bytes32 element) public {\n",
+          "message": "TestableBytes32Set.remove.element (local variable @ TestableBytes32Set.sol#90) shadows:\n\t- TestableBytes32Set.element (function @ TestableBytes32Set.sol#98-100)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function element(uint index) public view returns (bytes32) {\n",
+          "message": "TestableBytes32Set.element.index (local variable @ TestableBytes32Set.sol#98) shadows:\n\t- TestableBytes32Set.index (function @ TestableBytes32Set.sol#102-104)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function index(bytes32 element) public view returns (uint) {\n",
+          "message": "TestableBytes32Set.index.element (local variable @ TestableBytes32Set.sol#102) shadows:\n\t- TestableBytes32Set.element (function @ TestableBytes32Set.sol#98-100)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": 80,
+          "vulnerability_code": "    function contains(bytes32 candidate) public view returns (bool) {\n\n        return set.contains(candidate);\n",
+          "message": "TestableBytes32Set.contains (TestableBytes32Set.sol#78-80) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": 84,
+          "vulnerability_code": "    function getPage(uint index, uint pageSize) public view returns (bytes32[] memory) {\n\n        return set.getPage(index, pageSize);\n",
+          "message": "TestableBytes32Set.getPage (TestableBytes32Set.sol#82-84) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": 88,
+          "vulnerability_code": "    function add(bytes32 element) public {\n\n        set.add(element);\n",
+          "message": "TestableBytes32Set.add (TestableBytes32Set.sol#86-88) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": 92,
+          "vulnerability_code": "    function remove(bytes32 element) public {\n\n        set.remove(element);\n",
+          "message": "TestableBytes32Set.remove (TestableBytes32Set.sol#90-92) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": 96,
+          "vulnerability_code": "    function size() public view returns (uint) {\n\n        return set.elements.length;\n",
+          "message": "TestableBytes32Set.size (TestableBytes32Set.sol#94-96) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": 100,
+          "vulnerability_code": "    function element(uint index) public view returns (bytes32) {\n\n        return set.elements[index];\n",
+          "message": "TestableBytes32Set.element (TestableBytes32Set.sol#98-100) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": 104,
+          "vulnerability_code": "    function index(bytes32 element) public view returns (uint) {\n\n        return set.indices[element];\n",
+          "message": "TestableBytes32Set.index (TestableBytes32Set.sol#102-104) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": "Detected issues with version pragma in TestableBytes32Set.sol:\n\t- pragma solidity^0.5.16 (TestableBytes32Set.sol#3): it allows old versions\n\t- pragma solidity^0.5.16 (TestableBytes32Set.sol#71): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function element(uint index) public view returns (bytes32) {\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint endIndex = index + pageSize; // The check below that endIndex <= index handles overflow.\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -1,0 +1,284 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 269,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(uint256 _initialAmount, string memory _tokenName, uint8 _decimalUnits, string memory _tokenSymbol, bytes memory _reEntryCallData, string memory _reEntryFun) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 270,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _totalSupply = _initialAmount;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 271,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _balances[msg.sender] = _initialAmount;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 272,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        name = _tokenName;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 273,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        symbol = _tokenSymbol;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 274,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        decimals = _decimalUnits;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 275,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        reEntryCallData = _reEntryCallData;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 276,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        reEntryFun = _reEntryFun;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 277,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_19"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": 165,
+          "vulnerability_code": "    function increaseAllowance(address spender, uint256 addedValue) public returns (bool) {\n\n        _approve(msg.sender, spender, _allowed[msg.sender][spender].add(addedValue));\n\n        return true;\n",
+          "message": "ERC20NonView.increaseAllowance (FaucetTokenReEntrantHarness.sol#162-165) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 177,
+          "vulnerability_to_line": 180,
+          "vulnerability_code": "    function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool) {\n\n        _approve(msg.sender, spender, _allowed[msg.sender][spender].sub(subtractedValue));\n\n        return true;\n",
+          "message": "ERC20NonView.decreaseAllowance (FaucetTokenReEntrantHarness.sol#177-180) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 298,
+          "vulnerability_to_line": 302,
+          "vulnerability_code": "    function allocateTo(address _owner, uint256 value) public {\n\n        _balances[_owner] += value;\n\n        _totalSupply += value;\n\n        emit Transfer(address(this), _owner, value);\n",
+          "message": "FaucetTokenReEntrantHarness.allocateTo (FaucetTokenReEntrantHarness.sol#298-302) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.8;\n",
+          "message": "Detected issues with version pragma in FaucetTokenReEntrantHarness.sol:\n\t- pragma solidity^0.5.8 (FaucetTokenReEntrantHarness.sol#3): it allows old versions\n\t- pragma solidity^0.5.8 (FaucetTokenReEntrantHarness.sol#58): it allows old versions\n\t- pragma solidity^0.5.8 (FaucetTokenReEntrantHarness.sol#255): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 188,
+          "vulnerability_to_line": 194,
+          "vulnerability_code": "    function _transfer(address from, address to, uint256 value) internal {\n\n        require(to != address(0));\n\n\n\n        _balances[from] = _balances[from].sub(value);\n\n        _balances[to] = _balances[to].add(value);\n\n        emit Transfer(from, to, value);\n",
+          "message": "Function 'ERC20NonView._transfer' (FaucetTokenReEntrantHarness.sol#188-194) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 203,
+          "vulnerability_to_line": 209,
+          "vulnerability_code": "    function _mint(address account, uint256 value) internal {\n\n        require(account != address(0));\n\n\n\n        _totalSupply = _totalSupply.add(value);\n\n        _balances[account] = _balances[account].add(value);\n\n        emit Transfer(address(0), account, value);\n",
+          "message": "Function 'ERC20NonView._mint' (FaucetTokenReEntrantHarness.sol#203-209) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 217,
+          "vulnerability_to_line": 223,
+          "vulnerability_code": "    function _burn(address account, uint256 value) internal {\n\n        require(account != address(0));\n\n\n\n        _totalSupply = _totalSupply.sub(value);\n\n        _balances[account] = _balances[account].sub(value);\n\n        emit Transfer(account, address(0), value);\n",
+          "message": "Function 'ERC20NonView._burn' (FaucetTokenReEntrantHarness.sol#217-223) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 231,
+          "vulnerability_to_line": 237,
+          "vulnerability_code": "    function _approve(address owner, address spender, uint256 value) internal {\n\n        require(spender != address(0));\n\n        require(owner != address(0));\n\n\n\n        _allowed[owner][spender] = value;\n\n        emit Approval(owner, spender, value);\n",
+          "message": "Function 'ERC20NonView._approve' (FaucetTokenReEntrantHarness.sol#231-237) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 247,
+          "vulnerability_to_line": 250,
+          "vulnerability_code": "    function _burnFrom(address account, uint256 value) internal {\n\n        _burn(account, value);\n\n        _approve(account, msg.sender, _allowed[account][msg.sender].sub(value));\n",
+          "message": "Function 'ERC20NonView._burnFrom' (FaucetTokenReEntrantHarness.sol#247-250) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping (address => uint256) public _balances;\n",
+          "message": "Variable 'ERC20NonView._balances' (FaucetTokenReEntrantHarness.sol#79) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping (address => mapping (address => uint256)) public _allowed;\n",
+          "message": "Variable 'ERC20NonView._allowed' (FaucetTokenReEntrantHarness.sol#81) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public _totalSupply;\n",
+          "message": "Variable 'ERC20NonView._totalSupply' (FaucetTokenReEntrantHarness.sol#83) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 269,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(uint256 _initialAmount, string memory _tokenName, uint8 _decimalUnits, string memory _tokenSymbol, bytes memory _reEntryCallData, string memory _reEntryFun) public {\n",
+          "message": "Parameter '_initialAmount' of FaucetTokenReEntrantHarness. (FaucetTokenReEntrantHarness.sol#269) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 269,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(uint256 _initialAmount, string memory _tokenName, uint8 _decimalUnits, string memory _tokenSymbol, bytes memory _reEntryCallData, string memory _reEntryFun) public {\n",
+          "message": "Parameter '_tokenName' of FaucetTokenReEntrantHarness. (FaucetTokenReEntrantHarness.sol#269) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 269,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(uint256 _initialAmount, string memory _tokenName, uint8 _decimalUnits, string memory _tokenSymbol, bytes memory _reEntryCallData, string memory _reEntryFun) public {\n",
+          "message": "Parameter '_decimalUnits' of FaucetTokenReEntrantHarness. (FaucetTokenReEntrantHarness.sol#269) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 269,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(uint256 _initialAmount, string memory _tokenName, uint8 _decimalUnits, string memory _tokenSymbol, bytes memory _reEntryCallData, string memory _reEntryFun) public {\n",
+          "message": "Parameter '_tokenSymbol' of FaucetTokenReEntrantHarness. (FaucetTokenReEntrantHarness.sol#269) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 269,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(uint256 _initialAmount, string memory _tokenName, uint8 _decimalUnits, string memory _tokenSymbol, bytes memory _reEntryCallData, string memory _reEntryFun) public {\n",
+          "message": "Parameter '_reEntryCallData' of FaucetTokenReEntrantHarness. (FaucetTokenReEntrantHarness.sol#269) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 269,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(uint256 _initialAmount, string memory _tokenName, uint8 _decimalUnits, string memory _tokenSymbol, bytes memory _reEntryCallData, string memory _reEntryFun) public {\n",
+          "message": "Parameter '_reEntryFun' of FaucetTokenReEntrantHarness. (FaucetTokenReEntrantHarness.sol#269) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 298,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function allocateTo(address _owner, uint256 value) public {\n",
+          "message": "Parameter '_owner' of FaucetTokenReEntrantHarness.allocateTo (FaucetTokenReEntrantHarness.sol#298) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 133,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address spender, uint256 value) public returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 320,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address spender, uint256 amount) public reEnter(\"approve\") returns (bool success) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.8;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.8;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 255,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.8;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    using SafeMath for uint256;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

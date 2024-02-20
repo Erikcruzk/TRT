@@ -1,0 +1,99 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": 55,
+          "vulnerability_code": "    function signatureSplit(bytes memory signatures, uint256 pos)\n\n        internal\n\n        pure\n\n        returns (uint8 v, bytes32 r, bytes32 s)\n\n    {\n\n        // The signature format is a compact form of:\n\n        //   {bytes32 r}{bytes32 s}{uint8 v}\n\n        // Compact means, uint8 is not padded to 32 bytes.\n\n        // solium-disable-next-line security/no-inline-assembly\n\n        assembly {\n\n            let signaturePos := mul(0x41, pos)\n\n            r := mload(add(signatures, add(signaturePos, 0x20)))\n\n            s := mload(add(signatures, add(signaturePos, 0x40)))\n\n            // Here we are loading the last 32 bytes, including 31 bytes\n\n            // of 's'. There is no 'mload8' to do this.\n\n            //\n\n            // 'byte' is not working due to the Solidity parser, so lets\n\n            // use the second best option, 'and'\n\n            v := and(mload(add(signatures, add(signaturePos, 0x41))), 0xff)\n\n        }\n\n    }\n",
+          "message": "SignatureDecoder.signatureSplit (SignatureDecoder.sol#34-55) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": 55,
+          "vulnerability_code": "    function signatureSplit(bytes memory signatures, uint256 pos)\n\n        internal\n\n        pure\n\n        returns (uint8 v, bytes32 r, bytes32 s)\n\n    {\n\n        // The signature format is a compact form of:\n\n        //   {bytes32 r}{bytes32 s}{uint8 v}\n\n        // Compact means, uint8 is not padded to 32 bytes.\n\n        // solium-disable-next-line security/no-inline-assembly\n\n        assembly {\n\n            let signaturePos := mul(0x41, pos)\n\n            r := mload(add(signatures, add(signaturePos, 0x20)))\n\n            s := mload(add(signatures, add(signaturePos, 0x40)))\n\n            // Here we are loading the last 32 bytes, including 31 bytes\n\n            // of 's'. There is no 'mload8' to do this.\n\n            //\n\n            // 'byte' is not working due to the Solidity parser, so lets\n\n            // use the second best option, 'and'\n\n            v := and(mload(add(signatures, add(signaturePos, 0x41))), 0xff)\n\n        }\n\n    }\n",
+          "message": "SignatureDecoder.signatureSplit uses assembly (SignatureDecoder.sol#34-55)\n\t- SignatureDecoder.sol#43-54\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 4,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": "Detected issues with version pragma in SignatureDecoder.sol:\n\t- pragma solidity^0.5.0 (SignatureDecoder.sol#3-4): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function signatureSplit(bytes memory signatures, uint256 pos)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function signatureSplit(bytes memory signatures, uint256 pos)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        returns (uint8 v, bytes32 r, bytes32 s)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -1,0 +1,678 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 204,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool initialized = false;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 364,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            PROXY_STORAGE_CONTRACT.setUint(key1, block.timestamp + i*(1 years));\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 365,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            PROXY_STORAGE_CONTRACT.setUint(key2, 0);\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 360,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=1; i<=10; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-multiple-require",
+          "vulnerability_from_line": 402,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(year >= 1 && year <= 10);\n",
+          "message": "Using multiple require statements is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 424,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if(block.timestamp > startingDate && block.timestamp < startingDate + 1 years) {\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 425,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            return 1;\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 426,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        } else {\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 427,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            uint counter = 1;\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 428,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            uint start = startingDate + 1 years; //means we're checking for the second year\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 429,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            while(block.timestamp > start || counter == 10) {\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 430,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                start = start + 1 years;\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 431,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                counter ++;\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 432,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            }\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 433,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            return counter;\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 360,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=1; i<=10; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 431,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                counter ++;\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_36"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "uninitialized-state",
+          "vulnerability_from_line": 139,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ITwoKeySingletonesRegistry internal registry;\n",
+          "message": "UpgradeabilityStorage.registry (TwoKeyCommunityTokenPool.sol#139) is never initialized. It is used in:\n\t- initialize (TwoKeyCommunityTokenPool.sol#162-164)\n"
+        },
+        {
+          "name": "uninitialized-state",
+          "vulnerability_from_line": 142,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address internal _implementation;\n",
+          "message": "UpgradeabilityStorage._implementation (TwoKeyCommunityTokenPool.sol#142) is never initialized. It is used in:\n\t- implementation (TwoKeyCommunityTokenPool.sol#148-150)\n"
+        },
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": 164,
+          "vulnerability_code": "    function initialize(address sender) public payable {\n\n        require(msg.sender == address(registry));\n",
+          "message": "Contract locking ether found in TwoKeyCommunityTokenPool.sol:\n\tContract TwoKeyCommunityTokenPool has payable functions:\n\t - initialize (TwoKeyCommunityTokenPool.sol#162-164)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "reentrancy-no-eth",
+          "vulnerability_from_line": 343,
+          "vulnerability_to_line": 369,
+          "vulnerability_code": "    function setInitialParams(\n\n        address twoKeySingletonesRegistry,\n\n        address _erc20Address,\n\n        address _proxyStorage\n\n    )\n\n    external\n\n    {\n\n        require(initialized == false);\n\n\n\n        setInitialParameters(_erc20Address, TWO_KEY_SINGLETON_REGISTRY);\n\n\n\n        PROXY_STORAGE_CONTRACT = ITwoKeyCommunityTokenPoolStorage(_proxyStorage);\n\n\n\n        setUint(\"totalAmount2keys\", 200000000);\n\n        setUint(\"annualTransferAmountLimit\", 20000000);\n\n        setUint(\"startingDate\", block.timestamp);\n\n\n\n        for(uint i=1; i<=10; i++) {\n\n            bytes32 key1 = keccak256(\"yearToStartingDate\", i);\n\n            bytes32 key2 = keccak256(\"yearToTransferedThisYear\", i);\n\n\n\n            PROXY_STORAGE_CONTRACT.setUint(key1, block.timestamp + i*(1 years));\n\n            PROXY_STORAGE_CONTRACT.setUint(key2, 0);\n\n        }\n\n\n\n        initialized = true;\n",
+          "message": "Reentrancy in TwoKeyCommunityTokenPool.setInitialParams (TwoKeyCommunityTokenPool.sol#343-369):\n\tExternal calls:\n\t- setUint(totalAmount2keys,200000000) (TwoKeyCommunityTokenPool.sol#356)\n\t- setUint(annualTransferAmountLimit,20000000) (TwoKeyCommunityTokenPool.sol#357)\n\t- setUint(startingDate,block.timestamp) (TwoKeyCommunityTokenPool.sol#358)\n\tState variables written after the call(s):\n\t- initialized (TwoKeyCommunityTokenPool.sol#368)\n"
+        },
+        {
+          "name": "unused-return",
+          "vulnerability_from_line": 244,
+          "vulnerability_to_line": 251,
+          "vulnerability_code": "    function transferTokens(\n\n        address receiver,\n\n        uint amount\n\n    )\n\n    internal\n\n    {\n\n        IERC20(TWO_KEY_ECONOMY).transfer(receiver,amount);\n",
+          "message": "TokenPool.transferTokens (TwoKeyCommunityTokenPool.sol#244-251) does not use the value returned by external calls:\n\t-IERC20(TWO_KEY_ECONOMY).transfer(receiver,amount) (TwoKeyCommunityTokenPool.sol#250)\n"
+        },
+        {
+          "name": "calls-loop",
+          "vulnerability_from_line": 364,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            PROXY_STORAGE_CONTRACT.setUint(key1, block.timestamp + i*(1 years));\n",
+          "message": "TwoKeyCommunityTokenPool.setInitialParams has external calls inside a loop:\n\t- PROXY_STORAGE_CONTRACT.setUint(key1,block.timestamp + i * (220752000)) (TwoKeyCommunityTokenPool.sol#364)\n"
+        },
+        {
+          "name": "calls-loop",
+          "vulnerability_from_line": 365,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            PROXY_STORAGE_CONTRACT.setUint(key2, 0);\n",
+          "message": "TwoKeyCommunityTokenPool.setInitialParams has external calls inside a loop:\n\t- PROXY_STORAGE_CONTRACT.setUint(key2,0) (TwoKeyCommunityTokenPool.sol#365)\n"
+        },
+        {
+          "name": "timestamp",
+          "vulnerability_from_line": 417,
+          "vulnerability_to_line": 435,
+          "vulnerability_code": "    function checkInWhichYearIsTheTransfer()\n\n    public\n\n    view\n\n    returns (uint)\n\n    {\n\n        uint startingDate = getUint(\"startingDate\");\n\n\n\n        if(block.timestamp > startingDate && block.timestamp < startingDate + 1 years) {\n\n            return 1;\n\n        } else {\n\n            uint counter = 1;\n\n            uint start = startingDate + 1 years; //means we're checking for the second year\n\n            while(block.timestamp > start || counter == 10) {\n\n                start = start + 1 years;\n\n                counter ++;\n\n            }\n\n            return counter;\n\n        }\n",
+          "message": "TwoKeyCommunityTokenPool.checkInWhichYearIsTheTransfer (TwoKeyCommunityTokenPool.sol#417-435) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp > start || counter == 10 (TwoKeyCommunityTokenPool.sol#429-432)\n\t- block.timestamp > startingDate && block.timestamp < startingDate + 220752000 (TwoKeyCommunityTokenPool.sol#424-434)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 142,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address internal _implementation;\n",
+          "message": "UpgradeabilityStorage._implementation should be constant (TwoKeyCommunityTokenPool.sol#142)\n"
+        },
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": "Different versions of Solidity is used in TwoKeyCommunityTokenPool.sol:\n\t- Version used: ['^0.4.0', '^0.4.24']\n\t- TwoKeyCommunityTokenPool.sol#3 declares pragma solidity^0.4.24\n\t- TwoKeyCommunityTokenPool.sol#11 declares pragma solidity^0.4.24\n\t- TwoKeyCommunityTokenPool.sol#24 declares pragma solidity^0.4.24\n\t- TwoKeyCommunityTokenPool.sol#91 declares pragma solidity^0.4.24\n\t- TwoKeyCommunityTokenPool.sol#131 declares pragma solidity^0.4.24\n\t- TwoKeyCommunityTokenPool.sol#155 declares pragma solidity^0.4.24\n\t- TwoKeyCommunityTokenPool.sol#169 declares pragma solidity^0.4.24\n\t- TwoKeyCommunityTokenPool.sol#192 declares pragma solidity^0.4.24\n\t- TwoKeyCommunityTokenPool.sol#257 declares pragma solidity^0.4.24\n\t- TwoKeyCommunityTokenPool.sol#266 declares pragma solidity^0.4.0\n\t- TwoKeyCommunityTokenPool.sol#317 declares pragma solidity^0.4.24\n\t- TwoKeyCommunityTokenPool.sol#325 declares pragma solidity^0.4.24\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function onlyMaintainer(address _sender) public view returns (bool);\n",
+          "message": "ITwoKeyMaintainersRegistry.onlyMaintainer (TwoKeyCommunityTokenPool.sol#6) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractProxyAddress(string _contractName) public view returns (address);\n",
+          "message": "ITwoKeySingletoneRegistryFetchAddress.getContractProxyAddress (TwoKeyCommunityTokenPool.sol#17) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getNonUpgradableContractAddress(string contractName) public view returns (address);\n",
+          "message": "ITwoKeySingletoneRegistryFetchAddress.getNonUpgradableContractAddress (TwoKeyCommunityTokenPool.sol#18) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getLatestContractVersion(string contractName) public view returns (string);\n",
+          "message": "ITwoKeySingletoneRegistryFetchAddress.getLatestContractVersion (TwoKeyCommunityTokenPool.sol#19) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": 59,
+          "vulnerability_code": "    function approve(\n\n        address _spender,\n\n        uint256 _value\n\n    )\n\n    public\n",
+          "message": "IERC20.approve (TwoKeyCommunityTokenPool.sol#54-59) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 118,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addVersion(string _contractName, string version, address implementation) public;\n",
+          "message": "ITwoKeySingletonesRegistry.addVersion (TwoKeyCommunityTokenPool.sol#118) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 126,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getVersion(string _contractName, string version) public view returns (address);\n",
+          "message": "ITwoKeySingletonesRegistry.getVersion (TwoKeyCommunityTokenPool.sol#126) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 148,
+          "vulnerability_to_line": 150,
+          "vulnerability_code": "    function implementation() public view returns (address) {\n\n        return _implementation;\n",
+          "message": "UpgradeabilityStorage.implementation (TwoKeyCommunityTokenPool.sol#148-150) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": 164,
+          "vulnerability_code": "    function initialize(address sender) public payable {\n\n        require(msg.sender == address(registry));\n",
+          "message": "Upgradeable.initialize (TwoKeyCommunityTokenPool.sol#162-164) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 233,
+          "vulnerability_to_line": 239,
+          "vulnerability_code": "    function getContractBalance()\n\n    public\n\n    view\n\n    returns (uint)\n\n    {\n\n        return IERC20(TWO_KEY_ECONOMY).balanceOf(address(this));\n",
+          "message": "TokenPool.getContractBalance (TwoKeyCommunityTokenPool.sol#233-239) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 260,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function checkIfUserExists(address _userAddress) public view returns (bool);\n",
+          "message": "ITwoKeyRegistry.checkIfUserExists (TwoKeyCommunityTokenPool.sol#260) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 261,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getUserData(address _user) public view returns (bytes32,bytes32,bytes32);\n",
+          "message": "ITwoKeyRegistry.getUserData (TwoKeyCommunityTokenPool.sol#261) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 391,
+          "vulnerability_to_line": 415,
+          "vulnerability_code": "    function transferTokensToAddress(\n\n        address _receiver,\n\n        uint _amount\n\n    )\n\n    public\n\n    onlyTwoKeyAdmin\n\n    {\n\n        require(validateRegistrationOfReceiver(_receiver) == true);\n\n        require(_amount > 0);\n\n\n\n        uint year = checkInWhichYearIsTheTransfer();\n\n        require(year >= 1 && year <= 10);\n\n\n\n        bytes32 keyTransferedThisYear = keccak256(\"yearToTransferedThisYear\",year);\n\n        bytes32 keyAnnualTransferAmountLimit = keccak256(\"annualTransferAmountLimit\");\n\n\n\n        uint transferedThisYear = PROXY_STORAGE_CONTRACT.getUint(keyTransferedThisYear);\n\n        uint annualTransferAmountLimit = PROXY_STORAGE_CONTRACT.getUint(keyAnnualTransferAmountLimit);\n\n\n\n        require(transferedThisYear + _amount <= annualTransferAmountLimit);\n\n        super.transferTokens(_receiver,_amount);\n\n\n\n        PROXY_STORAGE_CONTRACT.setUint(keyTransferedThisYear, transferedThisYear + _amount);\n\n\n",
+          "message": "TwoKeyCommunityTokenPool.transferTokensToAddress (TwoKeyCommunityTokenPool.sol#391-415) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 266,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;\n",
+          "message": "Detected issues with version pragma in TwoKeyCommunityTokenPool.sol:\n\t- pragma solidity^0.4.0 (TwoKeyCommunityTokenPool.sol#266): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 142,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address internal _implementation;\n",
+          "message": "Variable 'UpgradeabilityStorage._implementation' (TwoKeyCommunityTokenPool.sol#142) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 174,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public TWO_KEY_SINGLETON_REGISTRY;\n",
+          "message": "Variable 'ITwoKeySingletonUtils.TWO_KEY_SINGLETON_REGISTRY' (TwoKeyCommunityTokenPool.sol#174) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 209,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _erc20address,\n",
+          "message": "Parameter '_erc20address' of TokenPool.setInitialParameters (TwoKeyCommunityTokenPool.sol#209) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 210,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _twoKeySingletonesRegistry\n",
+          "message": "Parameter '_twoKeySingletonesRegistry' of TokenPool.setInitialParameters (TwoKeyCommunityTokenPool.sol#210) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 206,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public TWO_KEY_ECONOMY;\n",
+          "message": "Variable 'TokenPool.TWO_KEY_ECONOMY' (TwoKeyCommunityTokenPool.sol#206) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 345,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _erc20Address,\n",
+          "message": "Parameter '_erc20Address' of TwoKeyCommunityTokenPool.setInitialParams (TwoKeyCommunityTokenPool.sol#345) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 346,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _proxyStorage\n",
+          "message": "Parameter '_proxyStorage' of TwoKeyCommunityTokenPool.setInitialParams (TwoKeyCommunityTokenPool.sol#346) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 375,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _receiver\n",
+          "message": "Parameter '_receiver' of TwoKeyCommunityTokenPool.validateRegistrationOfReceiver (TwoKeyCommunityTokenPool.sol#375) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 392,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _receiver,\n",
+          "message": "Parameter '_receiver' of TwoKeyCommunityTokenPool.transferTokensToAddress (TwoKeyCommunityTokenPool.sol#392) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 393,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint _amount\n",
+          "message": "Parameter '_amount' of TwoKeyCommunityTokenPool.transferTokensToAddress (TwoKeyCommunityTokenPool.sol#393) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 335,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ITwoKeyCommunityTokenPoolStorage public PROXY_STORAGE_CONTRACT;\n",
+          "message": "Variable 'TwoKeyCommunityTokenPool.PROXY_STORAGE_CONTRACT' (TwoKeyCommunityTokenPool.sol#335) is not in mixedCase\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 338,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(uint => uint) yearToStartingDate;\n",
+          "message": "TwoKeyCommunityTokenPool.yearToStartingDate (TwoKeyCommunityTokenPool.sol#338) is never used in TwoKeyCommunityTokenPool\nTwoKeyCommunityTokenPool.yearToTransferedThisYear (TwoKeyCommunityTokenPool.sol#339) is never used in TwoKeyCommunityTokenPool\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 364,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            PROXY_STORAGE_CONTRACT.setUint(key1, block.timestamp + i*(1 years));\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 424,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if(block.timestamp > startingDate && block.timestamp < startingDate + 1 years) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 428,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            uint start = startingDate + 1 years; //means we're checking for the second year\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 430,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                start = start + 1 years;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 429,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            while(block.timestamp > start || counter == 10) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 157,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Upgradeable is UpgradeabilityStorage {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 131,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 169,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 192,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 257,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 266,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 317,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 325,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 361,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            bytes32 key1 = keccak256(\"yearToStartingDate\", i);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 362,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            bytes32 key2 = keccak256(\"yearToTransferedThisYear\", i);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 404,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes32 keyTransferedThisYear = keccak256(\"yearToTransferedThisYear\",year);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractProxyAddress(string _contractName) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getNonUpgradableContractAddress(string contractName) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getLatestContractVersion(string contractName) public view returns (string);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getLatestContractVersion(string contractName) public view returns (string);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 118,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addVersion(string _contractName, string version, address implementation) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 118,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addVersion(string _contractName, string version, address implementation) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 126,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getVersion(string _contractName, string version) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 126,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getVersion(string _contractName, string version) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 184,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getAddressFromTwoKeySingletonRegistry(string contractName) internal view returns (address) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 439,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        string key,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 448,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        string key\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 118,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addVersion(string _contractName, string version, address implementation) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 126,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getVersion(string _contractName, string version) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 204,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool initialized = false;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 338,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(uint => uint) yearToStartingDate;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 339,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(uint => uint) yearToTransferedThisYear;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 454,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return PROXY_STORAGE_CONTRACT.getUint(keccak256(key));\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

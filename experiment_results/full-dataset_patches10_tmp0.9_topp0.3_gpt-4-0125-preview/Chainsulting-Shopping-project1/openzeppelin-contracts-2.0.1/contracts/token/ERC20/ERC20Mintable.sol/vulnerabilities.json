@@ -1,0 +1,306 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 377,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor() internal {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 378,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _addMinter(msg.sender);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 379,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_23"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": 132,
+          "vulnerability_code": "  function totalSupply() public view returns (uint256) {\n\n    return _totalSupply;\n",
+          "message": "ERC20.totalSupply (ERC20Mintable.sol#130-132) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function totalSupply() external view returns (uint256);\n",
+          "message": "IERC20.totalSupply (ERC20Mintable.sol#10) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address who) external view returns (uint256);\n",
+          "message": "IERC20.balanceOf (ERC20Mintable.sol#12) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 139,
+          "vulnerability_to_line": 141,
+          "vulnerability_code": "  function balanceOf(address owner) public view returns (uint256) {\n\n    return _balances[owner];\n",
+          "message": "ERC20.balanceOf (ERC20Mintable.sol#139-141) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 149,
+          "vulnerability_to_line": 158,
+          "vulnerability_code": "  function allowance(\n\n    address owner,\n\n    address spender\n\n   )\n\n    public\n\n    view\n\n    returns (uint256)\n\n  {\n\n    return _allowed[owner][spender];\n",
+          "message": "ERC20.allowance (ERC20Mintable.sol#149-158) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "  function allowance(address owner, address spender)\n",
+          "message": "IERC20.allowance (ERC20Mintable.sol#14-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 165,
+          "vulnerability_to_line": 168,
+          "vulnerability_code": "  function transfer(address to, uint256 value) public returns (bool) {\n\n    _transfer(msg.sender, to, value);\n\n    return true;\n",
+          "message": "ERC20.transfer (ERC20Mintable.sol#165-168) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address to, uint256 value) external returns (bool);\n",
+          "message": "IERC20.transfer (ERC20Mintable.sol#17) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": 185,
+          "vulnerability_code": "  function approve(address spender, uint256 value) public returns (bool) {\n\n    require(spender != address(0));\n\n\n\n    _allowed[msg.sender][spender] = value;\n\n    emit Approval(msg.sender, spender, value);\n\n    return true;\n",
+          "message": "ERC20.approve (ERC20Mintable.sol#179-185) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 20,
+          "vulnerability_code": "  function approve(address spender, uint256 value)\n",
+          "message": "IERC20.approve (ERC20Mintable.sol#19-20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 193,
+          "vulnerability_to_line": 206,
+          "vulnerability_code": "  function transferFrom(\n\n    address from,\n\n    address to,\n\n    uint256 value\n\n  )\n\n    public\n\n    returns (bool)\n\n  {\n\n    require(value <= _allowed[from][msg.sender]);\n\n\n\n    _allowed[from][msg.sender] = _allowed[from][msg.sender].sub(value);\n\n    _transfer(from, to, value);\n\n    return true;\n",
+          "message": "ERC20.transferFrom (ERC20Mintable.sol#193-206) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "  function transferFrom(address from, address to, uint256 value)\n",
+          "message": "IERC20.transferFrom (ERC20Mintable.sol#22-23) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 217,
+          "vulnerability_to_line": 230,
+          "vulnerability_code": "  function increaseAllowance(\n\n    address spender,\n\n    uint256 addedValue\n\n  )\n\n    public\n\n    returns (bool)\n\n  {\n\n    require(spender != address(0));\n\n\n\n    _allowed[msg.sender][spender] = (\n\n      _allowed[msg.sender][spender].add(addedValue));\n\n    emit Approval(msg.sender, spender, _allowed[msg.sender][spender]);\n\n    return true;\n",
+          "message": "ERC20.increaseAllowance (ERC20Mintable.sol#217-230) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 241,
+          "vulnerability_to_line": 254,
+          "vulnerability_code": "  function decreaseAllowance(\n\n    address spender,\n\n    uint256 subtractedValue\n\n  )\n\n    public\n\n    returns (bool)\n\n  {\n\n    require(spender != address(0));\n\n\n\n    _allowed[msg.sender][spender] = (\n\n      _allowed[msg.sender][spender].sub(subtractedValue));\n\n    emit Approval(msg.sender, spender, _allowed[msg.sender][spender]);\n\n    return true;\n",
+          "message": "ERC20.decreaseAllowance (ERC20Mintable.sol#241-254) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 390,
+          "vulnerability_to_line": 392,
+          "vulnerability_code": "  function addMinter(address account) public onlyMinter {\n\n    _addMinter(account);\n",
+          "message": "MinterRole.addMinter (ERC20Mintable.sol#390-392) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 394,
+          "vulnerability_to_line": 396,
+          "vulnerability_code": "  function renounceMinter() public {\n\n    _removeMinter(msg.sender);\n",
+          "message": "MinterRole.renounceMinter (ERC20Mintable.sol#394-396) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 425,
+          "vulnerability_to_line": 435,
+          "vulnerability_code": "  function mint(\n\n    address to,\n\n    uint256 value\n\n  )\n\n    public\n\n    onlyMinter\n\n    returns (bool)\n\n  {\n\n    _mint(to, value);\n\n    return true;\n",
+          "message": "ERC20Mintable.mint (ERC20Mintable.sol#425-435) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 262,
+          "vulnerability_to_line": 269,
+          "vulnerability_code": "  function _transfer(address from, address to, uint256 value) internal {\n\n    require(value <= _balances[from]);\n\n    require(to != address(0));\n\n\n\n    _balances[from] = _balances[from].sub(value);\n\n    _balances[to] = _balances[to].add(value);\n\n    emit Transfer(from, to, value);\n",
+          "message": "Function 'ERC20._transfer' (ERC20Mintable.sol#262-269) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 278,
+          "vulnerability_to_line": 283,
+          "vulnerability_code": "  function _mint(address account, uint256 value) internal {\n\n    require(account != 0);\n\n    _totalSupply = _totalSupply.add(value);\n\n    _balances[account] = _balances[account].add(value);\n\n    emit Transfer(address(0), account, value);\n",
+          "message": "Function 'ERC20._mint' (ERC20Mintable.sol#278-283) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 291,
+          "vulnerability_to_line": 298,
+          "vulnerability_code": "  function _burn(address account, uint256 value) internal {\n\n    require(account != 0);\n\n    require(value <= _balances[account]);\n\n\n\n    _totalSupply = _totalSupply.sub(value);\n\n    _balances[account] = _balances[account].sub(value);\n\n    emit Transfer(account, address(0), value);\n",
+          "message": "Function 'ERC20._burn' (ERC20Mintable.sol#291-298) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 307,
+          "vulnerability_to_line": 315,
+          "vulnerability_code": "  function _burnFrom(address account, uint256 value) internal {\n\n    require(value <= _allowed[account][msg.sender]);\n\n\n\n    // Should https://github.com/OpenZeppelin/zeppelin-solidity/issues/707 be accepted,\n\n    // this function needs to emit an event with the updated approval.\n\n    _allowed[account][msg.sender] = _allowed[account][msg.sender].sub(\n\n      value);\n\n    _burn(account, value);\n",
+          "message": "Function 'ERC20._burnFrom' (ERC20Mintable.sol#307-315) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 398,
+          "vulnerability_to_line": 401,
+          "vulnerability_code": "  function _addMinter(address account) internal {\n\n    minters.add(account);\n\n    emit MinterAdded(account);\n",
+          "message": "Function 'MinterRole._addMinter' (ERC20Mintable.sol#398-401) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 403,
+          "vulnerability_to_line": 406,
+          "vulnerability_code": "  function _removeMinter(address account) internal {\n\n    minters.remove(account);\n\n    emit MinterRemoved(account);\n",
+          "message": "Function 'MinterRole._removeMinter' (ERC20Mintable.sol#403-406) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address spender, uint256 value) public returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 320,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 367,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 411,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 121,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  mapping (address => uint256) private _balances;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 123,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  mapping (address => mapping (address => uint256)) private _allowed;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint256 private _totalSupply;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 375,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  Roles.Role private minters;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 119,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

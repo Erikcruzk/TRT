@@ -1,0 +1,78 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "pragma solidity 0.5.17;\n",
+          "message": "Different versions of Solidity is used in DummyRariFundController.sol:\n\t- Version used: ['0.5.17', 'ABIEncoderV2']\n\t- DummyRariFundController.sol#12-13 declares pragma solidity0.5.17\n\t- DummyRariFundController.sol#13-14 declares pragma experimentalABIEncoderV2\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": 52,
+          "vulnerability_code": "    function getPoolBalance(uint8 pool, string memory currencyCode) public returns (uint256) {\n\n        return _getPoolBalance(pool, currencyCode);\n\n    }\n",
+          "message": "DummyRariFundController.getPoolBalance (DummyRariFundController.sol#49-52) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 13,
+          "vulnerability_code": "pragma solidity 0.5.17;\n",
+          "message": "Detected issues with version pragma in DummyRariFundController.sol:\n\t- pragma solidity0.5.17 (DummyRariFundController.sol#12-13): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 42,
+          "vulnerability_code": "    function _getPoolBalance(uint8 pool, string memory currencyCode) public returns (uint256) {\n\n        return 0;\n\n    }\n",
+          "message": "Function 'DummyRariFundController._getPoolBalance' (DummyRariFundController.sol#39-42) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getDydxBalances() external view returns (address[] memory, uint256[] memory) {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

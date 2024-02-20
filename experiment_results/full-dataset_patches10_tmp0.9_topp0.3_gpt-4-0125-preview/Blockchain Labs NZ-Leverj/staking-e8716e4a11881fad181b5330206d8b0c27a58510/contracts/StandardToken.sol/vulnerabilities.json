@@ -1,0 +1,287 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-multiple-require",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(balances[_from] >= _value && allowed[_from][msg.sender] >= _value);\n",
+          "message": "Using multiple require statements is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_22"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public totalSupply;\n",
+          "message": "Token.totalSupply should be constant (StandardToken.sol#18)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": 91,
+          "vulnerability_code": "    function balanceOf(address _owner) public constant returns (uint256 balance) {\n\n        return balances[_owner];\n",
+          "message": "StandardToken.balanceOf (StandardToken.sol#89-91) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address _owner) public constant returns (uint256 balance);\n",
+          "message": "Token.balanceOf (StandardToken.sol#22) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public returns (bool success);\n",
+          "message": "Token.transfer (StandardToken.sol#28) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": 76,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public returns (bool success) {\n\n        //Default assumes totalSupply can't be over max (2^256 - 1).\n\n        //If your token leaves out totalSupply and can issue more tokens as time goes on, you need to check if it doesn't wrap.\n\n        //Replace the if with this one instead.\n\n        //require(balances[msg.sender] >= _value && balances[_to] + _value > balances[_to]);\n\n        require(balances[msg.sender] >= _value);\n\n        balances[msg.sender] -= _value;\n\n        balances[_to] += _value;\n\n        Transfer(msg.sender, _to, _value);\n\n        return true;\n",
+          "message": "StandardToken.transfer (StandardToken.sol#66-76) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success);\n",
+          "message": "Token.transferFrom (StandardToken.sol#35) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": 87,
+          "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {\n\n        //same as above. Replace this line with the following if you want to protect against wrapping uints.\n\n        //require(balances[_from] >= _value && allowed[_from][msg.sender] >= _value && balances[_to] + _value > balances[_to]);\n\n        require(balances[_from] >= _value && allowed[_from][msg.sender] >= _value);\n\n        balances[_to] += _value;\n\n        balances[_from] -= _value;\n\n        allowed[_from][msg.sender] -= _value;\n\n        Transfer(_from, _to, _value);\n\n        return true;\n",
+          "message": "StandardToken.transferFrom (StandardToken.sol#78-87) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 93,
+          "vulnerability_to_line": 97,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) public returns (bool success) {\n\n        allowed[msg.sender][_spender] = _value;\n\n        Approval(msg.sender, _spender, _value);\n\n        return true;\n",
+          "message": "StandardToken.approve (StandardToken.sol#93-97) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) public returns (bool success);\n",
+          "message": "Token.approve (StandardToken.sol#41) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function allowance(address _owner, address _spender) public constant returns (uint256 remaining);\n",
+          "message": "Token.allowance (StandardToken.sol#46) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": 101,
+          "vulnerability_code": "    function allowance(address _owner, address _spender) public constant returns (uint256 remaining) {\n\n      return allowed[_owner][_spender];\n",
+          "message": "StandardToken.allowance (StandardToken.sol#99-101) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.8;\n",
+          "message": "Detected issues with version pragma in StandardToken.sol:\n\t- pragma solidity^0.4.8 (StandardToken.sol#5): it allows old versions\n\t- pragma solidity^0.4.8 (StandardToken.sol#62): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address _owner) public constant returns (uint256 balance) {\n",
+          "message": "Parameter '_owner' of StandardToken.balanceOf (StandardToken.sol#89) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public returns (bool success) {\n",
+          "message": "Parameter '_to' of StandardToken.transfer (StandardToken.sol#66) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public returns (bool success) {\n",
+          "message": "Parameter '_value' of StandardToken.transfer (StandardToken.sol#66) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {\n",
+          "message": "Parameter '_from' of StandardToken.transferFrom (StandardToken.sol#78) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {\n",
+          "message": "Parameter '_to' of StandardToken.transferFrom (StandardToken.sol#78) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {\n",
+          "message": "Parameter '_value' of StandardToken.transferFrom (StandardToken.sol#78) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 93,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) public returns (bool success) {\n",
+          "message": "Parameter '_spender' of StandardToken.approve (StandardToken.sol#93) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 93,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) public returns (bool success) {\n",
+          "message": "Parameter '_value' of StandardToken.approve (StandardToken.sol#93) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function allowance(address _owner, address _spender) public constant returns (uint256 remaining) {\n",
+          "message": "Parameter '_owner' of StandardToken.allowance (StandardToken.sol#99) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function allowance(address _owner, address _spender) public constant returns (uint256 remaining) {\n",
+          "message": "Parameter '_spender' of StandardToken.allowance (StandardToken.sol#99) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address _owner) public constant returns (uint256 balance);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function allowance(address _owner, address _spender) public constant returns (uint256 remaining);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address _owner) public constant returns (uint256 balance) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function allowance(address _owner, address _spender) public constant returns (uint256 remaining) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 93,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) public returns (bool success) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.8;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.8;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 103,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping (address => uint256) balances;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 104,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping (address => mapping (address => uint256)) allowed;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        balances[_to] += _value;\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        balances[_to] += _value;\n",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        balances[_to] += _value;\n",
+          "message": null
+        }
+      ]
+    }
+  }
+}

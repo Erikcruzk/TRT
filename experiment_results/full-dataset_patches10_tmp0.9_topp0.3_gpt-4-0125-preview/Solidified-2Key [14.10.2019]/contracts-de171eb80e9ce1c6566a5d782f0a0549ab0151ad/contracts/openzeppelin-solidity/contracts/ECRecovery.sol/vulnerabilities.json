@@ -1,0 +1,159 @@
+{
+  "smartbugs_completed": "No vulnerabilities found",
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    if (v != 27 && v != 28) {\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      return (address(0));\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    } else {\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      // solium-disable-next-line arg-overflow\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      return ecrecover(_hash, v, r, s);\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 56,
+          "vulnerability_code": "  function recover(bytes32 _hash, bytes _sig)\n\n    internal\n\n    pure\n\n    returns (address)\n\n  {\n\n    bytes32 r;\n\n    bytes32 s;\n\n    uint8 v;\n\n\n\n    // Check the signature length\n\n    if (_sig.length != 65) {\n\n      return (address(0));\n\n    }\n\n\n\n    // Divide the signature in r, s and v variables\n\n    // ecrecover takes the signature parameters, and the only way to get them\n\n    // currently is to use assembly.\n\n    // solium-disable-next-line security/no-inline-assembly\n\n    assembly {\n\n      r := mload(add(_sig, 32))\n\n      s := mload(add(_sig, 64))\n\n      v := byte(0, mload(add(_sig, 96)))\n\n    }\n\n\n\n    // Version of signature should be 27 or 28, but 0 and 1 are also possible versions\n\n    if (v < 27) {\n\n      v += 27;\n\n    }\n\n\n\n    // If the version is correct return the signer address\n\n    if (v != 27 && v != 28) {\n\n      return (address(0));\n\n    } else {\n\n      // solium-disable-next-line arg-overflow\n\n      return ecrecover(_hash, v, r, s);\n\n    }\n",
+          "message": "ECRecovery.recover (ECRecovery.sol#20-56) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 56,
+          "vulnerability_code": "  function recover(bytes32 _hash, bytes _sig)\n\n    internal\n\n    pure\n\n    returns (address)\n\n  {\n\n    bytes32 r;\n\n    bytes32 s;\n\n    uint8 v;\n\n\n\n    // Check the signature length\n\n    if (_sig.length != 65) {\n\n      return (address(0));\n\n    }\n\n\n\n    // Divide the signature in r, s and v variables\n\n    // ecrecover takes the signature parameters, and the only way to get them\n\n    // currently is to use assembly.\n\n    // solium-disable-next-line security/no-inline-assembly\n\n    assembly {\n\n      r := mload(add(_sig, 32))\n\n      s := mload(add(_sig, 64))\n\n      v := byte(0, mload(add(_sig, 96)))\n\n    }\n\n\n\n    // Version of signature should be 27 or 28, but 0 and 1 are also possible versions\n\n    if (v < 27) {\n\n      v += 27;\n\n    }\n\n\n\n    // If the version is correct return the signer address\n\n    if (v != 27 && v != 28) {\n\n      return (address(0));\n\n    } else {\n\n      // solium-disable-next-line arg-overflow\n\n      return ecrecover(_hash, v, r, s);\n\n    }\n",
+          "message": "ECRecovery.recover uses assembly (ECRecovery.sol#20-56)\n\t- ECRecovery.sol#38-45\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function recover(bytes32 _hash, bytes _sig)\n",
+          "message": "Parameter '_hash' of ECRecovery.recover (ECRecovery.sol#20) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function recover(bytes32 _hash, bytes _sig)\n",
+          "message": "Parameter '_sig' of ECRecovery.recover (ECRecovery.sol#20) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function toEthSignedMessageHash(bytes32 _hash)\n",
+          "message": "Parameter '_hash' of ECRecovery.toEthSignedMessageHash (ECRecovery.sol#63) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      return (address(0));\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      return (address(0));\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function recover(bytes32 _hash, bytes _sig)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function recover(bytes32 _hash, bytes _sig)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

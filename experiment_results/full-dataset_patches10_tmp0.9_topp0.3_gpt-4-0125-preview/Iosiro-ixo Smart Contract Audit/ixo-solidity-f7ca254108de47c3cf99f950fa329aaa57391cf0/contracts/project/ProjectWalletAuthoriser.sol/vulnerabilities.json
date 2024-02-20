@@ -1,0 +1,244 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract ProjectWalletAuthoriser is Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == owner, \"Permission denied\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_newOwner != address(0), \"Can't transfer to 0x0\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == authoriser, \"Permission denied\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_13"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "unused-return",
+          "vulnerability_from_line": 105,
+          "vulnerability_to_line": 114,
+          "vulnerability_code": "    function transfer(\n\n        address _sender, \n\n        address _receiver, \n\n        uint256 _amt\n\n    )\n\n    public onlyAuthoriser\n\n    returns (bool)\n\n    {\n\n        ProjectWallet(_sender).transfer(_receiver, _amt);\n",
+          "message": "ProjectWalletAuthoriser.transfer (ProjectWalletAuthoriser.sol#105-114) does not use the value returned by external calls:\n\t-ProjectWallet(_sender).transfer(_receiver,_amt) (ProjectWalletAuthoriser.sol#113)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": 46,
+          "vulnerability_code": "    function renounceOwnership() public onlyOwner {\n\n        emit OwnershipRenounced(owner);\n\n        owner = address(0);\n",
+          "message": "Ownable.renounceOwnership (ProjectWalletAuthoriser.sol#43-46) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": 54,
+          "vulnerability_code": "    function transferOwnership(address _newOwner) public onlyOwner {\n\n        _transferOwnership(_newOwner);\n",
+          "message": "Ownable.transferOwnership (ProjectWalletAuthoriser.sol#52-54) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _receiver, uint256 _amt) public returns (bool);\n",
+          "message": "ProjectWallet.transfer (ProjectWalletAuthoriser.sol#73) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": 97,
+          "vulnerability_code": "    function setAuthoriser(address _authoriser) public onlyOwner returns (bool)\n\n    {\n\n        authoriser = _authoriser;\n",
+          "message": "ProjectWalletAuthoriser.setAuthoriser (ProjectWalletAuthoriser.sol#94-97) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 105,
+          "vulnerability_to_line": 114,
+          "vulnerability_code": "    function transfer(\n\n        address _sender, \n\n        address _receiver, \n\n        uint256 _amt\n\n    )\n\n    public onlyAuthoriser\n\n    returns (bool)\n\n    {\n\n        ProjectWallet(_sender).transfer(_receiver, _amt);\n",
+          "message": "ProjectWalletAuthoriser.transfer (ProjectWalletAuthoriser.sol#105-114) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferOwnership(address _newOwner) public onlyOwner {\n",
+          "message": "Parameter '_newOwner' of Ownable.transferOwnership (ProjectWalletAuthoriser.sol#52) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": 64,
+          "vulnerability_code": "    function _transferOwnership(address _newOwner) internal {\n\n        require(_newOwner != address(0), \"Can't transfer to 0x0\");\n\n        emit OwnershipTransferred(owner, _newOwner);\n\n        owner = _newOwner;\n",
+          "message": "Function 'Ownable._transferOwnership' (ProjectWalletAuthoriser.sol#60-64) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _transferOwnership(address _newOwner) internal {\n",
+          "message": "Parameter '_newOwner' of Ownable._transferOwnership (ProjectWalletAuthoriser.sol#60) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setAuthoriser(address _authoriser) public onlyOwner returns (bool)\n",
+          "message": "Parameter '_authoriser' of ProjectWalletAuthoriser.setAuthoriser (ProjectWalletAuthoriser.sol#94) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 106,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _sender, \n",
+          "message": "Parameter '_sender' of ProjectWalletAuthoriser.transfer (ProjectWalletAuthoriser.sol#106) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 107,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _receiver, \n",
+          "message": "Parameter '_receiver' of ProjectWalletAuthoriser.transfer (ProjectWalletAuthoriser.sol#107) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _amt\n",
+          "message": "Parameter '_amt' of ProjectWalletAuthoriser.transfer (ProjectWalletAuthoriser.sol#108) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner = address(0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setAuthoriser(address _authoriser) public onlyOwner returns (bool)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 105,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_OVERPOWERED_ROLE",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setAuthoriser(address _authoriser) public onlyOwner returns (bool)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 84,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address private authoriser;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        ProjectWallet(_sender).transfer(_receiver, _amt);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

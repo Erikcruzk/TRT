@@ -1,0 +1,240 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        emit LogSetOwner(msg.sender);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(newOwner_ != owner, \"TransferOwnership: the same owner.\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == newOwner, \"AcceptOwnership: only new owner do this.\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 68,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(isOwner(msg.sender), \"ds-auth-non-owner\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(isAuthorized(msg.sender, msg.sig), \"ds-auth-unauthorized\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(newOwner_ != owner, \"TransferOwnership: the same owner.\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == newOwner, \"AcceptOwnership: only new owner do this.\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_12"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function canCall(\n\n        address src, address dst, bytes4 sig\n",
+          "message": "DSAuthority.canCall (DSGuard.sol#19-21) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": 148,
+          "vulnerability_code": "    function canCall(\n\n        address src_, address dst_, bytes4 sig\n\n    ) public view returns (bool) {\n\n        bytes32 src = bytes32(bytes20(src_));\n\n        bytes32 dst = bytes32(bytes20(dst_));\n\n\n\n        return acl[src][dst][sig]\n\n            || acl[src][dst][ANY]\n\n            || acl[src][ANY][sig]\n\n            || acl[src][ANY][ANY]\n\n            || acl[ANY][dst][sig]\n\n            || acl[ANY][dst][ANY]\n\n            || acl[ANY][ANY][sig]\n\n            || acl[ANY][ANY][ANY];\n",
+          "message": "DSGuard.canCall (DSGuard.sol#134-148) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": 44,
+          "vulnerability_code": "    function disableOwnership() public onlyOwner {\n\n        owner = address(0);\n\n        emit OwnerUpdate(msg.sender, owner);\n",
+          "message": "DSAuth.disableOwnership (DSGuard.sol#41-44) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": 49,
+          "vulnerability_code": "    function transferOwnership(address newOwner_) public onlyOwner {\n\n        require(newOwner_ != owner, \"TransferOwnership: the same owner.\");\n\n        newOwner = newOwner_;\n",
+          "message": "DSAuth.transferOwnership (DSGuard.sol#46-49) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": 56,
+          "vulnerability_code": "    function acceptOwnership() public {\n\n        require(msg.sender == newOwner, \"AcceptOwnership: only new owner do this.\");\n\n        emit OwnerUpdate(owner, newOwner);\n\n        owner = newOwner;\n\n        newOwner = address(0x0);\n",
+          "message": "DSAuth.acceptOwnership (DSGuard.sol#51-56) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "    function setAuthority(DSAuthority authority_)\n\n        public\n\n        onlyOwner\n\n    {\n\n        authority = authority_;\n\n        emit LogSetAuthority(address(authority));\n",
+          "message": "DSAuth.setAuthority (DSGuard.sol#59-65) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 160,
+          "vulnerability_to_line": 162,
+          "vulnerability_code": "    function permit(address src, address dst, bytes32 sig) public auth {\n\n        _permit(bytes32(bytes20(src)), bytes32(bytes20(dst)), sig);\n",
+          "message": "DSGuard.permit (DSGuard.sol#160-162) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 163,
+          "vulnerability_to_line": 165,
+          "vulnerability_code": "    function permitx(address src, address dst) public auth {\n\n        _permit(bytes32(bytes20(src)), bytes32(bytes20(dst)), ANY);\n",
+          "message": "DSGuard.permitx (DSGuard.sol#163-165) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 166,
+          "vulnerability_to_line": 168,
+          "vulnerability_code": "    function forbid(address src, address dst, bytes32 sig) public auth {\n\n        _forbid(bytes32(bytes20(src)), bytes32(bytes20(dst)), sig);\n",
+          "message": "DSGuard.forbid (DSGuard.sol#166-168) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 169,
+          "vulnerability_to_line": 171,
+          "vulnerability_code": "    function forbidx(address src, address dst) public auth {\n\n        _forbid(bytes32(bytes20(src)), bytes32(bytes20(dst)), ANY);\n",
+          "message": "DSGuard.forbidx (DSGuard.sol#169-171) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 150,
+          "vulnerability_to_line": 153,
+          "vulnerability_code": "    function _permit(bytes32 src, bytes32 dst, bytes32 sig) internal  {\n\n        acl[src][dst][sig] = true;\n\n        emit LogPermit(src, dst, sig);\n",
+          "message": "Function 'DSGuard._permit' (DSGuard.sol#150-153) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": 158,
+          "vulnerability_code": "    function _forbid(bytes32 src, bytes32 dst, bytes32 sig) internal {\n\n        acl[src][dst][sig] = false;\n\n        emit LogForbid(src, dst, sig);\n",
+          "message": "Function 'DSGuard._forbid' (DSGuard.sol#155-158) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner = address(0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        newOwner = address(0x0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_OVERPOWERED_ROLE",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setAuthority(DSAuthority authority_)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.2;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.2;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 132,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping (bytes32 => mapping (bytes32 => mapping (bytes32 => bool))) acl;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

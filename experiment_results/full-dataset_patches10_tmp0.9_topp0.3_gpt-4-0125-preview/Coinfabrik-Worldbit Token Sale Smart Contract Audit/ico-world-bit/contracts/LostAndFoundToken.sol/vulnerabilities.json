@@ -1,0 +1,157 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_10"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "unused-return",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": 58,
+          "vulnerability_code": "  function enableLostAndFound(address agent, uint tokens, EIP20Token token_contract) public {\n\n    require(msg.sender == getLostAndFoundMaster());\n\n    // We use approve instead of transfer to minimize the possibility of the lost and found master\n\n    //  getting them stuck in another address by accident.\n\n    token_contract.approve(agent, tokens);\n",
+          "message": "LostAndFoundToken.enableLostAndFound (LostAndFoundToken.sol#53-58) does not use the value returned by external calls:\n\t-token_contract.approve(agent,tokens) (LostAndFoundToken.sol#57)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function totalSupply() public constant returns (uint256);\n",
+          "message": "EIP20Token.totalSupply (LostAndFoundToken.sol#11) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address who) public constant returns (uint256);\n",
+          "message": "EIP20Token.balanceOf (LostAndFoundToken.sol#12) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address to, uint256 value) public returns (bool success);\n",
+          "message": "EIP20Token.transfer (LostAndFoundToken.sol#13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address from, address to, uint256 value) public returns (bool success);\n",
+          "message": "EIP20Token.transferFrom (LostAndFoundToken.sol#14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address spender, uint256 value) public returns (bool success);\n",
+          "message": "EIP20Token.approve (LostAndFoundToken.sol#15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function allowance(address owner, address spender) public constant returns (uint256 remaining);\n",
+          "message": "EIP20Token.allowance (LostAndFoundToken.sol#16) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": 58,
+          "vulnerability_code": "  function enableLostAndFound(address agent, uint tokens, EIP20Token token_contract) public {\n\n    require(msg.sender == getLostAndFoundMaster());\n\n    // We use approve instead of transfer to minimize the possibility of the lost and found master\n\n    //  getting them stuck in another address by accident.\n\n    token_contract.approve(agent, tokens);\n",
+          "message": "LostAndFoundToken.enableLostAndFound (LostAndFoundToken.sol#53-58) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": "Detected issues with version pragma in LostAndFoundToken.sol:\n\t- pragma solidity^0.4.15 (LostAndFoundToken.sol#3): it allows old versions\n\t- pragma solidity^0.4.15 (LostAndFoundToken.sol#33): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function enableLostAndFound(address agent, uint tokens, EIP20Token token_contract) public {\n",
+          "message": "Parameter 'token_contract' of LostAndFoundToken.enableLostAndFound (LostAndFoundToken.sol#53) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function totalSupply() public constant returns (uint256);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address who) public constant returns (uint256);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function allowance(address owner, address spender) public constant returns (uint256 remaining);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function getLostAndFoundMaster() internal constant returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "execution failed"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": false,
+      "errors": [
+        "input files do not contain any valid contracts"
+      ],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

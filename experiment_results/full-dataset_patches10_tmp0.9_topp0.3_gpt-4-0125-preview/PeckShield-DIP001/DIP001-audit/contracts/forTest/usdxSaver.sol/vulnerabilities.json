@@ -1,0 +1,318 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        emit LogSetOwner(msg.sender);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\tconstructor (address _token) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 126,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\ttoken = _token;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 127,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t}\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(newOwner_ != owner, \"TransferOwnership: the same owner.\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == newOwner, \"AcceptOwnership: only new owner do this.\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 68,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(isOwner(msg.sender), \"ds-auth-non-owner\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(isAuthorized(msg.sender, msg.sig), \"ds-auth-unauthorized\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require((z = x + y) >= x, \"ds-math-add-overflow\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 116,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require((z = x - y) <= x, \"ds-math-sub-underflow\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(newOwner_ != owner, \"TransferOwnership: the same owner.\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == newOwner, \"AcceptOwnership: only new owner do this.\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_16"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": "Different versions of Solidity is used in usdxSaver.sol:\n\t- Version used: ['^0.5.2', '^0.5.4']\n\t- usdxSaver.sol#16 declares pragma solidity^0.5.4\n\t- usdxSaver.sol#96 declares pragma solidity^0.5.2\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function canCall(\n\n        address src, address dst, bytes4 sig\n",
+          "message": "DSAuthority.canCall (usdxSaver.sol#19-21) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": 44,
+          "vulnerability_code": "    function disableOwnership() public onlyOwner {\n\n        owner = address(0);\n\n        emit OwnerUpdate(msg.sender, owner);\n",
+          "message": "DSAuth.disableOwnership (usdxSaver.sol#41-44) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": 49,
+          "vulnerability_code": "    function transferOwnership(address newOwner_) public onlyOwner {\n\n        require(newOwner_ != owner, \"TransferOwnership: the same owner.\");\n\n        newOwner = newOwner_;\n",
+          "message": "DSAuth.transferOwnership (usdxSaver.sol#46-49) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": 56,
+          "vulnerability_code": "    function acceptOwnership() public {\n\n        require(msg.sender == newOwner, \"AcceptOwnership: only new owner do this.\");\n\n        emit OwnerUpdate(owner, newOwner);\n\n        owner = newOwner;\n\n        newOwner = address(0x0);\n",
+          "message": "DSAuth.acceptOwnership (usdxSaver.sol#51-56) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "    function setAuthority(DSAuthority authority_)\n\n        public\n\n        onlyOwner\n\n    {\n\n        authority = authority_;\n\n        emit LogSetAuthority(address(authority));\n",
+          "message": "DSAuth.setAuthority (usdxSaver.sol#59-65) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": 131,
+          "vulnerability_code": "    function deposit (uint256 _amount) public {\n\n        require(IERC20(token).transferFrom(msg.sender, address(this), _amount));\n",
+          "message": "usdxSaver.deposit (usdxSaver.sol#129-131) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 133,
+          "vulnerability_to_line": 135,
+          "vulnerability_code": "    function withdraw (uint256 _amount) public {\n\n        require(IERC20(token).transfer(msg.sender, _amount));\n",
+          "message": "usdxSaver.withdraw (usdxSaver.sol#133-135) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 137,
+          "vulnerability_to_line": 140,
+          "vulnerability_code": "    function transferOut (address _tokenID, address _to, uint amount) public returns (bool){\n\n        require(IERC20(_tokenID).transfer(_to, amount));\n\n        return true;\n",
+          "message": "usdxSaver.transferOut (usdxSaver.sol#137-140) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": "Detected issues with version pragma in usdxSaver.sol:\n\t- pragma solidity^0.5.4 (usdxSaver.sol#16): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": 141,
+          "vulnerability_code": "contract usdxSaver is DSAuth {\n\n\tusing DSMath for uint256;\n\n\n\n\taddress public token;\n\n\n\n\tconstructor (address _token) public {\n\n\t\ttoken = _token;\n\n\t}\n\n\n\n    function deposit (uint256 _amount) public {\n\n        require(IERC20(token).transferFrom(msg.sender, address(this), _amount));\n\n    }\n\n\n\n    function withdraw (uint256 _amount) public {\n\n        require(IERC20(token).transfer(msg.sender, _amount));\n\n    }\n\n\n\n    function transferOut (address _tokenID, address _to, uint amount) public returns (bool){\n\n        require(IERC20(_tokenID).transfer(_to, amount));\n\n        return true;\n\n    }\n",
+          "message": "Contract 'usdxSaver' (usdxSaver.sol#120-141) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\tconstructor (address _token) public {\n",
+          "message": "Parameter '_token' of usdxSaver. (usdxSaver.sol#125) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function deposit (uint256 _amount) public {\n",
+          "message": "Parameter '_amount' of usdxSaver.deposit (usdxSaver.sol#129) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 133,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdraw (uint256 _amount) public {\n",
+          "message": "Parameter '_amount' of usdxSaver.withdraw (usdxSaver.sol#133) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 137,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferOut (address _tokenID, address _to, uint amount) public returns (bool){\n",
+          "message": "Parameter '_tokenID' of usdxSaver.transferOut (usdxSaver.sol#137) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 137,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferOut (address _tokenID, address _to, uint amount) public returns (bool){\n",
+          "message": "Parameter '_to' of usdxSaver.transferOut (usdxSaver.sol#137) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner = address(0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        newOwner = address(0x0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_OVERPOWERED_ROLE",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setAuthority(DSAuthority authority_)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.2;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 138,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(IERC20(_tokenID).transfer(_to, amount));\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(IERC20(token).transfer(msg.sender, _amount));\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(IERC20(token).transferFrom(msg.sender, address(this), _amount));\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

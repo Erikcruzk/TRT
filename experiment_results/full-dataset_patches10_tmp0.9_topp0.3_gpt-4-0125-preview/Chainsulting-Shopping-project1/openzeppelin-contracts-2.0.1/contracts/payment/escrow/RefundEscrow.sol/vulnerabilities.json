@@ -1,0 +1,266 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor() internal {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _primary = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    emit PrimaryTransferred(_primary);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 224,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address beneficiary) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 225,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(beneficiary != address(0));\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 226,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _beneficiary = beneficiary;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 227,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _state = State.Active;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 228,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_10"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 275,
+          "vulnerability_to_line": 280,
+          "vulnerability_code": "  function beneficiaryWithdraw() public {\n\n    require(_state == State.Closed);\n\n    _beneficiary.transfer(address(this).balance);\n\n  }\n\n\n",
+          "message": "RefundEscrow.beneficiaryWithdraw (RefundEscrow.sol#275-280) sends eth to arbitrary user\n\tDangerous calls:\n\t- _beneficiary.transfer(address(this).balance) (RefundEscrow.sol#277-278)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 224,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address beneficiary) public {\n",
+          "message": "RefundEscrow.constructor.beneficiary (local variable @ RefundEscrow.sol#224) shadows:\n\t- RefundEscrow.beneficiary (function @ RefundEscrow.sol#240-244)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 103,
+          "vulnerability_to_line": 105,
+          "vulnerability_code": "  function primary() public view returns (address) {\n\n    return _primary;\n",
+          "message": "Secondary.primary (RefundEscrow.sol#103-105) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 111,
+          "vulnerability_to_line": 115,
+          "vulnerability_code": "  function transferPrimary(address recipient) public onlyPrimary {\n\n    require(recipient != address(0));\n\n    _primary = recipient;\n\n    emit PrimaryTransferred(_primary);\n",
+          "message": "Secondary.transferPrimary (RefundEscrow.sol#111-115) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 143,
+          "vulnerability_to_line": 145,
+          "vulnerability_code": "  function depositsOf(address payee) public view returns (uint256) {\n\n    return _deposits[payee];\n",
+          "message": "Escrow.depositsOf (RefundEscrow.sol#143-145) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 233,
+          "vulnerability_to_line": 237,
+          "vulnerability_code": "  function state() public view returns (State) {\n\n    return _state;\n\n  }\n\n\n",
+          "message": "RefundEscrow.state (RefundEscrow.sol#233-237) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 240,
+          "vulnerability_to_line": 244,
+          "vulnerability_code": "  function beneficiary() public view returns (address) {\n\n    return _beneficiary;\n\n  }\n\n\n",
+          "message": "RefundEscrow.beneficiary (RefundEscrow.sol#240-244) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 257,
+          "vulnerability_to_line": 263,
+          "vulnerability_code": "  function close() public onlyPrimary {\n\n    require(_state == State.Active);\n\n    _state = State.Closed;\n\n    emit RefundsClosed();\n\n  }\n\n\n",
+          "message": "RefundEscrow.close (RefundEscrow.sol#257-263) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 266,
+          "vulnerability_to_line": 272,
+          "vulnerability_code": "  function enableRefunds() public onlyPrimary {\n\n    require(_state == State.Active);\n\n    _state = State.Refunding;\n\n    emit RefundsEnabled();\n\n  }\n\n\n",
+          "message": "RefundEscrow.enableRefunds (RefundEscrow.sol#266-272) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 275,
+          "vulnerability_to_line": 280,
+          "vulnerability_code": "  function beneficiaryWithdraw() public {\n\n    require(_state == State.Closed);\n\n    _beneficiary.transfer(address(this).balance);\n\n  }\n\n\n",
+          "message": "RefundEscrow.beneficiaryWithdraw (RefundEscrow.sol#275-280) should be declared external\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 175,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 198,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  address private _primary;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  mapping(address => uint256) private _deposits;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 217,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  State private _state;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 218,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  address private _beneficiary;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 136,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Transaction-Ordering Dependence (TOD)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Concurrency bug",
+          "vulnerability_from_line": 167,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    payee.transfer(payment);\n",
+          "message": null
+        },
+        {
+          "name": "Concurrency bug",
+          "vulnerability_from_line": 277,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _beneficiary.transfer(address(this).balance);\n",
+          "message": null
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function storeSupply(uint256 supply)\n\n        public\n\n    {\n\n        _supply = supply;\n",
+          "message": "MockUFragments.storeSupply (MockUFragments.sol#21-25) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": 39,
+          "vulnerability_code": "    function rebase(uint256 epoch, int256 supplyDelta)\n\n        public\n\n        returns (uint256)\n\n    {\n\n        emit FunctionCalled(\"UFragments\", \"rebase\", msg.sender);\n\n        uint256[] memory uintVals = new uint256[](1);\n\n        uintVals[0] = epoch;\n\n        int256[] memory intVals = new int256[](1);\n\n        intVals[0] = supplyDelta;\n\n        emit FunctionArguments(uintVals, intVals);\n\n        return uint256(int256(_supply) + int256(supplyDelta));\n",
+          "message": "MockUFragments.rebase (MockUFragments.sol#28-39) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": 47,
+          "vulnerability_code": "    function totalSupply()\n\n        public\n\n        view\n\n        returns (uint256)\n\n    {\n\n        return _supply;\n",
+          "message": "MockUFragments.totalSupply (MockUFragments.sol#41-47) should be declared external\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 private _supply;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return uint256(int256(_supply) + int256(supplyDelta));\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return uint256(int256(_supply) + int256(supplyDelta));\n",
+          "message": null
+        }
+      ]
+    }
+  }
+}

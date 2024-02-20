@@ -1,0 +1,836 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 317,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    string private _purl = \"\";\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == owner, \"The owner should be the sender\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_to != address(0), \"0x0 Is not a valid owner\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 114,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(data.length / 32 > index, \"Reading bytes out of bounds\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 121,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(data.length >= offset + length, \"Reading bytes out of bounds\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 133,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_data.length >= _la, \"Reading bytes out of bounds\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 158,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_data.length >= o, \"Reading bytes out of bounds\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 183,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_data.length >= o, \"Reading bytes out of bounds\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 213,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_data.length >= o, \"Reading bytes out of bounds\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 248,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_data.length >= o, \"Reading bytes out of bounds\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 295,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_data.length >= o, \"Reading bytes out of bounds\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 351,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        revert(\"Invalid data\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_42"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": 84,
+          "vulnerability_code": "    function encodeCurrency(string memory currency) public pure returns (bytes32 o) {\n\n        require(bytes(currency).length <= 32);\n\n        assembly {\n\n            o := mload(add(currency, 32))\n\n        }\n",
+          "message": "Oracle.encodeCurrency (TestOracle.sol#79-84) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": 103,
+          "vulnerability_code": "    function decodeCurrency(bytes32 b) public pure returns (string memory o) {\n\n        uint256 ns = 256;\n\n        while (true) {\n\n            if (ns == 0 || (b<<ns-8) != 0)\n\n                break;\n\n            ns -= 8;\n\n        }\n\n        assembly {\n\n            ns := div(ns, 8)\n\n            o := mload(0x40)\n\n            mstore(0x40, add(o, and(add(add(ns, 0x20), 0x1f), not(0x1f))))\n\n            mstore(o, ns)\n\n            mstore(add(o, 32), b)\n\n        }\n",
+          "message": "Oracle.decodeCurrency (TestOracle.sol#89-103) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": 118,
+          "vulnerability_code": "    function readBytes32(bytes memory data, uint256 index) internal pure returns (bytes32 o) {\n\n        require(data.length / 32 > index, \"Reading bytes out of bounds\");\n\n        assembly {\n\n            o := mload(add(data, add(32, mul(32, index))))\n\n        }\n",
+          "message": "BytesUtils.readBytes32 (TestOracle.sol#113-118) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": 127,
+          "vulnerability_code": "    function read(bytes memory data, uint256 offset, uint256 length) internal pure returns (bytes32 o) {\n\n        require(data.length >= offset + length, \"Reading bytes out of bounds\");\n\n        assembly {\n\n            o := mload(add(data, add(32, offset)))\n\n            let lb := sub(32, length)\n\n            if lb { o := div(o, exp(2, mul(lb, 8))) }\n\n        }\n",
+          "message": "BytesUtils.read (TestOracle.sol#120-127) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": 139,
+          "vulnerability_code": "    function decode(\n\n        bytes memory _data,\n\n        uint256 _la\n\n    ) internal pure returns (bytes32 _a) {\n\n        require(_data.length >= _la, \"Reading bytes out of bounds\");\n\n        assembly {\n\n            _a := mload(add(_data, 32))\n\n            let l := sub(32, _la)\n\n            if l { _a := div(_a, exp(2, mul(l, 8))) }\n\n        }\n",
+          "message": "BytesUtils.decode (TestOracle.sol#129-139) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": 159,
+          "vulnerability_code": "    function decode(\n\n        bytes memory _data,\n\n        uint256 _la,\n\n        uint256 _lb\n\n    ) internal pure returns (bytes32 _a, bytes32 _b) {\n\n        uint256 o;\n\n        assembly {\n\n            let s := add(_data, 32)\n\n            _a := mload(s)\n\n            let l := sub(32, _la)\n\n            if l { _a := div(_a, exp(2, mul(l, 8))) }\n\n            o := add(s, _la)\n\n            _b := mload(o)\n\n            l := sub(32, _lb)\n\n            if l { _b := div(_b, exp(2, mul(l, 8))) }\n\n            o := sub(o, s)\n\n        }\n\n        require(_data.length >= o, \"Reading bytes out of bounds\");\n",
+          "message": "BytesUtils.decode (TestOracle.sol#141-159) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 161,
+          "vulnerability_to_line": 184,
+          "vulnerability_code": "    function decode(\n\n        bytes memory _data,\n\n        uint256 _la,\n\n        uint256 _lb,\n\n        uint256 _lc\n\n    ) internal pure returns (bytes32 _a, bytes32 _b, bytes32 _c) {\n\n        uint256 o;\n\n        assembly {\n\n            let s := add(_data, 32)\n\n            _a := mload(s)\n\n            let l := sub(32, _la)\n\n            if l { _a := div(_a, exp(2, mul(l, 8))) }\n\n            o := add(s, _la)\n\n            _b := mload(o)\n\n            l := sub(32, _lb)\n\n            if l { _b := div(_b, exp(2, mul(l, 8))) }\n\n            o := add(o, _lb)\n\n            _c := mload(o)\n\n            l := sub(32, _lc)\n\n            if l { _c := div(_c, exp(2, mul(l, 8))) }\n\n            o := sub(o, s)\n\n        }\n\n        require(_data.length >= o, \"Reading bytes out of bounds\");\n",
+          "message": "BytesUtils.decode (TestOracle.sol#161-184) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 186,
+          "vulnerability_to_line": 214,
+          "vulnerability_code": "    function decode(\n\n        bytes memory _data,\n\n        uint256 _la,\n\n        uint256 _lb,\n\n        uint256 _lc,\n\n        uint256 _ld\n\n    ) internal pure returns (bytes32 _a, bytes32 _b, bytes32 _c, bytes32 _d) {\n\n        uint256 o;\n\n        assembly {\n\n            let s := add(_data, 32)\n\n            _a := mload(s)\n\n            let l := sub(32, _la)\n\n            if l { _a := div(_a, exp(2, mul(l, 8))) }\n\n            o := add(s, _la)\n\n            _b := mload(o)\n\n            l := sub(32, _lb)\n\n            if l { _b := div(_b, exp(2, mul(l, 8))) }\n\n            o := add(o, _lb)\n\n            _c := mload(o)\n\n            l := sub(32, _lc)\n\n            if l { _c := div(_c, exp(2, mul(l, 8))) }\n\n            o := add(o, _lc)\n\n            _d := mload(o)\n\n            l := sub(32, _ld)\n\n            if l { _d := div(_d, exp(2, mul(l, 8))) }\n\n            o := sub(o, s)\n\n        }\n\n        require(_data.length >= o, \"Reading bytes out of bounds\");\n",
+          "message": "BytesUtils.decode (TestOracle.sol#186-214) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 216,
+          "vulnerability_to_line": 249,
+          "vulnerability_code": "    function decode(\n\n        bytes memory _data,\n\n        uint256 _la,\n\n        uint256 _lb,\n\n        uint256 _lc,\n\n        uint256 _ld,\n\n        uint256 _le\n\n    ) internal pure returns (bytes32 _a, bytes32 _b, bytes32 _c, bytes32 _d, bytes32 _e) {\n\n        uint256 o;\n\n        assembly {\n\n            let s := add(_data, 32)\n\n            _a := mload(s)\n\n            let l := sub(32, _la)\n\n            if l { _a := div(_a, exp(2, mul(l, 8))) }\n\n            o := add(s, _la)\n\n            _b := mload(o)\n\n            l := sub(32, _lb)\n\n            if l { _b := div(_b, exp(2, mul(l, 8))) }\n\n            o := add(o, _lb)\n\n            _c := mload(o)\n\n            l := sub(32, _lc)\n\n            if l { _c := div(_c, exp(2, mul(l, 8))) }\n\n            o := add(o, _lc)\n\n            _d := mload(o)\n\n            l := sub(32, _ld)\n\n            if l { _d := div(_d, exp(2, mul(l, 8))) }\n\n            o := add(o, _ld)\n\n            _e := mload(o)\n\n            l := sub(32, _le)\n\n            if l { _e := div(_e, exp(2, mul(l, 8))) }\n\n            o := sub(o, s)\n\n        }\n\n        require(_data.length >= o, \"Reading bytes out of bounds\");\n",
+          "message": "BytesUtils.decode (TestOracle.sol#216-249) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 251,
+          "vulnerability_to_line": 296,
+          "vulnerability_code": "    function decode(\n\n        bytes memory _data,\n\n        uint256 _la,\n\n        uint256 _lb,\n\n        uint256 _lc,\n\n        uint256 _ld,\n\n        uint256 _le,\n\n        uint256 _lf\n\n    ) internal pure returns (\n\n        bytes32 _a,\n\n        bytes32 _b,\n\n        bytes32 _c,\n\n        bytes32 _d,\n\n        bytes32 _e,\n\n        bytes32 _f\n\n    ) {\n\n        uint256 o;\n\n        assembly {\n\n            let s := add(_data, 32)\n\n            _a := mload(s)\n\n            let l := sub(32, _la)\n\n            if l { _a := div(_a, exp(2, mul(l, 8))) }\n\n            o := add(s, _la)\n\n            _b := mload(o)\n\n            l := sub(32, _lb)\n\n            if l { _b := div(_b, exp(2, mul(l, 8))) }\n\n            o := add(o, _lb)\n\n            _c := mload(o)\n\n            l := sub(32, _lc)\n\n            if l { _c := div(_c, exp(2, mul(l, 8))) }\n\n            o := add(o, _lc)\n\n            _d := mload(o)\n\n            l := sub(32, _ld)\n\n            if l { _d := div(_d, exp(2, mul(l, 8))) }\n\n            o := add(o, _ld)\n\n            _e := mload(o)\n\n            l := sub(32, _le)\n\n            if l { _e := div(_e, exp(2, mul(l, 8))) }\n\n            o := add(o, _le)\n\n            _f := mload(o)\n\n            l := sub(32, _lf)\n\n            if l { _f := div(_f, exp(2, mul(l, 8))) }\n\n            o := sub(o, s)\n\n        }\n\n        require(_data.length >= o, \"Reading bytes out of bounds\");\n",
+          "message": "BytesUtils.decode (TestOracle.sol#251-296) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 323,
+          "vulnerability_to_line": 331,
+          "vulnerability_code": "    function buildData(bytes32 d) internal pure returns (bytes memory o) {\n\n        assembly {\n\n            let size := 32\n\n            o := mload(0x40)\n\n            mstore(0x40, add(o, and(add(add(size, 0x20), 0x1f), not(0x1f))))\n\n            mstore(o, size)\n\n            mstore(add(o, 32), d)\n\n        }\n",
+          "message": "TestOracle.buildData (TestOracle.sol#323-331) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": 84,
+          "vulnerability_code": "    function encodeCurrency(string memory currency) public pure returns (bytes32 o) {\n\n        require(bytes(currency).length <= 32);\n\n        assembly {\n\n            o := mload(add(currency, 32))\n\n        }\n",
+          "message": "Oracle.encodeCurrency uses assembly (TestOracle.sol#79-84)\n\t- TestOracle.sol#81-83\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": 103,
+          "vulnerability_code": "    function decodeCurrency(bytes32 b) public pure returns (string memory o) {\n\n        uint256 ns = 256;\n\n        while (true) {\n\n            if (ns == 0 || (b<<ns-8) != 0)\n\n                break;\n\n            ns -= 8;\n\n        }\n\n        assembly {\n\n            ns := div(ns, 8)\n\n            o := mload(0x40)\n\n            mstore(0x40, add(o, and(add(add(ns, 0x20), 0x1f), not(0x1f))))\n\n            mstore(o, ns)\n\n            mstore(add(o, 32), b)\n\n        }\n",
+          "message": "Oracle.decodeCurrency uses assembly (TestOracle.sol#89-103)\n\t- TestOracle.sol#96-102\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": 118,
+          "vulnerability_code": "    function readBytes32(bytes memory data, uint256 index) internal pure returns (bytes32 o) {\n\n        require(data.length / 32 > index, \"Reading bytes out of bounds\");\n\n        assembly {\n\n            o := mload(add(data, add(32, mul(32, index))))\n\n        }\n",
+          "message": "BytesUtils.readBytes32 uses assembly (TestOracle.sol#113-118)\n\t- TestOracle.sol#115-117\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": 127,
+          "vulnerability_code": "    function read(bytes memory data, uint256 offset, uint256 length) internal pure returns (bytes32 o) {\n\n        require(data.length >= offset + length, \"Reading bytes out of bounds\");\n\n        assembly {\n\n            o := mload(add(data, add(32, offset)))\n\n            let lb := sub(32, length)\n\n            if lb { o := div(o, exp(2, mul(lb, 8))) }\n\n        }\n",
+          "message": "BytesUtils.read uses assembly (TestOracle.sol#120-127)\n\t- TestOracle.sol#122-126\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": 139,
+          "vulnerability_code": "    function decode(\n\n        bytes memory _data,\n\n        uint256 _la\n\n    ) internal pure returns (bytes32 _a) {\n\n        require(_data.length >= _la, \"Reading bytes out of bounds\");\n\n        assembly {\n\n            _a := mload(add(_data, 32))\n\n            let l := sub(32, _la)\n\n            if l { _a := div(_a, exp(2, mul(l, 8))) }\n\n        }\n",
+          "message": "BytesUtils.decode uses assembly (TestOracle.sol#129-139)\n\t- TestOracle.sol#134-138\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": 159,
+          "vulnerability_code": "    function decode(\n\n        bytes memory _data,\n\n        uint256 _la,\n\n        uint256 _lb\n\n    ) internal pure returns (bytes32 _a, bytes32 _b) {\n\n        uint256 o;\n\n        assembly {\n\n            let s := add(_data, 32)\n\n            _a := mload(s)\n\n            let l := sub(32, _la)\n\n            if l { _a := div(_a, exp(2, mul(l, 8))) }\n\n            o := add(s, _la)\n\n            _b := mload(o)\n\n            l := sub(32, _lb)\n\n            if l { _b := div(_b, exp(2, mul(l, 8))) }\n\n            o := sub(o, s)\n\n        }\n\n        require(_data.length >= o, \"Reading bytes out of bounds\");\n",
+          "message": "BytesUtils.decode uses assembly (TestOracle.sol#141-159)\n\t- TestOracle.sol#147-157\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 161,
+          "vulnerability_to_line": 184,
+          "vulnerability_code": "    function decode(\n\n        bytes memory _data,\n\n        uint256 _la,\n\n        uint256 _lb,\n\n        uint256 _lc\n\n    ) internal pure returns (bytes32 _a, bytes32 _b, bytes32 _c) {\n\n        uint256 o;\n\n        assembly {\n\n            let s := add(_data, 32)\n\n            _a := mload(s)\n\n            let l := sub(32, _la)\n\n            if l { _a := div(_a, exp(2, mul(l, 8))) }\n\n            o := add(s, _la)\n\n            _b := mload(o)\n\n            l := sub(32, _lb)\n\n            if l { _b := div(_b, exp(2, mul(l, 8))) }\n\n            o := add(o, _lb)\n\n            _c := mload(o)\n\n            l := sub(32, _lc)\n\n            if l { _c := div(_c, exp(2, mul(l, 8))) }\n\n            o := sub(o, s)\n\n        }\n\n        require(_data.length >= o, \"Reading bytes out of bounds\");\n",
+          "message": "BytesUtils.decode uses assembly (TestOracle.sol#161-184)\n\t- TestOracle.sol#168-182\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 186,
+          "vulnerability_to_line": 214,
+          "vulnerability_code": "    function decode(\n\n        bytes memory _data,\n\n        uint256 _la,\n\n        uint256 _lb,\n\n        uint256 _lc,\n\n        uint256 _ld\n\n    ) internal pure returns (bytes32 _a, bytes32 _b, bytes32 _c, bytes32 _d) {\n\n        uint256 o;\n\n        assembly {\n\n            let s := add(_data, 32)\n\n            _a := mload(s)\n\n            let l := sub(32, _la)\n\n            if l { _a := div(_a, exp(2, mul(l, 8))) }\n\n            o := add(s, _la)\n\n            _b := mload(o)\n\n            l := sub(32, _lb)\n\n            if l { _b := div(_b, exp(2, mul(l, 8))) }\n\n            o := add(o, _lb)\n\n            _c := mload(o)\n\n            l := sub(32, _lc)\n\n            if l { _c := div(_c, exp(2, mul(l, 8))) }\n\n            o := add(o, _lc)\n\n            _d := mload(o)\n\n            l := sub(32, _ld)\n\n            if l { _d := div(_d, exp(2, mul(l, 8))) }\n\n            o := sub(o, s)\n\n        }\n\n        require(_data.length >= o, \"Reading bytes out of bounds\");\n",
+          "message": "BytesUtils.decode uses assembly (TestOracle.sol#186-214)\n\t- TestOracle.sol#194-212\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 216,
+          "vulnerability_to_line": 249,
+          "vulnerability_code": "    function decode(\n\n        bytes memory _data,\n\n        uint256 _la,\n\n        uint256 _lb,\n\n        uint256 _lc,\n\n        uint256 _ld,\n\n        uint256 _le\n\n    ) internal pure returns (bytes32 _a, bytes32 _b, bytes32 _c, bytes32 _d, bytes32 _e) {\n\n        uint256 o;\n\n        assembly {\n\n            let s := add(_data, 32)\n\n            _a := mload(s)\n\n            let l := sub(32, _la)\n\n            if l { _a := div(_a, exp(2, mul(l, 8))) }\n\n            o := add(s, _la)\n\n            _b := mload(o)\n\n            l := sub(32, _lb)\n\n            if l { _b := div(_b, exp(2, mul(l, 8))) }\n\n            o := add(o, _lb)\n\n            _c := mload(o)\n\n            l := sub(32, _lc)\n\n            if l { _c := div(_c, exp(2, mul(l, 8))) }\n\n            o := add(o, _lc)\n\n            _d := mload(o)\n\n            l := sub(32, _ld)\n\n            if l { _d := div(_d, exp(2, mul(l, 8))) }\n\n            o := add(o, _ld)\n\n            _e := mload(o)\n\n            l := sub(32, _le)\n\n            if l { _e := div(_e, exp(2, mul(l, 8))) }\n\n            o := sub(o, s)\n\n        }\n\n        require(_data.length >= o, \"Reading bytes out of bounds\");\n",
+          "message": "BytesUtils.decode uses assembly (TestOracle.sol#216-249)\n\t- TestOracle.sol#225-247\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 251,
+          "vulnerability_to_line": 296,
+          "vulnerability_code": "    function decode(\n\n        bytes memory _data,\n\n        uint256 _la,\n\n        uint256 _lb,\n\n        uint256 _lc,\n\n        uint256 _ld,\n\n        uint256 _le,\n\n        uint256 _lf\n\n    ) internal pure returns (\n\n        bytes32 _a,\n\n        bytes32 _b,\n\n        bytes32 _c,\n\n        bytes32 _d,\n\n        bytes32 _e,\n\n        bytes32 _f\n\n    ) {\n\n        uint256 o;\n\n        assembly {\n\n            let s := add(_data, 32)\n\n            _a := mload(s)\n\n            let l := sub(32, _la)\n\n            if l { _a := div(_a, exp(2, mul(l, 8))) }\n\n            o := add(s, _la)\n\n            _b := mload(o)\n\n            l := sub(32, _lb)\n\n            if l { _b := div(_b, exp(2, mul(l, 8))) }\n\n            o := add(o, _lb)\n\n            _c := mload(o)\n\n            l := sub(32, _lc)\n\n            if l { _c := div(_c, exp(2, mul(l, 8))) }\n\n            o := add(o, _lc)\n\n            _d := mload(o)\n\n            l := sub(32, _ld)\n\n            if l { _d := div(_d, exp(2, mul(l, 8))) }\n\n            o := add(o, _ld)\n\n            _e := mload(o)\n\n            l := sub(32, _le)\n\n            if l { _e := div(_e, exp(2, mul(l, 8))) }\n\n            o := add(o, _le)\n\n            _f := mload(o)\n\n            l := sub(32, _lf)\n\n            if l { _f := div(_f, exp(2, mul(l, 8))) }\n\n            o := sub(o, s)\n\n        }\n\n        require(_data.length >= o, \"Reading bytes out of bounds\");\n",
+          "message": "BytesUtils.decode uses assembly (TestOracle.sol#251-296)\n\t- TestOracle.sol#268-294\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 323,
+          "vulnerability_to_line": 331,
+          "vulnerability_code": "    function buildData(bytes32 d) internal pure returns (bytes memory o) {\n\n        assembly {\n\n            let size := 32\n\n            o := mload(0x40)\n\n            mstore(0x40, add(o, and(add(add(size, 0x20), 0x1f), not(0x1f))))\n\n            mstore(o, size)\n\n            mstore(add(o, 32), d)\n\n        }\n",
+          "message": "TestOracle.buildData uses assembly (TestOracle.sol#323-331)\n\t- TestOracle.sol#324-330\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 307,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes32 public dummyData1 = keccak256(\"test_oracle_1\");\n",
+          "message": "TestOracle.dummyData1 should be constant (TestOracle.sol#307)\nTestOracle.dummyData2 should be constant (TestOracle.sol#308)\nTestOracle.dummyData3 should be constant (TestOracle.sol#309)\nTestOracle.invalidData should be constant (TestOracle.sol#311)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 27,
+          "vulnerability_code": "    function transferTo(address _to) public onlyOwner returns (bool) {\n\n        require(_to != address(0), \"0x0 Is not a valid owner\");\n\n        owner = _to;\n\n        return true;\n",
+          "message": "OwnableBasalt.transferTo (TestOracle.sol#23-27) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function url() public view returns (string memory);\n",
+          "message": "Oracle.url (TestOracle.sol#51) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 333,
+          "vulnerability_to_line": 335,
+          "vulnerability_code": "    function url() public view returns (string memory) {\n\n        return _purl;\n",
+          "message": "TestOracle.url (TestOracle.sol#333-335) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 337,
+          "vulnerability_to_line": 352,
+          "vulnerability_code": "    function getRate(bytes32, bytes memory data) public returns (uint256 rate, uint256 decimals) {\n\n        bytes32 sentData = readBytes32(data, 0);\n\n\n\n        if (sentData == dummyData1) {\n\n            // 1 ETH WEI = 6000 RCN WEI\n\n            return (6000, 0);\n\n        } else if (sentData == dummyData2) {\n\n            // 1 ETH WEI = 0.5 RCN WEI\n\n            return (5, 1);\n\n        } else if (sentData == dummyData3) {\n\n            // 1 ETH = 2 RCN\n\n            return (2, 0);\n\n        }\n\n\n\n        revert(\"Invalid data\");\n",
+          "message": "TestOracle.getRate (TestOracle.sol#337-352) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getRate(bytes32 symbol, bytes memory data) public returns (uint256 rate, uint256 decimals);\n",
+          "message": "Oracle.getRate (TestOracle.sol#59) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 68,
+          "vulnerability_to_line": 74,
+          "vulnerability_code": "    function addCurrency(string memory ticker) public onlyOwner returns (bool) {\n\n        bytes32 currency = encodeCurrency(ticker);\n\n        emit NewSymbol(currency);\n\n        supported[currency] = true;\n\n        currencies.push(currency);\n\n        return true;\n",
+          "message": "Oracle.addCurrency (TestOracle.sol#68-74) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": 103,
+          "vulnerability_code": "    function decodeCurrency(bytes32 b) public pure returns (string memory o) {\n\n        uint256 ns = 256;\n\n        while (true) {\n\n            if (ns == 0 || (b<<ns-8) != 0)\n\n                break;\n\n            ns -= 8;\n\n        }\n\n        assembly {\n\n            ns := div(ns, 8)\n\n            o := mload(0x40)\n\n            mstore(0x40, add(o, and(add(add(ns, 0x20), 0x1f), not(0x1f))))\n\n            mstore(o, ns)\n\n            mstore(add(o, 32), b)\n\n        }\n",
+          "message": "Oracle.decodeCurrency (TestOracle.sol#89-103) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 319,
+          "vulnerability_to_line": 321,
+          "vulnerability_code": "    function setUrl(string memory _url) public {\n\n        _purl = _url;\n",
+          "message": "TestOracle.setUrl (TestOracle.sol#319-321) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.11;\n",
+          "message": "Detected issues with version pragma in TestOracle.sol:\n\t- pragma solidity^0.5.11 (TestOracle.sol#3): it allows old versions\n\t- pragma solidity^0.5.11 (TestOracle.sol#32): it allows old versions\n\t- pragma solidity^0.5.11 (TestOracle.sol#109): it allows old versions\n\t- pragma solidity^0.5.11 (TestOracle.sol#303): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferTo(address _to) public onlyOwner returns (bool) {\n",
+          "message": "Parameter '_to' of OwnableBasalt.transferTo (TestOracle.sol#23) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes memory _data,\n",
+          "message": "Parameter '_data' of BytesUtils.decode (TestOracle.sol#130) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 131,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _la\n",
+          "message": "Parameter '_la' of BytesUtils.decode (TestOracle.sol#131) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 142,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes memory _data,\n",
+          "message": "Parameter '_data' of BytesUtils.decode (TestOracle.sol#142) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes memory _data,\n",
+          "message": "Parameter '_data' of BytesUtils.decode (TestOracle.sol#162) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 187,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes memory _data,\n",
+          "message": "Parameter '_data' of BytesUtils.decode (TestOracle.sol#187) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 217,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes memory _data,\n",
+          "message": "Parameter '_data' of BytesUtils.decode (TestOracle.sol#217) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 252,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes memory _data,\n",
+          "message": "Parameter '_data' of BytesUtils.decode (TestOracle.sol#252) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 337,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getRate(bytes32, bytes memory data) public returns (uint256 rate, uint256 decimals) {\n",
+          "message": "Parameter '' of TestOracle.getRate (TestOracle.sol#337) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 319,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setUrl(string memory _url) public {\n",
+          "message": "Parameter '_url' of TestOracle.setUrl (TestOracle.sol#319) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function encodeCurrency(string memory currency) public pure returns (bytes32 o) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function decodeCurrency(bytes32 b) public pure returns (string memory o) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function readBytes32(bytes memory data, uint256 index) internal pure returns (bytes32 o) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function read(bytes memory data, uint256 offset, uint256 length) internal pure returns (bytes32 o) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function decode(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function decode(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 161,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function decode(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 186,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function decode(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 216,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function decode(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 251,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function decode(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 323,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function buildData(bytes32 d) internal pure returns (bytes memory o) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        while (true) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.11;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.11;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 109,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.11;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 303,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.11;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 317,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    string private _purl = \"\";\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function encodeCurrency(string memory currency) public pure returns (bytes32 o) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function decodeCurrency(bytes32 b) public pure returns (string memory o) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function readBytes32(bytes memory data, uint256 index) internal pure returns (bytes32 o) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function read(bytes memory data, uint256 offset, uint256 length) internal pure returns (bytes32 o) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function decode(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function decode(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 161,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function decode(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 186,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function decode(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 216,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function decode(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 251,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function decode(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 323,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function buildData(bytes32 d) internal pure returns (bytes memory o) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getRate(bytes32 symbol, bytes memory data) public returns (uint256 rate, uint256 decimals);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ) internal pure returns (bytes32 _a, bytes32 _b) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 166,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ) internal pure returns (bytes32 _a, bytes32 _b, bytes32 _c) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 192,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ) internal pure returns (bytes32 _a, bytes32 _b, bytes32 _c, bytes32 _d) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 223,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ) internal pure returns (bytes32 _a, bytes32 _b, bytes32 _c, bytes32 _d, bytes32 _e) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 259,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ) internal pure returns (\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 337,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getRate(bytes32, bytes memory data) public returns (uint256 rate, uint256 decimals) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 122,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 147,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 168,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 194,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 225,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 268,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 324,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 315,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes public dummyDataBytes3 = buildData(dummyData3);\n",
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 315,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes public dummyDataBytes3 = buildData(dummyData3);\n",
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 334,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return _purl;\n",
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 334,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return _purl;\n",
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 313,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes public dummyDataBytes1 = buildData(dummyData1);\n",
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 313,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes public dummyDataBytes1 = buildData(dummyData1);\n",
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 314,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes public dummyDataBytes2 = buildData(dummyData2);\n",
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 314,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes public dummyDataBytes2 = buildData(dummyData2);\n",
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes32[] public currencies;\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.\nClassification: SWC-101"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

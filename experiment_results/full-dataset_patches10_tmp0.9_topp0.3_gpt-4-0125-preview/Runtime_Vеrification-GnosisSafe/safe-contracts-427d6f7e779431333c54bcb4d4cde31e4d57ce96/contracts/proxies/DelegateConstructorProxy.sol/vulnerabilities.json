@@ -1,0 +1,269 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _masterCopy)\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        public\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_masterCopy != address(0), \"Invalid master copy address provided\");\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        masterCopy = _masterCopy;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _masterCopy, bytes memory initializer) Proxy(_masterCopy)\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 68,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        public\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (initializer.length > 0) {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            // solium-disable-next-line security/no-inline-assembly\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            assembly {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                let masterCopy := and(sload(0), 0xffffffffffffffffffffffffffffffffffffffff)\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 74,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                let success := delegatecall(sub(gas, 10000), masterCopy, add(initializer, 0x20), mload(initializer), 0, 0)\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 75,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                let ptr := mload(0x40)\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                returndatacopy(ptr, 0, returndatasize)\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_masterCopy != address(0), \"Invalid master copy address provided\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_masterCopy != address(0), \"Invalid master copy address provided\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function ()\n\n        external\n\n        payable\n\n    {\n\n        // solium-disable-next-line security/no-inline-assembly\n\n        assembly {\n\n            let masterCopy := and(sload(0), 0xffffffffffffffffffffffffffffffffffffffff)\n\n            calldatacopy(0, 0, calldatasize())\n\n            let success := delegatecall(gas, masterCopy, 0, calldatasize(), 0, 0)\n\n            returndatacopy(0, 0, returndatasize())\n\n            if eq(success, 0) { revert(0, returndatasize()) }\n\n            return(0, returndatasize())\n\n        }\n\n    }\n",
+          "message": "Contract locking ether found in DelegateConstructorProxy.sol:\n\tContract DelegateConstructorProxy has payable functions:\n\t - fallback (DelegateConstructorProxy.sol#23-37)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function ()\n\n        external\n\n        payable\n\n    {\n\n        // solium-disable-next-line security/no-inline-assembly\n\n        assembly {\n\n            let masterCopy := and(sload(0), 0xffffffffffffffffffffffffffffffffffffffff)\n\n            calldatacopy(0, 0, calldatasize())\n\n            let success := delegatecall(gas, masterCopy, 0, calldatasize(), 0, 0)\n\n            returndatacopy(0, 0, returndatasize())\n\n            if eq(success, 0) { revert(0, returndatasize()) }\n\n            return(0, returndatasize())\n\n        }\n\n    }\n",
+          "message": "Proxy.fallback uses assembly (DelegateConstructorProxy.sol#23-37)\n\t- DelegateConstructorProxy.sol#28-36\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": 81,
+          "vulnerability_code": "    constructor(address _masterCopy, bytes memory initializer) Proxy(_masterCopy)\n\n        public\n\n    {\n\n        if (initializer.length > 0) {\n\n            // solium-disable-next-line security/no-inline-assembly\n\n            assembly {\n\n                let masterCopy := and(sload(0), 0xffffffffffffffffffffffffffffffffffffffff)\n\n                let success := delegatecall(sub(gas, 10000), masterCopy, add(initializer, 0x20), mload(initializer), 0, 0)\n\n                let ptr := mload(0x40)\n\n                returndatacopy(ptr, 0, returndatasize)\n\n                if eq(success, 0) { revert(ptr, returndatasize) }\n\n            }\n\n        }\n\n    }\n",
+          "message": "DelegateConstructorProxy.constructor uses assembly (DelegateConstructorProxy.sol#67-81)\n\t- DelegateConstructorProxy.sol#72-79\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function implementation()\n\n        public\n\n        view\n\n        returns (address)\n\n    {\n\n        return masterCopy;\n\n    }\n",
+          "message": "Proxy.implementation (DelegateConstructorProxy.sol#38-45) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": 53,
+          "vulnerability_code": "    function proxyType()\n\n        public\n\n        pure\n\n        returns (uint256)\n\n    {\n\n        return 2;\n\n    }\n",
+          "message": "Proxy.proxyType (DelegateConstructorProxy.sol#46-53) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 4,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": "Detected issues with version pragma in DelegateConstructorProxy.sol:\n\t- pragma solidity^0.5.0 (DelegateConstructorProxy.sol#3-4): it allows old versions\n\t- pragma solidity^0.5.0 (DelegateConstructorProxy.sol#57-59): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _masterCopy)\n",
+          "message": "Parameter '_masterCopy' of Proxy. (DelegateConstructorProxy.sol#15) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Proxy {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address masterCopy;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Delegatecall to user-supplied address (SWC 112)",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            let success := delegatecall(gas, masterCopy, 0, calldatasize(), 0, 0)\n",
+          "message": "The contract delegates execution to another contract with a user-supplied address.\nThe smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.\nClassification: SWC-112"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -1,0 +1,354 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 288,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor ()\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 289,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        public\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 290,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 291,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        EIP712_DOMAIN_HASH = keccak256(abi.encode(\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 292,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            EIP712_DOMAIN_SEPARATOR_SCHEMA_HASH,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 293,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            keccak256(bytes(EIP712_DOMAIN_NAME)),\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 294,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            keccak256(bytes(EIP712_DOMAIN_VERSION)),\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 295,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            address(this)\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 296,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        ));\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 297,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 401,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(_signer != address(0x0), \"signer address cannot be 0\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 402,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(result, \"signature recovery failed\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 400,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (!(result && (_signer != address(0x0)))) {\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 401,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(_signer != address(0x0), \"signer address cannot be 0\");\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 402,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(result, \"signature recovery failed\");\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 403,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        }\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_11"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": 242,
+          "vulnerability_code": "    function encodeAndExit() internal pure {\n\n        assembly {\n\n            // set up initial variables\n\n            let notes := add(0x104, calldataload(0x184))\n\n            let n := calldataload(notes)\n\n            let m := calldataload(0x124)\n\n            let inputOwners := add(0x124, calldataload(0x1a4)) // one word after inputOwners = 1st\n\n            let outputOwners := add(0x124, calldataload(0x1c4)) // one word after outputOwners = 1st\n\n            let metadata := add(0x144, calldataload(0x1e4)) // two words after metadata = 1st\n\n\n\n            // memory map of `proofOutputs`\n\n\n\n            // `returndata` starts at 0x160\n\n            // `proofOutputs` starts at 0x180\n\n            // 0x160 - 0x180 = relative offset in returndata to first bytes argument (0x20)\n\n            // 0x180 - 0x1a0 = byte length of `proofOutputs`\n\n            // 0x1a0 - 0x1c0 = number of `proofOutputs` entries (1)\n\n            // 0x1c0 - 0x1e0 = relative memory offset between `v` and start of `proofOutput`\n\n\n\n            // `proofOutput` - t, starts at 0x1e0\n\n            // 0x1e0 - 0x200 = length of `proofOutput`\n\n            // 0x200 - 0x220 = relative offset between `t` and `inputNotes`\n\n            // 0x220 - 0x240 = relative offset between `t` and `outputNotes`\n\n            // 0x240 - 0x260 = `publicOwner`\n\n            // 0x260 - 0x280 = `publicValue`\n\n            // 0x280 - 0x2a0 = `challenge`\n\n\n\n            // `inputNotes` starts at 0x280\n\n            // structure of `inputNotes` and `outputNotes`\n\n            // 0x00 - 0x20 = byte length of notes array\n\n            // 0x20 - 0x40 = number of notes `i`\n\n            // the next `i` consecutive blocks of 0x20-sized memory contain relative offset between\n\n            // start of notes array and the location of the `note`\n\n\n\n            // structure of a `note`\n\n            // 0x00 - 0x20 = size of `note`\n\n            // 0x20 - 0x40 = type\n\n            // 0x40 - 0x60 = `owner`\n\n            // 0x60 - 0x80 = `noteHash`\n\n            // 0x80 - 0xa0 = size of note `data`\n\n            // 0xa0 - 0xc0 = compressed note coordinate `gamma` (part of `data`)\n\n            // 0xc0 - 0xe0 = compressed note coordinate `sigma` (part of `data`)\n\n            // 0xe0 - ???? = remaining note metadata\n\n\n\n            // `proofOutputs` must form a monolithic block of memory that we can return.\n\n            // `s` points to the memory location of the start of the current note\n\n            // `inputPtr` points to the start of the current `notes` dynamic bytes array\n\n\n\n            // length of proofOutputs is at s\n\n            mstore(0x1a0, 0x01)                            // number of proofs\n\n            mstore(0x1c0, 0x60)                            // offset to 1st proof\n\n            // length of proofOutput is at s + 0x60\n\n            mstore(0x200, 0xc0)                            // location of inputNotes\n\n            // location of outputNotes is at s + 0xc0\n\n            mstore(0x240, calldataload(0x164))             // publicOwner\n\n            // store kPublic. If kPublic is negative, store correct signed representation,\n\n            // relative to 2^256, not to the order of the bn128 group\n\n            let kPublic := calldataload(sub(add(notes, mul(calldataload(notes), 0xc0)), 0xa0))\n\n            switch gt(kPublic, 10944121435919637611123202872628637544274182200208017171849102093287904247808)\n\n            case 1 {\n\n                mstore(0x260, sub(kPublic, 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001))\n\n            }\n\n            case 0 {\n\n                mstore(0x260, kPublic)\n\n            }\n\n\n\n            mstore(0x280, calldataload(0x144))                    // store challenge\n\n            let inputPtr := 0x2a0                                 // point to inputNotes\n\n            mstore(add(inputPtr, 0x20), m)                        // number of input notes\n\n            // set note pointer, offsetting lookup indices for each input note\n\n            let s := add(0x2e0, mul(m, 0x20))\n\n\n\n            for { let i := 0 } lt(i, m) { i := add(i, 0x01) } {\n\n                let noteIndex := add(add(notes, 0x20), mul(i, 0xc0))\n\n                // copy note data to 0x00 - 0x80\n\n                mstore(0x00, 0x01) // note type\n\n                calldatacopy(0x20, add(noteIndex, 0x40), 0x80) // get gamma, sigma\n\n                mstore(0xc0, keccak256(0x00, 0xa0)) // note hash\n\n\n\n\n\n                // store note length in `s`\n\n                mstore(s, 0xc0)\n\n                // store note type (1)\n\n                mstore(add(s, 0x20), 0x01)\n\n                mstore(0xa0, 0x10101)   // proof id 0x010101\n\n\n\n                // Store note owner at `s + 0x40`\n\n                mstore(add(s, 0x40), calldataload(add(inputOwners, mul(i, 0x20))))\n\n\n\n                // store note hash in `s + 0x60`\n\n                mstore(add(s, 0x60), mload(0xc0))\n\n                // store note metadata length in `s + 0x60` (just the coordinates)\n\n                mstore(add(s, 0x80), 0x40)\n\n                // store compressed note coordinate gamma in `s + 0x80`\n\n                mstore(\n\n                    add(s, 0xa0),\n\n                    or(\n\n                        calldataload(add(noteIndex, 0x40)),\n\n                        mul(\n\n                            and(calldataload(add(noteIndex, 0x60)), 0x01),\n\n                            0x8000000000000000000000000000000000000000000000000000000000000000\n\n                        )\n\n                    )\n\n                )\n\n                // store compressed note coordinate sigma in `s + 0xa0`\n\n                mstore(\n\n                    add(s, 0xc0),\n\n                    or(\n\n                        calldataload(add(noteIndex, 0x80)),\n\n                        mul(\n\n                            and(calldataload(add(noteIndex, 0xa0)), 0x01),\n\n                            0x8000000000000000000000000000000000000000000000000000000000000000\n\n                        )\n\n                    )\n\n                )\n\n                // compute the relative offset to index this note in our returndata\n\n                mstore(add(add(inputPtr, 0x40), mul(i, 0x20)), sub(s, inputPtr)) // relative offset to note\n\n        \n\n                // increase s by note length\n\n                s := add(s, 0xe0)\n\n            }\n\n\n\n            // transition between input and output notes\n\n            // store total length of inputNotes at 1st index of inputNotes \n\n            mstore(inputPtr, sub(sub(s, inputPtr), 0x20))\n\n            mstore(0x220, add(0xc0, sub(s, inputPtr))) // store relative memory offset to outputNotes\n\n            inputPtr := s\n\n            mstore(add(inputPtr, 0x20), sub(n, m)) // store number of output notes\n\n            s := add(s, add(0x40, mul(sub(n, m), 0x20)))\n\n\n\n            // output notes\n\n            for { let i := m } lt(i, n) { i := add(i, 0x01) } {\n\n                // get note index\n\n                let noteIndex := add(add(notes, 0x20), mul(i, 0xc0))\n\n                // get pointer to metadata\n\n                let metadataIndex := calldataload(add(metadata, mul(sub(i, m), 0x20)))\n\n                // get size of metadata\n\n                let metadataLength := calldataload(add(sub(metadata, 0x40), metadataIndex))\n\n\n\n                // copy note data to 0x00 - 0x80\n\n                mstore(0x00, 0x01) // note type\n\n                calldatacopy(0x20, add(noteIndex, 0x40), 0x80) // get gamma, sigma\n\n\n\n                // store note length in `s`\n\n                mstore(s, add(0xc0, metadataLength))\n\n                // store note type (1)\n\n                mstore(add(s, 0x20), 0x01)\n\n                // store the owner of the note in `s + 0x20`\n\n                mstore(add(s, 0x40), calldataload(add(outputOwners, mul(sub(i, m), 0x20))))\n\n                // store note hash\n\n                mstore(add(s, 0x60), keccak256(0x00, 0xa0))\n\n                // store note metadata length if `s + 0x60`\n\n                mstore(add(s, 0x80), add(0x40, metadataLength))\n\n                // store compressed note coordinate gamma in `s + 0x80`\n\n                mstore(\n\n                    add(s, 0xa0),\n\n                    or(\n\n                        mload(0x20),\n\n                        mul(\n\n                            and(mload(0x40), 0x01),\n\n                            0x8000000000000000000000000000000000000000000000000000000000000000\n\n                        )\n\n                    )\n\n                )\n\n                // store compressed note coordinate sigma in `s + 0xa0`\n\n                mstore(\n\n                add(s, 0xc0),\n\n                or(\n\n                    mload(0x60),\n\n                    mul(\n\n                        and(mload(0x80), 0x01),\n\n                        0x8000000000000000000000000000000000000000000000000000000000000000\n\n                    )\n\n                )\n\n                )\n\n                // copy metadata into `s + 0xc0`\n\n                calldatacopy(add(s, 0xe0), add(metadataIndex, sub(metadata, 0x20)), metadataLength)\n\n                // compute the relative offset to index this note in our returndata\n\n                mstore(add(add(inputPtr, 0x40), mul(sub(i, m), 0x20)), sub(s, inputPtr)) // relative offset to note\n\n\n\n                // increase s by note length\n\n                s := add(s, add(mload(s), 0x20))\n\n            }\n\n\n\n            // cleanup. the length of the outputNotes = s - inputPtr\n\n            mstore(inputPtr, sub(sub(s, inputPtr), 0x20)) // store length of outputNotes at start of outputNotes\n\n            let notesLength := sub(s, 0x2a0)\n\n            mstore(0x1e0, add(0xa0, notesLength)) // store length of proofOutput at 0x160\n\n            mstore(0x180, add(0x100, notesLength)) // store length of proofOutputs at 0x100\n\n            mstore(0x160, 0x20)\n\n            return(0x160, add(0x140, notesLength)) // return the final byte array\n\n        }\n",
+          "message": "JoinSplitABIEncoder.encodeAndExit (JoinSplitABIEncoderTest.sol#50-242) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 302,
+          "vulnerability_to_line": 328,
+          "vulnerability_code": "    function hashEIP712Message(bytes32 _hashStruct)\n\n        internal\n\n        view\n\n        returns (bytes32 _result)\n\n    {\n\n        bytes32 eip712DomainHash = EIP712_DOMAIN_HASH;\n\n\n\n        // Assembly for more efficient computing:\n\n        // keccak256(abi.encodePacked(\n\n        //     EIP191_HEADER,\n\n        //     EIP712_DOMAIN_HASH,\n\n        //     hashStruct\n\n        // ));\n\n\n\n        assembly {\n\n            // Load free memory pointer. We're not going to use it - we're going to overwrite it!\n\n            // We need 0x60 bytes of memory for this hash,\n\n            // cheaper to overwrite the free memory pointer at 0x40, and then replace it, than allocating free memory\n\n            let memPtr := mload(0x40)\n\n            mstore(0x00, 0x1901)               // EIP191 header\n\n            mstore(0x20, eip712DomainHash)     // EIP712 domain hash\n\n            mstore(0x40, _hashStruct)          // Hash of struct\n\n            _result := keccak256(0x1e, 0x42)   // compute hash\n\n            // replace memory pointer\n\n            mstore(0x40, memPtr)\n\n        }\n",
+          "message": "LibEIP712.hashEIP712Message (JoinSplitABIEncoderTest.sol#302-328) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 334,
+          "vulnerability_to_line": 404,
+          "vulnerability_code": "    function recoverSignature(\n\n        bytes32 _message,\n\n        bytes memory _signature\n\n    ) internal view returns (address _signer) {\n\n        bool result;\n\n        assembly {\n\n            // Here's a little trick we can pull. We expect `_signature` to be a byte array, of length 0x60, with\n\n            // 'v', 'r' and 's' located linearly in memory. Preceeding this is the length parameter of `_signature`.\n\n            // We *replace* the length param with the signature msg to get a memory block formatted for the precompile\n\n            // load length as a temporary variable\n\n\n\n            let byteLength := mload(_signature)\n\n\n\n            // store the signature message\n\n            mstore(_signature, _message)\n\n\n\n            // load 'v' - we need it for a condition check\n\n            // add 0x60 to jump over 3 words - length of bytes array, r and s\n\n            let v := mload(add(_signature, 0x60))\n\n            let s := mload(add(_signature, 0x40))\n\n            v := shr(248, v) // bitshifting, to resemble padLeft\n\n\n\n            /**\n\n            * Original memory map for input to precompile\n\n            *\n\n            * _signature : _signature + 0x20            message\n\n            * _signature + 0x20 : _signature + 0x40     r\n\n            * _signature + 0x40 : _signature + 0x60     s\n\n            * _signature + 0x60 : _signature + 0x80     v\n\n\n\n            * Desired memory map for input to precompile\n\n            *\n\n            * _signature : _signature + 0x20            message\n\n            * _signature + 0x20 : _signature + 0x40     v\n\n            * _signature + 0x40 : _signature + 0x60     r\n\n            * _signature + 0x60 : _signature + 0x80     s\n\n            */\n\n\n\n            // move s to v position\n\n            mstore(add(_signature, 0x60), mload(add(_signature, 0x40)))\n\n            // move r to s position\n\n            mstore(add(_signature, 0x40), mload(add(_signature, 0x20)))\n\n            // move v to r position\n\n            mstore(add(_signature, 0x20), v)\n\n            result := and(\n\n                and(\n\n                    // validate s is in lower half order\n\n                    lt(s, 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0),\n\n                    and(\n\n                        // validate signature length == 0x41\n\n                        eq(byteLength, 0x41),\n\n                        // validate v == 27 or v == 28\n\n                        or(eq(v, 27), eq(v, 28))\n\n                    )\n\n                ),\n\n                // validate call to precompile succeeds\n\n                staticcall(gas, 0x01, _signature, 0x80, _signature, 0x20)\n\n            )\n\n            // save the _signer only if the first word in _signature is not `_message` anymore\n\n            switch eq(_message, mload(_signature))\n\n            case 0 {\n\n                _signer := mload(_signature)\n\n            }\n\n            mstore(_signature, byteLength) // and put the byte length back where it belongs\n\n        }\n\n        // wrap Failure States in a single if test, so that happy path only has 1 conditional jump\n\n        if (!(result && (_signer != address(0x0)))) {\n\n            require(_signer != address(0x0), \"signer address cannot be 0\");\n\n            require(result, \"signature recovery failed\");\n\n        }\n",
+          "message": "LibEIP712.recoverSignature (JoinSplitABIEncoderTest.sol#334-404) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": 242,
+          "vulnerability_code": "    function encodeAndExit() internal pure {\n\n        assembly {\n\n            // set up initial variables\n\n            let notes := add(0x104, calldataload(0x184))\n\n            let n := calldataload(notes)\n\n            let m := calldataload(0x124)\n\n            let inputOwners := add(0x124, calldataload(0x1a4)) // one word after inputOwners = 1st\n\n            let outputOwners := add(0x124, calldataload(0x1c4)) // one word after outputOwners = 1st\n\n            let metadata := add(0x144, calldataload(0x1e4)) // two words after metadata = 1st\n\n\n\n            // memory map of `proofOutputs`\n\n\n\n            // `returndata` starts at 0x160\n\n            // `proofOutputs` starts at 0x180\n\n            // 0x160 - 0x180 = relative offset in returndata to first bytes argument (0x20)\n\n            // 0x180 - 0x1a0 = byte length of `proofOutputs`\n\n            // 0x1a0 - 0x1c0 = number of `proofOutputs` entries (1)\n\n            // 0x1c0 - 0x1e0 = relative memory offset between `v` and start of `proofOutput`\n\n\n\n            // `proofOutput` - t, starts at 0x1e0\n\n            // 0x1e0 - 0x200 = length of `proofOutput`\n\n            // 0x200 - 0x220 = relative offset between `t` and `inputNotes`\n\n            // 0x220 - 0x240 = relative offset between `t` and `outputNotes`\n\n            // 0x240 - 0x260 = `publicOwner`\n\n            // 0x260 - 0x280 = `publicValue`\n\n            // 0x280 - 0x2a0 = `challenge`\n\n\n\n            // `inputNotes` starts at 0x280\n\n            // structure of `inputNotes` and `outputNotes`\n\n            // 0x00 - 0x20 = byte length of notes array\n\n            // 0x20 - 0x40 = number of notes `i`\n\n            // the next `i` consecutive blocks of 0x20-sized memory contain relative offset between\n\n            // start of notes array and the location of the `note`\n\n\n\n            // structure of a `note`\n\n            // 0x00 - 0x20 = size of `note`\n\n            // 0x20 - 0x40 = type\n\n            // 0x40 - 0x60 = `owner`\n\n            // 0x60 - 0x80 = `noteHash`\n\n            // 0x80 - 0xa0 = size of note `data`\n\n            // 0xa0 - 0xc0 = compressed note coordinate `gamma` (part of `data`)\n\n            // 0xc0 - 0xe0 = compressed note coordinate `sigma` (part of `data`)\n\n            // 0xe0 - ???? = remaining note metadata\n\n\n\n            // `proofOutputs` must form a monolithic block of memory that we can return.\n\n            // `s` points to the memory location of the start of the current note\n\n            // `inputPtr` points to the start of the current `notes` dynamic bytes array\n\n\n\n            // length of proofOutputs is at s\n\n            mstore(0x1a0, 0x01)                            // number of proofs\n\n            mstore(0x1c0, 0x60)                            // offset to 1st proof\n\n            // length of proofOutput is at s + 0x60\n\n            mstore(0x200, 0xc0)                            // location of inputNotes\n\n            // location of outputNotes is at s + 0xc0\n\n            mstore(0x240, calldataload(0x164))             // publicOwner\n\n            // store kPublic. If kPublic is negative, store correct signed representation,\n\n            // relative to 2^256, not to the order of the bn128 group\n\n            let kPublic := calldataload(sub(add(notes, mul(calldataload(notes), 0xc0)), 0xa0))\n\n            switch gt(kPublic, 10944121435919637611123202872628637544274182200208017171849102093287904247808)\n\n            case 1 {\n\n                mstore(0x260, sub(kPublic, 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001))\n\n            }\n\n            case 0 {\n\n                mstore(0x260, kPublic)\n\n            }\n\n\n\n            mstore(0x280, calldataload(0x144))                    // store challenge\n\n            let inputPtr := 0x2a0                                 // point to inputNotes\n\n            mstore(add(inputPtr, 0x20), m)                        // number of input notes\n\n            // set note pointer, offsetting lookup indices for each input note\n\n            let s := add(0x2e0, mul(m, 0x20))\n\n\n\n            for { let i := 0 } lt(i, m) { i := add(i, 0x01) } {\n\n                let noteIndex := add(add(notes, 0x20), mul(i, 0xc0))\n\n                // copy note data to 0x00 - 0x80\n\n                mstore(0x00, 0x01) // note type\n\n                calldatacopy(0x20, add(noteIndex, 0x40), 0x80) // get gamma, sigma\n\n                mstore(0xc0, keccak256(0x00, 0xa0)) // note hash\n\n\n\n\n\n                // store note length in `s`\n\n                mstore(s, 0xc0)\n\n                // store note type (1)\n\n                mstore(add(s, 0x20), 0x01)\n\n                mstore(0xa0, 0x10101)   // proof id 0x010101\n\n\n\n                // Store note owner at `s + 0x40`\n\n                mstore(add(s, 0x40), calldataload(add(inputOwners, mul(i, 0x20))))\n\n\n\n                // store note hash in `s + 0x60`\n\n                mstore(add(s, 0x60), mload(0xc0))\n\n                // store note metadata length in `s + 0x60` (just the coordinates)\n\n                mstore(add(s, 0x80), 0x40)\n\n                // store compressed note coordinate gamma in `s + 0x80`\n\n                mstore(\n\n                    add(s, 0xa0),\n\n                    or(\n\n                        calldataload(add(noteIndex, 0x40)),\n\n                        mul(\n\n                            and(calldataload(add(noteIndex, 0x60)), 0x01),\n\n                            0x8000000000000000000000000000000000000000000000000000000000000000\n\n                        )\n\n                    )\n\n                )\n\n                // store compressed note coordinate sigma in `s + 0xa0`\n\n                mstore(\n\n                    add(s, 0xc0),\n\n                    or(\n\n                        calldataload(add(noteIndex, 0x80)),\n\n                        mul(\n\n                            and(calldataload(add(noteIndex, 0xa0)), 0x01),\n\n                            0x8000000000000000000000000000000000000000000000000000000000000000\n\n                        )\n\n                    )\n\n                )\n\n                // compute the relative offset to index this note in our returndata\n\n                mstore(add(add(inputPtr, 0x40), mul(i, 0x20)), sub(s, inputPtr)) // relative offset to note\n\n        \n\n                // increase s by note length\n\n                s := add(s, 0xe0)\n\n            }\n\n\n\n            // transition between input and output notes\n\n            // store total length of inputNotes at 1st index of inputNotes \n\n            mstore(inputPtr, sub(sub(s, inputPtr), 0x20))\n\n            mstore(0x220, add(0xc0, sub(s, inputPtr))) // store relative memory offset to outputNotes\n\n            inputPtr := s\n\n            mstore(add(inputPtr, 0x20), sub(n, m)) // store number of output notes\n\n            s := add(s, add(0x40, mul(sub(n, m), 0x20)))\n\n\n\n            // output notes\n\n            for { let i := m } lt(i, n) { i := add(i, 0x01) } {\n\n                // get note index\n\n                let noteIndex := add(add(notes, 0x20), mul(i, 0xc0))\n\n                // get pointer to metadata\n\n                let metadataIndex := calldataload(add(metadata, mul(sub(i, m), 0x20)))\n\n                // get size of metadata\n\n                let metadataLength := calldataload(add(sub(metadata, 0x40), metadataIndex))\n\n\n\n                // copy note data to 0x00 - 0x80\n\n                mstore(0x00, 0x01) // note type\n\n                calldatacopy(0x20, add(noteIndex, 0x40), 0x80) // get gamma, sigma\n\n\n\n                // store note length in `s`\n\n                mstore(s, add(0xc0, metadataLength))\n\n                // store note type (1)\n\n                mstore(add(s, 0x20), 0x01)\n\n                // store the owner of the note in `s + 0x20`\n\n                mstore(add(s, 0x40), calldataload(add(outputOwners, mul(sub(i, m), 0x20))))\n\n                // store note hash\n\n                mstore(add(s, 0x60), keccak256(0x00, 0xa0))\n\n                // store note metadata length if `s + 0x60`\n\n                mstore(add(s, 0x80), add(0x40, metadataLength))\n\n                // store compressed note coordinate gamma in `s + 0x80`\n\n                mstore(\n\n                    add(s, 0xa0),\n\n                    or(\n\n                        mload(0x20),\n\n                        mul(\n\n                            and(mload(0x40), 0x01),\n\n                            0x8000000000000000000000000000000000000000000000000000000000000000\n\n                        )\n\n                    )\n\n                )\n\n                // store compressed note coordinate sigma in `s + 0xa0`\n\n                mstore(\n\n                add(s, 0xc0),\n\n                or(\n\n                    mload(0x60),\n\n                    mul(\n\n                        and(mload(0x80), 0x01),\n\n                        0x8000000000000000000000000000000000000000000000000000000000000000\n\n                    )\n\n                )\n\n                )\n\n                // copy metadata into `s + 0xc0`\n\n                calldatacopy(add(s, 0xe0), add(metadataIndex, sub(metadata, 0x20)), metadataLength)\n\n                // compute the relative offset to index this note in our returndata\n\n                mstore(add(add(inputPtr, 0x40), mul(sub(i, m), 0x20)), sub(s, inputPtr)) // relative offset to note\n\n\n\n                // increase s by note length\n\n                s := add(s, add(mload(s), 0x20))\n\n            }\n\n\n\n            // cleanup. the length of the outputNotes = s - inputPtr\n\n            mstore(inputPtr, sub(sub(s, inputPtr), 0x20)) // store length of outputNotes at start of outputNotes\n\n            let notesLength := sub(s, 0x2a0)\n\n            mstore(0x1e0, add(0xa0, notesLength)) // store length of proofOutput at 0x160\n\n            mstore(0x180, add(0x100, notesLength)) // store length of proofOutputs at 0x100\n\n            mstore(0x160, 0x20)\n\n            return(0x160, add(0x140, notesLength)) // return the final byte array\n\n        }\n",
+          "message": "JoinSplitABIEncoder.encodeAndExit uses assembly (JoinSplitABIEncoderTest.sol#50-242)\n\t- JoinSplitABIEncoderTest.sol#51-241\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 302,
+          "vulnerability_to_line": 328,
+          "vulnerability_code": "    function hashEIP712Message(bytes32 _hashStruct)\n\n        internal\n\n        view\n\n        returns (bytes32 _result)\n\n    {\n\n        bytes32 eip712DomainHash = EIP712_DOMAIN_HASH;\n\n\n\n        // Assembly for more efficient computing:\n\n        // keccak256(abi.encodePacked(\n\n        //     EIP191_HEADER,\n\n        //     EIP712_DOMAIN_HASH,\n\n        //     hashStruct\n\n        // ));\n\n\n\n        assembly {\n\n            // Load free memory pointer. We're not going to use it - we're going to overwrite it!\n\n            // We need 0x60 bytes of memory for this hash,\n\n            // cheaper to overwrite the free memory pointer at 0x40, and then replace it, than allocating free memory\n\n            let memPtr := mload(0x40)\n\n            mstore(0x00, 0x1901)               // EIP191 header\n\n            mstore(0x20, eip712DomainHash)     // EIP712 domain hash\n\n            mstore(0x40, _hashStruct)          // Hash of struct\n\n            _result := keccak256(0x1e, 0x42)   // compute hash\n\n            // replace memory pointer\n\n            mstore(0x40, memPtr)\n\n        }\n",
+          "message": "LibEIP712.hashEIP712Message uses assembly (JoinSplitABIEncoderTest.sol#302-328)\n\t- JoinSplitABIEncoderTest.sol#316-327\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 334,
+          "vulnerability_to_line": 404,
+          "vulnerability_code": "    function recoverSignature(\n\n        bytes32 _message,\n\n        bytes memory _signature\n\n    ) internal view returns (address _signer) {\n\n        bool result;\n\n        assembly {\n\n            // Here's a little trick we can pull. We expect `_signature` to be a byte array, of length 0x60, with\n\n            // 'v', 'r' and 's' located linearly in memory. Preceeding this is the length parameter of `_signature`.\n\n            // We *replace* the length param with the signature msg to get a memory block formatted for the precompile\n\n            // load length as a temporary variable\n\n\n\n            let byteLength := mload(_signature)\n\n\n\n            // store the signature message\n\n            mstore(_signature, _message)\n\n\n\n            // load 'v' - we need it for a condition check\n\n            // add 0x60 to jump over 3 words - length of bytes array, r and s\n\n            let v := mload(add(_signature, 0x60))\n\n            let s := mload(add(_signature, 0x40))\n\n            v := shr(248, v) // bitshifting, to resemble padLeft\n\n\n\n            /**\n\n            * Original memory map for input to precompile\n\n            *\n\n            * _signature : _signature + 0x20            message\n\n            * _signature + 0x20 : _signature + 0x40     r\n\n            * _signature + 0x40 : _signature + 0x60     s\n\n            * _signature + 0x60 : _signature + 0x80     v\n\n\n\n            * Desired memory map for input to precompile\n\n            *\n\n            * _signature : _signature + 0x20            message\n\n            * _signature + 0x20 : _signature + 0x40     v\n\n            * _signature + 0x40 : _signature + 0x60     r\n\n            * _signature + 0x60 : _signature + 0x80     s\n\n            */\n\n\n\n            // move s to v position\n\n            mstore(add(_signature, 0x60), mload(add(_signature, 0x40)))\n\n            // move r to s position\n\n            mstore(add(_signature, 0x40), mload(add(_signature, 0x20)))\n\n            // move v to r position\n\n            mstore(add(_signature, 0x20), v)\n\n            result := and(\n\n                and(\n\n                    // validate s is in lower half order\n\n                    lt(s, 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0),\n\n                    and(\n\n                        // validate signature length == 0x41\n\n                        eq(byteLength, 0x41),\n\n                        // validate v == 27 or v == 28\n\n                        or(eq(v, 27), eq(v, 28))\n\n                    )\n\n                ),\n\n                // validate call to precompile succeeds\n\n                staticcall(gas, 0x01, _signature, 0x80, _signature, 0x20)\n\n            )\n\n            // save the _signer only if the first word in _signature is not `_message` anymore\n\n            switch eq(_message, mload(_signature))\n\n            case 0 {\n\n                _signer := mload(_signature)\n\n            }\n\n            mstore(_signature, byteLength) // and put the byte length back where it belongs\n\n        }\n\n        // wrap Failure States in a single if test, so that happy path only has 1 conditional jump\n\n        if (!(result && (_signer != address(0x0)))) {\n\n            require(_signer != address(0x0), \"signer address cannot be 0\");\n\n            require(result, \"signature recovery failed\");\n\n        }\n",
+          "message": "LibEIP712.recoverSignature uses assembly (JoinSplitABIEncoderTest.sol#334-404)\n\t- JoinSplitABIEncoderTest.sol#339-398\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.5.0 <0.6.0;\n",
+          "message": "Detected issues with version pragma in JoinSplitABIEncoderTest.sol:\n\t- pragma solidity>=0.5.0<0.6.0 (JoinSplitABIEncoderTest.sol#3): it allows old versions\n\t- pragma solidity>=0.5.0<0.6.0 (JoinSplitABIEncoderTest.sol#247): it allows old versions\n\t- pragma solidity>=0.5.0<0.6.0 (JoinSplitABIEncoderTest.sol#409): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 286,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes32 public EIP712_DOMAIN_HASH;\n",
+          "message": "Variable 'LibEIP712.EIP712_DOMAIN_HASH' (JoinSplitABIEncoderTest.sol#286) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 438,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes calldata,\n",
+          "message": "Parameter '' of JoinSplitABIEncoderTest.validateJoinSplit (JoinSplitABIEncoderTest.sol#438) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 439,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address,\n",
+          "message": "Parameter '_scope_0' of JoinSplitABIEncoderTest.validateJoinSplit (JoinSplitABIEncoderTest.sol#439) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 440,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint[6] calldata\n",
+          "message": "Parameter '_scope_1' of JoinSplitABIEncoderTest.validateJoinSplit (JoinSplitABIEncoderTest.sol#440) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 400,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (!(result && (_signer != address(0x0)))) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 401,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(_signer != address(0x0), \"signer address cannot be 0\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 437,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function validateJoinSplit(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 302,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function hashEIP712Message(bytes32 _hashStruct)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 334,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function recoverSignature(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.5.0 <0.6.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.5.0 <0.6.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 247,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.5.0 <0.6.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 247,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.5.0 <0.6.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 409,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.5.0 <0.6.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 409,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.5.0 <0.6.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function encodeAndExit() internal pure {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 302,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function hashEIP712Message(bytes32 _hashStruct)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 334,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function recoverSignature(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 316,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 339,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solc experienced a fatal error"
+      ],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

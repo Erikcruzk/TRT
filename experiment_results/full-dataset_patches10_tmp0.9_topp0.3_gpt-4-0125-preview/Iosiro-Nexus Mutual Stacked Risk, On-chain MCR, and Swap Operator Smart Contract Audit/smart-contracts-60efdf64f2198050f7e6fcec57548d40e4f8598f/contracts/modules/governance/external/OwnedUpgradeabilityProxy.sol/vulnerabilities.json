@@ -1,0 +1,318 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 64,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor() public {}\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address _implementation) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _setUpgradeabilityOwner(msg.sender);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 126,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _upgradeTo(_implementation);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 127,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_18"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": 76,
+          "vulnerability_code": "  function implementation() public view returns (address impl) {\n\n    bytes32 position = IMPLEMENTATION_POSITION;\n\n    // solhint-disable-next-line no-inline-assembly\n\n    assembly {\n\n      impl := sload(position)\n\n    }\n",
+          "message": "UpgradeabilityProxy.implementation (OwnedUpgradeabilityProxy.sol#70-76) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": 147,
+          "vulnerability_code": "  function proxyOwner() public view returns (address owner) {\n\n    bytes32 position = PROXY_OWNER_POSITION;\n\n    // solhint-disable-next-line no-inline-assembly\n\n    assembly {\n\n      owner := sload(position)\n\n    }\n",
+          "message": "OwnedUpgradeabilityProxy.proxyOwner (OwnedUpgradeabilityProxy.sol#141-147) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 33,
+          "vulnerability_code": "  function() external payable {\n\n    address _impl = implementation();\n\n    require(_impl != address(0));\n\n\n\n    // solhint-disable-next-line no-inline-assembly\n\n    assembly {\n\n      let ptr := mload(0x40)\n\n      calldatacopy(ptr, 0, calldatasize)\n\n      let result := delegatecall(gas, _impl, ptr, calldatasize, 0, 0)\n\n      let size := returndatasize\n\n      returndatacopy(ptr, 0, size)\n\n\n\n      switch result\n\n      case 0 {revert(ptr, size)}\n\n      default {return (ptr, size)}\n\n    }\n",
+          "message": "Contract locking ether found in OwnedUpgradeabilityProxy.sol:\n\tContract OwnedUpgradeabilityProxy has payable functions:\n\t - fallback (OwnedUpgradeabilityProxy.sol#17-33)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": 33,
+          "vulnerability_code": "  function() external payable {\n\n    address _impl = implementation();\n\n    require(_impl != address(0));\n\n\n\n    // solhint-disable-next-line no-inline-assembly\n\n    assembly {\n\n      let ptr := mload(0x40)\n\n      calldatacopy(ptr, 0, calldatasize)\n\n      let result := delegatecall(gas, _impl, ptr, calldatasize, 0, 0)\n\n      let size := returndatasize\n\n      returndatacopy(ptr, 0, size)\n\n\n\n      switch result\n\n      case 0 {revert(ptr, size)}\n\n      default {return (ptr, size)}\n\n    }\n",
+          "message": "Proxy.fallback uses assembly (OwnedUpgradeabilityProxy.sol#17-33)\n\t- OwnedUpgradeabilityProxy.sol#22-32\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": 76,
+          "vulnerability_code": "  function implementation() public view returns (address impl) {\n\n    bytes32 position = IMPLEMENTATION_POSITION;\n\n    // solhint-disable-next-line no-inline-assembly\n\n    assembly {\n\n      impl := sload(position)\n\n    }\n",
+          "message": "UpgradeabilityProxy.implementation uses assembly (OwnedUpgradeabilityProxy.sol#70-76)\n\t- OwnedUpgradeabilityProxy.sol#73-75\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": 88,
+          "vulnerability_code": "  function _setImplementation(address _newImplementation) internal {\n\n    bytes32 position = IMPLEMENTATION_POSITION;\n\n    // solhint-disable-next-line no-inline-assembly\n\n    assembly {\n\n      sstore(position, _newImplementation)\n\n    }\n",
+          "message": "UpgradeabilityProxy._setImplementation uses assembly (OwnedUpgradeabilityProxy.sol#82-88)\n\t- OwnedUpgradeabilityProxy.sol#85-87\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": 147,
+          "vulnerability_code": "  function proxyOwner() public view returns (address owner) {\n\n    bytes32 position = PROXY_OWNER_POSITION;\n\n    // solhint-disable-next-line no-inline-assembly\n\n    assembly {\n\n      owner := sload(position)\n\n    }\n",
+          "message": "OwnedUpgradeabilityProxy.proxyOwner uses assembly (OwnedUpgradeabilityProxy.sol#141-147)\n\t- OwnedUpgradeabilityProxy.sol#144-146\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 170,
+          "vulnerability_to_line": 176,
+          "vulnerability_code": "  function _setUpgradeabilityOwner(address _newProxyOwner) internal {\n\n    bytes32 position = PROXY_OWNER_POSITION;\n\n    // solhint-disable-next-line no-inline-assembly\n\n    assembly {\n\n      sstore(position, _newProxyOwner)\n\n    }\n",
+          "message": "OwnedUpgradeabilityProxy._setUpgradeabilityOwner uses assembly (OwnedUpgradeabilityProxy.sol#170-176)\n\t- OwnedUpgradeabilityProxy.sol#173-175\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 153,
+          "vulnerability_to_line": 157,
+          "vulnerability_code": "  function transferProxyOwnership(address _newOwner) public onlyProxyOwner {\n\n    require(_newOwner != address(0));\n\n    _setUpgradeabilityOwner(_newOwner);\n\n    emit ProxyOwnershipTransferred(proxyOwner(), _newOwner);\n",
+          "message": "OwnedUpgradeabilityProxy.transferProxyOwnership (OwnedUpgradeabilityProxy.sol#153-157) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 163,
+          "vulnerability_to_line": 165,
+          "vulnerability_code": "  function upgradeTo(address _implementation) public onlyProxyOwner {\n\n    _upgradeTo(_implementation);\n",
+          "message": "OwnedUpgradeabilityProxy.upgradeTo (OwnedUpgradeabilityProxy.sol#163-165) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": "Detected issues with version pragma in OwnedUpgradeabilityProxy.sol:\n\t- pragma solidity^0.5.0 (OwnedUpgradeabilityProxy.sol#3): it allows old versions\n\t- pragma solidity^0.5.0 (OwnedUpgradeabilityProxy.sol#44): it allows old versions\n\t- pragma solidity^0.5.0 (OwnedUpgradeabilityProxy.sol#104): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": 88,
+          "vulnerability_code": "  function _setImplementation(address _newImplementation) internal {\n\n    bytes32 position = IMPLEMENTATION_POSITION;\n\n    // solhint-disable-next-line no-inline-assembly\n\n    assembly {\n\n      sstore(position, _newImplementation)\n\n    }\n",
+          "message": "Function 'UpgradeabilityProxy._setImplementation' (OwnedUpgradeabilityProxy.sol#82-88) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": 99,
+          "vulnerability_code": "  function _upgradeTo(address _newImplementation) internal {\n\n    address currentImplementation = implementation();\n\n    require(currentImplementation != _newImplementation);\n\n    _setImplementation(_newImplementation);\n\n    emit Upgraded(_newImplementation);\n",
+          "message": "Function 'UpgradeabilityProxy._upgradeTo' (OwnedUpgradeabilityProxy.sol#94-99) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _upgradeTo(address _newImplementation) internal {\n",
+          "message": "Parameter '_newImplementation' of UpgradeabilityProxy._upgradeTo (OwnedUpgradeabilityProxy.sol#94) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address _implementation) public {\n",
+          "message": "Parameter '_implementation' of OwnedUpgradeabilityProxy. (OwnedUpgradeabilityProxy.sol#124) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 153,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferProxyOwnership(address _newOwner) public onlyProxyOwner {\n",
+          "message": "Parameter '_newOwner' of OwnedUpgradeabilityProxy.transferProxyOwnership (OwnedUpgradeabilityProxy.sol#153) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 163,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function upgradeTo(address _implementation) public onlyProxyOwner {\n",
+          "message": "Parameter '_implementation' of OwnedUpgradeabilityProxy.upgradeTo (OwnedUpgradeabilityProxy.sol#163) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 170,
+          "vulnerability_to_line": 176,
+          "vulnerability_code": "  function _setUpgradeabilityOwner(address _newProxyOwner) internal {\n\n    bytes32 position = PROXY_OWNER_POSITION;\n\n    // solhint-disable-next-line no-inline-assembly\n\n    assembly {\n\n      sstore(position, _newProxyOwner)\n\n    }\n",
+          "message": "Function 'OwnedUpgradeabilityProxy._setUpgradeabilityOwner' (OwnedUpgradeabilityProxy.sol#170-176) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function implementation() public view returns (address impl) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function proxyOwner() public view returns (address owner) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Proxy {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 104,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes32 private constant IMPLEMENTATION_POSITION = keccak256(\"org.govblocks.proxy.implementation\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 119,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes32 private constant PROXY_OWNER_POSITION = keccak256(\"org.govblocks.proxy.owner\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function implementation() public view returns (address impl) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function proxyOwner() public view returns (address owner) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 85,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 144,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 173,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Delegatecall to user-supplied address (SWC 112)",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      let result := delegatecall(gas, _impl, ptr, calldatasize, 0, 0)\n",
+          "message": "The contract delegates execution to another contract with a user-supplied address.\nThe smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.\nClassification: SWC-112"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

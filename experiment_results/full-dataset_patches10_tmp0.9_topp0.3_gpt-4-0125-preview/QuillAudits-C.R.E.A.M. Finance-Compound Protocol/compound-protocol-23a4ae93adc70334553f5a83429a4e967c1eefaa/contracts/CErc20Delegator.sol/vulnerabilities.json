@@ -1,0 +1,723 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 515,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address underlying_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 516,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                ComptrollerInterface comptroller_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 517,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                InterestRateModel interestRateModel_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 518,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                uint initialExchangeRateMantissa_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 519,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                string memory name_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 520,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                string memory symbol_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 521,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                uint8 decimals_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 522,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                address payable admin_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 523,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                address implementation_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 524,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                bytes memory becomeImplementationData) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 552,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == admin, \"CErc20Delegator::_setImplementation: Caller must be admin\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 962,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.value == 0,\"CErc20Delegator:fallback: cannot send value to fallback\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 552,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == admin, \"CErc20Delegator::_setImplementation: Caller must be admin\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 962,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.value == 0,\"CErc20Delegator:fallback: cannot send value to fallback\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_58"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "controlled-delegatecall",
+          "vulnerability_from_line": 894,
+          "vulnerability_to_line": 902,
+          "vulnerability_code": "    function delegateTo(address callee, bytes memory data) internal returns (bytes memory) {\n\n        (bool success, bytes memory returnData) = callee.delegatecall(data);\n\n        assembly {\n\n            if eq(success, 0) {\n\n                revert(add(returnData, 0x20), returndatasize)\n\n            }\n\n        }\n\n        return returnData;\n",
+          "message": "CErc20Delegator.delegateTo (CErc20Delegator.sol#894-902) uses delegatecall to a input-controlled function id\n\t(success,returnData) = callee.delegatecall(data) (CErc20Delegator.sol#895)\n"
+        },
+        {
+          "name": "controlled-delegatecall",
+          "vulnerability_from_line": 944,
+          "vulnerability_to_line": 955,
+          "vulnerability_code": "    function delegateAndReturn() private returns (bytes memory) {\n\n        (bool success, ) = implementation.delegatecall(msg.data);\n\n\n\n        assembly {\n\n            let free_mem_ptr := mload(0x40)\n\n            returndatacopy(free_mem_ptr, 0, returndatasize)\n\n\n\n            switch success\n\n            case 0 { revert(free_mem_ptr, returndatasize) }\n\n            default { return(free_mem_ptr, returndatasize) }\n\n        }\n",
+          "message": "CErc20Delegator.delegateAndReturn (CErc20Delegator.sol#944-955) uses delegatecall to a input-controlled function id\n\t(success) = implementation.delegatecall(msg.data) (CErc20Delegator.sol#945)\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 921,
+          "vulnerability_to_line": 929,
+          "vulnerability_code": "    function delegateToViewImplementation(bytes memory data) public view returns (bytes memory) {\n\n        (bool success, bytes memory returnData) = address(this).staticcall(abi.encodeWithSignature(\"delegateToImplementation(bytes)\", data));\n\n        assembly {\n\n            if eq(success, 0) {\n\n                revert(add(returnData, 0x20), returndatasize)\n\n            }\n\n        }\n\n        return abi.decode(returnData, (bytes));\n",
+          "message": "CErc20Delegator.delegateToViewImplementation (CErc20Delegator.sol#921-929) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 931,
+          "vulnerability_to_line": 942,
+          "vulnerability_code": "    function delegateToViewAndReturn() private view returns (bytes memory) {\n\n        (bool success, ) = address(this).staticcall(abi.encodeWithSignature(\"delegateToImplementation(bytes)\", msg.data));\n\n\n\n        assembly {\n\n            let free_mem_ptr := mload(0x40)\n\n            returndatacopy(free_mem_ptr, 0, returndatasize)\n\n\n\n            switch success\n\n            case 0 { revert(free_mem_ptr, returndatasize) }\n\n            default { return(add(free_mem_ptr, 0x40), returndatasize) }\n\n        }\n",
+          "message": "CErc20Delegator.delegateToViewAndReturn (CErc20Delegator.sol#931-942) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "reentrancy-no-eth",
+          "vulnerability_from_line": 551,
+          "vulnerability_to_line": 564,
+          "vulnerability_code": "    function _setImplementation(address implementation_, bool allowResign, bytes memory becomeImplementationData) public {\n\n        require(msg.sender == admin, \"CErc20Delegator::_setImplementation: Caller must be admin\");\n\n\n\n        if (allowResign) {\n\n            delegateToImplementation(abi.encodeWithSignature(\"_resignImplementation()\"));\n\n        }\n\n\n\n        address oldImplementation = implementation;\n\n        implementation = implementation_;\n\n\n\n        delegateToImplementation(abi.encodeWithSignature(\"_becomeImplementation(bytes)\", becomeImplementationData));\n\n\n\n        emit NewImplementation(oldImplementation, implementation);\n",
+          "message": "Reentrancy in CErc20Delegator._setImplementation (CErc20Delegator.sol#551-564):\n\tExternal calls:\n\t- delegateToImplementation(abi.encodeWithSignature(_resignImplementation())) (CErc20Delegator.sol#555)\n\tState variables written after the call(s):\n\t- implementation (CErc20Delegator.sol#559)\n"
+        },
+        {
+          "name": "reentrancy-no-eth",
+          "vulnerability_from_line": 515,
+          "vulnerability_to_line": 543,
+          "vulnerability_code": "    constructor(address underlying_,\n\n                ComptrollerInterface comptroller_,\n\n                InterestRateModel interestRateModel_,\n\n                uint initialExchangeRateMantissa_,\n\n                string memory name_,\n\n                string memory symbol_,\n\n                uint8 decimals_,\n\n                address payable admin_,\n\n                address implementation_,\n\n                bytes memory becomeImplementationData) public {\n\n        // Creator of the contract is admin during initialization\n\n        admin = msg.sender;\n\n\n\n        // First delegate gets to initialize the delegator (i.e. storage contract)\n\n        delegateTo(implementation_, abi.encodeWithSignature(\"initialize(address,address,address,uint256,string,string,uint8)\",\n\n                                                            underlying_,\n\n                                                            comptroller_,\n\n                                                            interestRateModel_,\n\n                                                            initialExchangeRateMantissa_,\n\n                                                            name_,\n\n                                                            symbol_,\n\n                                                            decimals_));\n\n\n\n        // New implementations always get set via the settor (post-initialize)\n\n        _setImplementation(implementation_, false, becomeImplementationData);\n\n\n\n        // Set the proper admin now that initialization is done\n\n        admin = admin_;\n",
+          "message": "Reentrancy in CErc20Delegator.constructor (CErc20Delegator.sol#515-543):\n\tExternal calls:\n\t- delegateTo(implementation_,abi.encodeWithSignature(initialize(address,address,address,uint256,string,string,uint8),underlying_,comptroller_,interestRateModel_,initialExchangeRateMantissa_,name_,symbol_,decimals_)) (CErc20Delegator.sol#529-536)\n\t- _setImplementation(implementation_,false,becomeImplementationData) (CErc20Delegator.sol#539)\n\tState variables written after the call(s):\n\t- admin (CErc20Delegator.sol#542)\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 894,
+          "vulnerability_to_line": 902,
+          "vulnerability_code": "    function delegateTo(address callee, bytes memory data) internal returns (bytes memory) {\n\n        (bool success, bytes memory returnData) = callee.delegatecall(data);\n\n        assembly {\n\n            if eq(success, 0) {\n\n                revert(add(returnData, 0x20), returndatasize)\n\n            }\n\n        }\n\n        return returnData;\n",
+          "message": "CErc20Delegator.delegateTo uses assembly (CErc20Delegator.sol#894-902)\n\t- CErc20Delegator.sol#896-900\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 921,
+          "vulnerability_to_line": 929,
+          "vulnerability_code": "    function delegateToViewImplementation(bytes memory data) public view returns (bytes memory) {\n\n        (bool success, bytes memory returnData) = address(this).staticcall(abi.encodeWithSignature(\"delegateToImplementation(bytes)\", data));\n\n        assembly {\n\n            if eq(success, 0) {\n\n                revert(add(returnData, 0x20), returndatasize)\n\n            }\n\n        }\n\n        return abi.decode(returnData, (bytes));\n",
+          "message": "CErc20Delegator.delegateToViewImplementation uses assembly (CErc20Delegator.sol#921-929)\n\t- CErc20Delegator.sol#923-927\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 931,
+          "vulnerability_to_line": 942,
+          "vulnerability_code": "    function delegateToViewAndReturn() private view returns (bytes memory) {\n\n        (bool success, ) = address(this).staticcall(abi.encodeWithSignature(\"delegateToImplementation(bytes)\", msg.data));\n\n\n\n        assembly {\n\n            let free_mem_ptr := mload(0x40)\n\n            returndatacopy(free_mem_ptr, 0, returndatasize)\n\n\n\n            switch success\n\n            case 0 { revert(free_mem_ptr, returndatasize) }\n\n            default { return(add(free_mem_ptr, 0x40), returndatasize) }\n\n        }\n",
+          "message": "CErc20Delegator.delegateToViewAndReturn uses assembly (CErc20Delegator.sol#931-942)\n\t- CErc20Delegator.sol#934-941\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 944,
+          "vulnerability_to_line": 955,
+          "vulnerability_code": "    function delegateAndReturn() private returns (bytes memory) {\n\n        (bool success, ) = implementation.delegatecall(msg.data);\n\n\n\n        assembly {\n\n            let free_mem_ptr := mload(0x40)\n\n            returndatacopy(free_mem_ptr, 0, returndatasize)\n\n\n\n            switch success\n\n            case 0 { revert(free_mem_ptr, returndatasize) }\n\n            default { return(free_mem_ptr, returndatasize) }\n\n        }\n",
+          "message": "CErc20Delegator.delegateAndReturn uses assembly (CErc20Delegator.sol#944-955)\n\t- CErc20Delegator.sol#947-954\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 265,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public collateralCap;\n",
+          "message": "CCollateralCapStorage.collateralCap should be constant (CErc20Delegator.sol#265)\nCCollateralCapStorage.totalCollateralTokens should be constant (CErc20Delegator.sol#249)\nCErc20Storage.underlying should be constant (CErc20Delegator.sol#230)\nCSupplyCapStorage.internalCash should be constant (CErc20Delegator.sol#242)\nCTokenStorage._notEntered should be constant (CErc20Delegator.sol#117)\nCTokenStorage.accrualBlockNumber should be constant (CErc20Delegator.sol#178)\nCTokenStorage.borrowIndex should be constant (CErc20Delegator.sol#183)\nCTokenStorage.decimals should be constant (CErc20Delegator.sol#132)\nCTokenStorage.initialExchangeRateMantissa should be constant (CErc20Delegator.sol#168)\nCTokenStorage.name should be constant (CErc20Delegator.sol#122)\nCTokenStorage.pendingAdmin should be constant (CErc20Delegator.sol#153)\nCTokenStorage.reserveFactorMantissa should be constant (CErc20Delegator.sol#173)\nCTokenStorage.symbol should be constant (CErc20Delegator.sol#127)\nCTokenStorage.totalBorrows should be constant (CErc20Delegator.sol#188)\nCTokenStorage.totalReserves should be constant (CErc20Delegator.sol#193)\nCTokenStorage.totalSupply should be constant (CErc20Delegator.sol#198)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 761,
+          "vulnerability_to_line": 764,
+          "vulnerability_code": "    function borrowBalanceStored(address account) public view returns (uint) {\n\n        account; // Shh\n\n        delegateToViewAndReturn();\n",
+          "message": "CErc20Delegator.borrowBalanceStored (CErc20Delegator.sol#761-764) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 376,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function borrowBalanceStored(address account) public view returns (uint);\n",
+          "message": "CTokenInterface.borrowBalanceStored (CErc20Delegator.sol#376) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 770,
+          "vulnerability_to_line": 772,
+          "vulnerability_code": "    function exchangeRateCurrent() public returns (uint) {\n\n        delegateAndReturn();\n",
+          "message": "CErc20Delegator.exchangeRateCurrent (CErc20Delegator.sol#770-772) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 377,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function exchangeRateCurrent() public returns (uint);\n",
+          "message": "CTokenInterface.exchangeRateCurrent (CErc20Delegator.sol#377) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 378,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function exchangeRateStored() public view returns (uint);\n",
+          "message": "CTokenInterface.exchangeRateStored (CErc20Delegator.sol#378) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 779,
+          "vulnerability_to_line": 781,
+          "vulnerability_code": "    function exchangeRateStored() public view returns (uint) {\n\n        delegateToViewAndReturn();\n",
+          "message": "CErc20Delegator.exchangeRateStored (CErc20Delegator.sol#779-781) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 380,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function accrueInterest() public returns (uint);\n",
+          "message": "CTokenInterface.accrueInterest (CErc20Delegator.sol#380) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 796,
+          "vulnerability_to_line": 798,
+          "vulnerability_code": "    function accrueInterest() public returns (uint) {\n\n        delegateAndReturn();\n",
+          "message": "CErc20Delegator.accrueInterest (CErc20Delegator.sol#796-798) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 388,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setComptroller(ComptrollerInterface newComptroller) public returns (uint);\n",
+          "message": "CTokenInterface._setComptroller (CErc20Delegator.sol#388) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 832,
+          "vulnerability_to_line": 835,
+          "vulnerability_code": "    function _setComptroller(ComptrollerInterface newComptroller) public returns (uint) {\n\n        newComptroller; // Shh\n\n        delegateAndReturn();\n",
+          "message": "CErc20Delegator._setComptroller (CErc20Delegator.sol#832-835) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 882,
+          "vulnerability_to_line": 885,
+          "vulnerability_code": "    function _setInterestRateModel(InterestRateModel newInterestRateModel) public returns (uint) {\n\n        newInterestRateModel; // Shh\n\n        delegateAndReturn();\n",
+          "message": "CErc20Delegator._setInterestRateModel (CErc20Delegator.sol#882-885) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 391,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setInterestRateModel(InterestRateModel newInterestRateModel) public returns (uint);\n",
+          "message": "CTokenInterface._setInterestRateModel (CErc20Delegator.sol#391) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 475,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _becomeImplementation(bytes memory data) public;\n",
+          "message": "CDelegateInterface._becomeImplementation (CErc20Delegator.sol#475) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 480,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _resignImplementation() public;\n",
+          "message": "CDelegateInterface._resignImplementation (CErc20Delegator.sol#480) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 921,
+          "vulnerability_to_line": 929,
+          "vulnerability_code": "    function delegateToViewImplementation(bytes memory data) public view returns (bytes memory) {\n\n        (bool success, bytes memory returnData) = address(this).staticcall(abi.encodeWithSignature(\"delegateToImplementation(bytes)\", data));\n\n        assembly {\n\n            if eq(success, 0) {\n\n                revert(add(returnData, 0x20), returndatasize)\n\n            }\n\n        }\n\n        return abi.decode(returnData, (bytes));\n",
+          "message": "CErc20Delegator.delegateToViewImplementation (CErc20Delegator.sol#921-929) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": "Detected issues with version pragma in CErc20Delegator.sol:\n\t- pragma solidity^0.5.16 (CErc20Delegator.sol#3): it allows old versions\n\t- pragma solidity^0.5.16 (CErc20Delegator.sol#77): it allows old versions\n\t- pragma solidity^0.5.16 (CErc20Delegator.sol#110): it allows old versions\n\t- pragma solidity^0.5.16 (CErc20Delegator.sol#494): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 894,
+          "vulnerability_to_line": 902,
+          "vulnerability_code": "    function delegateTo(address callee, bytes memory data) internal returns (bytes memory) {\n\n        (bool success, bytes memory returnData) = callee.delegatecall(data);\n\n        assembly {\n\n            if eq(success, 0) {\n\n                revert(add(returnData, 0x20), returndatasize)\n\n            }\n\n        }\n\n        return returnData;\n",
+          "message": "Low level call in CErc20Delegator.delegateTo (CErc20Delegator.sol#894-902):\n\t-(success,returnData) = callee.delegatecall(data) CErc20Delegator.sol#895\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 921,
+          "vulnerability_to_line": 929,
+          "vulnerability_code": "    function delegateToViewImplementation(bytes memory data) public view returns (bytes memory) {\n\n        (bool success, bytes memory returnData) = address(this).staticcall(abi.encodeWithSignature(\"delegateToImplementation(bytes)\", data));\n\n        assembly {\n\n            if eq(success, 0) {\n\n                revert(add(returnData, 0x20), returndatasize)\n\n            }\n\n        }\n\n        return abi.decode(returnData, (bytes));\n",
+          "message": "Low level call in CErc20Delegator.delegateToViewImplementation (CErc20Delegator.sol#921-929):\n\t-(success,returnData) = address(this).staticcall(abi.encodeWithSignature(delegateToImplementation(bytes),data)) CErc20Delegator.sol#922\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 931,
+          "vulnerability_to_line": 942,
+          "vulnerability_code": "    function delegateToViewAndReturn() private view returns (bytes memory) {\n\n        (bool success, ) = address(this).staticcall(abi.encodeWithSignature(\"delegateToImplementation(bytes)\", msg.data));\n\n\n\n        assembly {\n\n            let free_mem_ptr := mload(0x40)\n\n            returndatacopy(free_mem_ptr, 0, returndatasize)\n\n\n\n            switch success\n\n            case 0 { revert(free_mem_ptr, returndatasize) }\n\n            default { return(add(free_mem_ptr, 0x40), returndatasize) }\n\n        }\n",
+          "message": "Low level call in CErc20Delegator.delegateToViewAndReturn (CErc20Delegator.sol#931-942):\n\t-(success) = address(this).staticcall(abi.encodeWithSignature(delegateToImplementation(bytes),msg.data)) CErc20Delegator.sol#932\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 944,
+          "vulnerability_to_line": 955,
+          "vulnerability_code": "    function delegateAndReturn() private returns (bytes memory) {\n\n        (bool success, ) = implementation.delegatecall(msg.data);\n\n\n\n        assembly {\n\n            let free_mem_ptr := mload(0x40)\n\n            returndatacopy(free_mem_ptr, 0, returndatasize)\n\n\n\n            switch success\n\n            case 0 { revert(free_mem_ptr, returndatasize) }\n\n            default { return(free_mem_ptr, returndatasize) }\n\n        }\n",
+          "message": "Low level call in CErc20Delegator.delegateAndReturn (CErc20Delegator.sol#944-955):\n\t-(success) = implementation.delegatecall(msg.data) CErc20Delegator.sol#945\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool public constant isComptroller = true;\n",
+          "message": "Constant 'ComptrollerInterface.isComptroller' (CErc20Delegator.sol#7) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 85,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool public constant isInterestRateModel = true;\n",
+          "message": "Constant 'InterestRateModel.isInterestRateModel' (CErc20Delegator.sol#85) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 117,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool internal _notEntered;\n",
+          "message": "Variable 'CTokenStorage._notEntered' (CErc20Delegator.sol#117) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 138,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint internal constant borrowRateMaxMantissa = 0.0005e16;\n",
+          "message": "Constant 'CTokenStorage.borrowRateMaxMantissa' (CErc20Delegator.sol#138) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 143,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint internal constant reserveFactorMaxMantissa = 1e18;\n",
+          "message": "Constant 'CTokenStorage.reserveFactorMaxMantissa' (CErc20Delegator.sol#143) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 386,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setPendingAdmin(address payable newPendingAdmin) external returns (uint);\n",
+          "message": "Function 'CTokenInterface._setPendingAdmin' (CErc20Delegator.sol#386) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 387,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _acceptAdmin() external returns (uint);\n",
+          "message": "Function 'CTokenInterface._acceptAdmin' (CErc20Delegator.sol#387) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 388,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setComptroller(ComptrollerInterface newComptroller) public returns (uint);\n",
+          "message": "Function 'CTokenInterface._setComptroller' (CErc20Delegator.sol#388) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 389,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setReserveFactor(uint newReserveFactorMantissa) external returns (uint);\n",
+          "message": "Function 'CTokenInterface._setReserveFactor' (CErc20Delegator.sol#389) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 390,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _reduceReserves(uint reduceAmount) external returns (uint);\n",
+          "message": "Function 'CTokenInterface._reduceReserves' (CErc20Delegator.sol#390) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 391,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setInterestRateModel(InterestRateModel newInterestRateModel) public returns (uint);\n",
+          "message": "Function 'CTokenInterface._setInterestRateModel' (CErc20Delegator.sol#391) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 274,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool public constant isCToken = true;\n",
+          "message": "Constant 'CTokenInterface.isCToken' (CErc20Delegator.sol#274) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 408,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _addReserves(uint addAmount) external returns (uint);\n",
+          "message": "Function 'CErc20Interface._addReserves' (CErc20Delegator.sol#408) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 415,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public constant flashFeeBips = 3;\n",
+          "message": "Constant 'CCapableErc20Interface.flashFeeBips' (CErc20Delegator.sol#415) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 451,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setCollateralCap(uint newCollateralCap) external;\n",
+          "message": "Function 'CCollateralCapErc20Interface._setCollateralCap' (CErc20Delegator.sol#451) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 466,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setImplementation(address implementation_, bool allowResign, bytes memory becomeImplementationData) public;\n",
+          "message": "Function 'CDelegatorInterface._setImplementation' (CErc20Delegator.sol#466) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 475,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _becomeImplementation(bytes memory data) public;\n",
+          "message": "Function 'CDelegateInterface._becomeImplementation' (CErc20Delegator.sol#475) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 480,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _resignImplementation() public;\n",
+          "message": "Function 'CDelegateInterface._resignImplementation' (CErc20Delegator.sol#480) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 822,
+          "vulnerability_to_line": 825,
+          "vulnerability_code": "    function _setPendingAdmin(address payable newPendingAdmin) external returns (uint) {\n\n        newPendingAdmin; // Shh\n\n        delegateAndReturn();\n",
+          "message": "Function 'CErc20Delegator._setPendingAdmin' (CErc20Delegator.sol#822-825) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 852,
+          "vulnerability_to_line": 854,
+          "vulnerability_code": "    function _acceptAdmin() external returns (uint) {\n\n        delegateAndReturn();\n",
+          "message": "Function 'CErc20Delegator._acceptAdmin' (CErc20Delegator.sol#852-854) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 832,
+          "vulnerability_to_line": 835,
+          "vulnerability_code": "    function _setComptroller(ComptrollerInterface newComptroller) public returns (uint) {\n\n        newComptroller; // Shh\n\n        delegateAndReturn();\n",
+          "message": "Function 'CErc20Delegator._setComptroller' (CErc20Delegator.sol#832-835) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 842,
+          "vulnerability_to_line": 845,
+          "vulnerability_code": "    function _setReserveFactor(uint newReserveFactorMantissa) external returns (uint) {\n\n        newReserveFactorMantissa; // Shh\n\n        delegateAndReturn();\n",
+          "message": "Function 'CErc20Delegator._setReserveFactor' (CErc20Delegator.sol#842-845) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 871,
+          "vulnerability_to_line": 874,
+          "vulnerability_code": "    function _reduceReserves(uint reduceAmount) external returns (uint) {\n\n        reduceAmount; // Shh\n\n        delegateAndReturn();\n",
+          "message": "Function 'CErc20Delegator._reduceReserves' (CErc20Delegator.sol#871-874) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 882,
+          "vulnerability_to_line": 885,
+          "vulnerability_code": "    function _setInterestRateModel(InterestRateModel newInterestRateModel) public returns (uint) {\n\n        newInterestRateModel; // Shh\n\n        delegateAndReturn();\n",
+          "message": "Function 'CErc20Delegator._setInterestRateModel' (CErc20Delegator.sol#882-885) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 861,
+          "vulnerability_to_line": 864,
+          "vulnerability_code": "    function _addReserves(uint addAmount) external returns (uint) {\n\n        addAmount; // Shh\n\n        delegateAndReturn();\n",
+          "message": "Function 'CErc20Delegator._addReserves' (CErc20Delegator.sol#861-864) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 551,
+          "vulnerability_to_line": 564,
+          "vulnerability_code": "    function _setImplementation(address implementation_, bool allowResign, bytes memory becomeImplementationData) public {\n\n        require(msg.sender == admin, \"CErc20Delegator::_setImplementation: Caller must be admin\");\n\n\n\n        if (allowResign) {\n\n            delegateToImplementation(abi.encodeWithSignature(\"_resignImplementation()\"));\n\n        }\n\n\n\n        address oldImplementation = implementation;\n\n        implementation = implementation_;\n\n\n\n        delegateToImplementation(abi.encodeWithSignature(\"_becomeImplementation(bytes)\", becomeImplementationData));\n\n\n\n        emit NewImplementation(oldImplementation, implementation);\n",
+          "message": "Function 'CErc20Delegator._setImplementation' (CErc20Delegator.sol#551-564) is not in mixedCase\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 117,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool internal _notEntered;\n",
+          "message": "CTokenStorage._notEntered (CErc20Delegator.sol#117) is never used in CErc20Delegator\nCTokenStorage.borrowRateMaxMantissa (CErc20Delegator.sol#138) is never used in CErc20Delegator\nCTokenStorage.reserveFactorMaxMantissa (CErc20Delegator.sol#143) is never used in CErc20Delegator\nCTokenStorage.initialExchangeRateMantissa (CErc20Delegator.sol#168) is never used in CErc20Delegator\nCTokenStorage.accountTokens (CErc20Delegator.sol#203) is never used in CErc20Delegator\nCTokenStorage.transferAllowances (CErc20Delegator.sol#208) is never used in CErc20Delegator\nCTokenStorage.accountBorrows (CErc20Delegator.sol#223) is never used in CErc20Delegator\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 270,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract CTokenInterface is CTokenStorage {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 501,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract CErc20Delegator is CTokenInterface, CErc20Interface, CDelegatorInterface {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 110,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 494,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint repayAmount) external view returns (uint, uint);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 371,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getAccountSnapshot(address account) external view returns (uint, uint, uint, uint);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 386,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setPendingAdmin(address payable newPendingAdmin) external returns (uint);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 515,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address underlying_,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 386,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setPendingAdmin(address payable newPendingAdmin) external returns (uint);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 522,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                address payable admin_,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 523,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                address implementation_,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 524,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                bytes memory becomeImplementationData) public {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 526,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        admin = msg.sender;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 526,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        admin = msg.sender;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 529,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        delegateTo(implementation_, abi.encodeWithSignature(\"initialize(address,address,address,uint256,string,string,uint8)\",\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 529,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        delegateTo(implementation_, abi.encodeWithSignature(\"initialize(address,address,address,uint256,string,string,uint8)\",\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 529,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        delegateTo(implementation_, abi.encodeWithSignature(\"initialize(address,address,address,uint256,string,string,uint8)\",\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 531,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                                                            comptroller_,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 533,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                                                            initialExchangeRateMantissa_,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 535,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                                                            symbol_,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 539,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _setImplementation(implementation_, false, becomeImplementationData);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 539,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _setImplementation(implementation_, false, becomeImplementationData);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 542,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        admin = admin_;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

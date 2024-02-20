@@ -1,0 +1,687 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 84,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Whitelist is Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 118,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < addrs.length; i++) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < addrs.length; i++) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 163,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool public paused = false;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 521,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool public mintingFinished = false;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 578,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 579,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        totalSupply_ = INITIAL_SUPPLY;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 580,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 118,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < addrs.length; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < addrs.length; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 118,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < addrs.length; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < addrs.length; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_57"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": 55,
+          "vulnerability_code": "    function transferOwnership(address newOwner) public onlyOwner {\n\n        pendingOwner = newOwner;\n",
+          "message": "Ownable.transferOwnership (BeamToken.sol#53-55) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": 64,
+          "vulnerability_code": "    function claimOwnership() public onlyPendingOwner {\n\n        emit OwnershipTransferred(owner, pendingOwner);\n\n        owner = pendingOwner;\n\n        pendingOwner = address(0);\n",
+          "message": "Ownable.claimOwnership (BeamToken.sol#60-64) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": 75,
+          "vulnerability_code": "    function setManager(address _manager) public onlyOwner {\n\n        require(_manager != address(0));\n\n        manager = _manager;\n\n        // SWC-Typographical Error: L72\n\n        emit ManagerUpdated(manager);\n",
+          "message": "Ownable.setManager (BeamToken.sol#70-75) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 117,
+          "vulnerability_to_line": 123,
+          "vulnerability_code": "    function addAddressesToWhitelist(address[] addrs) public onlyOwner returns(bool success) {\n\n        for (uint256 i = 0; i < addrs.length; i++) {\n\n            if (addAddressToWhitelist(addrs[i])) {\n\n                success = true;\n\n            }\n\n        }\n",
+          "message": "Whitelist.addAddressesToWhitelist (BeamToken.sol#117-123) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": 151,
+          "vulnerability_code": "    function removeAddressesFromWhitelist(address[] addrs) public onlyOwner returns(bool success) {\n\n        for (uint256 i = 0; i < addrs.length; i++) {\n\n            if (removeAddressFromWhitelist(addrs[i])) {\n\n                success = true;\n\n            }\n\n        }\n",
+          "message": "Whitelist.removeAddressesFromWhitelist (BeamToken.sol#145-151) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 184,
+          "vulnerability_to_line": 187,
+          "vulnerability_code": "    function pause() public onlyOwner whenNotPaused {\n\n        paused = true;\n\n        emit Pause();\n",
+          "message": "Pausable.pause (BeamToken.sol#184-187) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 192,
+          "vulnerability_to_line": 195,
+          "vulnerability_code": "    function unpause() public onlyOwner whenPaused {\n\n        paused = false;\n\n        emit Unpause();\n",
+          "message": "Pausable.unpause (BeamToken.sol#192-195) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 298,
+          "vulnerability_to_line": 300,
+          "vulnerability_code": "    function totalSupply() public view returns (uint256) {\n\n        return totalSupply_;\n",
+          "message": "BasicToken.totalSupply (BeamToken.sol#298-300) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 205,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function totalSupply() public view returns (uint256);\n",
+          "message": "ERC20Basic.totalSupply (BeamToken.sol#205) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 206,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address who) public view returns (uint256);\n",
+          "message": "ERC20Basic.balanceOf (BeamToken.sol#206) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 322,
+          "vulnerability_to_line": 324,
+          "vulnerability_code": "    function balanceOf(address _owner) public view returns (uint256) {\n\n        return balances[_owner];\n",
+          "message": "BasicToken.balanceOf (BeamToken.sol#322-324) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 386,
+          "vulnerability_to_line": 395,
+          "vulnerability_code": "    function allowance(\n\n        address _owner,\n\n        address _spender\n\n    )\n\n        public\n\n        view\n\n        returns (uint256)\n\n    {\n\n        return allowed[_owner][_spender];\n",
+          "message": "StandardToken.allowance (BeamToken.sol#386-395) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 217,
+          "vulnerability_to_line": 218,
+          "vulnerability_code": "    function allowance(address owner, address spender)\n",
+          "message": "ERC20.allowance (BeamToken.sol#217-218) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 534,
+          "vulnerability_to_line": 548,
+          "vulnerability_code": "    function mint(\n\n        address _to,\n\n        uint256 _amount\n\n    )\n\n        public\n\n        onlyManager\n\n        canMint\n\n        returns (bool)\n\n    {\n\n        totalSupply_ = totalSupply_.add(_amount);\n\n        balances[_to] = balances[_to].add(_amount);\n\n        emit Mint(_to, _amount);\n\n        emit Transfer(address(0), _to, _amount);\n\n        return true;\n",
+          "message": "MintableToken.mint (BeamToken.sol#534-548) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 554,
+          "vulnerability_to_line": 558,
+          "vulnerability_code": "    function finishMinting() public onlyOwner canMint  returns (bool) {\n\n        mintingFinished = true;\n\n        emit MintFinished();\n\n        return true;\n",
+          "message": "MintableToken.finishMinting (BeamToken.sol#554-558) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 582,
+          "vulnerability_to_line": 585,
+          "vulnerability_code": "    function setLock(address _who, bool _lock) public onlyOwner {\n\n        require(isLocked[_who] != _lock);\n\n        isLocked[_who] = _lock;\n",
+          "message": "BeamToken.setLock (BeamToken.sol#582-585) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setManager(address _manager) public onlyOwner {\n",
+          "message": "Parameter '_manager' of Ownable.setManager (BeamToken.sol#70) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 322,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address _owner) public view returns (uint256) {\n",
+          "message": "Parameter '_owner' of BasicToken.balanceOf (BeamToken.sol#322) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 307,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_to' of BasicToken.transfer (BeamToken.sol#307) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 307,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_value' of BasicToken.transfer (BeamToken.sol#307) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 387,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _owner,\n",
+          "message": "Parameter '_owner' of StandardToken.allowance (BeamToken.sol#387) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 388,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _spender\n",
+          "message": "Parameter '_spender' of StandardToken.allowance (BeamToken.sol#388) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 347,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _from,\n",
+          "message": "Parameter '_from' of StandardToken.transferFrom (BeamToken.sol#347) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 348,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _to,\n",
+          "message": "Parameter '_to' of StandardToken.transferFrom (BeamToken.sol#348) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 349,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _value\n",
+          "message": "Parameter '_value' of StandardToken.transferFrom (BeamToken.sol#349) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 374,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_spender' of StandardToken.approve (BeamToken.sol#374) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 374,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_value' of StandardToken.approve (BeamToken.sol#374) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 407,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _spender,\n",
+          "message": "Parameter '_spender' of StandardToken.increaseApproval (BeamToken.sol#407) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 408,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _addedValue\n",
+          "message": "Parameter '_addedValue' of StandardToken.increaseApproval (BeamToken.sol#408) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 429,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _spender,\n",
+          "message": "Parameter '_spender' of StandardToken.decreaseApproval (BeamToken.sol#429) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 430,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _subtractedValue\n",
+          "message": "Parameter '_subtractedValue' of StandardToken.decreaseApproval (BeamToken.sol#430) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 455,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _to,\n",
+          "message": "Parameter '_to' of PausableToken.transfer (BeamToken.sol#455) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 456,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _value\n",
+          "message": "Parameter '_value' of PausableToken.transfer (BeamToken.sol#456) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 466,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _from,\n",
+          "message": "Parameter '_from' of PausableToken.transferFrom (BeamToken.sol#466) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 467,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _to,\n",
+          "message": "Parameter '_to' of PausableToken.transferFrom (BeamToken.sol#467) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 468,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _value\n",
+          "message": "Parameter '_value' of PausableToken.transferFrom (BeamToken.sol#468) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 478,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _spender,\n",
+          "message": "Parameter '_spender' of PausableToken.approve (BeamToken.sol#478) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 479,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _value\n",
+          "message": "Parameter '_value' of PausableToken.approve (BeamToken.sol#479) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 489,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _spender,\n",
+          "message": "Parameter '_spender' of PausableToken.increaseApproval (BeamToken.sol#489) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 490,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _addedValue\n",
+          "message": "Parameter '_addedValue' of PausableToken.increaseApproval (BeamToken.sol#490) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 500,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _spender,\n",
+          "message": "Parameter '_spender' of PausableToken.decreaseApproval (BeamToken.sol#500) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 501,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _subtractedValue\n",
+          "message": "Parameter '_subtractedValue' of PausableToken.decreaseApproval (BeamToken.sol#501) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 535,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _to,\n",
+          "message": "Parameter '_to' of MintableToken.mint (BeamToken.sol#535) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 536,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _amount\n",
+          "message": "Parameter '_amount' of MintableToken.mint (BeamToken.sol#536) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 596,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _to,\n",
+          "message": "Parameter '_to' of BeamToken.transfer (BeamToken.sol#596) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 597,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _value\n",
+          "message": "Parameter '_value' of BeamToken.transfer (BeamToken.sol#597) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 607,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _from,\n",
+          "message": "Parameter '_from' of BeamToken.transferFrom (BeamToken.sol#607) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 608,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _to,\n",
+          "message": "Parameter '_to' of BeamToken.transferFrom (BeamToken.sol#608) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 609,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _value\n",
+          "message": "Parameter '_value' of BeamToken.transferFrom (BeamToken.sol#609) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 619,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _spender,\n",
+          "message": "Parameter '_spender' of BeamToken.approve (BeamToken.sol#619) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 620,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _value\n",
+          "message": "Parameter '_value' of BeamToken.approve (BeamToken.sol#620) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 630,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _spender,\n",
+          "message": "Parameter '_spender' of BeamToken.increaseApproval (BeamToken.sol#630) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 631,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _addedValue\n",
+          "message": "Parameter '_addedValue' of BeamToken.increaseApproval (BeamToken.sol#631) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 641,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _spender,\n",
+          "message": "Parameter '_spender' of BeamToken.decreaseApproval (BeamToken.sol#641) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 642,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _subtractedValue\n",
+          "message": "Parameter '_subtractedValue' of BeamToken.decreaseApproval (BeamToken.sol#642) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 582,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setLock(address _who, bool _lock) public onlyOwner {\n",
+          "message": "Parameter '_who' of BeamToken.setLock (BeamToken.sol#582) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 582,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setLock(address _who, bool _lock) public onlyOwner {\n",
+          "message": "Parameter '_lock' of BeamToken.setLock (BeamToken.sol#582) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        pendingOwner = address(0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 374,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) public returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 477,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 618,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 118,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < addrs.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < addrs.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 118,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < addrs.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < addrs.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_OVERPOWERED_ROLE",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setManager(address _manager) public onlyOwner {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_OVERPOWERED_ROLE",
+          "vulnerability_from_line": 582,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setLock(address _who, bool _lock) public onlyOwner {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 289,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 117,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addAddressesToWhitelist(address[] addrs) public onlyOwner returns(bool success) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function removeAddressesFromWhitelist(address[] addrs) public onlyOwner returns(bool success) {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 277,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        c = a + b;\n",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 277,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        c = a + b;\n",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 277,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        c = a + b;\n",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function removeAddressesFromWhitelist(address[] addrs) public onlyOwner returns(bool success) {\n",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 277,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        c = a + b;\n",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 277,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        c = a + b;\n",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function removeAddressesFromWhitelist(address[] addrs) public onlyOwner returns(bool success) {\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

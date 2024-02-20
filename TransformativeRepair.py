@@ -756,7 +756,9 @@ class TransformativeRepair:
                         "flattened_sc_source_code": sc.source_code,
                         "vulnerability_name": vulnerability_name,
                         "analyzer_message": analyzer_message,
-                        "analyzer": analyzer
+                        "analyzer": analyzer,
+                        "vulnerability_from_line": result["vulnerability_from_line"],
+                        "vulnerability_to_line": result["vulnerability_to_line"]
                     }
 
                     #### Step 3: Create Prompt Engine and generate prompt

@@ -1,0 +1,91 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i; i < n; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(contains(set, element), \"Element not in set.\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i; i < n; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "uninitialized-local",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i; i < n; i++) {\n",
+          "message": "i in AddressSetLib.getPage (AddressSetLib.sol#38) is a local variable never initialiazed\n"
+        },
+        {
+          "name": "unused-return",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "    function remove(AddressSet storage set, address element) internal {\n\n        require(contains(set, element), \"Element not in set.\");\n\n        // Replace the removed element with the last element of the list.\n\n        uint index = set.indices[element];\n\n        uint lastIndex = set.elements.length - 1; // We required that element is in the list, so it is not empty.\n\n        if (index != lastIndex) {\n\n            // No need to shift the last element if it is the one we want to delete.\n\n            address shiftedElement = set.elements[lastIndex];\n\n            set.elements[index] = shiftedElement;\n\n            set.indices[shiftedElement] = index;\n\n        }\n\n        set.elements.pop();\n\n        delete set.indices[element];\n",
+          "message": "AddressSetLib.remove (AddressSetLib.sol#52-65) does not use the value returned by external calls:\n\t-set.elements.pop() (AddressSetLib.sol#63)\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": "Detected issues with version pragma in AddressSetLib.sol:\n\t- pragma solidity^0.5.16 (AddressSetLib.sol#3): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

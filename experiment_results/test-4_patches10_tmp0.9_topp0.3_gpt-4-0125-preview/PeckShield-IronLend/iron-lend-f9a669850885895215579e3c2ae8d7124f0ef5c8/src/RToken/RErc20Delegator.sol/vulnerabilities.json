@@ -1,0 +1,870 @@
+{
+  "smartbugs_completed": "No vulnerabilities found",
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 509,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address underlying_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 510,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                IronControllerInterface ironController_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 511,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                InterestRateModel interestRateModel_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 512,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                uint initialExchangeRateMantissa_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 513,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                string memory name_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 514,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                string memory symbol_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 515,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                uint8 decimals_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 516,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                address payable admin_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 517,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                address implementation_,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 518,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                bytes memory becomeImplementationData) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 546,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == admin, \"RErc20Delegator::_setImplementation: Caller must be admin\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 947,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.value == 0,\"RErc20Delegator:fallback: cannot send value to fallback\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 546,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == admin, \"RErc20Delegator::_setImplementation: Caller must be admin\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 947,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.value == 0,\"RErc20Delegator:fallback: cannot send value to fallback\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_78"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "controlled-delegatecall",
+          "vulnerability_from_line": 905,
+          "vulnerability_to_line": 913,
+          "vulnerability_code": "    function delegateTo(address callee, bytes memory data) internal returns (bytes memory) {\n\n        (bool success, bytes memory returnData) = callee.delegatecall(data);\n\n        assembly {\n\n            if eq(success, 0) {\n\n                revert(add(returnData, 0x20), returndatasize)\n\n            }\n\n        }\n\n        return returnData;\n",
+          "message": "RErc20Delegator.delegateTo (RErc20Delegator.sol#905-913) uses delegatecall to a input-controlled function id\n\t(success,returnData) = callee.delegatecall(data) (RErc20Delegator.sol#906)\n"
+        },
+        {
+          "name": "controlled-delegatecall",
+          "vulnerability_from_line": 946,
+          "vulnerability_to_line": 960,
+          "vulnerability_code": "    function () external payable {\n\n        require(msg.value == 0,\"RErc20Delegator:fallback: cannot send value to fallback\");\n\n\n\n        // delegate all other functions to current implementation\n\n        (bool success, ) = implementation.delegatecall(msg.data);\n\n\n\n        assembly {\n\n            let free_mem_ptr := mload(0x40)\n\n            returndatacopy(free_mem_ptr, 0, returndatasize)\n\n\n\n            switch success\n\n            case 0 { revert(free_mem_ptr, returndatasize) }\n\n            default { return(free_mem_ptr, returndatasize) }\n\n        }\n",
+          "message": "RErc20Delegator.fallback (RErc20Delegator.sol#946-960) uses delegatecall to a input-controlled function id\n\t(success) = implementation.delegatecall(msg.data) (RErc20Delegator.sol#950)\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 932,
+          "vulnerability_to_line": 940,
+          "vulnerability_code": "    function delegateToViewImplementation(bytes memory data) public view returns (bytes memory) {\n\n        (bool success, bytes memory returnData) = address(this).staticcall(abi.encodeWithSignature(\"delegateToImplementation(bytes)\", data));\n\n        assembly {\n\n            if eq(success, 0) {\n\n                revert(add(returnData, 0x20), returndatasize)\n\n            }\n\n        }\n\n        return abi.decode(returnData, (bytes));\n",
+          "message": "RErc20Delegator.delegateToViewImplementation (RErc20Delegator.sol#932-940) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "erc20-interface",
+          "vulnerability_from_line": 117,
+          "vulnerability_to_line": 179,
+          "vulnerability_code": "interface EIP20NonStandardInterface {\n\n\n\n    /**\n\n     * @notice Get the total number of tokens in circulation\n\n     * @return The supply of tokens\n\n     */\n\n    function totalSupply() external view returns (uint256);\n\n\n\n    /**\n\n     * @notice Gets the balance of the specified address\n\n     * @param owner The address from which the balance will be retrieved\n\n     * @return The balance\n\n     */\n\n    function balanceOf(address owner) external view returns (uint256 balance);\n\n\n\n    ///\n\n    /// !!!!!!!!!!!!!!\n\n    /// !!! NOTICE !!! `transfer` does not return a value, in violation of the ERC-20 specification\n\n    /// !!!!!!!!!!!!!!\n\n    ///\n\n\n\n    /**\n\n      * @notice Transfer `amount` tokens from `msg.sender` to `dst`\n\n      * @param dst The address of the destination account\n\n      * @param amount The number of tokens to transfer\n\n      */\n\n    function transfer(address dst, uint256 amount) external;\n\n\n\n    ///\n\n    /// !!!!!!!!!!!!!!\n\n    /// !!! NOTICE !!! `transferFrom` does not return a value, in violation of the ERC-20 specification\n\n    /// !!!!!!!!!!!!!!\n\n    ///\n\n\n\n    /**\n\n      * @notice Transfer `amount` tokens from `src` to `dst`\n\n      * @param src The address of the source account\n\n      * @param dst The address of the destination account\n\n      * @param amount The number of tokens to transfer\n\n      */\n\n    function transferFrom(address src, address dst, uint256 amount) external;\n\n\n\n    /**\n\n      * @notice Approve `spender` to transfer up to `amount` from `src`\n\n      * @dev This will overwrite the approval amount for `spender`\n\n      *  and is subject to issues noted [here](https://eips.ethereum.org/EIPS/eip-20#approve)\n\n      * @param spender The address of the account which may transfer tokens\n\n      * @param amount The number of tokens that are approved\n\n      * @return Whether or not the approval succeeded\n\n      */\n\n    function approve(address spender, uint256 amount) external returns (bool success);\n\n\n\n    /**\n\n      * @notice Get the current allowance from `owner` for `spender`\n\n      * @param owner The address of the account which owns the tokens to be spent\n\n      * @param spender The address of the account which may transfer tokens\n\n      * @return The number of tokens allowed to be spent\n\n      */\n\n    function allowance(address owner, address spender) external view returns (uint256 remaining);\n\n\n\n    event Transfer(address indexed from, address indexed to, uint256 amount);\n\n    event Approval(address indexed owner, address indexed spender, uint256 amount);\n",
+          "message": "EIP20NonStandardInterface (RErc20Delegator.sol#117-179) has incorrect ERC20 function interface(s):\n\t-transfer (RErc20Delegator.sol#143)\n\t-transferFrom (RErc20Delegator.sol#157)\n"
+        },
+        {
+          "name": "reentrancy-no-eth",
+          "vulnerability_from_line": 545,
+          "vulnerability_to_line": 558,
+          "vulnerability_code": "    function _setImplementation(address implementation_, bool allowResign, bytes memory becomeImplementationData) public {\n\n        require(msg.sender == admin, \"RErc20Delegator::_setImplementation: Caller must be admin\");\n\n\n\n        if (allowResign) {\n\n            delegateToImplementation(abi.encodeWithSignature(\"_resignImplementation()\"));\n\n        }\n\n\n\n        address oldImplementation = implementation;\n\n        implementation = implementation_;\n\n\n\n        delegateToImplementation(abi.encodeWithSignature(\"_becomeImplementation(bytes)\", becomeImplementationData));\n\n\n\n        emit NewImplementation(oldImplementation, implementation);\n",
+          "message": "Reentrancy in RErc20Delegator._setImplementation (RErc20Delegator.sol#545-558):\n\tExternal calls:\n\t- delegateToImplementation(abi.encodeWithSignature(_resignImplementation())) (RErc20Delegator.sol#549)\n\tState variables written after the call(s):\n\t- implementation (RErc20Delegator.sol#553)\n"
+        },
+        {
+          "name": "reentrancy-no-eth",
+          "vulnerability_from_line": 509,
+          "vulnerability_to_line": 537,
+          "vulnerability_code": "    constructor(address underlying_,\n\n                IronControllerInterface ironController_,\n\n                InterestRateModel interestRateModel_,\n\n                uint initialExchangeRateMantissa_,\n\n                string memory name_,\n\n                string memory symbol_,\n\n                uint8 decimals_,\n\n                address payable admin_,\n\n                address implementation_,\n\n                bytes memory becomeImplementationData) public {\n\n        // Creator of the contract is admin during initialization\n\n        admin = msg.sender;\n\n\n\n        // First delegate gets to initialize the delegator (i.e. storage contract)\n\n        delegateTo(implementation_, abi.encodeWithSignature(\"initialize(address,address,address,uint256,string,string,uint8)\",\n\n                                                            underlying_,\n\n                                                            ironController_,\n\n                                                            interestRateModel_,\n\n                                                            initialExchangeRateMantissa_,\n\n                                                            name_,\n\n                                                            symbol_,\n\n                                                            decimals_));\n\n\n\n        // New implementations always get set via the settor (post-initialize)\n\n        _setImplementation(implementation_, false, becomeImplementationData);\n\n\n\n        // Set the proper admin now that initialization is done\n\n        admin = admin_;\n",
+          "message": "Reentrancy in RErc20Delegator.constructor (RErc20Delegator.sol#509-537):\n\tExternal calls:\n\t- delegateTo(implementation_,abi.encodeWithSignature(initialize(address,address,address,uint256,string,string,uint8),underlying_,ironController_,interestRateModel_,initialExchangeRateMantissa_,name_,symbol_,decimals_)) (RErc20Delegator.sol#523-530)\n\t- _setImplementation(implementation_,false,becomeImplementationData) (RErc20Delegator.sol#533)\n\tState variables written after the call(s):\n\t- admin (RErc20Delegator.sol#536)\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 905,
+          "vulnerability_to_line": 913,
+          "vulnerability_code": "    function delegateTo(address callee, bytes memory data) internal returns (bytes memory) {\n\n        (bool success, bytes memory returnData) = callee.delegatecall(data);\n\n        assembly {\n\n            if eq(success, 0) {\n\n                revert(add(returnData, 0x20), returndatasize)\n\n            }\n\n        }\n\n        return returnData;\n",
+          "message": "RErc20Delegator.delegateTo uses assembly (RErc20Delegator.sol#905-913)\n\t- RErc20Delegator.sol#907-911\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 932,
+          "vulnerability_to_line": 940,
+          "vulnerability_code": "    function delegateToViewImplementation(bytes memory data) public view returns (bytes memory) {\n\n        (bool success, bytes memory returnData) = address(this).staticcall(abi.encodeWithSignature(\"delegateToImplementation(bytes)\", data));\n\n        assembly {\n\n            if eq(success, 0) {\n\n                revert(add(returnData, 0x20), returndatasize)\n\n            }\n\n        }\n\n        return abi.decode(returnData, (bytes));\n",
+          "message": "RErc20Delegator.delegateToViewImplementation uses assembly (RErc20Delegator.sol#932-940)\n\t- RErc20Delegator.sol#934-938\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 946,
+          "vulnerability_to_line": 960,
+          "vulnerability_code": "    function () external payable {\n\n        require(msg.value == 0,\"RErc20Delegator:fallback: cannot send value to fallback\");\n\n\n\n        // delegate all other functions to current implementation\n\n        (bool success, ) = implementation.delegatecall(msg.data);\n\n\n\n        assembly {\n\n            let free_mem_ptr := mload(0x40)\n\n            returndatacopy(free_mem_ptr, 0, returndatasize)\n\n\n\n            switch success\n\n            case 0 { revert(free_mem_ptr, returndatasize) }\n\n            default { return(free_mem_ptr, returndatasize) }\n\n        }\n",
+          "message": "RErc20Delegator.fallback uses assembly (RErc20Delegator.sol#946-960)\n\t- RErc20Delegator.sol#952-959\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 428,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public underlying;\n",
+          "message": "RErc20Storage.underlying should be constant (RErc20Delegator.sol#428)\nRTokenStorage._notEntered should be constant (RErc20Delegator.sol#191)\nRTokenStorage.accrualBlockNumber should be constant (RErc20Delegator.sol#252)\nRTokenStorage.borrowIndex should be constant (RErc20Delegator.sol#257)\nRTokenStorage.decimals should be constant (RErc20Delegator.sol#206)\nRTokenStorage.initialExchangeRateMantissa should be constant (RErc20Delegator.sol#242)\nRTokenStorage.name should be constant (RErc20Delegator.sol#196)\nRTokenStorage.pendingAdmin should be constant (RErc20Delegator.sol#227)\nRTokenStorage.reserveFactorMantissa should be constant (RErc20Delegator.sol#247)\nRTokenStorage.symbol should be constant (RErc20Delegator.sol#201)\nRTokenStorage.totalBorrows should be constant (RErc20Delegator.sol#262)\nRTokenStorage.totalReserves should be constant (RErc20Delegator.sol#267)\nRTokenStorage.totalSupply should be constant (RErc20Delegator.sol#272)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 758,
+          "vulnerability_to_line": 761,
+          "vulnerability_code": "    function borrowBalanceStored(address account) public view returns (uint) {\n\n        bytes memory data = delegateToViewImplementation(abi.encodeWithSignature(\"borrowBalanceStored(address)\", account));\n\n        return abi.decode(data, (uint));\n",
+          "message": "RErc20Delegator.borrowBalanceStored (RErc20Delegator.sol#758-761) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 406,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function borrowBalanceStored(address account) public view returns (uint);\n",
+          "message": "RTokenInterface.borrowBalanceStored (RErc20Delegator.sol#406) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 407,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function exchangeRateCurrent() public returns (uint);\n",
+          "message": "RTokenInterface.exchangeRateCurrent (RErc20Delegator.sol#407) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 767,
+          "vulnerability_to_line": 770,
+          "vulnerability_code": "    function exchangeRateCurrent() public returns (uint) {\n\n        bytes memory data = delegateToImplementation(abi.encodeWithSignature(\"exchangeRateCurrent()\"));\n\n        return abi.decode(data, (uint));\n",
+          "message": "RErc20Delegator.exchangeRateCurrent (RErc20Delegator.sol#767-770) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 777,
+          "vulnerability_to_line": 780,
+          "vulnerability_code": "    function exchangeRateStored() public view returns (uint) {\n\n        bytes memory data = delegateToViewImplementation(abi.encodeWithSignature(\"exchangeRateStored()\"));\n\n        return abi.decode(data, (uint));\n",
+          "message": "RErc20Delegator.exchangeRateStored (RErc20Delegator.sol#777-780) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 408,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function exchangeRateStored() public view returns (uint);\n",
+          "message": "RTokenInterface.exchangeRateStored (RErc20Delegator.sol#408) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 796,
+          "vulnerability_to_line": 799,
+          "vulnerability_code": "    function accrueInterest() public returns (uint) {\n\n        bytes memory data = delegateToImplementation(abi.encodeWithSignature(\"accrueInterest()\"));\n\n        return abi.decode(data, (uint));\n",
+          "message": "RErc20Delegator.accrueInterest (RErc20Delegator.sol#796-799) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 410,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function accrueInterest() public returns (uint);\n",
+          "message": "RTokenInterface.accrueInterest (RErc20Delegator.sol#410) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 418,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setIronController(IronControllerInterface newIronController) public returns (uint);\n",
+          "message": "RTokenInterface._setIronController (RErc20Delegator.sol#418) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 842,
+          "vulnerability_to_line": 845,
+          "vulnerability_code": "    function _setIronController(IronControllerInterface newIronController) public returns (uint) {\n\n        bytes memory data = delegateToImplementation(abi.encodeWithSignature(\"_setIronController(address)\", newIronController));\n\n        return abi.decode(data, (uint));\n",
+          "message": "RErc20Delegator._setIronController (RErc20Delegator.sol#842-845) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 893,
+          "vulnerability_to_line": 896,
+          "vulnerability_code": "    function _setInterestRateModel(InterestRateModel newInterestRateModel) public returns (uint) {\n\n        bytes memory data = delegateToImplementation(abi.encodeWithSignature(\"_setInterestRateModel(address)\", newInterestRateModel));\n\n        return abi.decode(data, (uint));\n",
+          "message": "RErc20Delegator._setInterestRateModel (RErc20Delegator.sol#893-896) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 421,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setInterestRateModel(InterestRateModel newInterestRateModel) public returns (uint);\n",
+          "message": "RTokenInterface._setInterestRateModel (RErc20Delegator.sol#421) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 478,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _becomeImplementation(bytes memory data) public;\n",
+          "message": "RDelegateInterface._becomeImplementation (RErc20Delegator.sol#478) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 483,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _resignImplementation() public;\n",
+          "message": "RDelegateInterface._resignImplementation (RErc20Delegator.sol#483) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": "Detected issues with version pragma in RErc20Delegator.sol:\n\t- pragma solidity^0.5.16 (RErc20Delegator.sol#3): it allows old versions\n\t- pragma solidity^0.5.16 (RErc20Delegator.sol#36): it allows old versions\n\t- pragma solidity^0.5.16 (RErc20Delegator.sol#110): it allows old versions\n\t- pragma solidity^0.5.16 (RErc20Delegator.sol#183): it allows old versions\n\t- pragma solidity^0.5.16 (RErc20Delegator.sol#488): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 905,
+          "vulnerability_to_line": 913,
+          "vulnerability_code": "    function delegateTo(address callee, bytes memory data) internal returns (bytes memory) {\n\n        (bool success, bytes memory returnData) = callee.delegatecall(data);\n\n        assembly {\n\n            if eq(success, 0) {\n\n                revert(add(returnData, 0x20), returndatasize)\n\n            }\n\n        }\n\n        return returnData;\n",
+          "message": "Low level call in RErc20Delegator.delegateTo (RErc20Delegator.sol#905-913):\n\t-(success,returnData) = callee.delegatecall(data) RErc20Delegator.sol#906\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 932,
+          "vulnerability_to_line": 940,
+          "vulnerability_code": "    function delegateToViewImplementation(bytes memory data) public view returns (bytes memory) {\n\n        (bool success, bytes memory returnData) = address(this).staticcall(abi.encodeWithSignature(\"delegateToImplementation(bytes)\", data));\n\n        assembly {\n\n            if eq(success, 0) {\n\n                revert(add(returnData, 0x20), returndatasize)\n\n            }\n\n        }\n\n        return abi.decode(returnData, (bytes));\n",
+          "message": "Low level call in RErc20Delegator.delegateToViewImplementation (RErc20Delegator.sol#932-940):\n\t-(success,returnData) = address(this).staticcall(abi.encodeWithSignature(delegateToImplementation(bytes),data)) RErc20Delegator.sol#933\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 946,
+          "vulnerability_to_line": 960,
+          "vulnerability_code": "    function () external payable {\n\n        require(msg.value == 0,\"RErc20Delegator:fallback: cannot send value to fallback\");\n\n\n\n        // delegate all other functions to current implementation\n\n        (bool success, ) = implementation.delegatecall(msg.data);\n\n\n\n        assembly {\n\n            let free_mem_ptr := mload(0x40)\n\n            returndatacopy(free_mem_ptr, 0, returndatasize)\n\n\n\n            switch success\n\n            case 0 { revert(free_mem_ptr, returndatasize) }\n\n            default { return(free_mem_ptr, returndatasize) }\n\n        }\n",
+          "message": "Low level call in RErc20Delegator.fallback (RErc20Delegator.sol#946-960):\n\t-(success) = implementation.delegatecall(msg.data) RErc20Delegator.sol#950\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool public constant isInterestRateModel = true;\n",
+          "message": "Constant 'InterestRateModel.isInterestRateModel' (RErc20Delegator.sol#11) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function enterMarkets(address[] calldata RTokens) external returns (uint[] memory);\n",
+          "message": "Parameter 'RTokens' of IronControllerInterface.enterMarkets (RErc20Delegator.sol#44) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function exitMarket(address RToken) external returns (uint);\n",
+          "message": "Parameter 'RToken' of IronControllerInterface.exitMarket (RErc20Delegator.sol#45) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mintAllowed(address RToken, address minter, uint mintAmount) external returns (uint);\n",
+          "message": "Parameter 'RToken' of IronControllerInterface.mintAllowed (RErc20Delegator.sol#49) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mintVerify(address RToken, address minter, uint mintAmount, uint mintTokens) external;\n",
+          "message": "Parameter 'RToken' of IronControllerInterface.mintVerify (RErc20Delegator.sol#50) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function redeemAllowed(address RToken, address redeemer, uint redeemTokens) external returns (uint);\n",
+          "message": "Parameter 'RToken' of IronControllerInterface.redeemAllowed (RErc20Delegator.sol#52) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function redeemVerify(address RToken, address redeemer, uint redeemAmount, uint redeemTokens) external;\n",
+          "message": "Parameter 'RToken' of IronControllerInterface.redeemVerify (RErc20Delegator.sol#53) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function borrowAllowed(address RToken, address borrower, uint borrowAmount) external returns (uint);\n",
+          "message": "Parameter 'RToken' of IronControllerInterface.borrowAllowed (RErc20Delegator.sol#55) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function borrowVerify(address RToken, address borrower, uint borrowAmount) external;\n",
+          "message": "Parameter 'RToken' of IronControllerInterface.borrowVerify (RErc20Delegator.sol#56) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address RToken,\n",
+          "message": "Parameter 'RToken' of IronControllerInterface.repayBorrowAllowed (RErc20Delegator.sol#59) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 64,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address RToken,\n",
+          "message": "Parameter 'RToken' of IronControllerInterface.repayBorrowVerify (RErc20Delegator.sol#64) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address RTokenBorrowed,\n",
+          "message": "Parameter 'RTokenBorrowed' of IronControllerInterface.liquidateBorrowAllowed (RErc20Delegator.sol#71) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address RTokenCollateral,\n",
+          "message": "Parameter 'RTokenCollateral' of IronControllerInterface.liquidateBorrowAllowed (RErc20Delegator.sol#72) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address RTokenBorrowed,\n",
+          "message": "Parameter 'RTokenBorrowed' of IronControllerInterface.liquidateBorrowVerify (RErc20Delegator.sol#77) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address RTokenCollateral,\n",
+          "message": "Parameter 'RTokenCollateral' of IronControllerInterface.liquidateBorrowVerify (RErc20Delegator.sol#78) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 85,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address RTokenCollateral,\n",
+          "message": "Parameter 'RTokenCollateral' of IronControllerInterface.seizeAllowed (RErc20Delegator.sol#85) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address RTokenBorrowed,\n",
+          "message": "Parameter 'RTokenBorrowed' of IronControllerInterface.seizeAllowed (RErc20Delegator.sol#86) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address RTokenCollateral,\n",
+          "message": "Parameter 'RTokenCollateral' of IronControllerInterface.seizeVerify (RErc20Delegator.sol#91) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 92,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address RTokenBorrowed,\n",
+          "message": "Parameter 'RTokenBorrowed' of IronControllerInterface.seizeVerify (RErc20Delegator.sol#92) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferAllowed(address RToken, address src, address dst, uint transfeRTokens) external returns (uint);\n",
+          "message": "Parameter 'RToken' of IronControllerInterface.transferAllowed (RErc20Delegator.sol#97) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferVerify(address RToken, address src, address dst, uint transfeRTokens) external;\n",
+          "message": "Parameter 'RToken' of IronControllerInterface.transferVerify (RErc20Delegator.sol#98) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 103,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address RTokenBorrowed,\n",
+          "message": "Parameter 'RTokenBorrowed' of IronControllerInterface.liquidateCalculateSeizeTokens (RErc20Delegator.sol#103) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 104,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address RTokenCollateral,\n",
+          "message": "Parameter 'RTokenCollateral' of IronControllerInterface.liquidateCalculateSeizeTokens (RErc20Delegator.sol#104) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool public constant isIronController = true;\n",
+          "message": "Constant 'IronControllerInterface.isIronController' (RErc20Delegator.sol#40) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 191,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool internal _notEntered;\n",
+          "message": "Variable 'RTokenStorage._notEntered' (RErc20Delegator.sol#191) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 212,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint internal constant borrowRateMaxMantissa = 0.0005e16;\n",
+          "message": "Constant 'RTokenStorage.borrowRateMaxMantissa' (RErc20Delegator.sol#212) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 217,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint internal constant reserveFactorMaxMantissa = 1e18;\n",
+          "message": "Constant 'RTokenStorage.reserveFactorMaxMantissa' (RErc20Delegator.sol#217) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 416,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setPendingAdmin(address payable newPendingAdmin) external returns (uint);\n",
+          "message": "Function 'RTokenInterface._setPendingAdmin' (RErc20Delegator.sol#416) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 417,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _acceptAdmin() external returns (uint);\n",
+          "message": "Function 'RTokenInterface._acceptAdmin' (RErc20Delegator.sol#417) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 418,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setIronController(IronControllerInterface newIronController) public returns (uint);\n",
+          "message": "Function 'RTokenInterface._setIronController' (RErc20Delegator.sol#418) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 419,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setReserveFactor(uint newReserveFactorMantissa) external returns (uint);\n",
+          "message": "Function 'RTokenInterface._setReserveFactor' (RErc20Delegator.sol#419) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 420,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _reduceReserves(uint reduceAmount) external returns (uint);\n",
+          "message": "Function 'RTokenInterface._reduceReserves' (RErc20Delegator.sol#420) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 421,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setInterestRateModel(InterestRateModel newInterestRateModel) public returns (uint);\n",
+          "message": "Function 'RTokenInterface._setInterestRateModel' (RErc20Delegator.sol#421) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 304,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool public constant isRToken = true;\n",
+          "message": "Constant 'RTokenInterface.isRToken' (RErc20Delegator.sol#304) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 441,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function liquidateBorrow(address borrower, uint repayAmount, RTokenInterface RTokenCollateral) external returns (uint);\n",
+          "message": "Parameter 'RTokenCollateral' of RErc20Interface.liquidateBorrow (RErc20Delegator.sol#441) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 447,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _addReserves(uint addAmount) external returns (uint);\n",
+          "message": "Function 'RErc20Interface._addReserves' (RErc20Delegator.sol#447) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 457,
+          "vulnerability_to_line": 470,
+          "vulnerability_code": "contract rDelegatorInterface is RDelegationStorage {\n\n    /**\n\n     * @notice Emitted when implementation is changed\n\n     */\n\n    event NewImplementation(address oldImplementation, address newImplementation);\n\n\n\n    /**\n\n     * @notice Called by the admin to update the implementation of the delegator\n\n     * @param implementation_ The address of the new implementation for delegation\n\n     * @param allowResign Flag to indicate whether to call _resignImplementation on the old implementation\n\n     * @param becomeImplementationData The encoded bytes data to be passed to _becomeImplementation\n\n     */\n\n    function _setImplementation(address implementation_, bool allowResign, bytes memory becomeImplementationData) public;\n",
+          "message": "Contract 'rDelegatorInterface' (RErc20Delegator.sol#457-470) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 469,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setImplementation(address implementation_, bool allowResign, bytes memory becomeImplementationData) public;\n",
+          "message": "Function 'rDelegatorInterface._setImplementation' (RErc20Delegator.sol#469) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 478,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _becomeImplementation(bytes memory data) public;\n",
+          "message": "Function 'RDelegateInterface._becomeImplementation' (RErc20Delegator.sol#478) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 483,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _resignImplementation() public;\n",
+          "message": "Function 'RDelegateInterface._resignImplementation' (RErc20Delegator.sol#483) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 832,
+          "vulnerability_to_line": 835,
+          "vulnerability_code": "    function _setPendingAdmin(address payable newPendingAdmin) external returns (uint) {\n\n        bytes memory data = delegateToImplementation(abi.encodeWithSignature(\"_setPendingAdmin(address)\", newPendingAdmin));\n\n        return abi.decode(data, (uint));\n",
+          "message": "Function 'RErc20Delegator._setPendingAdmin' (RErc20Delegator.sol#832-835) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 862,
+          "vulnerability_to_line": 865,
+          "vulnerability_code": "    function _acceptAdmin() external returns (uint) {\n\n        bytes memory data = delegateToImplementation(abi.encodeWithSignature(\"_acceptAdmin()\"));\n\n        return abi.decode(data, (uint));\n",
+          "message": "Function 'RErc20Delegator._acceptAdmin' (RErc20Delegator.sol#862-865) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 842,
+          "vulnerability_to_line": 845,
+          "vulnerability_code": "    function _setIronController(IronControllerInterface newIronController) public returns (uint) {\n\n        bytes memory data = delegateToImplementation(abi.encodeWithSignature(\"_setIronController(address)\", newIronController));\n\n        return abi.decode(data, (uint));\n",
+          "message": "Function 'RErc20Delegator._setIronController' (RErc20Delegator.sol#842-845) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 852,
+          "vulnerability_to_line": 855,
+          "vulnerability_code": "    function _setReserveFactor(uint newReserveFactorMantissa) external returns (uint) {\n\n        bytes memory data = delegateToImplementation(abi.encodeWithSignature(\"_setReserveFactor(uint256)\", newReserveFactorMantissa));\n\n        return abi.decode(data, (uint));\n",
+          "message": "Function 'RErc20Delegator._setReserveFactor' (RErc20Delegator.sol#852-855) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 882,
+          "vulnerability_to_line": 885,
+          "vulnerability_code": "    function _reduceReserves(uint reduceAmount) external returns (uint) {\n\n        bytes memory data = delegateToImplementation(abi.encodeWithSignature(\"_reduceReserves(uint256)\", reduceAmount));\n\n        return abi.decode(data, (uint));\n",
+          "message": "Function 'RErc20Delegator._reduceReserves' (RErc20Delegator.sol#882-885) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 893,
+          "vulnerability_to_line": 896,
+          "vulnerability_code": "    function _setInterestRateModel(InterestRateModel newInterestRateModel) public returns (uint) {\n\n        bytes memory data = delegateToImplementation(abi.encodeWithSignature(\"_setInterestRateModel(address)\", newInterestRateModel));\n\n        return abi.decode(data, (uint));\n",
+          "message": "Function 'RErc20Delegator._setInterestRateModel' (RErc20Delegator.sol#893-896) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 632,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function liquidateBorrow(address borrower, uint repayAmount, RTokenInterface RTokenCollateral) external returns (uint) {\n",
+          "message": "Parameter 'RTokenCollateral' of RErc20Delegator.liquidateBorrow (RErc20Delegator.sol#632) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 872,
+          "vulnerability_to_line": 875,
+          "vulnerability_code": "    function _addReserves(uint addAmount) external returns (uint) {\n\n        bytes memory data = delegateToImplementation(abi.encodeWithSignature(\"_addReserves(uint256)\", addAmount));\n\n        return abi.decode(data, (uint));\n",
+          "message": "Function 'RErc20Delegator._addReserves' (RErc20Delegator.sol#872-875) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 545,
+          "vulnerability_to_line": 558,
+          "vulnerability_code": "    function _setImplementation(address implementation_, bool allowResign, bytes memory becomeImplementationData) public {\n\n        require(msg.sender == admin, \"RErc20Delegator::_setImplementation: Caller must be admin\");\n\n\n\n        if (allowResign) {\n\n            delegateToImplementation(abi.encodeWithSignature(\"_resignImplementation()\"));\n\n        }\n\n\n\n        address oldImplementation = implementation;\n\n        implementation = implementation_;\n\n\n\n        delegateToImplementation(abi.encodeWithSignature(\"_becomeImplementation(bytes)\", becomeImplementationData));\n\n\n\n        emit NewImplementation(oldImplementation, implementation);\n",
+          "message": "Function 'RErc20Delegator._setImplementation' (RErc20Delegator.sol#545-558) is not in mixedCase\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 191,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool internal _notEntered;\n",
+          "message": "RTokenStorage._notEntered (RErc20Delegator.sol#191) is never used in RErc20Delegator\nRTokenStorage.borrowRateMaxMantissa (RErc20Delegator.sol#212) is never used in RErc20Delegator\nRTokenStorage.reserveFactorMaxMantissa (RErc20Delegator.sol#217) is never used in RErc20Delegator\nRTokenStorage.initialExchangeRateMantissa (RErc20Delegator.sol#242) is never used in RErc20Delegator\nRTokenStorage.accountTokens (RErc20Delegator.sol#277) is never used in RErc20Delegator\nRTokenStorage.transferAllowances (RErc20Delegator.sol#282) is never used in RErc20Delegator\nRTokenStorage.accountBorrows (RErc20Delegator.sol#297) is never used in RErc20Delegator\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 300,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract RTokenInterface is RTokenStorage {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 495,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract RErc20Delegator is RTokenInterface, RErc20Interface, rDelegatorInterface {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 110,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 183,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 488,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 105,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint repayAmount) external view returns (uint, uint);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 401,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getAccountSnapshot(address account) external view returns (uint, uint, uint, uint);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 416,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setPendingAdmin(address payable newPendingAdmin) external returns (uint);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 509,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address underlying_,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 416,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setPendingAdmin(address payable newPendingAdmin) external returns (uint);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 516,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                address payable admin_,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 517,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                address implementation_,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 518,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                bytes memory becomeImplementationData) public {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 520,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        admin = msg.sender;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 520,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        admin = msg.sender;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 523,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        delegateTo(implementation_, abi.encodeWithSignature(\"initialize(address,address,address,uint256,string,string,uint8)\",\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 523,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        delegateTo(implementation_, abi.encodeWithSignature(\"initialize(address,address,address,uint256,string,string,uint8)\",\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 523,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        delegateTo(implementation_, abi.encodeWithSignature(\"initialize(address,address,address,uint256,string,string,uint8)\",\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 525,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                                                            ironController_,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 527,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                                                            initialExchangeRateMantissa_,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 529,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                                                            symbol_,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 533,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _setImplementation(implementation_, false, becomeImplementationData);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 533,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _setImplementation(implementation_, false, becomeImplementationData);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 536,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        admin = admin_;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

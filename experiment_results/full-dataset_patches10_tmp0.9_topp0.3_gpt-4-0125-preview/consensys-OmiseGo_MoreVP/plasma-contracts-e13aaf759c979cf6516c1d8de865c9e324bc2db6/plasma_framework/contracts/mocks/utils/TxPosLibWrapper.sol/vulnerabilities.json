@@ -1,0 +1,98 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_8"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity 0.5.11;\n",
+          "message": "Different versions of Solidity is used in TxPosLibWrapper.sol:\n\t- Version used: ['0.5.11', 'ABIEncoderV2']\n\t- TxPosLibWrapper.sol#3 declares pragma solidity0.5.11\n\t- TxPosLibWrapper.sol#44 declares pragma solidity0.5.11\n\t- TxPosLibWrapper.sol#45 declares pragma experimentalABIEncoderV2\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": 52,
+          "vulnerability_code": "    function blockNum(uint256 _txPos) public pure returns (uint256) {\n\n        return TxPosLib.TxPos(_txPos).blockNum();\n",
+          "message": "TxPosLibWrapper.blockNum (TxPosLibWrapper.sol#50-52) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": 56,
+          "vulnerability_code": "    function txIndex(uint256 _txPos) public pure returns (uint256) {\n\n        return TxPosLib.TxPos(_txPos).txIndex();\n",
+          "message": "TxPosLibWrapper.txIndex (TxPosLibWrapper.sol#54-56) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity 0.5.11;\n",
+          "message": "Detected issues with version pragma in TxPosLibWrapper.sol:\n\t- pragma solidity0.5.11 (TxPosLibWrapper.sol#3): it allows old versions\n\t- pragma solidity0.5.11 (TxPosLibWrapper.sol#44): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function blockNum(TxPos memory _txPos)\n",
+          "message": "Parameter '_txPos' of TxPosLib.blockNum (TxPosLibWrapper.sol#20) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function txIndex(TxPos memory _txPos)\n",
+          "message": "Parameter '_txPos' of TxPosLib.txIndex (TxPosLibWrapper.sol#33) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function blockNum(uint256 _txPos) public pure returns (uint256) {\n",
+          "message": "Parameter '_txPos' of TxPosLibWrapper.blockNum (TxPosLibWrapper.sol#50) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function txIndex(uint256 _txPos) public pure returns (uint256) {\n",
+          "message": "Parameter '_txPos' of TxPosLibWrapper.txIndex (TxPosLibWrapper.sol#54) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "UNKNOWN INSTRUCTION: SHR"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

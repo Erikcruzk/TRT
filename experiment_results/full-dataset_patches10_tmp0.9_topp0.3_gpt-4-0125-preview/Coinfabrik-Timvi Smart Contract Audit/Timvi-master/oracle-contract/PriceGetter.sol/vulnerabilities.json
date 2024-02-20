@@ -1,0 +1,201 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (address(0x79fEbF6B9F76853EDBcBc913e6aAE8232cFB9De9).isContract()) {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            // mainnet\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            aggr = Aggregator(0x79fEbF6B9F76853EDBcBc913e6aAE8232cFB9De9);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            expiration = 120;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        } else if (address(0x0Be00A19538Fac4BE07AC360C69378B870c412BF).isContract()) {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            // ropsten\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            aggr = Aggregator(0x0Be00A19538Fac4BE07AC360C69378B870c412BF);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            expiration = 4000;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        } else if (address(0x1AddCFF77Ca0F032c7dCA322fd8bFE61Cae66A62).isContract()) {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(block.number - aggr.updatedHeight() < expiration, \"Oracle data are outdated\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 27,
+          "vulnerability_code": "    function isContract(address account) internal view returns (bool) {\n\n        uint256 size;\n\n        // XXX Currently there is no better way to check if there is a contract in an address\n\n        // than to check the size of the code at that address.\n\n        // See https://ethereum.stackexchange.com/a/14016/36603\n\n        // for more details about how this works.\n\n        // TODO Check this again before the Serenity release, because all addresses will be\n\n        // contracts then.\n\n        // solium-disable-next-line security/no-inline-assembly\n\n        assembly { size := extcodesize(account) }\n\n        return size > 0;\n",
+          "message": "Address.isContract (PriceGetter.sol#16-27) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 27,
+          "vulnerability_code": "    function isContract(address account) internal view returns (bool) {\n\n        uint256 size;\n\n        // XXX Currently there is no better way to check if there is a contract in an address\n\n        // than to check the size of the code at that address.\n\n        // See https://ethereum.stackexchange.com/a/14016/36603\n\n        // for more details about how this works.\n\n        // TODO Check this again before the Serenity release, because all addresses will be\n\n        // contracts then.\n\n        // solium-disable-next-line security/no-inline-assembly\n\n        assembly { size := extcodesize(account) }\n\n        return size > 0;\n",
+          "message": "Address.isContract uses assembly (PriceGetter.sol#16-27)\n\t- PriceGetter.sol#25-26\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "    function ethUsdPrice() public view returns (uint256) {\n\n        require(block.number - aggr.updatedHeight() < expiration, \"Oracle data are outdated\");\n\n        return aggr.currentAnswer() / 1000;\n",
+          "message": "PriceGetter.ethUsdPrice (PriceGetter.sol#62-65) should be declared external\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (address(0x79fEbF6B9F76853EDBcBc913e6aAE8232cFB9De9).isContract()) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            aggr = Aggregator(0x79fEbF6B9F76853EDBcBc913e6aAE8232cFB9De9);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        } else if (address(0x0Be00A19538Fac4BE07AC360C69378B870c412BF).isContract()) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            aggr = Aggregator(0x0Be00A19538Fac4BE07AC360C69378B870c412BF);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        } else if (address(0x1AddCFF77Ca0F032c7dCA322fd8bFE61Cae66A62).isContract()) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            aggr = Aggregator(0x1AddCFF77Ca0F032c7dCA322fd8bFE61Cae66A62);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        } else if (address(0x1AddCFF77Ca0F032c7dCA322fd8bFE61Cae66A62).isContract()) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function isContract(address account) internal view returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Aggregator aggr;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

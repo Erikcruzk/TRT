@@ -1,0 +1,1020 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 758,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(i = 0; i < parts.length; i++) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 761,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            if (i < parts.length - 1) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 190,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint len = 0; ptr < end; len++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 356,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 1; i < len; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 190,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint len = 0; ptr < end; len++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 356,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 1; i < len; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 531,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                for (idx = 0; idx <= selflen - needlelen; idx++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 707,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            count++;\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 751,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i = 0; i < parts.length; i++)\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 758,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(i = 0; i < parts.length; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_38"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": 90,
+          "vulnerability_code": "    function memcpy(uint dest, uint src, uint len) private pure {\n\n        // Copy word-length chunks while possible\n\n        for(; len >= 32; len -= 32) {\n\n            assembly {\n\n                mstore(dest, mload(src))\n\n            }\n\n            dest += 32;\n\n            src += 32;\n\n        }\n\n\n\n        // Copy remaining bytes\n\n        uint mask = 256 ** (32 - len) - 1;\n\n        assembly {\n\n            let srcpart := and(mload(src), not(mask))\n\n            let destpart := and(mload(dest), mask)\n\n            mstore(dest, or(destpart, srcpart))\n\n        }\n",
+          "message": "StringUtilsLib.memcpy (StringUtilsLib.sol#73-90) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 168,
+          "vulnerability_to_line": 175,
+          "vulnerability_code": "    function toString(slice self) internal view returns (string) {\n\n        var ret = new string(self._len);\n\n        uint retptr;\n\n        assembly { retptr := add(ret, 32) }\n\n\n\n        memcpy(retptr, self._ptr, self._len);\n\n        return ret;\n",
+          "message": "StringUtilsLib.toString (StringUtilsLib.sol#168-175) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 186,
+          "vulnerability_to_line": 210,
+          "vulnerability_code": "    function len(slice self) internal view returns (uint) {\n\n        // Starting at ptr-31 means the LSB will be the byte we care about\n\n        var ptr = self._ptr - 31;\n\n        var end = ptr + self._len;\n\n        for (uint len = 0; ptr < end; len++) {\n\n            uint8 b;\n\n            assembly {\n\n                b := and(mload(ptr), 0xFF)\n\n            }\n\n            if (b < 0x80) {\n\n                ptr += 1;\n\n            } else if(b < 0xE0) {\n\n                ptr += 2;\n\n            } else if(b < 0xF0) {\n\n                ptr += 3;\n\n            } else if(b < 0xF8) {\n\n                ptr += 4;\n\n            } else if(b < 0xFC) {\n\n                ptr += 5;\n\n            } else {\n\n                ptr += 6;\n\n            }\n\n        }\n\n        return len;\n",
+          "message": "StringUtilsLib.len (StringUtilsLib.sol#186-210) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 230,
+          "vulnerability_to_line": 255,
+          "vulnerability_code": "    function compare(slice self, slice other) internal view returns (int) {\n\n        uint shortest = self._len;\n\n        if (other._len < self._len)\n\n            shortest = other._len;\n\n\n\n        var selfptr = self._ptr;\n\n        var otherptr = other._ptr;\n\n        for (uint idx = 0; idx < shortest; idx += 32) {\n\n            uint a;\n\n            uint b;\n\n            assembly {\n\n                a := mload(selfptr)\n\n                b := mload(otherptr)\n\n            }\n\n            if (a != b) {\n\n                // Mask out irrelevant bytes and check again\n\n                uint mask = ~(2 ** (8 * (32 - shortest + idx)) - 1);\n\n                var diff = (a & mask) - (b & mask);\n\n                if (diff != 0)\n\n                    return int(diff);\n\n            }\n\n            selfptr += 32;\n\n            otherptr += 32;\n\n        }\n\n        return int(self._len) - int(other._len);\n",
+          "message": "StringUtilsLib.compare (StringUtilsLib.sol#230-255) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 325,
+          "vulnerability_to_line": 367,
+          "vulnerability_code": "    function ord(slice self) internal view returns (uint ret) {\n\n        if (self._len == 0) {\n\n            return 0;\n\n        }\n\n\n\n        uint word;\n\n        uint len;\n\n        uint div = 2 ** 248;\n\n\n\n        // Load the rune into the MSBs of b\n\n        assembly { word:= mload(mload(add(self, 32))) }\n\n        var b = word / div;\n\n        if (b < 0x80) {\n\n            ret = b;\n\n            len = 1;\n\n        } else if(b < 0xE0) {\n\n            ret = b & 0x1F;\n\n            len = 2;\n\n        } else if(b < 0xF0) {\n\n            ret = b & 0x0F;\n\n            len = 3;\n\n        } else {\n\n            ret = b & 0x07;\n\n            len = 4;\n\n        }\n\n\n\n        // Check for truncated codepoints\n\n        if (len > self._len) {\n\n            return 0;\n\n        }\n\n\n\n        for (uint i = 1; i < len; i++) {\n\n            div = div / 256;\n\n            b = (word / div) & 0xFF;\n\n            if (b & 0xC0 != 0x80) {\n\n                // Invalid UTF-8 sequence\n\n                return 0;\n\n            }\n\n            ret = (ret * 64) | (b & 0x3F);\n\n        }\n\n\n\n        return ret;\n",
+          "message": "StringUtilsLib.ord (StringUtilsLib.sol#325-367) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 374,
+          "vulnerability_to_line": 378,
+          "vulnerability_code": "    function keccak(slice self) internal view returns (bytes32 ret) {\n\n        assembly {\n\n            ret := sha3(mload(add(self, 32)), mload(self))\n\n        }\n",
+          "message": "StringUtilsLib.keccak (StringUtilsLib.sol#374-378) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 386,
+          "vulnerability_to_line": 403,
+          "vulnerability_code": "    function startsWith(slice self, slice needle) internal view returns (bool) {\n\n        if (self._len < needle._len) {\n\n            return false;\n\n        }\n\n\n\n        if (self._ptr == needle._ptr) {\n\n            return true;\n\n        }\n\n\n\n        bool equal;\n\n        assembly {\n\n            let len := mload(needle)\n\n            let selfptr := mload(add(self, 0x20))\n\n            let needleptr := mload(add(needle, 0x20))\n\n            equal := eq(sha3(selfptr, len), sha3(needleptr, len))\n\n        }\n\n        return equal;\n",
+          "message": "StringUtilsLib.startsWith (StringUtilsLib.sol#386-403) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 441,
+          "vulnerability_to_line": 460,
+          "vulnerability_code": "    function endsWith(slice self, slice needle) internal view returns (bool) {\n\n        if (self._len < needle._len) {\n\n            return false;\n\n        }\n\n\n\n        var selfptr = self._ptr + self._len - needle._len;\n\n\n\n        if (selfptr == needle._ptr) {\n\n            return true;\n\n        }\n\n\n\n        bool equal;\n\n        assembly {\n\n            let len := mload(needle)\n\n            let needleptr := mload(add(needle, 0x20))\n\n            equal := eq(sha3(selfptr, len), sha3(needleptr, len))\n\n        }\n\n\n\n        return equal;\n",
+          "message": "StringUtilsLib.endsWith (StringUtilsLib.sol#441-460) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 493,
+          "vulnerability_to_line": 541,
+          "vulnerability_code": "    function findPtr(uint selflen, uint selfptr, uint needlelen, uint needleptr)\n\n      private\n\n      view\n\n      returns (uint)\n\n    {\n\n        uint ptr;\n\n        uint idx;\n\n\n\n        if (needlelen <= selflen) {\n\n            if (needlelen <= 32) {\n\n                // Optimized assembly for 68 gas per byte on short strings\n\n                assembly {\n\n                    let mask := not(sub(exp(2, mul(8, sub(32, needlelen))), 1))\n\n                    let needledata := and(mload(needleptr), mask)\n\n                    let end := add(selfptr, sub(selflen, needlelen))\n\n                    let loop := selfptr\n\n\n\n                    for { } lt(loop, end) { } {\n\n                        switch eq(and(mload(loop), mask), needledata)\n\n                        case 1 {\n\n                            ptr := loop\n\n                            loop := end\n\n                        }\n\n                        case 0 {\n\n                            loop := add(loop,1)\n\n                        }\n\n                    }\n\n                    switch eq(and(mload(ptr), mask), needledata)\n\n                    case 0 {\n\n                        ptr := add(selfptr, selflen)\n\n                    }\n\n                }\n\n                return ptr;\n\n            } else {\n\n                // For long needles, use hashing\n\n                bytes32 hash;\n\n                assembly { hash := sha3(needleptr, needlelen) }\n\n                ptr = selfptr;\n\n                for (idx = 0; idx <= selflen - needlelen; idx++) {\n\n                    bytes32 testHash;\n\n                    assembly { testHash := sha3(ptr, needlelen) }\n\n                    if (hash == testHash)\n\n                        return ptr;\n\n                    ptr += 1;\n\n                }\n\n            }\n\n        }\n\n        return selfptr + selflen;\n",
+          "message": "StringUtilsLib.findPtr (StringUtilsLib.sol#493-541) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 545,
+          "vulnerability_to_line": 594,
+          "vulnerability_code": "    function rfindPtr(uint selflen, uint selfptr, uint needlelen, uint needleptr)\n\n      private\n\n      view\n\n      returns (uint)\n\n    {\n\n        uint ptr;\n\n\n\n        if (needlelen <= selflen) {\n\n            if (needlelen <= 32) {\n\n                // Optimized assembly for 69 gas per byte on short strings\n\n                assembly {\n\n                    let mask := not(sub(exp(2, mul(8, sub(32, needlelen))), 1))\n\n                    let needledata := and(mload(needleptr), mask)\n\n                    let loop := add(selfptr, sub(selflen, needlelen))\n\n\n\n                    for { } gt(loop, selfptr) { } {\n\n                        switch eq(and(mload(loop), mask), needledata)\n\n                        case 1 {\n\n                            ptr := loop\n\n                            loop := selfptr\n\n                        }\n\n                        case 0 {\n\n                            loop := sub(loop,1)\n\n                        }\n\n                    }\n\n                    switch eq(and(mload(ptr), mask), needledata)\n\n                    case 1 {\n\n                        ptr := add(ptr, needlelen)\n\n                    }\n\n                    case 0 {\n\n                        ptr := selfptr\n\n                    }\n\n                }\n\n                return ptr;\n\n            } else {\n\n                // For long needles, use hashing\n\n                bytes32 hash;\n\n                assembly { hash := sha3(needleptr, needlelen) }\n\n                ptr = selfptr + (selflen - needlelen);\n\n                while (ptr >= selfptr) {\n\n                    bytes32 testHash;\n\n                    assembly { testHash := sha3(ptr, needlelen) }\n\n                    if (hash == testHash)\n\n                        return ptr + needlelen;\n\n                    ptr -= 1;\n\n                }\n\n            }\n\n        }\n\n        return selfptr;\n",
+          "message": "StringUtilsLib.rfindPtr (StringUtilsLib.sol#545-594) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 729,
+          "vulnerability_to_line": 736,
+          "vulnerability_code": "    function concat(slice self, slice other) internal view returns (string) {\n\n        var ret = new string(self._len + other._len);\n\n        uint retptr;\n\n        assembly { retptr := add(ret, 32) }\n\n        memcpy(retptr, self._ptr, self._len);\n\n        memcpy(retptr + self._len, other._ptr, other._len);\n\n        return ret;\n",
+          "message": "StringUtilsLib.concat (StringUtilsLib.sol#729-736) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 746,
+          "vulnerability_to_line": 768,
+          "vulnerability_code": "    function join(slice self, slice[] parts) internal view returns (string) {\n\n        if (parts.length == 0)\n\n            return \"\";\n\n\n\n        uint len = self._len * (parts.length - 1);\n\n        for(uint i = 0; i < parts.length; i++)\n\n            len += parts[i]._len;\n\n\n\n        var ret = new string(len);\n\n        uint retptr;\n\n        assembly { retptr := add(ret, 32) }\n\n\n\n        for(i = 0; i < parts.length; i++) {\n\n            memcpy(retptr, parts[i]._ptr, parts[i]._len);\n\n            retptr += parts[i]._len;\n\n            if (i < parts.length - 1) {\n\n                memcpy(retptr, self._ptr, self._len);\n\n                retptr += self._len;\n\n            }\n\n        }\n\n\n\n        return ret;\n",
+          "message": "StringUtilsLib.join (StringUtilsLib.sol#746-768) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "uninitialized-local",
+          "vulnerability_from_line": 111,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint ret;\n",
+          "message": "ret in StringUtilsLib.len (StringUtilsLib.sol#111) is a local variable never initialiazed\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function memcpy(uint dest, uint src, uint len) private pure {\n",
+          "message": "StringUtilsLib.memcpy.len (local variable @ StringUtilsLib.sol#73) shadows:\n\t- StringUtilsLib.len (function @ StringUtilsLib.sol#110-134)\n\t- StringUtilsLib.len (function @ StringUtilsLib.sol#186-210)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 190,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint len = 0; ptr < end; len++) {\n",
+          "message": "StringUtilsLib.len.len (local variable @ StringUtilsLib.sol#190) shadows:\n\t- StringUtilsLib.len (function @ StringUtilsLib.sol#110-134)\n\t- StringUtilsLib.len (function @ StringUtilsLib.sol#186-210)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 282,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint len;\n",
+          "message": "StringUtilsLib.nextRune.len (local variable @ StringUtilsLib.sol#282) shadows:\n\t- StringUtilsLib.len (function @ StringUtilsLib.sol#110-134)\n\t- StringUtilsLib.len (function @ StringUtilsLib.sol#186-210)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 331,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint len;\n",
+          "message": "StringUtilsLib.ord.len (local variable @ StringUtilsLib.sol#331) shadows:\n\t- StringUtilsLib.len (function @ StringUtilsLib.sol#110-134)\n\t- StringUtilsLib.len (function @ StringUtilsLib.sol#186-210)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 704,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function count(slice self, slice needle) internal view returns (uint count) {\n",
+          "message": "StringUtilsLib.count.count (local variable @ StringUtilsLib.sol#704) shadows:\n\t- StringUtilsLib.count (function @ StringUtilsLib.sol#704-710)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 750,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint len = self._len * (parts.length - 1);\n",
+          "message": "StringUtilsLib.join.len (local variable @ StringUtilsLib.sol#750) shadows:\n\t- StringUtilsLib.len (function @ StringUtilsLib.sol#110-134)\n\t- StringUtilsLib.len (function @ StringUtilsLib.sol#186-210)\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": 90,
+          "vulnerability_code": "    function memcpy(uint dest, uint src, uint len) private pure {\n\n        // Copy word-length chunks while possible\n\n        for(; len >= 32; len -= 32) {\n\n            assembly {\n\n                mstore(dest, mload(src))\n\n            }\n\n            dest += 32;\n\n            src += 32;\n\n        }\n\n\n\n        // Copy remaining bytes\n\n        uint mask = 256 ** (32 - len) - 1;\n\n        assembly {\n\n            let srcpart := and(mload(src), not(mask))\n\n            let destpart := and(mload(dest), mask)\n\n            mstore(dest, or(destpart, srcpart))\n\n        }\n",
+          "message": "StringUtilsLib.memcpy uses assembly (StringUtilsLib.sol#73-90)\n\t- StringUtilsLib.sol#76-79\n\t- StringUtilsLib.sol#85-90\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": 103,
+          "vulnerability_code": "    function toSlice(string self) internal returns (slice) {\n\n        uint ptr;\n\n        assembly {\n\n            ptr := add(self, 0x20)\n\n        }\n\n        return slice(bytes(self).length, ptr);\n",
+          "message": "StringUtilsLib.toSlice uses assembly (StringUtilsLib.sol#97-103)\n\t- StringUtilsLib.sol#99-102\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 143,
+          "vulnerability_to_line": 152,
+          "vulnerability_code": "    function toSliceB32(bytes32 self) internal returns (slice ret) {\n\n        // Allocate space for `self` in memory, copy it there, and point ret at it\n\n        assembly {\n\n            let ptr := mload(0x40)\n\n            mstore(0x40, add(ptr, 0x20))\n\n            mstore(ptr, self)\n\n            mstore(add(ret, 0x20), ptr)\n\n        }\n\n        ret._len = len(self);\n",
+          "message": "StringUtilsLib.toSliceB32 uses assembly (StringUtilsLib.sol#143-152)\n\t- StringUtilsLib.sol#145-151\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 168,
+          "vulnerability_to_line": 175,
+          "vulnerability_code": "    function toString(slice self) internal view returns (string) {\n\n        var ret = new string(self._len);\n\n        uint retptr;\n\n        assembly { retptr := add(ret, 32) }\n\n\n\n        memcpy(retptr, self._ptr, self._len);\n\n        return ret;\n",
+          "message": "StringUtilsLib.toString uses assembly (StringUtilsLib.sol#168-175)\n\t- StringUtilsLib.sol#171-173\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 186,
+          "vulnerability_to_line": 210,
+          "vulnerability_code": "    function len(slice self) internal view returns (uint) {\n\n        // Starting at ptr-31 means the LSB will be the byte we care about\n\n        var ptr = self._ptr - 31;\n\n        var end = ptr + self._len;\n\n        for (uint len = 0; ptr < end; len++) {\n\n            uint8 b;\n\n            assembly {\n\n                b := and(mload(ptr), 0xFF)\n\n            }\n\n            if (b < 0x80) {\n\n                ptr += 1;\n\n            } else if(b < 0xE0) {\n\n                ptr += 2;\n\n            } else if(b < 0xF0) {\n\n                ptr += 3;\n\n            } else if(b < 0xF8) {\n\n                ptr += 4;\n\n            } else if(b < 0xFC) {\n\n                ptr += 5;\n\n            } else {\n\n                ptr += 6;\n\n            }\n\n        }\n\n        return len;\n",
+          "message": "StringUtilsLib.len uses assembly (StringUtilsLib.sol#186-210)\n\t- StringUtilsLib.sol#192-195\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 230,
+          "vulnerability_to_line": 255,
+          "vulnerability_code": "    function compare(slice self, slice other) internal view returns (int) {\n\n        uint shortest = self._len;\n\n        if (other._len < self._len)\n\n            shortest = other._len;\n\n\n\n        var selfptr = self._ptr;\n\n        var otherptr = other._ptr;\n\n        for (uint idx = 0; idx < shortest; idx += 32) {\n\n            uint a;\n\n            uint b;\n\n            assembly {\n\n                a := mload(selfptr)\n\n                b := mload(otherptr)\n\n            }\n\n            if (a != b) {\n\n                // Mask out irrelevant bytes and check again\n\n                uint mask = ~(2 ** (8 * (32 - shortest + idx)) - 1);\n\n                var diff = (a & mask) - (b & mask);\n\n                if (diff != 0)\n\n                    return int(diff);\n\n            }\n\n            selfptr += 32;\n\n            otherptr += 32;\n\n        }\n\n        return int(self._len) - int(other._len);\n",
+          "message": "StringUtilsLib.compare uses assembly (StringUtilsLib.sol#230-255)\n\t- StringUtilsLib.sol#240-244\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 274,
+          "vulnerability_to_line": 308,
+          "vulnerability_code": "    function nextRune(slice self, slice rune) internal returns (slice) {\n\n        rune._ptr = self._ptr;\n\n\n\n        if (self._len == 0) {\n\n            rune._len = 0;\n\n            return rune;\n\n        }\n\n\n\n        uint len;\n\n        uint b;\n\n        // Load the first byte of the rune into the LSBs of b\n\n        assembly { b := and(mload(sub(mload(add(self, 32)), 31)), 0xFF) }\n\n        if (b < 0x80) {\n\n            len = 1;\n\n        } else if(b < 0xE0) {\n\n            len = 2;\n\n        } else if(b < 0xF0) {\n\n            len = 3;\n\n        } else {\n\n            len = 4;\n\n        }\n\n\n\n        // Check for truncated codepoints\n\n        if (len > self._len) {\n\n            rune._len = self._len;\n\n            self._ptr += self._len;\n\n            self._len = 0;\n\n            return rune;\n\n        }\n\n\n\n        self._ptr += len;\n\n        self._len -= len;\n\n        rune._len = len;\n\n        return rune;\n",
+          "message": "StringUtilsLib.nextRune uses assembly (StringUtilsLib.sol#274-308)\n\t- StringUtilsLib.sol#285-286\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 325,
+          "vulnerability_to_line": 367,
+          "vulnerability_code": "    function ord(slice self) internal view returns (uint ret) {\n\n        if (self._len == 0) {\n\n            return 0;\n\n        }\n\n\n\n        uint word;\n\n        uint len;\n\n        uint div = 2 ** 248;\n\n\n\n        // Load the rune into the MSBs of b\n\n        assembly { word:= mload(mload(add(self, 32))) }\n\n        var b = word / div;\n\n        if (b < 0x80) {\n\n            ret = b;\n\n            len = 1;\n\n        } else if(b < 0xE0) {\n\n            ret = b & 0x1F;\n\n            len = 2;\n\n        } else if(b < 0xF0) {\n\n            ret = b & 0x0F;\n\n            len = 3;\n\n        } else {\n\n            ret = b & 0x07;\n\n            len = 4;\n\n        }\n\n\n\n        // Check for truncated codepoints\n\n        if (len > self._len) {\n\n            return 0;\n\n        }\n\n\n\n        for (uint i = 1; i < len; i++) {\n\n            div = div / 256;\n\n            b = (word / div) & 0xFF;\n\n            if (b & 0xC0 != 0x80) {\n\n                // Invalid UTF-8 sequence\n\n                return 0;\n\n            }\n\n            ret = (ret * 64) | (b & 0x3F);\n\n        }\n\n\n\n        return ret;\n",
+          "message": "StringUtilsLib.ord uses assembly (StringUtilsLib.sol#325-367)\n\t- StringUtilsLib.sol#335-336\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 374,
+          "vulnerability_to_line": 378,
+          "vulnerability_code": "    function keccak(slice self) internal view returns (bytes32 ret) {\n\n        assembly {\n\n            ret := sha3(mload(add(self, 32)), mload(self))\n\n        }\n",
+          "message": "StringUtilsLib.keccak uses assembly (StringUtilsLib.sol#374-378)\n\t- StringUtilsLib.sol#375-378\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 386,
+          "vulnerability_to_line": 403,
+          "vulnerability_code": "    function startsWith(slice self, slice needle) internal view returns (bool) {\n\n        if (self._len < needle._len) {\n\n            return false;\n\n        }\n\n\n\n        if (self._ptr == needle._ptr) {\n\n            return true;\n\n        }\n\n\n\n        bool equal;\n\n        assembly {\n\n            let len := mload(needle)\n\n            let selfptr := mload(add(self, 0x20))\n\n            let needleptr := mload(add(needle, 0x20))\n\n            equal := eq(sha3(selfptr, len), sha3(needleptr, len))\n\n        }\n\n        return equal;\n",
+          "message": "StringUtilsLib.startsWith uses assembly (StringUtilsLib.sol#386-403)\n\t- StringUtilsLib.sol#396-402\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 412,
+          "vulnerability_to_line": 433,
+          "vulnerability_code": "    function beyond(slice self, slice needle) internal returns (slice) {\n\n        if (self._len < needle._len) {\n\n            return self;\n\n        }\n\n\n\n        bool equal = true;\n\n        if (self._ptr != needle._ptr) {\n\n            assembly {\n\n                let len := mload(needle)\n\n                let selfptr := mload(add(self, 0x20))\n\n                let needleptr := mload(add(needle, 0x20))\n\n                equal := eq(sha3(selfptr, len), sha3(needleptr, len))\n\n            }\n\n        }\n\n\n\n        if (equal) {\n\n            self._len -= needle._len;\n\n            self._ptr += needle._len;\n\n        }\n\n\n\n        return self;\n",
+          "message": "StringUtilsLib.beyond uses assembly (StringUtilsLib.sol#412-433)\n\t- StringUtilsLib.sol#419-425\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 441,
+          "vulnerability_to_line": 460,
+          "vulnerability_code": "    function endsWith(slice self, slice needle) internal view returns (bool) {\n\n        if (self._len < needle._len) {\n\n            return false;\n\n        }\n\n\n\n        var selfptr = self._ptr + self._len - needle._len;\n\n\n\n        if (selfptr == needle._ptr) {\n\n            return true;\n\n        }\n\n\n\n        bool equal;\n\n        assembly {\n\n            let len := mload(needle)\n\n            let needleptr := mload(add(needle, 0x20))\n\n            equal := eq(sha3(selfptr, len), sha3(needleptr, len))\n\n        }\n\n\n\n        return equal;\n",
+          "message": "StringUtilsLib.endsWith uses assembly (StringUtilsLib.sol#441-460)\n\t- StringUtilsLib.sol#453-459\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 469,
+          "vulnerability_to_line": 489,
+          "vulnerability_code": "    function until(slice self, slice needle) internal returns (slice) {\n\n        if (self._len < needle._len) {\n\n            return self;\n\n        }\n\n\n\n        var selfptr = self._ptr + self._len - needle._len;\n\n        bool equal = true;\n\n        if (selfptr != needle._ptr) {\n\n            assembly {\n\n                let len := mload(needle)\n\n                let needleptr := mload(add(needle, 0x20))\n\n                equal := eq(sha3(selfptr, len), sha3(needleptr, len))\n\n            }\n\n        }\n\n\n\n        if (equal) {\n\n            self._len -= needle._len;\n\n        }\n\n\n\n        return self;\n",
+          "message": "StringUtilsLib.until uses assembly (StringUtilsLib.sol#469-489)\n\t- StringUtilsLib.sol#477-482\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 493,
+          "vulnerability_to_line": 541,
+          "vulnerability_code": "    function findPtr(uint selflen, uint selfptr, uint needlelen, uint needleptr)\n\n      private\n\n      view\n\n      returns (uint)\n\n    {\n\n        uint ptr;\n\n        uint idx;\n\n\n\n        if (needlelen <= selflen) {\n\n            if (needlelen <= 32) {\n\n                // Optimized assembly for 68 gas per byte on short strings\n\n                assembly {\n\n                    let mask := not(sub(exp(2, mul(8, sub(32, needlelen))), 1))\n\n                    let needledata := and(mload(needleptr), mask)\n\n                    let end := add(selfptr, sub(selflen, needlelen))\n\n                    let loop := selfptr\n\n\n\n                    for { } lt(loop, end) { } {\n\n                        switch eq(and(mload(loop), mask), needledata)\n\n                        case 1 {\n\n                            ptr := loop\n\n                            loop := end\n\n                        }\n\n                        case 0 {\n\n                            loop := add(loop,1)\n\n                        }\n\n                    }\n\n                    switch eq(and(mload(ptr), mask), needledata)\n\n                    case 0 {\n\n                        ptr := add(selfptr, selflen)\n\n                    }\n\n                }\n\n                return ptr;\n\n            } else {\n\n                // For long needles, use hashing\n\n                bytes32 hash;\n\n                assembly { hash := sha3(needleptr, needlelen) }\n\n                ptr = selfptr;\n\n                for (idx = 0; idx <= selflen - needlelen; idx++) {\n\n                    bytes32 testHash;\n\n                    assembly { testHash := sha3(ptr, needlelen) }\n\n                    if (hash == testHash)\n\n                        return ptr;\n\n                    ptr += 1;\n\n                }\n\n            }\n\n        }\n\n        return selfptr + selflen;\n",
+          "message": "StringUtilsLib.findPtr uses assembly (StringUtilsLib.sol#493-541)\n\t- StringUtilsLib.sol#504-525\n\t- StringUtilsLib.sol#529-530\n\t- StringUtilsLib.sol#533-534\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 545,
+          "vulnerability_to_line": 594,
+          "vulnerability_code": "    function rfindPtr(uint selflen, uint selfptr, uint needlelen, uint needleptr)\n\n      private\n\n      view\n\n      returns (uint)\n\n    {\n\n        uint ptr;\n\n\n\n        if (needlelen <= selflen) {\n\n            if (needlelen <= 32) {\n\n                // Optimized assembly for 69 gas per byte on short strings\n\n                assembly {\n\n                    let mask := not(sub(exp(2, mul(8, sub(32, needlelen))), 1))\n\n                    let needledata := and(mload(needleptr), mask)\n\n                    let loop := add(selfptr, sub(selflen, needlelen))\n\n\n\n                    for { } gt(loop, selfptr) { } {\n\n                        switch eq(and(mload(loop), mask), needledata)\n\n                        case 1 {\n\n                            ptr := loop\n\n                            loop := selfptr\n\n                        }\n\n                        case 0 {\n\n                            loop := sub(loop,1)\n\n                        }\n\n                    }\n\n                    switch eq(and(mload(ptr), mask), needledata)\n\n                    case 1 {\n\n                        ptr := add(ptr, needlelen)\n\n                    }\n\n                    case 0 {\n\n                        ptr := selfptr\n\n                    }\n\n                }\n\n                return ptr;\n\n            } else {\n\n                // For long needles, use hashing\n\n                bytes32 hash;\n\n                assembly { hash := sha3(needleptr, needlelen) }\n\n                ptr = selfptr + (selflen - needlelen);\n\n                while (ptr >= selfptr) {\n\n                    bytes32 testHash;\n\n                    assembly { testHash := sha3(ptr, needlelen) }\n\n                    if (hash == testHash)\n\n                        return ptr + needlelen;\n\n                    ptr -= 1;\n\n                }\n\n            }\n\n        }\n\n        return selfptr;\n",
+          "message": "StringUtilsLib.rfindPtr uses assembly (StringUtilsLib.sol#545-594)\n\t- StringUtilsLib.sol#555-578\n\t- StringUtilsLib.sol#582-583\n\t- StringUtilsLib.sol#586-587\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 729,
+          "vulnerability_to_line": 736,
+          "vulnerability_code": "    function concat(slice self, slice other) internal view returns (string) {\n\n        var ret = new string(self._len + other._len);\n\n        uint retptr;\n\n        assembly { retptr := add(ret, 32) }\n\n        memcpy(retptr, self._ptr, self._len);\n\n        memcpy(retptr + self._len, other._ptr, other._len);\n\n        return ret;\n",
+          "message": "StringUtilsLib.concat uses assembly (StringUtilsLib.sol#729-736)\n\t- StringUtilsLib.sol#732-733\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 746,
+          "vulnerability_to_line": 768,
+          "vulnerability_code": "    function join(slice self, slice[] parts) internal view returns (string) {\n\n        if (parts.length == 0)\n\n            return \"\";\n\n\n\n        uint len = self._len * (parts.length - 1);\n\n        for(uint i = 0; i < parts.length; i++)\n\n            len += parts[i]._len;\n\n\n\n        var ret = new string(len);\n\n        uint retptr;\n\n        assembly { retptr := add(ret, 32) }\n\n\n\n        for(i = 0; i < parts.length; i++) {\n\n            memcpy(retptr, parts[i]._ptr, parts[i]._len);\n\n            retptr += parts[i]._len;\n\n            if (i < parts.length - 1) {\n\n                memcpy(retptr, self._ptr, self._len);\n\n                retptr += self._len;\n\n            }\n\n        }\n\n\n\n        return ret;\n",
+          "message": "StringUtilsLib.join uses assembly (StringUtilsLib.sol#746-768)\n\t- StringUtilsLib.sol#756-758\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": "Detected issues with version pragma in StringUtilsLib.sol:\n\t- pragma solidity^0.4.18 (StringUtilsLib.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 68,
+          "vulnerability_to_line": 71,
+          "vulnerability_code": "    struct slice {\n\n        uint _len;\n\n        uint _ptr;\n",
+          "message": "Struct 'StringUtilsLib.slice' (StringUtilsLib.sol#68-71) is not in CapWords\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 114,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (self & 0xffffffffffffffffffffffffffffffff == 0) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 116,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            self = bytes32(uint(self) / 0x100000000000000000000000000000000);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 118,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (self & 0xffffffffffffffff == 0) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            self = bytes32(uint(self) / 0x10000000000000000);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 122,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (self & 0xffffffff == 0) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            self = bytes32(uint(self) / 0x100000000);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 126,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (self & 0xffff == 0) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 128,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            self = bytes32(uint(self) / 0x10000);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (self & 0xff == 0) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 195,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            if (b < 0x80) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 197,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            } else if(b < 0xE0) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 199,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            } else if(b < 0xF0) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 201,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            } else if(b < 0xF8) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 203,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            } else if(b < 0xFC) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 286,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (b < 0x80) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 288,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        } else if(b < 0xE0) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 290,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        } else if(b < 0xF0) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 337,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (b < 0x80) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 340,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        } else if(b < 0xE0) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 341,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            ret = b & 0x1F;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 343,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        } else if(b < 0xF0) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 344,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            ret = b & 0x0F;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 347,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            ret = b & 0x07;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 358,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            b = (word / div) & 0xFF;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 359,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            if (b & 0xC0 != 0x80) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 359,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            if (b & 0xC0 != 0x80) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 363,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            ret = (ret * 64) | (b & 0x3F);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 376,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            ret := sha3(mload(add(self, 32)), mload(self))\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 400,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            equal := eq(sha3(selfptr, len), sha3(needleptr, len))\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 400,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            equal := eq(sha3(selfptr, len), sha3(needleptr, len))\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 423,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                equal := eq(sha3(selfptr, len), sha3(needleptr, len))\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 423,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                equal := eq(sha3(selfptr, len), sha3(needleptr, len))\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 456,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            equal := eq(sha3(selfptr, len), sha3(needleptr, len))\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 456,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            equal := eq(sha3(selfptr, len), sha3(needleptr, len))\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 480,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                equal := eq(sha3(selfptr, len), sha3(needleptr, len))\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 480,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                equal := eq(sha3(selfptr, len), sha3(needleptr, len))\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 529,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                assembly { hash := sha3(needleptr, needlelen) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 533,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                    assembly { testHash := sha3(ptr, needlelen) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 582,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                assembly { hash := sha3(needleptr, needlelen) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 586,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                    assembly { testHash := sha3(ptr, needlelen) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 751,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i = 0; i < parts.length; i++)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 758,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(i = 0; i < parts.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 316,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function nextRune(slice self) internal returns (slice ret) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 374,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function keccak(slice self) internal view returns (bytes32 ret) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 658,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function split(slice self, slice needle) internal returns (slice token) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 694,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function rsplit(slice self, slice needle) internal returns (slice token) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 704,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function count(slice self, slice needle) internal view returns (uint count) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 751,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i = 0; i < parts.length; i++)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 758,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(i = 0; i < parts.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 584,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                while (ptr >= selfptr) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 706,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        while (ptr <= self._ptr + self._len) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function memcpy(uint dest, uint src, uint len) private pure {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 168,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function toString(slice self) internal view returns (string) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 186,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function len(slice self) internal view returns (uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 230,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function compare(slice self, slice other) internal view returns (int) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 325,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function ord(slice self) internal view returns (uint ret) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 374,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function keccak(slice self) internal view returns (bytes32 ret) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 386,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function startsWith(slice self, slice needle) internal view returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 441,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function endsWith(slice self, slice needle) internal view returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 493,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function findPtr(uint selflen, uint selfptr, uint needlelen, uint needleptr)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 545,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function rfindPtr(uint selflen, uint selfptr, uint needlelen, uint needleptr)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 729,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function concat(slice self, slice other) internal view returns (string) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 746,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function join(slice self, slice[] parts) internal view returns (string) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function toSlice(string self) internal returns (slice) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 168,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function toString(slice self) internal view returns (string) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 729,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function concat(slice self, slice other) internal view returns (string) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 746,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function join(slice self, slice[] parts) internal view returns (string) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 746,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function join(slice self, slice[] parts) internal view returns (string) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 85,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 171,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { retptr := add(ret, 32) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 192,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 240,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 285,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { b := and(mload(sub(mload(add(self, 32)), 31)), 0xFF) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 335,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { word:= mload(mload(add(self, 32))) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 375,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 396,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 419,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 453,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 477,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 504,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 529,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                assembly { hash := sha3(needleptr, needlelen) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 533,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                    assembly { testHash := sha3(ptr, needlelen) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 555,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 582,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                assembly { hash := sha3(needleptr, needlelen) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 586,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                    assembly { testHash := sha3(ptr, needlelen) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 732,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { retptr := add(ret, 32) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 756,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { retptr := add(ret, 32) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VAR",
+          "vulnerability_from_line": 188,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        var ptr = self._ptr - 31;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

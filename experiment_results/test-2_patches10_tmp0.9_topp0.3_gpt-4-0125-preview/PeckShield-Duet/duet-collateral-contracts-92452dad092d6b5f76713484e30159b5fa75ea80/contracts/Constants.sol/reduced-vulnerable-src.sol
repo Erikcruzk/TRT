@@ -1,0 +1,8 @@
+
+
+
+pragma solidity 0.8.9;
+
+contract Constants {
+  uint public constant PercentBase = 10000;
+}

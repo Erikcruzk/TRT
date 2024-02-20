@@ -1,0 +1,323 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Polls is Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_21"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-no-eth",
+          "vulnerability_from_line": 140,
+          "vulnerability_to_line": 149,
+          "vulnerability_code": "  function vote(uint256 _option) public {\n\n    require(poll.endTime >= block.timestamp);\n\n    require(!voted[poll.block][msg.sender]);\n\n    require(token.takeSnapshot(msg.sender) >= poll.minimumTokens);\n\n\n\n    voted[poll.block][msg.sender] = true;\n\n    results[poll.block][_option] = results[poll.block][_option] + 1;\n\n  }\n\n\n",
+          "message": "Reentrancy in Polls.vote (Polls.sol#140-149):\n\tExternal calls:\n\t- require(bool)(token.takeSnapshot(msg.sender) >= poll.minimumTokens) (Polls.sol#143-144)\n\tState variables written after the call(s):\n\t- voted (Polls.sol#145-146)\n"
+        },
+        {
+          "name": "reentrancy-benign",
+          "vulnerability_from_line": 140,
+          "vulnerability_to_line": 149,
+          "vulnerability_code": "  function vote(uint256 _option) public {\n\n    require(poll.endTime >= block.timestamp);\n\n    require(!voted[poll.block][msg.sender]);\n\n    require(token.takeSnapshot(msg.sender) >= poll.minimumTokens);\n\n\n\n    voted[poll.block][msg.sender] = true;\n\n    results[poll.block][_option] = results[poll.block][_option] + 1;\n\n  }\n\n\n",
+          "message": "Reentrancy in Polls.vote (Polls.sol#140-149):\n\tExternal calls:\n\t- require(bool)(token.takeSnapshot(msg.sender) >= poll.minimumTokens) (Polls.sol#143-144)\n\tState variables written after the call(s):\n\t- results (Polls.sol#146-147)\n"
+        },
+        {
+          "name": "timestamp",
+          "vulnerability_from_line": 140,
+          "vulnerability_to_line": 149,
+          "vulnerability_code": "  function vote(uint256 _option) public {\n\n    require(poll.endTime >= block.timestamp);\n\n    require(!voted[poll.block][msg.sender]);\n\n    require(token.takeSnapshot(msg.sender) >= poll.minimumTokens);\n\n\n\n    voted[poll.block][msg.sender] = true;\n\n    results[poll.block][_option] = results[poll.block][_option] + 1;\n\n  }\n\n\n",
+          "message": "Polls.vote (Polls.sol#140-149) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool)(poll.endTime >= block.timestamp) (Polls.sol#141-142)\n"
+        },
+        {
+          "name": "timestamp",
+          "vulnerability_from_line": 153,
+          "vulnerability_to_line": 159,
+          "vulnerability_code": "  function showResults(uint256 _option) public view returns (uint256) {\n\n    require(poll.endTime <= block.timestamp);\n\n\n\n    return results[poll.block][_option];\n\n  }\n\n\n",
+          "message": "Polls.showResults (Polls.sol#153-159) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool)(poll.endTime <= block.timestamp) (Polls.sol#154-155)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "  function requestSnapshots(uint256 _blockNumber) public;\n",
+          "message": "ISnapshotToken.requestSnapshots (Polls.sol#14-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "  function takeSnapshot(address _owner) public returns(uint256);\n",
+          "message": "ISnapshotToken.takeSnapshot (Polls.sol#15-16) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": 60,
+          "vulnerability_code": "  function transferOwnership(address newOwner) public onlyOwner {\n\n    require(newOwner != address(0));\n\n    OwnershipTransferred(owner, newOwner);\n\n    owner = newOwner;\n\n  }\n\n\n",
+          "message": "Ownable.transferOwnership (Polls.sol#54-60) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": 134,
+          "vulnerability_code": "  function createPoll(\n\n      bytes32 _question,\n\n      bytes32[] _options,\n\n      uint256 _minimumTokens,\n\n      uint256 _endTime\n\n  ) public onlyOwner {\n\n    poll.block = block.number;\n\n    poll.minimumTokens = _minimumTokens;\n\n    poll.endTime = _endTime;\n\n\n\n    token.requestSnapshots(block.number);\n\n\n\n    PollCreated(\n\n      block.number,\n\n      _question,\n\n      _options,\n\n      _minimumTokens,\n\n      _endTime\n\n    );\n\n  }\n\n\n",
+          "message": "Polls.createPoll (Polls.sol#113-134) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 140,
+          "vulnerability_to_line": 149,
+          "vulnerability_code": "  function vote(uint256 _option) public {\n\n    require(poll.endTime >= block.timestamp);\n\n    require(!voted[poll.block][msg.sender]);\n\n    require(token.takeSnapshot(msg.sender) >= poll.minimumTokens);\n\n\n\n    voted[poll.block][msg.sender] = true;\n\n    results[poll.block][_option] = results[poll.block][_option] + 1;\n\n  }\n\n\n",
+          "message": "Polls.vote (Polls.sol#140-149) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 163,
+          "vulnerability_to_line": 166,
+          "vulnerability_code": "  function logResults(uint256 _option) public onlyOwner {\n\n    ResultRevealed(poll.block, _option, showResults(_option));\n\n  }\n",
+          "message": "Polls.logResults (Polls.sol#163-166) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": 5,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n\n\n",
+          "message": "Detected issues with version pragma in Polls.sol:\n\t- pragma solidity^0.4.18 (Polls.sol#3-5): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "  function Ownable() public {\n\n    owner = msg.sender;\n\n  }\n\n\n",
+          "message": "Function 'Ownable.Ownable' (Polls.sol#36-40) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": 104,
+          "vulnerability_code": "  function Polls(address _token) public {\n\n    require(_token != 0x0);\n\n    token = ISnapshotToken(_token);\n\n  }\n\n\n",
+          "message": "Function 'Polls.Polls' (Polls.sol#99-104) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function Polls(address _token) public {\n",
+          "message": "Parameter '_token' of Polls.Polls (Polls.sol#99) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 114,
+          "vulnerability_to_line": 115,
+          "vulnerability_code": "      bytes32 _question,\n",
+          "message": "Parameter '_question' of Polls.createPoll (Polls.sol#114-115) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": 116,
+          "vulnerability_code": "      bytes32[] _options,\n",
+          "message": "Parameter '_options' of Polls.createPoll (Polls.sol#115-116) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 116,
+          "vulnerability_to_line": 117,
+          "vulnerability_code": "      uint256 _minimumTokens,\n",
+          "message": "Parameter '_minimumTokens' of Polls.createPoll (Polls.sol#116-117) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 117,
+          "vulnerability_to_line": 118,
+          "vulnerability_code": "      uint256 _endTime\n",
+          "message": "Parameter '_endTime' of Polls.createPoll (Polls.sol#117-118) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 140,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function vote(uint256 _option) public {\n",
+          "message": "Parameter '_option' of Polls.vote (Polls.sol#140) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 153,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function showResults(uint256 _option) public view returns (uint256) {\n",
+          "message": "Parameter '_option' of Polls.showResults (Polls.sol#153) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 163,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function logResults(uint256 _option) public onlyOwner {\n",
+          "message": "Parameter '_option' of Polls.logResults (Polls.sol#163) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      bytes32[] _options,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function requestSnapshots(uint256 _blockNumber) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function takeSnapshot(address _owner) public returns(uint256);\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function createPoll(\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Dependence on predictable environment variable (SWC 116)",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(poll.endTime >= block.timestamp);\n",
+          "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 143,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(token.takeSnapshot(msg.sender) >= poll.minimumTokens);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    voted[poll.block][msg.sender] = true;\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    voted[poll.block][msg.sender] = true;\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    voted[poll.block][msg.sender] = true;\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    results[poll.block][_option] = results[poll.block][_option] + 1;\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    results[poll.block][_option] = results[poll.block][_option] + 1;\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    results[poll.block][_option] = results[poll.block][_option] + 1;\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    results[poll.block][_option] = results[poll.block][_option] + 1;\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 123,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    token.requestSnapshots(block.number);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    PollCreated(\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 116)",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(poll.endTime <= block.timestamp);\n",
+          "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    results[poll.block][_option] = results[poll.block][_option] + 1;\n",
+          "message": null
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,848 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 287,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\tbool initialized = false;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_53"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "uninitialized-state",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ITwoKeySingletonesRegistry internal registry;\n",
+          "message": "UpgradeabilityStorage.registry (TwoKeyAdmin.sol#145) is never initialized. It is used in:\n\t- initialize (TwoKeyAdmin.sol#168-170)\n"
+        },
+        {
+          "name": "uninitialized-state",
+          "vulnerability_from_line": 148,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address internal _implementation;\n",
+          "message": "UpgradeabilityStorage._implementation (TwoKeyAdmin.sol#148) is never initialized. It is used in:\n\t- implementation (TwoKeyAdmin.sol#154-156)\n"
+        },
+        {
+          "name": "reentrancy-no-eth",
+          "vulnerability_from_line": 313,
+          "vulnerability_to_line": 333,
+          "vulnerability_code": "    function setInitialParams(\n\n\t\taddress _twoKeySingletonRegistry,\n\n\t\taddress _proxyStorageContract,\n\n        address _twoKeyCongress,\n\n        address _economy,\n\n\t\tuint _twoKeyTokenReleaseDate\n\n    ) external {\n\n        require(initialized == false);\n\n\n\n\t\tTWO_KEY_SINGLETON_REGISTRY = _twoKeySingletonRegistry;\n\n\t\tPROXY_STORAGE_CONTRACT = ITwoKeyAdminStorage(_proxyStorageContract);\n\n\t\ttwoKeyCongress = _twoKeyCongress;\n\n\t\ttwoKeyEconomy = _economy;\n\n\n\n\t\tsetUint(\"twoKeyIntegratorDefaultFeePercent\",2);\n\n\t\tsetUint(\"twoKeyNetworkTaxPercent\",2);\n\n\t\tsetUint(\"twoKeyTokenRate\", 95);\n\n\t\tsetUint(\"rewardReleaseAfter\",_twoKeyTokenReleaseDate);\n\n\n\n        initialized = true;\n",
+          "message": "Reentrancy in TwoKeyAdmin.setInitialParams (TwoKeyAdmin.sol#313-333):\n\tExternal calls:\n\t- setUint(twoKeyIntegratorDefaultFeePercent,2) (TwoKeyAdmin.sol#327)\n\t- setUint(twoKeyNetworkTaxPercent,2) (TwoKeyAdmin.sol#328)\n\t- setUint(twoKeyTokenRate,95) (TwoKeyAdmin.sol#329)\n\t- setUint(rewardReleaseAfter,_twoKeyTokenReleaseDate) (TwoKeyAdmin.sol#330)\n\tState variables written after the call(s):\n\t- initialized (TwoKeyAdmin.sol#332)\n"
+        },
+        {
+          "name": "unused-return",
+          "vulnerability_from_line": 339,
+          "vulnerability_to_line": 348,
+          "vulnerability_code": "\tfunction transferByAdmins(\n\n\t\taddress _to,\n\n\t\tuint256 _tokens\n\n\t)\n\n\texternal\n\n\tonlyTwoKeyCongress\n\n\t{\n\n\t\trequire (_to != address(0));\n\n\t\tIERC20(twoKeyEconomy).transfer(_to, _tokens);\n",
+          "message": "TwoKeyAdmin.transferByAdmins (TwoKeyAdmin.sol#339-348) does not use the value returned by external calls:\n\t-IERC20(twoKeyEconomy).transfer(_to,_tokens) (TwoKeyAdmin.sol#347)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 148,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address internal _implementation;\n",
+          "message": "UpgradeabilityStorage._implementation should be constant (TwoKeyAdmin.sol#148)\n"
+        },
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": "Different versions of Solidity is used in TwoKeyAdmin.sol:\n\t- Version used: ['^0.4.0', '^0.4.24']\n\t- TwoKeyAdmin.sol#3 declares pragma solidity^0.4.24\n\t- TwoKeyAdmin.sol#70 declares pragma solidity^0.4.24\n\t- TwoKeyAdmin.sol#97 declares pragma solidity^0.4.24\n\t- TwoKeyAdmin.sol#137 declares pragma solidity^0.4.24\n\t- TwoKeyAdmin.sol#161 declares pragma solidity^0.4.24\n\t- TwoKeyAdmin.sol#175 declares pragma solidity^0.4.24\n\t- TwoKeyAdmin.sol#188 declares pragma solidity^0.4.24\n\t- TwoKeyAdmin.sol#196 declares pragma solidity^0.4.24\n\t- TwoKeyAdmin.sol#219 declares pragma solidity^0.4.0\n\t- TwoKeyAdmin.sol#270 declares pragma solidity^0.4.24\n\t- TwoKeyAdmin.sol#278 declares pragma solidity^0.4.24\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": 38,
+          "vulnerability_code": "    function approve(\n\n        address _spender,\n\n        uint256 _value\n\n    )\n\n    public\n",
+          "message": "IERC20.approve (TwoKeyAdmin.sol#33-38) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 74,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addTwoKeyEventSource(address _twoKeyEventSource) public;\n",
+          "message": "ITwoKeyReg.addTwoKeyEventSource (TwoKeyAdmin.sol#74) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 75,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function changeTwoKeyEventSource(address _twoKeyEventSource) public;\n",
+          "message": "ITwoKeyReg.changeTwoKeyEventSource (TwoKeyAdmin.sol#75) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addWhereContractor(address _userAddress, address _contractAddress) public;\n",
+          "message": "ITwoKeyReg.addWhereContractor (TwoKeyAdmin.sol#76) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addWhereModerator(address _userAddress, address _contractAddress) public;\n",
+          "message": "ITwoKeyReg.addWhereModerator (TwoKeyAdmin.sol#77) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addWhereReferrer(address _userAddress, address _contractAddress) public;\n",
+          "message": "ITwoKeyReg.addWhereReferrer (TwoKeyAdmin.sol#78) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addWhereConverter(address _userAddress, address _contractAddress) public;\n",
+          "message": "ITwoKeyReg.addWhereConverter (TwoKeyAdmin.sol#79) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractsWhereUserIsContractor(address _userAddress) public view returns (address[]);\n",
+          "message": "ITwoKeyReg.getContractsWhereUserIsContractor (TwoKeyAdmin.sol#80) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractsWhereUserIsModerator(address _userAddress) public view returns (address[]);\n",
+          "message": "ITwoKeyReg.getContractsWhereUserIsModerator (TwoKeyAdmin.sol#81) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractsWhereUserIsRefferer(address _userAddress) public view returns (address[]);\n",
+          "message": "ITwoKeyReg.getContractsWhereUserIsRefferer (TwoKeyAdmin.sol#82) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractsWhereUserIsConverter(address _userAddress) public view returns (address[]);\n",
+          "message": "ITwoKeyReg.getContractsWhereUserIsConverter (TwoKeyAdmin.sol#83) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 84,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getTwoKeyEventSourceAddress() public view returns (address);\n",
+          "message": "ITwoKeyReg.getTwoKeyEventSourceAddress (TwoKeyAdmin.sol#84) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 85,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addName(string _name, address _sender, string _fullName, string _email, bytes signature) public;\n",
+          "message": "ITwoKeyReg.addName (TwoKeyAdmin.sol#85) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addNameByUser(string _name) public;\n",
+          "message": "ITwoKeyReg.addNameByUser (TwoKeyAdmin.sol#86) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getName2Owner(string _name) public view returns (address);\n",
+          "message": "ITwoKeyReg.getName2Owner (TwoKeyAdmin.sol#87) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getOwner2Name(address _sender) public view returns (string);\n",
+          "message": "ITwoKeyReg.getOwner2Name (TwoKeyAdmin.sol#88) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getPlasmaToEthereum(address plasma) public view returns (address);\n",
+          "message": "ITwoKeyReg.getPlasmaToEthereum (TwoKeyAdmin.sol#89) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getEthereumToPlasma(address ethereum) public view returns (address);\n",
+          "message": "ITwoKeyReg.getEthereumToPlasma (TwoKeyAdmin.sol#90) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function checkIfTwoKeyMaintainerExists(address _maintainer) public view returns (bool);\n",
+          "message": "ITwoKeyReg.checkIfTwoKeyMaintainerExists (TwoKeyAdmin.sol#91) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addVersion(string _contractName, string version, address implementation) public;\n",
+          "message": "ITwoKeySingletonesRegistry.addVersion (TwoKeyAdmin.sol#124) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 132,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getVersion(string _contractName, string version) public view returns (address);\n",
+          "message": "ITwoKeySingletonesRegistry.getVersion (TwoKeyAdmin.sol#132) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": 156,
+          "vulnerability_code": "    function implementation() public view returns (address) {\n\n        return _implementation;\n",
+          "message": "UpgradeabilityStorage.implementation (TwoKeyAdmin.sol#154-156) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 168,
+          "vulnerability_to_line": 170,
+          "vulnerability_code": "    function initialize(address sender) public payable {\n\n        require(msg.sender == address(registry));\n",
+          "message": "Upgradeable.initialize (TwoKeyAdmin.sol#168-170) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 181,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractProxyAddress(string _contractName) public view returns (address);\n",
+          "message": "ITwoKeySingletoneRegistryFetchAddress.getContractProxyAddress (TwoKeyAdmin.sol#181) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 182,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getNonUpgradableContractAddress(string contractName) public view returns (address);\n",
+          "message": "ITwoKeySingletoneRegistryFetchAddress.getNonUpgradableContractAddress (TwoKeyAdmin.sol#182) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 183,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getLatestContractVersion(string contractName) public view returns (string);\n",
+          "message": "ITwoKeySingletoneRegistryFetchAddress.getLatestContractVersion (TwoKeyAdmin.sol#183) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 191,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function onlyMaintainer(address _sender) public view returns (bool);\n",
+          "message": "ITwoKeyMaintainersRegistry.onlyMaintainer (TwoKeyAdmin.sol#191) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 366,
+          "vulnerability_to_line": 371,
+          "vulnerability_code": "\tfunction destroy()\n\n\tpublic\n\n\tonlyTwoKeyCongress\n\n\t{\n\n        selfdestruct(twoKeyCongress);\n",
+          "message": "TwoKeyAdmin.destroy (TwoKeyAdmin.sol#366-371) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 405,
+          "vulnerability_to_line": 415,
+          "vulnerability_code": "    function transfer2KeyTokens(\n\n\t\taddress _to,\n\n\t\tuint256 _amount\n\n\t)\n\n\tpublic\n\n\tonlyTwoKeyCongress\n\n\treturns (bool)\n\n\t{\n\n\t\tbool completed = IERC20(twoKeyEconomy).transfer(_to, _amount);\n\n\t\treturn completed;\n",
+          "message": "TwoKeyAdmin.transfer2KeyTokens (TwoKeyAdmin.sol#405-415) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 447,
+          "vulnerability_to_line": 453,
+          "vulnerability_code": "\tfunction getDefaultIntegratorFeePercent()\n\n\tpublic\n\n\tview\n\n\treturns (uint)\n\n\t{\n\n\t\treturn getUint(\"twoKeyIntegratorDefaultFeePercent\");\n",
+          "message": "TwoKeyAdmin.getDefaultIntegratorFeePercent (TwoKeyAdmin.sol#447-453) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 456,
+          "vulnerability_to_line": 462,
+          "vulnerability_code": "\tfunction getDefaultNetworkTaxPercent()\n\n\tpublic\n\n\tview\n\n\treturns (uint)\n\n\t{\n\n\t\treturn getUint(\"twoKeyNetworkTaxPercent\");\n",
+          "message": "TwoKeyAdmin.getDefaultNetworkTaxPercent (TwoKeyAdmin.sol#456-462) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 465,
+          "vulnerability_to_line": 471,
+          "vulnerability_code": "\tfunction getTwoKeyTokenRate()\n\n\tpublic\n\n\tview\n\n\treturns (uint)\n\n\t{\n\n\t\treturn getUint(\"twoKeyTokenRate\");\n",
+          "message": "TwoKeyAdmin.getTwoKeyTokenRate (TwoKeyAdmin.sol#465-471) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 219,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;\n",
+          "message": "Detected issues with version pragma in TwoKeyAdmin.sol:\n\t- pragma solidity^0.4.0 (TwoKeyAdmin.sol#219): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 148,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address internal _implementation;\n",
+          "message": "Variable 'UpgradeabilityStorage._implementation' (TwoKeyAdmin.sol#148) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 201,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public TWO_KEY_SINGLETON_REGISTRY;\n",
+          "message": "Variable 'ITwoKeySingletonUtils.TWO_KEY_SINGLETON_REGISTRY' (TwoKeyAdmin.sol#201) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 314,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\taddress _twoKeySingletonRegistry,\n",
+          "message": "Parameter '_twoKeySingletonRegistry' of TwoKeyAdmin.setInitialParams (TwoKeyAdmin.sol#314) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 315,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\taddress _proxyStorageContract,\n",
+          "message": "Parameter '_proxyStorageContract' of TwoKeyAdmin.setInitialParams (TwoKeyAdmin.sol#315) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 316,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _twoKeyCongress,\n",
+          "message": "Parameter '_twoKeyCongress' of TwoKeyAdmin.setInitialParams (TwoKeyAdmin.sol#316) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 317,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _economy,\n",
+          "message": "Parameter '_economy' of TwoKeyAdmin.setInitialParams (TwoKeyAdmin.sol#317) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 318,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tuint _twoKeyTokenReleaseDate\n",
+          "message": "Parameter '_twoKeyTokenReleaseDate' of TwoKeyAdmin.setInitialParams (TwoKeyAdmin.sol#318) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 340,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\taddress _to,\n",
+          "message": "Parameter '_to' of TwoKeyAdmin.transferByAdmins (TwoKeyAdmin.sol#340) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 341,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tuint256 _tokens\n",
+          "message": "Parameter '_tokens' of TwoKeyAdmin.transferByAdmins (TwoKeyAdmin.sol#341) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 377,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tstring _name,\n",
+          "message": "Parameter '_name' of TwoKeyAdmin.addNameToReg (TwoKeyAdmin.sol#377) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 378,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\taddress _addr,\n",
+          "message": "Parameter '_addr' of TwoKeyAdmin.addNameToReg (TwoKeyAdmin.sol#378) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 406,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\taddress _to,\n",
+          "message": "Parameter '_to' of TwoKeyAdmin.transfer2KeyTokens (TwoKeyAdmin.sol#406) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 407,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tuint256 _amount\n",
+          "message": "Parameter '_amount' of TwoKeyAdmin.transfer2KeyTokens (TwoKeyAdmin.sol#407) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 289,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\tITwoKeyAdminStorage public PROXY_STORAGE_CONTRACT;\n",
+          "message": "Variable 'TwoKeyAdmin.PROXY_STORAGE_CONTRACT' (TwoKeyAdmin.sol#289) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 163,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Upgradeable is UpgradeabilityStorage {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 137,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 161,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 175,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 188,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 196,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 219,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 270,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 278,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractsWhereUserIsContractor(address _userAddress) public view returns (address[]);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractsWhereUserIsModerator(address _userAddress) public view returns (address[]);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractsWhereUserIsRefferer(address _userAddress) public view returns (address[]);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractsWhereUserIsConverter(address _userAddress) public view returns (address[]);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 85,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addName(string _name, address _sender, string _fullName, string _email, bytes signature) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 85,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addName(string _name, address _sender, string _fullName, string _email, bytes signature) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 85,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addName(string _name, address _sender, string _fullName, string _email, bytes signature) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 85,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addName(string _name, address _sender, string _fullName, string _email, bytes signature) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addNameByUser(string _name) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getName2Owner(string _name) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getOwner2Name(address _sender) public view returns (string);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addVersion(string _contractName, string version, address implementation) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addVersion(string _contractName, string version, address implementation) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 132,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getVersion(string _contractName, string version) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 132,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getVersion(string _contractName, string version) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 181,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractProxyAddress(string _contractName) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 182,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getNonUpgradableContractAddress(string contractName) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 183,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getLatestContractVersion(string contractName) public view returns (string);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 183,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getLatestContractVersion(string contractName) public view returns (string);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 211,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getAddressFromTwoKeySingletonRegistry(string contractName) internal view returns (address) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 419,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tstring key\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 430,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tstring key,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addVersion(string _contractName, string version, address implementation) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 132,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getVersion(string _contractName, string version) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 287,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\tbool initialized = false;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 291,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\taddress twoKeyEconomy;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 425,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\treturn PROXY_STORAGE_CONTRACT.getUint(keccak256(key));\n",
+          "message": null
+        },
+        {
+          "name": "Transaction-Ordering Dependence (TOD)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 393,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tIERC20(address(twoKeyEconomy)).freezeTransfers();\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 347,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tIERC20(twoKeyEconomy).transfer(_to, _tokens);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 401,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tIERC20(address(twoKeyEconomy)).unfreezeTransfers();\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 384,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    \tITwoKeyReg(twoKeyRegistry).addName(_name, _addr, fullName, email, signature);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 384,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    \tITwoKeyReg(twoKeyRegistry).addName(_name, _addr, fullName, email, signature);\n",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "Unprotected Selfdestruct (SWC 106)",
+          "vulnerability_from_line": 370,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        selfdestruct(twoKeyCongress);\n",
+          "message": "Any sender can cause the contract to self-destruct.\nAny sender can trigger execution of the SELFDESTRUCT instruction to destroy this contract account and withdraw its balance to an arbitrary address. Review the transaction trace generated for this issue and make sure that appropriate security controls are in place to prevent unrestricted access.\nClassification: SWC-106"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 413,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tbool completed = IERC20(twoKeyEconomy).transfer(_to, _amount);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 332,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        initialized = true;\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 332,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        initialized = true;\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 425,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\treturn PROXY_STORAGE_CONTRACT.getUint(keccak256(key));\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 425,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\treturn PROXY_STORAGE_CONTRACT.getUint(keccak256(key));\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 425,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\treturn PROXY_STORAGE_CONTRACT.getUint(keccak256(key));\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 425,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\treturn PROXY_STORAGE_CONTRACT.getUint(keccak256(key));\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 212,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return ITwoKeySingletoneRegistryFetchAddress(TWO_KEY_SINGLETON_REGISTRY)\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 435,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tPROXY_STORAGE_CONTRACT.setUint(keccak256(key), value);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 435,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tPROXY_STORAGE_CONTRACT.setUint(keccak256(key), value);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 435,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tPROXY_STORAGE_CONTRACT.setUint(keccak256(key), value);\n",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 435,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tPROXY_STORAGE_CONTRACT.setUint(keccak256(key), value);\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Concurrency bug",
+          "vulnerability_from_line": 362,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tto.transfer(amount);\n",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 384,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    \tITwoKeyReg(twoKeyRegistry).addName(_name, _addr, fullName, email, signature);\n",
+          "message": null
+        },
+        {
+          "name": "Underflow bugs",
+          "vulnerability_from_line": 384,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    \tITwoKeyReg(twoKeyRegistry).addName(_name, _addr, fullName, email, signature);\n",
+          "message": null
+        }
+      ]
+    }
+  }
+}

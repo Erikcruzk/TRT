@@ -1,0 +1,324 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 131,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor () internal {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 132,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _primary = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 133,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        emit PrimaryTransferred(_primary);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(c >= a, \"SafeMath: addition overflow\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(b <= a, \"SafeMath: subtraction overflow\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(c / a == b, \"SafeMath: multiplication overflow\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(b > 0, \"SafeMath: division by zero\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 106,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(b != 0, \"SafeMath: modulo by zero\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 140,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == _primary, \"Secondary: caller is not the primary account\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 156,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(recipient != address(0), \"Secondary: new primary is the zero address\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 235,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(withdrawalAllowed(payee), \"ConditionalEscrow: payee is not allowed to withdraw\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(c / a == b, \"SafeMath: multiplication overflow\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 140,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == _primary, \"Secondary: caller is not the primary account\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 156,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(recipient != address(0), \"Secondary: new primary is the zero address\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 235,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(withdrawalAllowed(payee), \"ConditionalEscrow: payee is not allowed to withdraw\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 147,
+          "vulnerability_to_line": 149,
+          "vulnerability_code": "    function primary() public view returns (address) {\n\n        return _primary;\n",
+          "message": "Secondary.primary (ConditionalEscrow.sol#147-149) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": 159,
+          "vulnerability_code": "    function transferPrimary(address recipient) public onlyPrimary {\n\n        require(recipient != address(0), \"Secondary: new primary is the zero address\");\n\n        _primary = recipient;\n\n        emit PrimaryTransferred(_primary);\n",
+          "message": "Secondary.transferPrimary (ConditionalEscrow.sol#155-159) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 187,
+          "vulnerability_to_line": 189,
+          "vulnerability_code": "    function depositsOf(address payee) public view returns (uint256) {\n\n        return _deposits[payee];\n",
+          "message": "Escrow.depositsOf (ConditionalEscrow.sol#187-189) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 195,
+          "vulnerability_to_line": 200,
+          "vulnerability_code": "    function deposit(address payee) public onlyPrimary payable {\n\n        uint256 amount = msg.value;\n\n        _deposits[payee] = _deposits[payee].add(amount);\n\n\n\n        emit Deposited(payee, amount);\n",
+          "message": "Escrow.deposit (ConditionalEscrow.sol#195-200) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": "Detected issues with version pragma in ConditionalEscrow.sol:\n\t- pragma solidity^0.5.0 (ConditionalEscrow.sol#3): it allows old versions\n\t- pragma solidity^0.5.0 (ConditionalEscrow.sol#113): it allows old versions\n\t- pragma solidity^0.5.0 (ConditionalEscrow.sol#164): it allows old versions\n\t- pragma solidity^0.5.0 (ConditionalEscrow.sol#219): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Escrow is Secondary {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 226,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract ConditionalEscrow is Escrow {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 164,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 219,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 119,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address private _primary;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 185,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => uint256) private _deposits;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 180,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 206,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdraw(address payable payee) public onlyPrimary {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 234,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdraw(address payable payee) public {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 207,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 payment = _deposits[payee];\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 209,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _deposits[payee] = 0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 211,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        payee.transfer(payment);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 213,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        emit Withdrawn(payee, payment);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 213,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        emit Withdrawn(payee, payment);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 235,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(withdrawalAllowed(payee), \"ConditionalEscrow: payee is not allowed to withdraw\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 235,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(withdrawalAllowed(payee), \"ConditionalEscrow: payee is not allowed to withdraw\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 236,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        super.withdraw(payee);\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

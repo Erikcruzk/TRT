@@ -1,0 +1,254 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 468,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 469,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        // Set admin to caller\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 470,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        admin = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 471,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_15"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "controlled-delegatecall",
+          "vulnerability_from_line": 571,
+          "vulnerability_to_line": 583,
+          "vulnerability_code": "    function () external payable {\n\n        // delegate all other functions to current implementation\n\n        (bool success, ) = vaiControllerImplementation.delegatecall(msg.data);\n\n\n\n        assembly {\n\n              let free_mem_ptr := mload(0x40)\n\n              returndatacopy(free_mem_ptr, 0, returndatasize)\n\n\n\n              switch success\n\n              case 0 { revert(free_mem_ptr, returndatasize) }\n\n              default { return(free_mem_ptr, returndatasize) }\n\n        }\n",
+          "message": "VAIUnitroller.fallback (VAIUnitroller.sol#571-583) uses delegatecall to a input-controlled function id\n\t(success) = vaiControllerImplementation.delegatecall(msg.data) (VAIUnitroller.sol#573)\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 571,
+          "vulnerability_to_line": 583,
+          "vulnerability_code": "    function () external payable {\n\n        // delegate all other functions to current implementation\n\n        (bool success, ) = vaiControllerImplementation.delegatecall(msg.data);\n\n\n\n        assembly {\n\n              let free_mem_ptr := mload(0x40)\n\n              returndatacopy(free_mem_ptr, 0, returndatasize)\n\n\n\n              switch success\n\n              case 0 { revert(free_mem_ptr, returndatasize) }\n\n              default { return(free_mem_ptr, returndatasize) }\n\n        }\n",
+          "message": "VAIUnitroller.fallback uses assembly (VAIUnitroller.sol#571-583)\n\t- VAIUnitroller.sol#575-582\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 421,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool public isVenusVAIInitialized;\n",
+          "message": "VAIControllerStorageG1.isVenusVAIInitialized should be constant (VAIUnitroller.sol#421)\nVAIControllerStorageG2._notEntered should be constant (VAIUnitroller.sol#438)\nVAIControllerStorageG2.treasuryAddress should be constant (VAIUnitroller.sol#432)\nVAIControllerStorageG2.treasuryGuardian should be constant (VAIUnitroller.sol#429)\nVAIControllerStorageG2.treasuryPercent should be constant (VAIUnitroller.sol#435)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 474,
+          "vulnerability_to_line": 487,
+          "vulnerability_code": "    function _setPendingImplementation(address newPendingImplementation) public returns (uint) {\n\n\n\n        if (msg.sender != admin) {\n\n            return fail(Error.UNAUTHORIZED, FailureInfo.SET_PENDING_IMPLEMENTATION_OWNER_CHECK);\n\n        }\n\n\n\n        address oldPendingImplementation = pendingVAIControllerImplementation;\n\n\n\n        pendingVAIControllerImplementation = newPendingImplementation;\n\n\n\n        emit NewPendingImplementation(oldPendingImplementation, pendingVAIControllerImplementation);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "VAIUnitroller._setPendingImplementation (VAIUnitroller.sol#474-487) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 494,
+          "vulnerability_to_line": 512,
+          "vulnerability_code": "    function _acceptImplementation() public returns (uint) {\n\n        // Check caller is pendingImplementation\n\n        if (msg.sender != pendingVAIControllerImplementation) {\n\n            return fail(Error.UNAUTHORIZED, FailureInfo.ACCEPT_PENDING_IMPLEMENTATION_ADDRESS_CHECK);\n\n        }\n\n\n\n        // Save current values for inclusion in log\n\n        address oldImplementation = vaiControllerImplementation;\n\n        address oldPendingImplementation = pendingVAIControllerImplementation;\n\n\n\n        vaiControllerImplementation = pendingVAIControllerImplementation;\n\n\n\n        pendingVAIControllerImplementation = address(0);\n\n\n\n        emit NewImplementation(oldImplementation, vaiControllerImplementation);\n\n        emit NewPendingImplementation(oldPendingImplementation, pendingVAIControllerImplementation);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "VAIUnitroller._acceptImplementation (VAIUnitroller.sol#494-512) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 521,
+          "vulnerability_to_line": 537,
+          "vulnerability_code": "    function _setPendingAdmin(address newPendingAdmin) public returns (uint) {\n\n        // Check caller = admin\n\n        if (msg.sender != admin) {\n\n            return fail(Error.UNAUTHORIZED, FailureInfo.SET_PENDING_ADMIN_OWNER_CHECK);\n\n        }\n\n\n\n        // Save current value, if any, for inclusion in log\n\n        address oldPendingAdmin = pendingAdmin;\n\n\n\n        // Store pendingAdmin with value newPendingAdmin\n\n        pendingAdmin = newPendingAdmin;\n\n\n\n        // Emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin)\n\n        emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "VAIUnitroller._setPendingAdmin (VAIUnitroller.sol#521-537) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 544,
+          "vulnerability_to_line": 564,
+          "vulnerability_code": "    function _acceptAdmin() public returns (uint) {\n\n        // Check caller is pendingAdmin\n\n        if (msg.sender != pendingAdmin) {\n\n            return fail(Error.UNAUTHORIZED, FailureInfo.ACCEPT_ADMIN_PENDING_ADMIN_CHECK);\n\n        }\n\n\n\n        // Save current values for inclusion in log\n\n        address oldAdmin = admin;\n\n        address oldPendingAdmin = pendingAdmin;\n\n\n\n        // Store admin with value pendingAdmin\n\n        admin = pendingAdmin;\n\n\n\n        // Clear the pending value\n\n        pendingAdmin = address(0);\n\n\n\n        emit NewAdmin(oldAdmin, admin);\n\n        emit NewPendingAdmin(oldPendingAdmin, pendingAdmin);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "VAIUnitroller._acceptAdmin (VAIUnitroller.sol#544-564) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": "Detected issues with version pragma in VAIUnitroller.sol:\n\t- pragma solidity^0.5.16 (VAIUnitroller.sol#3): it allows old versions\n\t- pragma solidity^0.5.16 (VAIUnitroller.sol#288): it allows old versions\n\t- pragma solidity^0.5.16 (VAIUnitroller.sol#382): it allows old versions\n\t- pragma solidity^0.5.16 (VAIUnitroller.sol#443): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 571,
+          "vulnerability_to_line": 583,
+          "vulnerability_code": "    function () external payable {\n\n        // delegate all other functions to current implementation\n\n        (bool success, ) = vaiControllerImplementation.delegatecall(msg.data);\n\n\n\n        assembly {\n\n              let free_mem_ptr := mload(0x40)\n\n              returndatacopy(free_mem_ptr, 0, returndatasize)\n\n\n\n              switch success\n\n              case 0 { revert(free_mem_ptr, returndatasize) }\n\n              default { return(free_mem_ptr, returndatasize) }\n\n        }\n",
+          "message": "Low level call in VAIUnitroller.fallback (VAIUnitroller.sol#571-583):\n\t-(success) = vaiControllerImplementation.delegatecall(msg.data) VAIUnitroller.sol#573\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 292,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool public constant isComptroller = true;\n",
+          "message": "Constant 'ComptrollerInterfaceG1.isComptroller' (VAIUnitroller.sol#292) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 438,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool internal _notEntered;\n",
+          "message": "Variable 'VAIControllerStorageG2._notEntered' (VAIUnitroller.sol#438) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 474,
+          "vulnerability_to_line": 487,
+          "vulnerability_code": "    function _setPendingImplementation(address newPendingImplementation) public returns (uint) {\n\n\n\n        if (msg.sender != admin) {\n\n            return fail(Error.UNAUTHORIZED, FailureInfo.SET_PENDING_IMPLEMENTATION_OWNER_CHECK);\n\n        }\n\n\n\n        address oldPendingImplementation = pendingVAIControllerImplementation;\n\n\n\n        pendingVAIControllerImplementation = newPendingImplementation;\n\n\n\n        emit NewPendingImplementation(oldPendingImplementation, pendingVAIControllerImplementation);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "Function 'VAIUnitroller._setPendingImplementation' (VAIUnitroller.sol#474-487) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 494,
+          "vulnerability_to_line": 512,
+          "vulnerability_code": "    function _acceptImplementation() public returns (uint) {\n\n        // Check caller is pendingImplementation\n\n        if (msg.sender != pendingVAIControllerImplementation) {\n\n            return fail(Error.UNAUTHORIZED, FailureInfo.ACCEPT_PENDING_IMPLEMENTATION_ADDRESS_CHECK);\n\n        }\n\n\n\n        // Save current values for inclusion in log\n\n        address oldImplementation = vaiControllerImplementation;\n\n        address oldPendingImplementation = pendingVAIControllerImplementation;\n\n\n\n        vaiControllerImplementation = pendingVAIControllerImplementation;\n\n\n\n        pendingVAIControllerImplementation = address(0);\n\n\n\n        emit NewImplementation(oldImplementation, vaiControllerImplementation);\n\n        emit NewPendingImplementation(oldPendingImplementation, pendingVAIControllerImplementation);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "Function 'VAIUnitroller._acceptImplementation' (VAIUnitroller.sol#494-512) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 521,
+          "vulnerability_to_line": 537,
+          "vulnerability_code": "    function _setPendingAdmin(address newPendingAdmin) public returns (uint) {\n\n        // Check caller = admin\n\n        if (msg.sender != admin) {\n\n            return fail(Error.UNAUTHORIZED, FailureInfo.SET_PENDING_ADMIN_OWNER_CHECK);\n\n        }\n\n\n\n        // Save current value, if any, for inclusion in log\n\n        address oldPendingAdmin = pendingAdmin;\n\n\n\n        // Store pendingAdmin with value newPendingAdmin\n\n        pendingAdmin = newPendingAdmin;\n\n\n\n        // Emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin)\n\n        emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "Function 'VAIUnitroller._setPendingAdmin' (VAIUnitroller.sol#521-537) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 544,
+          "vulnerability_to_line": 564,
+          "vulnerability_code": "    function _acceptAdmin() public returns (uint) {\n\n        // Check caller is pendingAdmin\n\n        if (msg.sender != pendingAdmin) {\n\n            return fail(Error.UNAUTHORIZED, FailureInfo.ACCEPT_ADMIN_PENDING_ADMIN_CHECK);\n\n        }\n\n\n\n        // Save current values for inclusion in log\n\n        address oldAdmin = admin;\n\n        address oldPendingAdmin = pendingAdmin;\n\n\n\n        // Store admin with value pendingAdmin\n\n        admin = pendingAdmin;\n\n\n\n        // Clear the pending value\n\n        pendingAdmin = address(0);\n\n\n\n        emit NewAdmin(oldAdmin, admin);\n\n        emit NewPendingAdmin(oldPendingAdmin, pendingAdmin);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "Function 'VAIUnitroller._acceptAdmin' (VAIUnitroller.sol#544-564) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 506,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        pendingVAIControllerImplementation = address(0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 558,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        pendingAdmin = address(0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 446,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract VAIUnitroller is VAIUnitrollerAdminStorage, VAIControllerErrorReporter {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 288,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 382,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 443,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 357,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint repayAmount) external view returns (uint, uint);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 364,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint repayAmount) external view returns (uint, uint);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UNCHECKED_CALL",
+          "vulnerability_from_line": 573,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, ) = vaiControllerImplementation.delegatecall(msg.data);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 575,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_2"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "erc20-interface",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": 139,
+          "vulnerability_code": "interface IERC721 {\n\n    /**\n\n     * @dev Returns true if this contract implements the interface defined by\n\n     * `interfaceId`. See the corresponding\n\n     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section]\n\n     * to learn more about how these ids are created.\n\n     *\n\n     * This function call must use less than 30 000 gas.\n\n     */\n\n    function supportsInterface(bytes4 interfaceId) external view returns (bool);\n\n\n\n    /**\n\n     * @dev Emitted when `tokenId` token is transferred from `from` to `to`.\n\n     */\n\n    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);\n\n\n\n    /**\n\n     * @dev Emitted when `owner` enables `approved` to manage the `tokenId` token.\n\n     */\n\n    event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);\n\n\n\n    /**\n\n     * @dev Emitted when `owner` enables or disables (`approved`) `operator` to manage all of its assets.\n\n     */\n\n    event ApprovalForAll(address indexed owner, address indexed operator, bool approved);\n\n\n\n    /**\n\n     * @dev Returns the number of tokens in ``owner``'s account.\n\n     */\n\n    function balanceOf(address owner) external view returns (uint256 balance);\n\n\n\n    /**\n\n     * @dev Returns the owner of the `tokenId` token.\n\n     *\n\n     * Requirements:\n\n     *\n\n     * - `tokenId` must exist.\n\n     */\n\n    function ownerOf(uint256 tokenId) external view returns (address owner);\n\n\n\n    /**\n\n     * @dev Safely transfers `tokenId` token from `from` to `to`, checking first that contract recipients\n\n     * are aware of the ERC721 protocol to prevent tokens from being forever locked.\n\n     *\n\n     * Requirements:\n\n     *\n\n     * - `from` cannot be the zero address.\n\n     * - `to` cannot be the zero address.\n\n     * - `tokenId` token must exist and be owned by `from`.\n\n     * - If the caller is not `from`, it must be have been allowed to move this token by either {approve} or {setApprovalForAll}.\n\n     * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.\n\n     *\n\n     * Emits a {Transfer} event.\n\n     */\n\n    function safeTransferFrom(address from, address to, uint256 tokenId) external;\n\n\n\n    /**\n\n     * @dev Transfers `tokenId` token from `from` to `to`.\n\n     *\n\n     * WARNING: Usage of this method is discouraged, use {safeTransferFrom} whenever possible.\n\n     *\n\n     * Requirements:\n\n     *\n\n     * - `from` cannot be the zero address.\n\n     * - `to` cannot be the zero address.\n\n     * - `tokenId` token must be owned by `from`.\n\n     * - If the caller is not `from`, it must be approved to move this token by either {approve} or {setApprovalForAll}.\n\n     *\n\n     * Emits a {Transfer} event.\n\n     */\n\n    function transferFrom(address from, address to, uint256 tokenId) external;\n\n\n\n    /**\n\n     * @dev Gives permission to `to` to transfer `tokenId` token to another account.\n\n     * The approval is cleared when the token is transferred.\n\n     *\n\n     * Only a single account can be approved at a time, so approving the zero address clears previous approvals.\n\n     *\n\n     * Requirements:\n\n     *\n\n     * - The caller must own the token or be an approved operator.\n\n     * - `tokenId` must exist.\n\n     *\n\n     * Emits an {Approval} event.\n\n     */\n\n    function approve(address to, uint256 tokenId) external;\n\n\n\n    /**\n\n     * @dev Returns the account approved for `tokenId` token.\n\n     *\n\n     * Requirements:\n\n     *\n\n     * - `tokenId` must exist.\n\n     */\n\n    function getApproved(uint256 tokenId) external view returns (address operator);\n\n\n\n    /**\n\n     * @dev Approve or remove `operator` as an operator for the caller.\n\n     * Operators can call {transferFrom} or {safeTransferFrom} for any token owned by the caller.\n\n     *\n\n     * Requirements:\n\n     *\n\n     * - The `operator` cannot be the caller.\n\n     *\n\n     * Emits an {ApprovalForAll} event.\n\n     */\n\n    function setApprovalForAll(address operator, bool _approved) external;\n\n\n\n    /**\n\n     * @dev Returns if the `operator` is allowed to manage all of the assets of `owner`.\n\n     *\n\n     * See {setApprovalForAll}\n\n     */\n\n    function isApprovedForAll(address owner, address operator) external view returns (bool);\n\n\n\n    /**\n\n      * @dev Safely transfers `tokenId` token from `from` to `to`.\n\n      *\n\n      * Requirements:\n\n      *\n\n      * - `from` cannot be the zero address.\n\n      * - `to` cannot be the zero address.\n\n      * - `tokenId` token must exist and be owned by `from`.\n\n      * - If the caller is not `from`, it must be approved to move this token by either {approve} or {setApprovalForAll}.\n\n      * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.\n\n      *\n\n      * Emits a {Transfer} event.\n\n      */\n\n    function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data) external;\n",
+          "message": "IERC721 (IERC721.sol#10-139) has incorrect ERC20 function interface(s):\n\t-transferFrom (IERC721.sol#80)\n\t-approve (IERC721.sol#95)\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.6.2 <0.8.0;\n",
+          "message": "Detected issues with version pragma in IERC721.sol:\n\t- pragma solidity>=0.6.2<0.8.0 (IERC721.sol#5): is has a complex pragma\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.6.2 <0.8.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.6.2 <0.8.0;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "execution failed"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solc experienced a fatal error"
+      ],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

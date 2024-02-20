@@ -1,0 +1,148 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": 31,
+          "vulnerability_code": "    function ()\n\n        external\n\n        payable\n\n    {\n\n\n",
+          "message": "Contract locking ether found in Executor.sol:\n\tContract Executor has payable functions:\n\t - fallback (Executor.sol#26-31)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": 68,
+          "vulnerability_code": "    function executeCall(address to, uint256 value, bytes memory data, uint256 txGas)\n\n        internal\n\n        returns (bool success)\n\n    {\n\n        // solium-disable-next-line security/no-inline-assembly\n\n        assembly {\n\n            success := call(txGas, to, value, add(data, 0x20), mload(data), 0, 0)\n\n        }\n",
+          "message": "Executor.executeCall uses assembly (Executor.sol#60-68)\n\t- Executor.sol#65-67\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": 78,
+          "vulnerability_code": "    function executeDelegateCall(address to, bytes memory data, uint256 txGas)\n\n        internal\n\n        returns (bool success)\n\n    {\n\n        // solium-disable-next-line security/no-inline-assembly\n\n        assembly {\n\n            success := delegatecall(txGas, to, add(data, 0x20), mload(data), 0, 0)\n\n        }\n",
+          "message": "Executor.executeDelegateCall uses assembly (Executor.sol#70-78)\n\t- Executor.sol#75-77\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": 88,
+          "vulnerability_code": "    function executeCreate(bytes memory data)\n\n        internal\n\n        returns (address newContract)\n\n    {\n\n        // solium-disable-next-line security/no-inline-assembly\n\n        assembly {\n\n            newContract := create(0, add(data, 0x20), mload(data))\n\n        }\n",
+          "message": "Executor.executeCreate uses assembly (Executor.sol#80-88)\n\t- Executor.sol#85-87\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": "Detected issues with version pragma in Executor.sol:\n\t- pragma solidity^0.5.0 (Executor.sol#3): it allows old versions\n\t- pragma solidity^0.5.0 (Executor.sol#18): it allows old versions\n\t- pragma solidity^0.5.0 (Executor.sol#36): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function executeCall(address to, uint256 value, bytes memory data, uint256 txGas)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function executeDelegateCall(address to, bytes memory data, uint256 txGas)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function executeCreate(bytes memory data)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract EtherPaymentFallback {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 75,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 85,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

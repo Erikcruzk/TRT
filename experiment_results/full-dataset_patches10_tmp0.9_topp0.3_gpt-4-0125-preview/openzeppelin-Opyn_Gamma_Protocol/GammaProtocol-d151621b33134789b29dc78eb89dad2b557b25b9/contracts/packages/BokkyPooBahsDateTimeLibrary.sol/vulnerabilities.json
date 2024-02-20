@@ -1,0 +1,99 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.0;\n",
+          "message": "Detected issues with version pragma in BokkyPooBahsDateTimeLibrary.sol:\n\t- pragma solidity^0.6.0 (BokkyPooBahsDateTimeLibrary.sol#5): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": 78,
+          "vulnerability_code": "    function _daysToDate(uint256 _days)\n\n        internal\n\n        pure\n\n        returns (\n\n            uint256 year,\n\n            uint256 month,\n\n            uint256 day\n\n        )\n\n    {\n\n        int256 __days = int256(_days);\n\n\n\n        int256 L = __days + 68569 + OFFSET19700101;\n\n        int256 N = (4 * L) / 146097;\n\n        L = L - (146097 * N + 3) / 4;\n\n        int256 _year = (4000 * (L + 1)) / 1461001;\n\n        L = L - (1461 * _year) / 4 + 31;\n\n        int256 _month = (80 * L) / 2447;\n\n        int256 _day = L - (2447 * _month) / 80;\n\n        L = _month / 11;\n\n        _month = _month + 2 - 12 * L;\n\n        _year = 100 * (N - 49) + _year + L;\n\n\n\n        year = uint256(_year);\n\n        month = uint256(_month);\n\n        day = uint256(_day);\n",
+          "message": "Function 'BokkyPooBahsDateTimeLibrary._daysToDate' (BokkyPooBahsDateTimeLibrary.sol#53-78) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _daysToDate(uint256 _days)\n",
+          "message": "Parameter '_days' of BokkyPooBahsDateTimeLibrary._daysToDate (BokkyPooBahsDateTimeLibrary.sol#53) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        returns (\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        returns (\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 constant SECONDS_PER_DAY = 24 * 60 * 60;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    int256 constant OFFSET19700101 = 2440588;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

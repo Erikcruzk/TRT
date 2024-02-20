@@ -1,0 +1,163 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 32; i <= proof.length; i += 32) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(proof.length != 0, \"Merkle proof must not be empty\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(proof.length % 32 == 0, \"Length of Merkle proof must be a multiple of 32\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(index < 2**(proof.length/32), \"Index does not match the length of the proof\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(proof.length % 32 == 0, \"Length of Merkle proof must be a multiple of 32\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(index < 2**(proof.length/32), \"Index does not match the length of the proof\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 50,
+          "vulnerability_code": "    function checkMembership(bytes memory leaf, uint256 index, bytes32 rootHash, bytes memory proof)\n\n        internal\n\n        pure\n\n        returns (bool)\n\n    {\n\n        require(proof.length != 0, \"Merkle proof must not be empty\");\n\n        require(proof.length % 32 == 0, \"Length of Merkle proof must be a multiple of 32\");\n\n\n\n        // see https://github.com/omisego/plasma-contracts/issues/546\n\n        require(index < 2**(proof.length/32), \"Index does not match the length of the proof\");\n\n\n\n        bytes32 proofElement;\n\n        bytes32 computedHash = keccak256(abi.encodePacked(LEAF_SALT, leaf));\n\n        uint256 j = index;\n\n        // Note: We're skipping the first 32 bytes of `proof`, which holds the size of the dynamically sized `bytes`\n\n        for (uint256 i = 32; i <= proof.length; i += 32) {\n\n            // solhint-disable-next-line no-inline-assembly\n\n            assembly {\n\n                proofElement := mload(add(proof, i))\n\n            }\n\n            if (j % 2 == 0) {\n\n                computedHash = keccak256(abi.encodePacked(NODE_SALT, computedHash, proofElement));\n\n            } else {\n\n                computedHash = keccak256(abi.encodePacked(NODE_SALT, proofElement, computedHash));\n\n            }\n\n            j = j / 2;\n\n        }\n\n\n\n        return computedHash == rootHash;\n",
+          "message": "Merkle.checkMembership (MerkleWrapper.sol#21-50) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 50,
+          "vulnerability_code": "    function checkMembership(bytes memory leaf, uint256 index, bytes32 rootHash, bytes memory proof)\n\n        internal\n\n        pure\n\n        returns (bool)\n\n    {\n\n        require(proof.length != 0, \"Merkle proof must not be empty\");\n\n        require(proof.length % 32 == 0, \"Length of Merkle proof must be a multiple of 32\");\n\n\n\n        // see https://github.com/omisego/plasma-contracts/issues/546\n\n        require(index < 2**(proof.length/32), \"Index does not match the length of the proof\");\n\n\n\n        bytes32 proofElement;\n\n        bytes32 computedHash = keccak256(abi.encodePacked(LEAF_SALT, leaf));\n\n        uint256 j = index;\n\n        // Note: We're skipping the first 32 bytes of `proof`, which holds the size of the dynamically sized `bytes`\n\n        for (uint256 i = 32; i <= proof.length; i += 32) {\n\n            // solhint-disable-next-line no-inline-assembly\n\n            assembly {\n\n                proofElement := mload(add(proof, i))\n\n            }\n\n            if (j % 2 == 0) {\n\n                computedHash = keccak256(abi.encodePacked(NODE_SALT, computedHash, proofElement));\n\n            } else {\n\n                computedHash = keccak256(abi.encodePacked(NODE_SALT, proofElement, computedHash));\n\n            }\n\n            j = j / 2;\n\n        }\n\n\n\n        return computedHash == rootHash;\n",
+          "message": "Merkle.checkMembership uses assembly (MerkleWrapper.sol#21-50)\n\t- MerkleWrapper.sol#38-40\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "    function checkMembership(bytes memory leaf, uint256 index, bytes32 rootHash, bytes memory proof)\n\n        public\n\n        pure\n\n        returns (bool)\n\n    {\n\n        return Merkle.checkMembership(leaf, index, rootHash, proof);\n",
+          "message": "MerkleWrapper.checkMembership (MerkleWrapper.sol#59-65) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity 0.5.11;\n",
+          "message": "Detected issues with version pragma in MerkleWrapper.sol:\n\t- pragma solidity0.5.11 (MerkleWrapper.sol#3): it allows old versions\n\t- pragma solidity0.5.11 (MerkleWrapper.sol#55): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    byte private constant LEAF_SALT = 0x00;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    byte private constant NODE_SALT = 0x01;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 32; i <= proof.length; i += 32) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    byte private constant LEAF_SALT = 0x00;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    byte private constant NODE_SALT = 0x01;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function checkMembership(bytes memory leaf, uint256 index, bytes32 rootHash, bytes memory proof)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

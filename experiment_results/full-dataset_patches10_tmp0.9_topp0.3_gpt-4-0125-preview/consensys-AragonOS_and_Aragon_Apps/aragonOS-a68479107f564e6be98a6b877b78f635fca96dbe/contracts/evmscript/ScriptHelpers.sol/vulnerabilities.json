@@ -1,0 +1,291 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_15"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function uint256At(bytes _data, uint256 _location) internal pure returns (uint256 result) {\n\n        assembly {\n\n            result := mload(add(_data, add(0x20, _location)))\n\n        }\n",
+          "message": "ScriptHelpers.uint256At (ScriptHelpers.sol#15-19) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function addressAt(bytes _data, uint256 _location) internal pure returns (address result) {\n\n        uint256 word = uint256At(_data, _location);\n\n\n\n        assembly {\n\n            result := div(and(word, 0xffffffffffffffffffffffffffffffffffffffff000000000000000000000000),\n\n            0x1000000000000000000000000)\n\n        }\n",
+          "message": "ScriptHelpers.addressAt (ScriptHelpers.sol#21-28) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function uint32At(bytes _data, uint256 _location) internal pure returns (uint32 result) {\n\n        uint256 word = uint256At(_data, _location);\n\n\n\n        assembly {\n\n            result := div(and(word, 0xffffffff00000000000000000000000000000000000000000000000000000000),\n\n            0x100000000000000000000000000000000000000000000000000000000)\n\n        }\n",
+          "message": "ScriptHelpers.uint32At (ScriptHelpers.sol#30-37) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 43,
+          "vulnerability_code": "    function locationOf(bytes _data, uint256 _location) internal pure returns (uint256 result) {\n\n        assembly {\n\n            result := add(_data, add(0x20, _location))\n\n        }\n",
+          "message": "ScriptHelpers.locationOf (ScriptHelpers.sol#39-43) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": 49,
+          "vulnerability_code": "    function toBytes(bytes4 _sig) internal pure returns (bytes) {\n\n        bytes memory payload = new bytes(4);\n\n        assembly { mstore(add(payload, 0x20), _sig) }\n\n        return payload;\n",
+          "message": "ScriptHelpers.toBytes (ScriptHelpers.sol#45-49) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 19,
+          "vulnerability_code": "    function uint256At(bytes _data, uint256 _location) internal pure returns (uint256 result) {\n\n        assembly {\n\n            result := mload(add(_data, add(0x20, _location)))\n\n        }\n",
+          "message": "ScriptHelpers.uint256At uses assembly (ScriptHelpers.sol#15-19)\n\t- ScriptHelpers.sol#16-19\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function addressAt(bytes _data, uint256 _location) internal pure returns (address result) {\n\n        uint256 word = uint256At(_data, _location);\n\n\n\n        assembly {\n\n            result := div(and(word, 0xffffffffffffffffffffffffffffffffffffffff000000000000000000000000),\n\n            0x1000000000000000000000000)\n\n        }\n",
+          "message": "ScriptHelpers.addressAt uses assembly (ScriptHelpers.sol#21-28)\n\t- ScriptHelpers.sol#24-28\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function uint32At(bytes _data, uint256 _location) internal pure returns (uint32 result) {\n\n        uint256 word = uint256At(_data, _location);\n\n\n\n        assembly {\n\n            result := div(and(word, 0xffffffff00000000000000000000000000000000000000000000000000000000),\n\n            0x100000000000000000000000000000000000000000000000000000000)\n\n        }\n",
+          "message": "ScriptHelpers.uint32At uses assembly (ScriptHelpers.sol#30-37)\n\t- ScriptHelpers.sol#33-37\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 43,
+          "vulnerability_code": "    function locationOf(bytes _data, uint256 _location) internal pure returns (uint256 result) {\n\n        assembly {\n\n            result := add(_data, add(0x20, _location))\n\n        }\n",
+          "message": "ScriptHelpers.locationOf uses assembly (ScriptHelpers.sol#39-43)\n\t- ScriptHelpers.sol#40-43\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": 49,
+          "vulnerability_code": "    function toBytes(bytes4 _sig) internal pure returns (bytes) {\n\n        bytes memory payload = new bytes(4);\n\n        assembly { mstore(add(payload, 0x20), _sig) }\n\n        return payload;\n",
+          "message": "ScriptHelpers.toBytes uses assembly (ScriptHelpers.sol#45-49)\n\t- ScriptHelpers.sol#47-48\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getSpecId(bytes _script) internal pure returns (uint32) {\n",
+          "message": "Parameter '_script' of ScriptHelpers.getSpecId (ScriptHelpers.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addressAt(bytes _data, uint256 _location) internal pure returns (address result) {\n",
+          "message": "Parameter '_data' of ScriptHelpers.addressAt (ScriptHelpers.sol#21) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addressAt(bytes _data, uint256 _location) internal pure returns (address result) {\n",
+          "message": "Parameter '_location' of ScriptHelpers.addressAt (ScriptHelpers.sol#21) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function uint32At(bytes _data, uint256 _location) internal pure returns (uint32 result) {\n",
+          "message": "Parameter '_data' of ScriptHelpers.uint32At (ScriptHelpers.sol#30) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function uint32At(bytes _data, uint256 _location) internal pure returns (uint32 result) {\n",
+          "message": "Parameter '_location' of ScriptHelpers.uint32At (ScriptHelpers.sol#30) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function uint256At(bytes _data, uint256 _location) internal pure returns (uint256 result) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addressAt(bytes _data, uint256 _location) internal pure returns (address result) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function uint32At(bytes _data, uint256 _location) internal pure returns (uint32 result) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function locationOf(bytes _data, uint256 _location) internal pure returns (uint256 result) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function uint256At(bytes _data, uint256 _location) internal pure returns (uint256 result) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addressAt(bytes _data, uint256 _location) internal pure returns (address result) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function uint32At(bytes _data, uint256 _location) internal pure returns (uint32 result) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function locationOf(bytes _data, uint256 _location) internal pure returns (uint256 result) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function toBytes(bytes4 _sig) internal pure returns (bytes) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getSpecId(bytes _script) internal pure returns (uint32) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function uint256At(bytes _data, uint256 _location) internal pure returns (uint256 result) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addressAt(bytes _data, uint256 _location) internal pure returns (address result) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function uint32At(bytes _data, uint256 _location) internal pure returns (uint32 result) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function locationOf(bytes _data, uint256 _location) internal pure returns (uint256 result) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function toBytes(bytes4 _sig) internal pure returns (bytes) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { mstore(add(payload, 0x20), _sig) }\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

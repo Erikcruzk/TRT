@@ -1,0 +1,382 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "inefficient-state-variable-increment",
+          "vulnerability_from_line": 204,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        totalSupply += _amount;\n",
+          "message": "<x> += <y> costs more gas than <x> = <x> + <y> for state variables."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 193,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(string memory _name, string memory _symbol, uint8 _decimals) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 194,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        name = _name;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 195,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        symbol = _symbol;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 196,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        decimals = _decimals;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 197,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        balances[msg.sender] = totalSupply;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 198,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 199,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 202,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == owner, \"Only owner can mint\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_35"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "shadowing-abstract",
+          "vulnerability_from_line": 189,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public totalSupply = 1000000 * 10**18;\n",
+          "message": "TestToken.totalSupply (TestToken.sol#189) shadows:\n\t- ERC20Basic.totalSupply (TestToken.sol#6)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public totalSupply;\n",
+          "message": "ERC20Basic.totalSupply should be constant (TestToken.sol#6)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address who) public view returns (uint256);\n",
+          "message": "ERC20Basic.balanceOf (TestToken.sol#7) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": 73,
+          "vulnerability_code": "    function balanceOf(address _owner) public view returns (uint256 balance) {\n\n        return balances[_owner];\n",
+          "message": "BasicToken.balanceOf (TestToken.sol#71-73) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address to, uint256 value) public returns (bool);\n",
+          "message": "ERC20Basic.transfer (TestToken.sol#8) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": 64,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public returns (bool) {\n\n        require(_to != address(0));\n\n        require(_value <= balances[msg.sender]);\n\n\n\n        // SafeMath.sub will throw if there is not enough balance.\n\n        balances[msg.sender] = balances[msg.sender].sub(_value);\n\n        balances[_to] = balances[_to].add(_value);\n\n        emit Transfer(msg.sender, _to, _value);\n\n        return true;\n",
+          "message": "BasicToken.transfer (TestToken.sol#55-64) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 142,
+          "vulnerability_to_line": 144,
+          "vulnerability_code": "    function allowance(address _owner, address _spender) public view returns (uint256) {\n\n        return allowed[_owner][_spender];\n",
+          "message": "StandardToken.allowance (TestToken.sol#142-144) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function allowance(address owner, address spender) public view returns (uint256);\n",
+          "message": "ERC20.allowance (TestToken.sol#83) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 84,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferFrom(address from, address to, uint256 value) public returns (bool);\n",
+          "message": "ERC20.transferFrom (TestToken.sol#84) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": 118,
+          "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {\n\n        require(_to != address(0));\n\n        require(_value <= balances[_from]);\n\n        require(_value <= allowed[_from][msg.sender]);\n\n\n\n        balances[_from] = balances[_from].sub(_value);\n\n        balances[_to] = balances[_to].add(_value);\n\n        allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);\n\n        emit Transfer(_from, _to, _value);\n\n        return true;\n",
+          "message": "StandardToken.transferFrom (TestToken.sol#108-118) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": 134,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) public returns (bool) {\n\n        allowed[msg.sender][_spender] = _value;\n\n        emit Approval(msg.sender, _spender, _value);\n\n        return true;\n",
+          "message": "StandardToken.approve (TestToken.sol#130-134) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 85,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address spender, uint256 value) public returns (bool);\n",
+          "message": "ERC20.approve (TestToken.sol#85) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 156,
+          "vulnerability_to_line": 160,
+          "vulnerability_code": "    function increaseApproval(address _spender, uint _addedValue) public returns (bool) {\n\n        allowed[msg.sender][_spender] = allowed[msg.sender][_spender].add(_addedValue);\n\n        emit Approval(msg.sender, _spender, allowed[msg.sender][_spender]);\n\n        return true;\n",
+          "message": "StandardToken.increaseApproval (TestToken.sol#156-160) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 172,
+          "vulnerability_to_line": 181,
+          "vulnerability_code": "    function decreaseApproval(address _spender, uint _subtractedValue) public returns (bool) {\n\n        uint oldValue = allowed[msg.sender][_spender];\n\n        if (_subtractedValue > oldValue) {\n\n            allowed[msg.sender][_spender] = 0;\n\n        } else {\n\n            allowed[msg.sender][_spender] = oldValue.sub(_subtractedValue);\n\n        }\n\n        emit Approval(msg.sender, _spender, allowed[msg.sender][_spender]);\n\n        return true;\n",
+          "message": "StandardToken.decreaseApproval (TestToken.sol#172-181) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 201,
+          "vulnerability_to_line": 205,
+          "vulnerability_code": "    function mint(address _to, uint256 _amount) public {\n\n        require(msg.sender == owner, \"Only owner can mint\");\n\n        balances[_to] += _amount;\n\n        totalSupply += _amount;\n",
+          "message": "TestToken.mint (TestToken.sol#201-205) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": "Detected issues with version pragma in TestToken.sol:\n\t- pragma solidity^0.5.4 (TestToken.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address _owner) public view returns (uint256 balance) {\n",
+          "message": "Parameter '_owner' of BasicToken.balanceOf (TestToken.sol#71) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_to' of BasicToken.transfer (TestToken.sol#55) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_value' of BasicToken.transfer (TestToken.sol#55) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 142,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function allowance(address _owner, address _spender) public view returns (uint256) {\n",
+          "message": "Parameter '_owner' of StandardToken.allowance (TestToken.sol#142) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 142,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function allowance(address _owner, address _spender) public view returns (uint256) {\n",
+          "message": "Parameter '_spender' of StandardToken.allowance (TestToken.sol#142) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_from' of StandardToken.transferFrom (TestToken.sol#108) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_to' of StandardToken.transferFrom (TestToken.sol#108) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_value' of StandardToken.transferFrom (TestToken.sol#108) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_spender' of StandardToken.approve (TestToken.sol#130) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_value' of StandardToken.approve (TestToken.sol#130) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 156,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function increaseApproval(address _spender, uint _addedValue) public returns (bool) {\n",
+          "message": "Parameter '_spender' of StandardToken.increaseApproval (TestToken.sol#156) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 156,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function increaseApproval(address _spender, uint _addedValue) public returns (bool) {\n",
+          "message": "Parameter '_addedValue' of StandardToken.increaseApproval (TestToken.sol#156) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 172,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function decreaseApproval(address _spender, uint _subtractedValue) public returns (bool) {\n",
+          "message": "Parameter '_spender' of StandardToken.decreaseApproval (TestToken.sol#172) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 172,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function decreaseApproval(address _spender, uint _subtractedValue) public returns (bool) {\n",
+          "message": "Parameter '_subtractedValue' of StandardToken.decreaseApproval (TestToken.sol#172) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 193,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(string memory _name, string memory _symbol, uint8 _decimals) public {\n",
+          "message": "Parameter '_name' of TestToken. (TestToken.sol#193) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 193,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(string memory _name, string memory _symbol, uint8 _decimals) public {\n",
+          "message": "Parameter '_symbol' of TestToken. (TestToken.sol#193) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 193,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(string memory _name, string memory _symbol, uint8 _decimals) public {\n",
+          "message": "Parameter '_decimals' of TestToken. (TestToken.sol#193) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 201,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mint(address _to, uint256 _amount) public {\n",
+          "message": "Parameter '_to' of TestToken.mint (TestToken.sol#201) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 201,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mint(address _to, uint256 _amount) public {\n",
+          "message": "Parameter '_amount' of TestToken.mint (TestToken.sol#201) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) public returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => uint256) balances;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

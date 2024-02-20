@@ -1,0 +1,594 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 355,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes memory calldata = abi.encodeWithSelector(sig, _script, _input, _blacklist);\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 209,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(a <= MAX_UINT64, ERROR_NUMBER_TOO_BIG);\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_29"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": 52,
+          "vulnerability_code": "    function getStorageBool(bytes32 position) internal view returns (bool data) {\n\n        assembly { data := sload(position) }\n",
+          "message": "UnstructuredStorage.getStorageBool (EVMScriptRunner.sol#50-52) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": 56,
+          "vulnerability_code": "    function getStorageAddress(bytes32 position) internal view returns (address data) {\n\n        assembly { data := sload(position) }\n",
+          "message": "UnstructuredStorage.getStorageAddress (EVMScriptRunner.sol#54-56) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": 60,
+          "vulnerability_code": "    function getStorageBytes32(bytes32 position) internal view returns (bytes32 data) {\n\n        assembly { data := sload(position) }\n",
+          "message": "UnstructuredStorage.getStorageBytes32 (EVMScriptRunner.sol#58-60) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": 64,
+          "vulnerability_code": "    function getStorageUint256(bytes32 position) internal view returns (uint256 data) {\n\n        assembly { data := sload(position) }\n",
+          "message": "UnstructuredStorage.getStorageUint256 (EVMScriptRunner.sol#62-64) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 373,
+          "vulnerability_to_line": 385,
+          "vulnerability_code": "    function returnedDataDecoded() internal pure returns (bytes ret) {\n\n        assembly {\n\n            let size := returndatasize\n\n            switch size\n\n            case 0 {}\n\n            default {\n\n                ret := mload(0x40) // free mem ptr get\n\n                mstore(0x40, add(ret, add(size, 0x20))) // free mem ptr set\n\n                returndatacopy(ret, 0x20, sub(size, 0x20)) // copy return data\n\n            }\n\n        }\n\n        return ret;\n",
+          "message": "EVMScriptRunner.returnedDataDecoded (EVMScriptRunner.sol#373-385) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": 52,
+          "vulnerability_code": "    function getStorageBool(bytes32 position) internal view returns (bool data) {\n\n        assembly { data := sload(position) }\n",
+          "message": "UnstructuredStorage.getStorageBool uses assembly (EVMScriptRunner.sol#50-52)\n\t- EVMScriptRunner.sol#51-52\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": 56,
+          "vulnerability_code": "    function getStorageAddress(bytes32 position) internal view returns (address data) {\n\n        assembly { data := sload(position) }\n",
+          "message": "UnstructuredStorage.getStorageAddress uses assembly (EVMScriptRunner.sol#54-56)\n\t- EVMScriptRunner.sol#55-56\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": 60,
+          "vulnerability_code": "    function getStorageBytes32(bytes32 position) internal view returns (bytes32 data) {\n\n        assembly { data := sload(position) }\n",
+          "message": "UnstructuredStorage.getStorageBytes32 uses assembly (EVMScriptRunner.sol#58-60)\n\t- EVMScriptRunner.sol#59-60\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": 64,
+          "vulnerability_code": "    function getStorageUint256(bytes32 position) internal view returns (uint256 data) {\n\n        assembly { data := sload(position) }\n",
+          "message": "UnstructuredStorage.getStorageUint256 uses assembly (EVMScriptRunner.sol#62-64)\n\t- EVMScriptRunner.sol#63-64\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": 68,
+          "vulnerability_code": "    function setStorageBool(bytes32 position, bool data) internal {\n\n        assembly { sstore(position, data) }\n",
+          "message": "UnstructuredStorage.setStorageBool uses assembly (EVMScriptRunner.sol#66-68)\n\t- EVMScriptRunner.sol#67-68\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": 72,
+          "vulnerability_code": "    function setStorageAddress(bytes32 position, address data) internal {\n\n        assembly { sstore(position, data) }\n",
+          "message": "UnstructuredStorage.setStorageAddress uses assembly (EVMScriptRunner.sol#70-72)\n\t- EVMScriptRunner.sol#71-72\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 74,
+          "vulnerability_to_line": 76,
+          "vulnerability_code": "    function setStorageBytes32(bytes32 position, bytes32 data) internal {\n\n        assembly { sstore(position, data) }\n",
+          "message": "UnstructuredStorage.setStorageBytes32 uses assembly (EVMScriptRunner.sol#74-76)\n\t- EVMScriptRunner.sol#75-76\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": 80,
+          "vulnerability_code": "    function setStorageUint256(bytes32 position, uint256 data) internal {\n\n        assembly { sstore(position, data) }\n",
+          "message": "UnstructuredStorage.setStorageUint256 uses assembly (EVMScriptRunner.sol#78-80)\n\t- EVMScriptRunner.sol#79-80\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 373,
+          "vulnerability_to_line": 385,
+          "vulnerability_code": "    function returnedDataDecoded() internal pure returns (bytes ret) {\n\n        assembly {\n\n            let size := returndatasize\n\n            switch size\n\n            case 0 {}\n\n            default {\n\n                ret := mload(0x40) // free mem ptr get\n\n                mstore(0x40, add(ret, add(size, 0x20))) // free mem ptr set\n\n                returndatacopy(ret, 0x20, sub(size, 0x20)) // copy return data\n\n            }\n\n        }\n\n        return ret;\n",
+          "message": "EVMScriptRunner.returnedDataDecoded uses assembly (EVMScriptRunner.sol#373-385)\n\t- EVMScriptRunner.sol#374-384\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getScriptExecutor(bytes script) public view returns (IEVMScriptExecutor);\n",
+          "message": "IEVMScriptRegistry.getScriptExecutor (EVMScriptRunner.sol#37) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function hasPermission(address who, address where, bytes32 what, bytes how) public view returns (bool);\n",
+          "message": "IACL.hasPermission (EVMScriptRunner.sol#97) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function acl() public view returns (IACL);\n",
+          "message": "IKernel.acl (EVMScriptRunner.sol#129) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function hasPermission(address who, address where, bytes32 what, bytes how) public view returns (bool);\n",
+          "message": "IKernel.hasPermission (EVMScriptRunner.sol#130) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 132,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setApp(bytes32 namespace, bytes32 appId, address app) public;\n",
+          "message": "IKernel.setApp (EVMScriptRunner.sol#132) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 133,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getApp(bytes32 namespace, bytes32 appId) public view returns (address);\n",
+          "message": "IKernel.getApp (EVMScriptRunner.sol#133) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 344,
+          "vulnerability_to_line": 363,
+          "vulnerability_code": "    function runScript(bytes _script, bytes _input, address[] _blacklist)\n\n        internal\n\n        isInitialized\n\n        protectState\n\n        returns (bytes)\n\n    {\n\n        // TODO: Too much data flying around, maybe extracting spec id here is cheaper\n\n        IEVMScriptExecutor executor = getExecutor(_script);\n\n        require(address(executor) != address(0), ERROR_EXECUTOR_UNAVAILABLE);\n\n\n\n        bytes4 sig = executor.execScript.selector;\n\n        bytes memory calldata = abi.encodeWithSelector(sig, _script, _input, _blacklist);\n\n        require(address(executor).delegatecall(calldata), ERROR_EXECUTION_REVERTED);\n\n\n\n        bytes memory output = returnedDataDecoded();\n\n\n\n        emit ScriptResult(address(executor), _script, _input, output);\n\n\n\n        return output;\n",
+          "message": "Low level call in EVMScriptRunner.runScript (EVMScriptRunner.sol#344-363):\n\t-require(bool,string)(address(executor).delegatecall(calldata),ERROR_EXECUTION_REVERTED) EVMScriptRunner.sol#356\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 163,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setKernel(IKernel _kernel) internal {\n",
+          "message": "Parameter '_kernel' of AppStorage.setKernel (EVMScriptRunner.sol#163) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 167,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setAppId(bytes32 _appId) internal {\n",
+          "message": "Parameter '_appId' of AppStorage.setAppId (EVMScriptRunner.sol#167) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 317,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function initializedAt(uint256 _blockNumber) internal onlyInit {\n",
+          "message": "Parameter '_blockNumber' of Initializable.initializedAt (EVMScriptRunner.sol#317) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 340,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getExecutor(bytes _script) public view returns (IEVMScriptExecutor) {\n",
+          "message": "Parameter '_script' of EVMScriptRunner.getExecutor (EVMScriptRunner.sol#340) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 344,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function runScript(bytes _script, bytes _input, address[] _blacklist)\n",
+          "message": "Parameter '_script' of EVMScriptRunner.runScript (EVMScriptRunner.sol#344) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 344,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function runScript(bytes _script, bytes _input, address[] _blacklist)\n",
+          "message": "Parameter '_input' of EVMScriptRunner.runScript (EVMScriptRunner.sol#344) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 344,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function runScript(bytes _script, bytes _input, address[] _blacklist)\n",
+          "message": "Parameter '_blacklist' of EVMScriptRunner.runScript (EVMScriptRunner.sol#344) is not in mixedCase\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 153,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes32 internal constant PINNED_CODE_POSITION = 0xdee64df20d65e53d7f51cb6ab6d921a0a6a638a91e942e1d8d02df28e31c038e;\n",
+          "message": "AppStorage.PINNED_CODE_POSITION (EVMScriptRunner.sol#153) is never used in EVMScriptRunner\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getStorageBool(bytes32 position) internal view returns (bool data) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getStorageAddress(bytes32 position) internal view returns (address data) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getStorageBytes32(bytes32 position) internal view returns (bytes32 data) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getStorageUint256(bytes32 position) internal view returns (uint256 data) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 106,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 122,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 142,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 178,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 200,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 220,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 269,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 328,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 206,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    string private constant ERROR_NUMBER_TOO_BIG = \"UINT64_NUMBER_TOO_BIG\";\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 278,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    string private constant ERROR_ALREADY_INITIALIZED = \"INIT_ALREADY_INITIALIZED\";\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 279,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    string private constant ERROR_NOT_INITIALIZED = \"INIT_NOT_INITIALIZED\";\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 334,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    string private constant ERROR_EXECUTOR_UNAVAILABLE = \"EVMRUN_EXECUTOR_UNAVAILABLE\";\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 335,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    string private constant ERROR_EXECUTION_REVERTED = \"EVMRUN_EXECUTION_REVERTED\";\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 336,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    string private constant ERROR_PROTECTED_STATE_MODIFIED = \"EVMRUN_PROTECTED_STATE_MODIFIED\";\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 373,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function returnedDataDecoded() internal pure returns (bytes ret) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getStorageBool(bytes32 position) internal view returns (bool data) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getStorageAddress(bytes32 position) internal view returns (address data) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getStorageBytes32(bytes32 position) internal view returns (bytes32 data) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getStorageUint256(bytes32 position) internal view returns (uint256 data) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getScriptExecutor(bytes script) public view returns (IEVMScriptExecutor);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function hasPermission(address who, address where, bytes32 what, bytes how) public view returns (bool);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function hasPermission(address who, address where, bytes32 what, bytes how) public view returns (bool);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 340,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getExecutor(bytes _script) public view returns (IEVMScriptExecutor) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 344,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function runScript(bytes _script, bytes _input, address[] _blacklist)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 344,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function runScript(bytes _script, bytes _input, address[] _blacklist)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 344,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function runScript(bytes _script, bytes _input, address[] _blacklist)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 348,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        returns (bytes)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 373,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function returnedDataDecoded() internal pure returns (bytes ret) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { data := sload(position) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { data := sload(position) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { data := sload(position) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { data := sload(position) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { sstore(position, data) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { sstore(position, data) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 75,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { sstore(position, data) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { sstore(position, data) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 374,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getScriptExecutor(bytes script) public view returns (IEVMScriptExecutor);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function hasPermission(address who, address where, bytes32 what, bytes how) public view returns (bool);\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 340,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getExecutor(bytes _script) public view returns (IEVMScriptExecutor) {\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

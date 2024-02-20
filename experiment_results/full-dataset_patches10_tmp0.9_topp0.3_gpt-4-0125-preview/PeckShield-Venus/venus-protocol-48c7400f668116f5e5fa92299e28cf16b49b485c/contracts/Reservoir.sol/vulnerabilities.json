@@ -1,0 +1,185 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(uint dripRate_, EIP20Interface token_, address target_) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    dripStart = block.number;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 100,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    dripRate = dripRate_;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    token = token_;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    target = target_;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 103,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    dripped = 0;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 104,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "incorrect-equality",
+          "vulnerability_from_line": 148,
+          "vulnerability_to_line": 155,
+          "vulnerability_code": "  function mul(uint a, uint b, string memory errorMessage) internal pure returns (uint) {\n\n    if (a == 0) {\n\n      return 0;\n\n    }\n\n    uint c = a * b;\n\n    require(c / a == b, errorMessage);\n\n    return c;\n",
+          "message": "Reservoir.mul (Reservoir.sol#148-155) uses a dangerous strict equality:\n\t- require(bool,string)(c / a == b,errorMessage)\n"
+        },
+        {
+          "name": "unused-return",
+          "vulnerability_from_line": 111,
+          "vulnerability_to_line": 132,
+          "vulnerability_code": "  function drip() public returns (uint) {\n\n    // First, read storage into memory\n\n    EIP20Interface token_ = token;\n\n    uint reservoirBalance_ = token_.balanceOf(address(this)); // TODO: Verify this is a static call\n\n    uint dripRate_ = dripRate;\n\n    uint dripStart_ = dripStart;\n\n    uint dripped_ = dripped;\n\n    address target_ = target;\n\n    uint blockNumber_ = block.number;\n\n\n\n    // Next, calculate intermediate values\n\n    uint dripTotal_ = mul(dripRate_, blockNumber_ - dripStart_, \"dripTotal overflow\");\n\n    uint deltaDrip_ = sub(dripTotal_, dripped_, \"deltaDrip underflow\");\n\n    uint toDrip_ = min(reservoirBalance_, deltaDrip_);\n\n    uint drippedNext_ = add(dripped_, toDrip_, \"tautological\");\n\n\n\n    // Finally, write new `dripped` value and transfer tokens to target\n\n    dripped = drippedNext_;\n\n    token_.transfer(target_, toDrip_);\n\n\n\n    return toDrip_;\n",
+          "message": "Reservoir.drip (Reservoir.sol#111-132) does not use the value returned by external calls:\n\t-token_.transfer(target_,toDrip_) (Reservoir.sol#129)\n"
+        },
+        {
+          "name": "reentrancy-benign",
+          "vulnerability_from_line": 111,
+          "vulnerability_to_line": 132,
+          "vulnerability_code": "  function drip() public returns (uint) {\n\n    // First, read storage into memory\n\n    EIP20Interface token_ = token;\n\n    uint reservoirBalance_ = token_.balanceOf(address(this)); // TODO: Verify this is a static call\n\n    uint dripRate_ = dripRate;\n\n    uint dripStart_ = dripStart;\n\n    uint dripped_ = dripped;\n\n    address target_ = target;\n\n    uint blockNumber_ = block.number;\n\n\n\n    // Next, calculate intermediate values\n\n    uint dripTotal_ = mul(dripRate_, blockNumber_ - dripStart_, \"dripTotal overflow\");\n\n    uint deltaDrip_ = sub(dripTotal_, dripped_, \"deltaDrip underflow\");\n\n    uint toDrip_ = min(reservoirBalance_, deltaDrip_);\n\n    uint drippedNext_ = add(dripped_, toDrip_, \"tautological\");\n\n\n\n    // Finally, write new `dripped` value and transfer tokens to target\n\n    dripped = drippedNext_;\n\n    token_.transfer(target_, toDrip_);\n\n\n\n    return toDrip_;\n",
+          "message": "Reentrancy in Reservoir.drip (Reservoir.sol#111-132):\n\tExternal calls:\n\t- reservoirBalance_ = token_.balanceOf(address(this)) (Reservoir.sol#114)\n\tState variables written after the call(s):\n\t- dripped (Reservoir.sol#128)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 111,
+          "vulnerability_to_line": 132,
+          "vulnerability_code": "  function drip() public returns (uint) {\n\n    // First, read storage into memory\n\n    EIP20Interface token_ = token;\n\n    uint reservoirBalance_ = token_.balanceOf(address(this)); // TODO: Verify this is a static call\n\n    uint dripRate_ = dripRate;\n\n    uint dripStart_ = dripStart;\n\n    uint dripped_ = dripped;\n\n    address target_ = target;\n\n    uint blockNumber_ = block.number;\n\n\n\n    // Next, calculate intermediate values\n\n    uint dripTotal_ = mul(dripRate_, blockNumber_ - dripStart_, \"dripTotal overflow\");\n\n    uint deltaDrip_ = sub(dripTotal_, dripped_, \"deltaDrip underflow\");\n\n    uint toDrip_ = min(reservoirBalance_, deltaDrip_);\n\n    uint drippedNext_ = add(dripped_, toDrip_, \"tautological\");\n\n\n\n    // Finally, write new `dripped` value and transfer tokens to target\n\n    dripped = drippedNext_;\n\n    token_.transfer(target_, toDrip_);\n\n\n\n    return toDrip_;\n",
+          "message": "Reservoir.drip (Reservoir.sol#111-132) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": "Detected issues with version pragma in Reservoir.sol:\n\t- pragma solidity^0.5.16 (Reservoir.sol#3): it allows old versions\n\t- pragma solidity^0.5.16 (Reservoir.sol#67): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    token_.transfer(target_, toDrip_);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    token_.transfer(target_, toDrip_);\n",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 120)",
+          "vulnerability_from_line": 153,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(c / a == b, errorMessage);\n",
+          "message": "A control flow decision is made based on The block.number environment variable.\nThe block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-120"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 120)",
+          "vulnerability_from_line": 143,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(b <= a, errorMessage);\n",
+          "message": "A control flow decision is made based on The block.number environment variable.\nThe block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-120"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 120)",
+          "vulnerability_from_line": 158,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    if (a <= b) {\n",
+          "message": "A control flow decision is made based on The block.number environment variable.\nThe block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-120"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 120)",
+          "vulnerability_from_line": 138,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(c >= a, errorMessage);\n",
+          "message": "A control flow decision is made based on The block.number environment variable.\nThe block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-120"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

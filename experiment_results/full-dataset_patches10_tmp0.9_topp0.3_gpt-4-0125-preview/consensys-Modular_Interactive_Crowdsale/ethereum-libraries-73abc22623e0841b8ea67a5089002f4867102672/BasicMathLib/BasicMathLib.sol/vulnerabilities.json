@@ -1,0 +1,280 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_13"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": 50,
+          "vulnerability_code": "  function times(uint256 a, uint256 b) public pure returns (bool err,uint256 res) {\n\n    assembly{\n\n      res := mul(a,b)\n\n      switch or(iszero(b), eq(div(res,b), a))\n\n      case 0 {\n\n        err := 1\n\n        res := 0\n\n      }\n\n    }\n",
+          "message": "BasicMathLib.times (BasicMathLib.sol#41-50) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": 73,
+          "vulnerability_code": "  function dividedBy(uint256 a, uint256 b) public pure returns (bool err,uint256 i) {\n\n    uint256 res;\n\n    assembly{\n\n      switch iszero(b)\n\n      case 0 {\n\n        res := div(a,b)\n\n        let loc := mload(0x40)\n\n        mstore(add(loc,0x20),res)\n\n        i := mload(add(loc,0x20))\n\n      }\n\n      default {\n\n        err := 1\n\n        i := 0\n\n      }\n\n    }\n",
+          "message": "BasicMathLib.dividedBy (BasicMathLib.sol#58-73) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": 90,
+          "vulnerability_code": "  function plus(uint256 a, uint256 b) public pure returns (bool err, uint256 res) {\n\n    assembly{\n\n      res := add(a,b)\n\n      switch and(eq(sub(res,b), a), or(gt(res,b),eq(res,b)))\n\n      case 0 {\n\n        err := 1\n\n        res := 0\n\n      }\n\n    }\n",
+          "message": "BasicMathLib.plus (BasicMathLib.sol#81-90) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": 107,
+          "vulnerability_code": "  function minus(uint256 a, uint256 b) public pure returns (bool err,uint256 res) {\n\n    assembly{\n\n      res := sub(a,b)\n\n      switch eq(and(eq(add(res,b), a), or(lt(res,a), eq(res,a))), 1)\n\n      case 0 {\n\n        err := 1\n\n        res := 0\n\n      }\n\n    }\n",
+          "message": "BasicMathLib.minus (BasicMathLib.sol#98-107) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": 50,
+          "vulnerability_code": "  function times(uint256 a, uint256 b) public pure returns (bool err,uint256 res) {\n\n    assembly{\n\n      res := mul(a,b)\n\n      switch or(iszero(b), eq(div(res,b), a))\n\n      case 0 {\n\n        err := 1\n\n        res := 0\n\n      }\n\n    }\n",
+          "message": "BasicMathLib.times uses assembly (BasicMathLib.sol#41-50)\n\t- BasicMathLib.sol#42-50\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": 73,
+          "vulnerability_code": "  function dividedBy(uint256 a, uint256 b) public pure returns (bool err,uint256 i) {\n\n    uint256 res;\n\n    assembly{\n\n      switch iszero(b)\n\n      case 0 {\n\n        res := div(a,b)\n\n        let loc := mload(0x40)\n\n        mstore(add(loc,0x20),res)\n\n        i := mload(add(loc,0x20))\n\n      }\n\n      default {\n\n        err := 1\n\n        i := 0\n\n      }\n\n    }\n",
+          "message": "BasicMathLib.dividedBy uses assembly (BasicMathLib.sol#58-73)\n\t- BasicMathLib.sol#60-73\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": 90,
+          "vulnerability_code": "  function plus(uint256 a, uint256 b) public pure returns (bool err, uint256 res) {\n\n    assembly{\n\n      res := add(a,b)\n\n      switch and(eq(sub(res,b), a), or(gt(res,b),eq(res,b)))\n\n      case 0 {\n\n        err := 1\n\n        res := 0\n\n      }\n\n    }\n",
+          "message": "BasicMathLib.plus uses assembly (BasicMathLib.sol#81-90)\n\t- BasicMathLib.sol#82-90\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": 107,
+          "vulnerability_code": "  function minus(uint256 a, uint256 b) public pure returns (bool err,uint256 res) {\n\n    assembly{\n\n      res := sub(a,b)\n\n      switch eq(and(eq(add(res,b), a), or(lt(res,a), eq(res,a))), 1)\n\n      case 0 {\n\n        err := 1\n\n        res := 0\n\n      }\n\n    }\n",
+          "message": "BasicMathLib.minus uses assembly (BasicMathLib.sol#98-107)\n\t- BasicMathLib.sol#99-107\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": 50,
+          "vulnerability_code": "  function times(uint256 a, uint256 b) public pure returns (bool err,uint256 res) {\n\n    assembly{\n\n      res := mul(a,b)\n\n      switch or(iszero(b), eq(div(res,b), a))\n\n      case 0 {\n\n        err := 1\n\n        res := 0\n\n      }\n\n    }\n",
+          "message": "BasicMathLib.times (BasicMathLib.sol#41-50) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": 73,
+          "vulnerability_code": "  function dividedBy(uint256 a, uint256 b) public pure returns (bool err,uint256 i) {\n\n    uint256 res;\n\n    assembly{\n\n      switch iszero(b)\n\n      case 0 {\n\n        res := div(a,b)\n\n        let loc := mload(0x40)\n\n        mstore(add(loc,0x20),res)\n\n        i := mload(add(loc,0x20))\n\n      }\n\n      default {\n\n        err := 1\n\n        i := 0\n\n      }\n\n    }\n",
+          "message": "BasicMathLib.dividedBy (BasicMathLib.sol#58-73) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": 90,
+          "vulnerability_code": "  function plus(uint256 a, uint256 b) public pure returns (bool err, uint256 res) {\n\n    assembly{\n\n      res := add(a,b)\n\n      switch and(eq(sub(res,b), a), or(gt(res,b),eq(res,b)))\n\n      case 0 {\n\n        err := 1\n\n        res := 0\n\n      }\n\n    }\n",
+          "message": "BasicMathLib.plus (BasicMathLib.sol#81-90) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": 107,
+          "vulnerability_code": "  function minus(uint256 a, uint256 b) public pure returns (bool err,uint256 res) {\n\n    assembly{\n\n      res := sub(a,b)\n\n      switch eq(and(eq(add(res,b), a), or(lt(res,a), eq(res,a))), 1)\n\n      case 0 {\n\n        err := 1\n\n        res := 0\n\n      }\n\n    }\n",
+          "message": "BasicMathLib.minus (BasicMathLib.sol#98-107) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": "Detected issues with version pragma in BasicMathLib.sol:\n\t- pragma solidity^0.4.18 (BasicMathLib.sol#4): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function times(uint256 a, uint256 b) public pure returns (bool err,uint256 res) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function dividedBy(uint256 a, uint256 b) public pure returns (bool err,uint256 i) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function plus(uint256 a, uint256 b) public pure returns (bool err, uint256 res) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function minus(uint256 a, uint256 b) public pure returns (bool err,uint256 res) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function times(uint256 a, uint256 b) public pure returns (bool err,uint256 res) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function dividedBy(uint256 a, uint256 b) public pure returns (bool err,uint256 i) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function plus(uint256 a, uint256 b) public pure returns (bool err, uint256 res) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function minus(uint256 a, uint256 b) public pure returns (bool err,uint256 res) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly{\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly{\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly{\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly{\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      res := add(a,b)\n",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 84,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      switch and(eq(sub(res,b), a), or(gt(res,b),eq(res,b)))\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      res := add(a,b)\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 84,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      switch and(eq(sub(res,b), a), or(gt(res,b),eq(res,b)))\n",
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 100,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      res := sub(a,b)\n",
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      switch eq(and(eq(add(res,b), a), or(lt(res,a), eq(res,a))), 1)\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Division bugs",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      switch or(iszero(b), eq(div(res,b), a))\n",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      res := mul(a,b)\n",
+          "message": null
+        }
+      ]
+    }
+  }
+}

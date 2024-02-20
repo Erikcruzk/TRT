@@ -1,0 +1,62 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_2"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.0;\n",
+          "message": "Detected issues with version pragma in IexecLibCore_v5.sol:\n\t- pragma solidity^0.6.0 (IexecLibCore_v5.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": 112,
+          "vulnerability_code": "library IexecLibCore_v5\n\n{\n\n\t/**\n\n\t* Tools\n\n\t*/\n\n\tstruct Account\n\n\t{\n\n\t\tuint256 stake;\n\n\t\tuint256 locked;\n\n\t}\n\n\tstruct Category\n\n\t{\n\n\t\tstring  name;\n\n\t\tstring  description;\n\n\t\tuint256 workClockTimeRef;\n\n\t}\n\n\n\n\t/**\n\n\t * Clerk - Deals\n\n\t */\n\n\tstruct Resource\n\n\t{\n\n\t\taddress pointer;\n\n\t\taddress owner;\n\n\t\tuint256 price;\n\n\t}\n\n\tstruct Deal\n\n\t{\n\n\t\t// Ressources\n\n\t\tResource app;\n\n\t\tResource dataset;\n\n\t\tResource workerpool;\n\n\t\tuint256 trust;\n\n\t\tuint256 category;\n\n\t\tbytes32 tag;\n\n\t\t// execution details\n\n\t\taddress requester;\n\n\t\taddress beneficiary;\n\n\t\taddress callback;\n\n\t\tstring  params;\n\n\t\t// execution settings\n\n\t\tuint256 startTime;\n\n\t\tuint256 botFirst;\n\n\t\tuint256 botSize;\n\n\t\t// consistency\n\n\t\tuint256 workerStake;\n\n\t\tuint256 schedulerRewardRatio;\n\n\t}\n\n\n\n\t/**\n\n\t * Tasks\n\n\t */\n\n\tenum TaskStatusEnum\n\n\t{\n\n\t\tUNSET,     // Work order not yet initialized (invalid address)\n\n\t\tACTIVE,    // Marketed \u2192 constributions are open\n\n\t\tREVEALING, // Starting consensus reveal\n\n\t\tCOMPLETED, // Concensus achieved\n\n\t\tFAILLED    // Failled consensus\n\n\t}\n\n\tstruct Task\n\n\t{\n\n\t\tTaskStatusEnum status;\n\n\t\tbytes32   dealid;\n\n\t\tuint256   idx;\n\n\t\tuint256   timeref;\n\n\t\tuint256   contributionDeadline;\n\n\t\tuint256   revealDeadline;\n\n\t\tuint256   finalDeadline;\n\n\t\tbytes32   consensusValue;\n\n\t\tuint256   revealCounter;\n\n\t\tuint256   winnerCounter;\n\n\t\taddress[] contributors;\n\n\t\tbytes32   resultDigest;\n\n\t\tbytes     results;\n\n\t\tuint256   resultsTimestamp;\n\n\t}\n\n\n\n\t/**\n\n\t * Consensus\n\n\t */\n\n\tstruct Consensus\n\n\t{\n\n\t\tmapping(bytes32 => uint256) group;\n\n\t\tuint256                     total;\n\n\t}\n\n\n\n\t/**\n\n\t * Consensus\n\n\t */\n\n\tenum ContributionStatusEnum\n\n\t{\n\n\t\tUNSET,\n\n\t\tCONTRIBUTED,\n\n\t\tPROVED,\n\n\t\tREJECTED\n\n\t}\n\n\tstruct Contribution\n\n\t{\n\n\t\tContributionStatusEnum status;\n\n\t\tbytes32 resultHash;\n\n\t\tbytes32 resultSeal;\n\n\t\taddress enclaveChallenge;\n\n\t\tuint256 weight;\n\n\t}\n\n\n",
+          "message": "Contract 'IexecLibCore_v5' (IexecLibCore_v5.sol#6-112) is not in CapWords\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.0;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

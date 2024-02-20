@@ -1,0 +1,266 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 140,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract BridgeValidators is IBridgeValidators, EternalStorage, Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < _initialValidators.length; i++) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < _initialValidators.length; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < _initialValidators.length; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_15"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": 60,
+          "vulnerability_code": "    function transferOwnership(address newOwner) public onlyOwner {\n\n        require(newOwner != address(0));\n\n        setOwner(newOwner);\n",
+          "message": "Ownable.transferOwnership (BridgeValidators.sol#57-60) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": 166,
+          "vulnerability_code": "    function initialize(uint256 _requiredSignatures, address[] _initialValidators, address _owner)\n\n      public returns(bool)\n\n    {\n\n        require(!isInitialized());\n\n        require(_owner != address(0));\n\n        setOwner(_owner);\n\n        require(_requiredSignatures != 0);\n\n        require(_initialValidators.length >= _requiredSignatures);\n\n        for (uint256 i = 0; i < _initialValidators.length; i++) {\n\n            require(_initialValidators[i] != address(0));\n\n            assert(validators(_initialValidators[i]) != true);\n\n            setValidatorCount(validatorCount().add(1));\n\n            setValidator(_initialValidators[i], true);\n\n            emit ValidatorAdded(_initialValidators[i]);\n\n        }\n\n        //SWC-Code With No Effects: L31\n\n        require(validatorCount() >= _requiredSignatures);\n\n        uintStorage[keccak256(abi.encodePacked(\"requiredSignatures\"))] = _requiredSignatures;\n\n        setInitialize(true);\n\n        return isInitialized();\n",
+          "message": "BridgeValidators.initialize (BridgeValidators.sol#146-166) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 203,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function isValidator(address _validator) public view returns(bool) {\n",
+          "message": "Parameter '_validator' of BridgeValidators.isValidator (BridgeValidators.sol#203) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function initialize(uint256 _requiredSignatures, address[] _initialValidators, address _owner)\n",
+          "message": "Parameter '_requiredSignatures' of BridgeValidators.initialize (BridgeValidators.sol#146) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function initialize(uint256 _requiredSignatures, address[] _initialValidators, address _owner)\n",
+          "message": "Parameter '_initialValidators' of BridgeValidators.initialize (BridgeValidators.sol#146) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function initialize(uint256 _requiredSignatures, address[] _initialValidators, address _owner)\n",
+          "message": "Parameter '_owner' of BridgeValidators.initialize (BridgeValidators.sol#146) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 168,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addValidator(address _validator) external onlyOwner {\n",
+          "message": "Parameter '_validator' of BridgeValidators.addValidator (BridgeValidators.sol#168) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 176,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function removeValidator(address _validator) external onlyOwner {\n",
+          "message": "Parameter '_validator' of BridgeValidators.removeValidator (BridgeValidators.sol#176) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 184,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setRequiredSignatures(uint256 _requiredSignatures) external onlyOwner {\n",
+          "message": "Parameter '_requiredSignatures' of BridgeValidators.setRequiredSignatures (BridgeValidators.sol#184) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 199,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function validators(address _validator) public view returns(bool) {\n",
+          "message": "Parameter '_validator' of BridgeValidators.validators (BridgeValidators.sol#199) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 211,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setValidatorCount(uint256 _validatorCount) private {\n",
+          "message": "Parameter '_validatorCount' of BridgeValidators.setValidatorCount (BridgeValidators.sol#211) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 215,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setValidator(address _validator, bool _status) private {\n",
+          "message": "Parameter '_validator' of BridgeValidators.setValidator (BridgeValidators.sol#215) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 215,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setValidator(address _validator, bool _status) private {\n",
+          "message": "Parameter '_status' of BridgeValidators.setValidator (BridgeValidators.sol#215) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 219,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setInitialize(bool _status) private {\n",
+          "message": "Parameter '_status' of BridgeValidators.setInitialize (BridgeValidators.sol#219) is not in mixedCase\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(bytes32 => string) internal stringStorage;\n",
+          "message": "EternalStorage.stringStorage (BridgeValidators.sol#13) is never used in BridgeValidators\nEternalStorage.bytesStorage (BridgeValidators.sol#15) is never used in BridgeValidators\nEternalStorage.intStorage (BridgeValidators.sol#17) is never used in BridgeValidators\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < _initialValidators.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < _initialValidators.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_OVERPOWERED_ROLE",
+          "vulnerability_from_line": 184,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setRequiredSignatures(uint256 _requiredSignatures) external onlyOwner {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function initialize(uint256 _requiredSignatures, address[] _initialValidators, address _owner)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function isValidator(address _validator) public view returns(bool);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function requiredSignatures() public view returns(uint256);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function owner() public view returns(address);\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 195,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function validatorCount() public view returns(uint256) {\n",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 196,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return uintStorage[keccak256(abi.encodePacked(\"validatorCount\"))];\n",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function owner() public view returns (address) {\n",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return addressStorage[keccak256(abi.encodePacked(\"owner\"))];\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 199,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function validators(address _validator) public view returns(bool) {\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

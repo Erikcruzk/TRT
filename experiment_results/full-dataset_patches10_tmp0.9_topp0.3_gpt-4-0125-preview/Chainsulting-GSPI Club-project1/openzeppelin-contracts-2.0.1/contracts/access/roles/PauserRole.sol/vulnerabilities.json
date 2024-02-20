@@ -1,0 +1,110 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor() internal {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _addPauser(msg.sender);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": 75,
+          "vulnerability_code": "  function addPauser(address account) public onlyPauser {\n\n    _addPauser(account);\n",
+          "message": "PauserRole.addPauser (PauserRole.sol#73-75) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": 79,
+          "vulnerability_code": "  function renouncePauser() public {\n\n    _removePauser(msg.sender);\n",
+          "message": "PauserRole.renouncePauser (PauserRole.sol#77-79) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": 84,
+          "vulnerability_code": "  function _addPauser(address account) internal {\n\n    pausers.add(account);\n\n    emit PauserAdded(account);\n",
+          "message": "Function 'PauserRole._addPauser' (PauserRole.sol#81-84) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": 89,
+          "vulnerability_code": "  function _removePauser(address account) internal {\n\n    pausers.remove(account);\n\n    emit PauserRemoved(account);\n",
+          "message": "Function 'PauserRole._removePauser' (PauserRole.sol#86-89) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  Roles.Role private pausers;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

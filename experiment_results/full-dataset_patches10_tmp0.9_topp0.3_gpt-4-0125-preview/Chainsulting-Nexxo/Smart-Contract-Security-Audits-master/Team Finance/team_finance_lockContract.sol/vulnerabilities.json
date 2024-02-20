@@ -1,0 +1,687 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 180,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 0; i < depositsByWithdrawalAddress[_withdrawalAddress].length; i++) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 193,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < depositsByWithdrawalAddress[_withdrawalAddress].length; i++) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 180,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 0; i < depositsByWithdrawalAddress[_withdrawalAddress].length; i++) {\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 181,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            if (!lockedToken[depositsByWithdrawalAddress[_withdrawalAddress][i]].withdrawn) {\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 181,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            if (!lockedToken[depositsByWithdrawalAddress[_withdrawalAddress][i]].withdrawn) {\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 193,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < depositsByWithdrawalAddress[_withdrawalAddress].length; i++) {\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 194,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            if(!lockedToken[depositsByWithdrawalAddress[_withdrawalAddress][i]].withdrawn) {\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 194,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            if(!lockedToken[depositsByWithdrawalAddress[_withdrawalAddress][i]].withdrawn) {\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 195,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                deposits[tempIdx] =  depositsByWithdrawalAddress[_withdrawalAddress][i];\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 180,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 0; i < depositsByWithdrawalAddress[_withdrawalAddress].length; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 193,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < depositsByWithdrawalAddress[_withdrawalAddress].length; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 180,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 0; i < depositsByWithdrawalAddress[_withdrawalAddress].length; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 182,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                staked++;\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 193,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < depositsByWithdrawalAddress[_withdrawalAddress].length; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 196,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                tempIdx ++;\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_31"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-no-eth",
+          "vulnerability_from_line": 138,
+          "vulnerability_to_line": 150,
+          "vulnerability_code": "    function withdrawTokens(uint256 _id) public {\n\n        require(block.timestamp >= lockedToken[_id].unlockTime);\n\n        require(msg.sender == lockedToken[_id].withdrawalAddress);\n\n        require(!lockedToken[_id].withdrawn);\n\n        require(Token(lockedToken[_id].tokenAddress).transfer(msg.sender, lockedToken[_id].tokenAmount));\n\n        \n\n        lockedToken[_id].withdrawn = true;\n\n        \n\n        //update balance in address\n\n        walletTokenBalance[lockedToken[_id].tokenAddress][msg.sender] = walletTokenBalance[lockedToken[_id].tokenAddress][msg.sender].sub(lockedToken[_id].tokenAmount);\n\n        \n\n        LogWithdrawal(msg.sender, lockedToken[_id].tokenAmount);\n",
+          "message": "Reentrancy in lockContract.withdrawTokens (team_finance_lockContract.sol#138-150):\n\tExternal calls:\n\t- require(bool)(Token(lockedToken[_id].tokenAddress).transfer(msg.sender,lockedToken[_id].tokenAmount)) (team_finance_lockContract.sol#142)\n\tState variables written after the call(s):\n\t- lockedToken (team_finance_lockContract.sol#144)\n"
+        },
+        {
+          "name": "reentrancy-benign",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": 117,
+          "vulnerability_code": "    function lockTokens(address _tokenAddress, uint256 _amount, uint256 _unlockTime) public returns (uint256 _id) {\n\n        require(_amount > 0);\n\n        require(_unlockTime < 10000000000);\n\n        require(Token(_tokenAddress).transferFrom(msg.sender, this, _amount));\n\n        \n\n        //update balance in address\n\n        walletTokenBalance[_tokenAddress][msg.sender] = walletTokenBalance[_tokenAddress][msg.sender].add(_amount);\n\n        \n\n        address _withdrawalAddress = msg.sender;\n\n        _id = ++depositId;\n\n        lockedToken[_id].tokenAddress = _tokenAddress;\n\n        lockedToken[_id].withdrawalAddress = _withdrawalAddress;\n\n        lockedToken[_id].tokenAmount = _amount;\n\n        lockedToken[_id].unlockTime = _unlockTime;\n\n        lockedToken[_id].withdrawn = false;\n\n        \n\n        allDepositIds.push(_id);\n\n        depositsByWithdrawalAddress[_withdrawalAddress].push(_id);\n",
+          "message": "Reentrancy in lockContract.lockTokens (team_finance_lockContract.sol#99-117):\n\tExternal calls:\n\t- require(bool)(Token(_tokenAddress).transferFrom(msg.sender,this,_amount)) (team_finance_lockContract.sol#102)\n\tState variables written after the call(s):\n\t- allDepositIds (team_finance_lockContract.sol#115)\n\t- depositId (team_finance_lockContract.sol#108)\n\t- depositsByWithdrawalAddress (team_finance_lockContract.sol#116)\n\t- lockedToken (team_finance_lockContract.sol#109)\n\t- lockedToken (team_finance_lockContract.sol#110)\n\t- lockedToken (team_finance_lockContract.sol#111)\n\t- lockedToken (team_finance_lockContract.sol#112)\n\t- lockedToken (team_finance_lockContract.sol#113)\n\t- walletTokenBalance (team_finance_lockContract.sol#105)\n"
+        },
+        {
+          "name": "reentrancy-benign",
+          "vulnerability_from_line": 138,
+          "vulnerability_to_line": 150,
+          "vulnerability_code": "    function withdrawTokens(uint256 _id) public {\n\n        require(block.timestamp >= lockedToken[_id].unlockTime);\n\n        require(msg.sender == lockedToken[_id].withdrawalAddress);\n\n        require(!lockedToken[_id].withdrawn);\n\n        require(Token(lockedToken[_id].tokenAddress).transfer(msg.sender, lockedToken[_id].tokenAmount));\n\n        \n\n        lockedToken[_id].withdrawn = true;\n\n        \n\n        //update balance in address\n\n        walletTokenBalance[lockedToken[_id].tokenAddress][msg.sender] = walletTokenBalance[lockedToken[_id].tokenAddress][msg.sender].sub(lockedToken[_id].tokenAmount);\n\n        \n\n        LogWithdrawal(msg.sender, lockedToken[_id].tokenAmount);\n",
+          "message": "Reentrancy in lockContract.withdrawTokens (team_finance_lockContract.sol#138-150):\n\tExternal calls:\n\t- require(bool)(Token(lockedToken[_id].tokenAddress).transfer(msg.sender,lockedToken[_id].tokenAmount)) (team_finance_lockContract.sol#142)\n\tState variables written after the call(s):\n\t- walletTokenBalance (team_finance_lockContract.sol#147)\n"
+        },
+        {
+          "name": "timestamp",
+          "vulnerability_from_line": 122,
+          "vulnerability_to_line": 133,
+          "vulnerability_code": "    function transferLocks(uint256 _id, address _receiverAddress) public {\n\n        require(block.timestamp < lockedToken[_id].unlockTime);\n\n        require(msg.sender == lockedToken[_id].withdrawalAddress);\n\n        lockedToken[_id].withdrawalAddress = _receiverAddress;\n\n        \n\n        //decrease sender's token balance\n\n        walletTokenBalance[lockedToken[_id].tokenAddress][msg.sender] = walletTokenBalance[lockedToken[_id].tokenAddress][msg.sender].sub(lockedToken[_id].tokenAmount);\n\n        \n\n        //increase receiver's token balance\n\n        walletTokenBalance[lockedToken[_id].tokenAddress][_receiverAddress] = walletTokenBalance[lockedToken[_id].tokenAddress][_receiverAddress].add(lockedToken[_id].tokenAmount);\n\n        \n",
+          "message": "lockContract.transferLocks (team_finance_lockContract.sol#122-133) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool)(block.timestamp < lockedToken[_id].unlockTime) (team_finance_lockContract.sol#123)\n"
+        },
+        {
+          "name": "timestamp",
+          "vulnerability_from_line": 138,
+          "vulnerability_to_line": 150,
+          "vulnerability_code": "    function withdrawTokens(uint256 _id) public {\n\n        require(block.timestamp >= lockedToken[_id].unlockTime);\n\n        require(msg.sender == lockedToken[_id].withdrawalAddress);\n\n        require(!lockedToken[_id].withdrawn);\n\n        require(Token(lockedToken[_id].tokenAddress).transfer(msg.sender, lockedToken[_id].tokenAmount));\n\n        \n\n        lockedToken[_id].withdrawn = true;\n\n        \n\n        //update balance in address\n\n        walletTokenBalance[lockedToken[_id].tokenAddress][msg.sender] = walletTokenBalance[lockedToken[_id].tokenAddress][msg.sender].sub(lockedToken[_id].tokenAmount);\n\n        \n\n        LogWithdrawal(msg.sender, lockedToken[_id].tokenAmount);\n",
+          "message": "lockContract.withdrawTokens (team_finance_lockContract.sol#138-150) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool)(block.timestamp >= lockedToken[_id].unlockTime) (team_finance_lockContract.sol#139)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": 64,
+          "vulnerability_code": "        function transferOwnership(address newOwner) onlyOwner public {\n\n            owner = newOwner;\n",
+          "message": "owned.transferOwnership (team_finance_lockContract.sol#62-64) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": 117,
+          "vulnerability_code": "    function lockTokens(address _tokenAddress, uint256 _amount, uint256 _unlockTime) public returns (uint256 _id) {\n\n        require(_amount > 0);\n\n        require(_unlockTime < 10000000000);\n\n        require(Token(_tokenAddress).transferFrom(msg.sender, this, _amount));\n\n        \n\n        //update balance in address\n\n        walletTokenBalance[_tokenAddress][msg.sender] = walletTokenBalance[_tokenAddress][msg.sender].add(_amount);\n\n        \n\n        address _withdrawalAddress = msg.sender;\n\n        _id = ++depositId;\n\n        lockedToken[_id].tokenAddress = _tokenAddress;\n\n        lockedToken[_id].withdrawalAddress = _withdrawalAddress;\n\n        lockedToken[_id].tokenAmount = _amount;\n\n        lockedToken[_id].unlockTime = _unlockTime;\n\n        lockedToken[_id].withdrawn = false;\n\n        \n\n        allDepositIds.push(_id);\n\n        depositsByWithdrawalAddress[_withdrawalAddress].push(_id);\n",
+          "message": "lockContract.lockTokens (team_finance_lockContract.sol#99-117) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 122,
+          "vulnerability_to_line": 133,
+          "vulnerability_code": "    function transferLocks(uint256 _id, address _receiverAddress) public {\n\n        require(block.timestamp < lockedToken[_id].unlockTime);\n\n        require(msg.sender == lockedToken[_id].withdrawalAddress);\n\n        lockedToken[_id].withdrawalAddress = _receiverAddress;\n\n        \n\n        //decrease sender's token balance\n\n        walletTokenBalance[lockedToken[_id].tokenAddress][msg.sender] = walletTokenBalance[lockedToken[_id].tokenAddress][msg.sender].sub(lockedToken[_id].tokenAmount);\n\n        \n\n        //increase receiver's token balance\n\n        walletTokenBalance[lockedToken[_id].tokenAddress][_receiverAddress] = walletTokenBalance[lockedToken[_id].tokenAddress][_receiverAddress].add(lockedToken[_id].tokenAmount);\n\n        \n",
+          "message": "lockContract.transferLocks (team_finance_lockContract.sol#122-133) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 138,
+          "vulnerability_to_line": 150,
+          "vulnerability_code": "    function withdrawTokens(uint256 _id) public {\n\n        require(block.timestamp >= lockedToken[_id].unlockTime);\n\n        require(msg.sender == lockedToken[_id].withdrawalAddress);\n\n        require(!lockedToken[_id].withdrawn);\n\n        require(Token(lockedToken[_id].tokenAddress).transfer(msg.sender, lockedToken[_id].tokenAmount));\n\n        \n\n        lockedToken[_id].withdrawn = true;\n\n        \n\n        //update balance in address\n\n        walletTokenBalance[lockedToken[_id].tokenAddress][msg.sender] = walletTokenBalance[lockedToken[_id].tokenAddress][msg.sender].sub(lockedToken[_id].tokenAmount);\n\n        \n\n        LogWithdrawal(msg.sender, lockedToken[_id].tokenAmount);\n",
+          "message": "lockContract.withdrawTokens (team_finance_lockContract.sol#138-150) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 153,
+          "vulnerability_to_line": 156,
+          "vulnerability_code": "    function getTotalTokenBalance(address _tokenAddress) view public returns (uint256)\n\n    {\n\n       return Token(_tokenAddress).balanceOf(this);\n",
+          "message": "lockContract.getTotalTokenBalance (team_finance_lockContract.sol#153-156) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 159,
+          "vulnerability_to_line": 162,
+          "vulnerability_code": "    function getTokenBalanceByAddress(address _tokenAddress, address _walletAddress) view public returns (uint256)\n\n    {\n\n       return walletTokenBalance[_tokenAddress][_walletAddress];\n",
+          "message": "lockContract.getTokenBalanceByAddress (team_finance_lockContract.sol#159-162) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 165,
+          "vulnerability_to_line": 168,
+          "vulnerability_code": "    function getAllDepositIds() view public returns (uint256[])\n\n    {\n\n        return allDepositIds;\n",
+          "message": "lockContract.getAllDepositIds (team_finance_lockContract.sol#165-168) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 171,
+          "vulnerability_to_line": 175,
+          "vulnerability_code": "    function getDepositDetails(uint256 _id) view public returns (address tokenAddress, address withdrawalAddress, uint256 tokenAmount, uint256 unlockTime, bool withdrawn)\n\n    {\n\n        return(lockedToken[_id].tokenAddress,lockedToken[_id].withdrawalAddress,lockedToken[_id].tokenAmount,\n\n        lockedToken[_id].unlockTime,lockedToken[_id].withdrawn);\n",
+          "message": "lockContract.getDepositDetails (team_finance_lockContract.sol#171-175) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 189,
+          "vulnerability_to_line": 200,
+          "vulnerability_code": "    function getWithdrawableDepositsByAddress(address _withdrawalAddress) view public returns (uint256[])\n\n    {\n\n        uint256[] memory deposits = new uint256[](numOfActiveDeposits(_withdrawalAddress));\n\n        uint256 tempIdx = 0;\n\n        for(uint256 i = 0; i < depositsByWithdrawalAddress[_withdrawalAddress].length; i++) {\n\n            if(!lockedToken[depositsByWithdrawalAddress[_withdrawalAddress][i]].withdrawn) {\n\n                deposits[tempIdx] =  depositsByWithdrawalAddress[_withdrawalAddress][i];\n\n                tempIdx ++;\n\n            }\n\n        }\n\n        return deposits;\n",
+          "message": "lockContract.getWithdrawableDepositsByAddress (team_finance_lockContract.sol#189-200) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 203,
+          "vulnerability_to_line": 206,
+          "vulnerability_code": "    function getAllDepositsByAddress(address _withdrawalAddress) view public returns (uint256[])\n\n    {\n\n        return depositsByWithdrawalAddress[_withdrawalAddress];\n",
+          "message": "lockContract.getAllDepositsByAddress (team_finance_lockContract.sol#203-206) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.16;\n",
+          "message": "Detected issues with version pragma in team_finance_lockContract.sol:\n\t- pragma solidity^0.4.16 (team_finance_lockContract.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "contract owned {\n\n        address public owner;\n\n\n\n        function owned() public {\n\n            owner = msg.sender;\n\n        }\n\n\n\n        modifier onlyOwner {\n\n            require(msg.sender == owner);\n\n            _;\n\n        }\n\n\n\n        function transferOwnership(address newOwner) onlyOwner public {\n\n            owner = newOwner;\n\n        }\n",
+          "message": "Contract 'owned' (team_finance_lockContract.sol#50-65) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": 208,
+          "vulnerability_code": "contract lockContract is owned{\n\n    using SafeMath for uint256;\n\n    \n\n    /*\n\n     * deposit vars\n\n    */\n\n    struct Items {\n\n        address tokenAddress;\n\n        address withdrawalAddress;\n\n        uint256 tokenAmount;\n\n        uint256 unlockTime;\n\n        bool withdrawn;\n\n    }\n\n    \n\n    uint256 public depositId;\n\n    uint256[] public allDepositIds;\n\n    mapping (address => uint256[]) public depositsByWithdrawalAddress;\n\n    mapping (uint256 => Items) public lockedToken;\n\n    mapping (address => mapping(address => uint256)) public walletTokenBalance;\n\n    \n\n    event LogWithdrawal(address SentToAddress, uint256 AmountTransferred);\n\n    \n\n    /**\n\n     * Constrctor function\n\n    */\n\n    function lockContract() public {\n\n        \n\n    }\n\n    \n\n    /**\n\n     *lock tokens\n\n    */\n\n    function lockTokens(address _tokenAddress, uint256 _amount, uint256 _unlockTime) public returns (uint256 _id) {\n\n        require(_amount > 0);\n\n        require(_unlockTime < 10000000000);\n\n        require(Token(_tokenAddress).transferFrom(msg.sender, this, _amount));\n\n        \n\n        //update balance in address\n\n        walletTokenBalance[_tokenAddress][msg.sender] = walletTokenBalance[_tokenAddress][msg.sender].add(_amount);\n\n        \n\n        address _withdrawalAddress = msg.sender;\n\n        _id = ++depositId;\n\n        lockedToken[_id].tokenAddress = _tokenAddress;\n\n        lockedToken[_id].withdrawalAddress = _withdrawalAddress;\n\n        lockedToken[_id].tokenAmount = _amount;\n\n        lockedToken[_id].unlockTime = _unlockTime;\n\n        lockedToken[_id].withdrawn = false;\n\n        \n\n        allDepositIds.push(_id);\n\n        depositsByWithdrawalAddress[_withdrawalAddress].push(_id);\n\n    }\n\n    \n\n    /**\n\n     *transfer locked tokens\n\n    */\n\n    function transferLocks(uint256 _id, address _receiverAddress) public {\n\n        require(block.timestamp < lockedToken[_id].unlockTime);\n\n        require(msg.sender == lockedToken[_id].withdrawalAddress);\n\n        lockedToken[_id].withdrawalAddress = _receiverAddress;\n\n        \n\n        //decrease sender's token balance\n\n        walletTokenBalance[lockedToken[_id].tokenAddress][msg.sender] = walletTokenBalance[lockedToken[_id].tokenAddress][msg.sender].sub(lockedToken[_id].tokenAmount);\n\n        \n\n        //increase receiver's token balance\n\n        walletTokenBalance[lockedToken[_id].tokenAddress][_receiverAddress] = walletTokenBalance[lockedToken[_id].tokenAddress][_receiverAddress].add(lockedToken[_id].tokenAmount);\n\n        \n\n    }\n\n    \n\n    /**\n\n     *withdraw tokens\n\n    */\n\n    function withdrawTokens(uint256 _id) public {\n\n        require(block.timestamp >= lockedToken[_id].unlockTime);\n\n        require(msg.sender == lockedToken[_id].withdrawalAddress);\n\n        require(!lockedToken[_id].withdrawn);\n\n        require(Token(lockedToken[_id].tokenAddress).transfer(msg.sender, lockedToken[_id].tokenAmount));\n\n        \n\n        lockedToken[_id].withdrawn = true;\n\n        \n\n        //update balance in address\n\n        walletTokenBalance[lockedToken[_id].tokenAddress][msg.sender] = walletTokenBalance[lockedToken[_id].tokenAddress][msg.sender].sub(lockedToken[_id].tokenAmount);\n\n        \n\n        LogWithdrawal(msg.sender, lockedToken[_id].tokenAmount);\n\n    }\n\n\n\n     /*get total token balance in contract*/\n\n    function getTotalTokenBalance(address _tokenAddress) view public returns (uint256)\n\n    {\n\n       return Token(_tokenAddress).balanceOf(this);\n\n    }\n\n    \n\n    /*get total token balance by address*/\n\n    function getTokenBalanceByAddress(address _tokenAddress, address _walletAddress) view public returns (uint256)\n\n    {\n\n       return walletTokenBalance[_tokenAddress][_walletAddress];\n\n    }\n\n    \n\n    /*get allDepositIds*/\n\n    function getAllDepositIds() view public returns (uint256[])\n\n    {\n\n        return allDepositIds;\n\n    }\n\n    \n\n    /*get getDepositDetails*/\n\n    function getDepositDetails(uint256 _id) view public returns (address tokenAddress, address withdrawalAddress, uint256 tokenAmount, uint256 unlockTime, bool withdrawn)\n\n    {\n\n        return(lockedToken[_id].tokenAddress,lockedToken[_id].withdrawalAddress,lockedToken[_id].tokenAmount,\n\n        lockedToken[_id].unlockTime,lockedToken[_id].withdrawn);\n\n    }\n\n    \n\n    /*get number of active deposits of an address*/\n\n    function numOfActiveDeposits(address _withdrawalAddress) public view returns (uint256) {\n\n        uint256 staked = 0;\n\n        for (uint i = 0; i < depositsByWithdrawalAddress[_withdrawalAddress].length; i++) {\n\n            if (!lockedToken[depositsByWithdrawalAddress[_withdrawalAddress][i]].withdrawn) {\n\n                staked++;\n\n            }\n\n        }\n\n        return staked;\n\n    }\n\n    \n\n    /*get getWithdrawableDepositsByAddress*/\n\n    function getWithdrawableDepositsByAddress(address _withdrawalAddress) view public returns (uint256[])\n\n    {\n\n        uint256[] memory deposits = new uint256[](numOfActiveDeposits(_withdrawalAddress));\n\n        uint256 tempIdx = 0;\n\n        for(uint256 i = 0; i < depositsByWithdrawalAddress[_withdrawalAddress].length; i++) {\n\n            if(!lockedToken[depositsByWithdrawalAddress[_withdrawalAddress][i]].withdrawn) {\n\n                deposits[tempIdx] =  depositsByWithdrawalAddress[_withdrawalAddress][i];\n\n                tempIdx ++;\n\n            }\n\n        }\n\n        return deposits;\n\n    }\n\n    \n\n    /*get getAllDepositsByAddress*/\n\n    function getAllDepositsByAddress(address _withdrawalAddress) view public returns (uint256[])\n\n    {\n\n        return depositsByWithdrawalAddress[_withdrawalAddress];\n\n    }\n\n    \n",
+          "message": "Contract 'lockContract' (team_finance_lockContract.sol#67-208) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function lockTokens(address _tokenAddress, uint256 _amount, uint256 _unlockTime) public returns (uint256 _id) {\n",
+          "message": "Parameter '_tokenAddress' of lockContract.lockTokens (team_finance_lockContract.sol#99) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function lockTokens(address _tokenAddress, uint256 _amount, uint256 _unlockTime) public returns (uint256 _id) {\n",
+          "message": "Parameter '_amount' of lockContract.lockTokens (team_finance_lockContract.sol#99) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function lockTokens(address _tokenAddress, uint256 _amount, uint256 _unlockTime) public returns (uint256 _id) {\n",
+          "message": "Parameter '_unlockTime' of lockContract.lockTokens (team_finance_lockContract.sol#99) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 122,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferLocks(uint256 _id, address _receiverAddress) public {\n",
+          "message": "Parameter '_id' of lockContract.transferLocks (team_finance_lockContract.sol#122) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 122,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferLocks(uint256 _id, address _receiverAddress) public {\n",
+          "message": "Parameter '_receiverAddress' of lockContract.transferLocks (team_finance_lockContract.sol#122) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 138,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdrawTokens(uint256 _id) public {\n",
+          "message": "Parameter '_id' of lockContract.withdrawTokens (team_finance_lockContract.sol#138) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 153,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getTotalTokenBalance(address _tokenAddress) view public returns (uint256)\n",
+          "message": "Parameter '_tokenAddress' of lockContract.getTotalTokenBalance (team_finance_lockContract.sol#153) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 159,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getTokenBalanceByAddress(address _tokenAddress, address _walletAddress) view public returns (uint256)\n",
+          "message": "Parameter '_tokenAddress' of lockContract.getTokenBalanceByAddress (team_finance_lockContract.sol#159) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 159,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getTokenBalanceByAddress(address _tokenAddress, address _walletAddress) view public returns (uint256)\n",
+          "message": "Parameter '_walletAddress' of lockContract.getTokenBalanceByAddress (team_finance_lockContract.sol#159) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 171,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getDepositDetails(uint256 _id) view public returns (address tokenAddress, address withdrawalAddress, uint256 tokenAmount, uint256 unlockTime, bool withdrawn)\n",
+          "message": "Parameter '_id' of lockContract.getDepositDetails (team_finance_lockContract.sol#171) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 178,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function numOfActiveDeposits(address _withdrawalAddress) public view returns (uint256) {\n",
+          "message": "Parameter '_withdrawalAddress' of lockContract.numOfActiveDeposits (team_finance_lockContract.sol#178) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 189,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getWithdrawableDepositsByAddress(address _withdrawalAddress) view public returns (uint256[])\n",
+          "message": "Parameter '_withdrawalAddress' of lockContract.getWithdrawableDepositsByAddress (team_finance_lockContract.sol#189) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 203,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getAllDepositsByAddress(address _withdrawalAddress) view public returns (uint256[])\n",
+          "message": "Parameter '_withdrawalAddress' of lockContract.getAllDepositsByAddress (team_finance_lockContract.sol#203) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function mul(uint256 a, uint256 b) internal constant returns (uint256) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function div(uint256 a, uint256 b) internal constant returns (uint256) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function sub(uint256 a, uint256 b) internal constant returns (uint256) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function add(uint256 a, uint256 b) internal constant returns (uint256) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function ceil(uint256 a, uint256 m) internal constant returns (uint256) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DIV_MUL",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    return mul(div(d,m),m);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 180,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 0; i < depositsByWithdrawalAddress[_withdrawalAddress].length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 193,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < depositsByWithdrawalAddress[_withdrawalAddress].length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 180,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 0; i < depositsByWithdrawalAddress[_withdrawalAddress].length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 193,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < depositsByWithdrawalAddress[_withdrawalAddress].length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 68,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 165,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getAllDepositIds() view public returns (uint256[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 189,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getWithdrawableDepositsByAddress(address _withdrawalAddress) view public returns (uint256[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 203,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getAllDepositsByAddress(address _withdrawalAddress) view public returns (uint256[])\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 149,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        LogWithdrawal(msg.sender, lockedToken[_id].tokenAmount);\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Dependence on predictable environment variable (SWC 116)",
+          "vulnerability_from_line": 139,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(block.timestamp >= lockedToken[_id].unlockTime);\n",
+          "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 116)",
+          "vulnerability_from_line": 123,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(block.timestamp < lockedToken[_id].unlockTime);\n",
+          "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
+        },
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping (address => uint256[]) public depositsByWithdrawalAddress;\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(Token(_tokenAddress).transferFrom(msg.sender, this, _amount));\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 105,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        walletTokenBalance[_tokenAddress][msg.sender] = walletTokenBalance[_tokenAddress][msg.sender].add(_amount);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 105,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        walletTokenBalance[_tokenAddress][msg.sender] = walletTokenBalance[_tokenAddress][msg.sender].add(_amount);\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _id = ++depositId;\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _id = ++depositId;\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 109,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        lockedToken[_id].tokenAddress = _tokenAddress;\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 109,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        lockedToken[_id].tokenAddress = _tokenAddress;\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 110,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        lockedToken[_id].withdrawalAddress = _withdrawalAddress;\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 110,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        lockedToken[_id].withdrawalAddress = _withdrawalAddress;\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 111,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        lockedToken[_id].tokenAmount = _amount;\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 112,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        lockedToken[_id].unlockTime = _unlockTime;\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        lockedToken[_id].withdrawn = false;\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        lockedToken[_id].withdrawn = false;\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        allDepositIds.push(_id);\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 116,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        depositsByWithdrawalAddress[_withdrawalAddress].push(_id);\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "       return Token(_tokenAddress).balanceOf(this);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256[] public allDepositIds;\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 1,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "// File: ../sc_datasets/DAppSCAN/Chainsulting-Nexxo/Smart-Contract-Security-Audits-master/Team Finance/team_finance_lockContract.sol\n",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _id = ++depositId;\n",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 165,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getAllDepositIds() view public returns (uint256[])\n",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 167,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return allDepositIds;\n",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 203,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getAllDepositsByAddress(address _withdrawalAddress) view public returns (uint256[])\n",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 205,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return depositsByWithdrawalAddress[_withdrawalAddress];\n",
+          "message": null
+        }
+      ]
+    }
+  }
+}
