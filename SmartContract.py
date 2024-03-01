@@ -512,7 +512,7 @@ class SmartContract:
             # Run smartbugs
             # process = subprocess.Popen(f'./smartbugs/smartbugs -c {smartbugs_config_path} -f {self.path}', shell=True, stdout=subprocess.DEVNULL)
             sb_command = f'./smartbugs/smartbugs -c "{smartbugs_config_path}" -f "{self.path}"'
-            print(f'\n\n **** SB command is: {sb_command} ****')
+            # print(f'\n\n **** SB command is: {sb_command} ****')
             process = subprocess.Popen(sb_command, shell=True)  # DEBUG
 
             atexit.register(exit_handler, process)
