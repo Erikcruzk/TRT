@@ -1,0 +1,141 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\trequire(balanceOf[msg.sender] >= wad, \"WETH9: Error\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\trequire(balanceOf[src] >= wad, \"WETH9: Error\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\t\trequire(allowance[src][msg.sender] >= wad, \"WETH9: Error\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\tif (src != msg.sender && allowance[src][msg.sender] != uint256(-1)) {\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\t\trequire(allowance[src][msg.sender] >= wad, \"WETH9: Error\");\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\t\tallowance[src][msg.sender] -= wad;\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\t\t}\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\tuint8 public decimals = 18;\n",
+          "message": "WETH9Mock.decimals should be constant (WETH9Mock.sol#10)\nWETH9Mock.name should be constant (WETH9Mock.sol#8)\nWETH9Mock.symbol should be constant (WETH9Mock.sol#9)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "\tfunction deposit() public payable {\n\n\t\tbalanceOf[msg.sender] += msg.value;\n\n\t\temit Deposit(msg.sender, msg.value);\n",
+          "message": "WETH9Mock.deposit (WETH9Mock.sol#20-23) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": 30,
+          "vulnerability_code": "\tfunction withdraw(uint256 wad) public {\n\n\t\trequire(balanceOf[msg.sender] >= wad, \"WETH9: Error\");\n\n\t\tbalanceOf[msg.sender] -= wad;\n\n\t\tmsg.sender.transfer(wad);\n\n\t\temit Withdrawal(msg.sender, wad);\n",
+          "message": "WETH9Mock.withdraw (WETH9Mock.sol#25-30) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": 34,
+          "vulnerability_code": "\tfunction totalSupply() public view returns (uint256) {\n\n\t\treturn address(this).balance;\n",
+          "message": "WETH9Mock.totalSupply (WETH9Mock.sol#32-34) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "\tfunction approve(address guy, uint256 wad) public returns (bool) {\n\n\t\tallowance[msg.sender][guy] = wad;\n\n\t\temit Approval(msg.sender, guy, wad);\n\n\t\treturn true;\n",
+          "message": "WETH9Mock.approve (WETH9Mock.sol#36-40) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": 44,
+          "vulnerability_code": "\tfunction transfer(address dst, uint256 wad) public returns (bool) {\n\n\t\treturn transferFrom(msg.sender, dst, wad);\n",
+          "message": "WETH9Mock.transfer (WETH9Mock.sol#42-44) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity 0.6.12;\n",
+          "message": "Detected issues with version pragma in WETH9Mock.sol:\n\t- pragma solidity0.6.12 (WETH9Mock.sol#5): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

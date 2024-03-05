@@ -1,0 +1,434 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 458,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 0; i < recipients.length; ++i) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 127,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor (string tokenName, string tokenSymbol) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 128,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        name = tokenName;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        symbol = tokenSymbol;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        rescueAccount = tokenDistributor = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 131,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    } \t\t   \t  \t\t\t\t  \t  \t      \t\t \t\t\t  \t\t \t  \t \t\t \t \t\t \t\t \t  \t \t\t\t \t   \t\t    \t  \t \t\t\t  \t\t\t \t   \t\t \t \t\t\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 459,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            balanceOf[recipients[i]] = balanceOf[recipients[i]].add(amounts[i]);\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 459,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            balanceOf[recipients[i]] = balanceOf[recipients[i]].add(amounts[i]);\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 241,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint8 i = 0; i < 32; ++i) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 458,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 0; i < recipients.length; ++i) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-multiple-require",
+          "vulnerability_from_line": 157,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(to1 != 0x0 && to2 != 0x0); // Prevent people from accidentally burning their tokens\n",
+          "message": "Using multiple require statements is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-multiple-require",
+          "vulnerability_from_line": 202,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(block.timestamp <= deadline && !usedSigIds[signer][sigId]); // solium-disable-line security/no-block-members\n",
+          "message": "Using multiple require statements is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_16"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "unused-return",
+          "vulnerability_from_line": 497,
+          "vulnerability_to_line": 499,
+          "vulnerability_code": "    function rescueLostTokens (ERC20CompatibleToken tokenContract, uint256 value) external rescueAccountOnly {\n\n        tokenContract.transfer(rescueAccount, value);\n",
+          "message": "DreamTeamToken.rescueLostTokens (DreamTeamToken.sol#497-499) does not use the value returned by external calls:\n\t-tokenContract.transfer(rescueAccount,value) (DreamTeamToken.sol#498)\n"
+        },
+        {
+          "name": "reentrancy-benign",
+          "vulnerability_from_line": 421,
+          "vulnerability_to_line": 442,
+          "vulnerability_code": "    function approveAndCallViaSignature (\n\n        address     from,\n\n        address     spender,\n\n        uint256     value,\n\n        bytes       extraData,\n\n        uint256     fee,\n\n        address     feeRecipient,\n\n        uint256     deadline,\n\n        uint256     sigId,\n\n        bytes       sig,\n\n        sigStandard sigStd\n\n    ) external returns (bool) {\n\n        requireSignature(\n\n            keccak256(address(this), from, spender, value, extraData, fee, feeRecipient, deadline, sigId),\n\n            from, deadline, sigId, sig, sigStd, sigDestination.approveAndCall\n\n        );\n\n        allowance[from][spender] = value;\n\n        emit Approval(from, spender, value);\n\n        tokenRecipient(spender).receiveApproval(from, value, this, extraData);\n\n        internalTransfer(from, feeRecipient, fee);\n\n        return true;\n",
+          "message": "Reentrancy in DreamTeamToken.approveAndCallViaSignature (DreamTeamToken.sol#421-442):\n\tExternal calls:\n\t- tokenRecipient(spender).receiveApproval(from,value,this,extraData) (DreamTeamToken.sol#439)\n\tState variables written after the call(s):\n\t- balanceOf (DreamTeamToken.sol#440)\n"
+        },
+        {
+          "name": "timestamp",
+          "vulnerability_from_line": 183,
+          "vulnerability_to_line": 233,
+          "vulnerability_code": "    function requireSignature (\n\n        bytes32 data,\n\n        address signer,\n\n        uint256 deadline,\n\n        uint256 sigId,\n\n        bytes sig,\n\n        sigStandard sigStd,\n\n        sigDestination sigDest\n\n    ) internal {\n\n        bytes32 r;\n\n        bytes32 s;\n\n        uint8 v;\n\n        assembly { // solium-disable-line security/no-inline-assembly\n\n            r := mload(add(sig, 32))\n\n            s := mload(add(sig, 64)) \t\t   \t  \t\t\t\t  \t  \t      \t\t \t\t\t  \t\t \t  \t \t\t \t \t\t \t\t \t  \t \t\t\t \t   \t\t    \t  \t \t\t\t  \t\t\t \t   \t\t \t \t\t\n\n            v := byte(0, mload(add(sig, 96)))\n\n        }\n\n        if (v < 27)\n\n            v += 27;\n\n        require(block.timestamp <= deadline && !usedSigIds[signer][sigId]); // solium-disable-line security/no-block-members\n\n        if (sigStd == sigStandard.typed) { // Typed signature. This is the most likely scenario to be used and accepted\n\n            require(\n\n                signer == ecrecover(\n\n                    keccak256(\n\n                        sigDest == sigDestination.transfer\n\n                            ? sigDestinationTransfer\n\n                            : sigDest == sigDestination.approve\n\n                                ? sigDestinationApprove\n\n                                : sigDest == sigDestination.approveAndCall\n\n                                    ? sigDestinationApproveAndCall\n\n                                    : sigDestinationTransferFrom,\n\n                        data\n\n                    ),\n\n                    v, r, s\n\n                )\n\n            );\n\n        } else if (sigStd == sigStandard.personal) { // Ethereum signed message signature (Geth and Trezor)\n\n            require(\n\n                signer == ecrecover(keccak256(ethSignedMessagePrefix, \"32\", data), v, r, s) // Geth-adopted\n\n                ||\n\n                signer == ecrecover(keccak256(ethSignedMessagePrefix, \"\\x20\", data), v, r, s) // Trezor-adopted\n\n            );\n\n        } else { // == 2; Signed string hash signature (the most expensive but universal)\n\n            require(\n\n                signer == ecrecover(keccak256(ethSignedMessagePrefix, \"64\", hexToString(data)), v, r, s) // Geth\n\n                ||\n\n                signer == ecrecover(keccak256(ethSignedMessagePrefix, \"\\x40\", hexToString(data)), v, r, s) // Trezor\n\n            );\n\n        }\n\n        usedSigIds[signer][sigId] = true;\n",
+          "message": "DreamTeamToken.requireSignature (DreamTeamToken.sol#183-233) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool)(block.timestamp <= deadline && ! usedSigIds[signer][sigId]) (DreamTeamToken.sol#202)\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 183,
+          "vulnerability_to_line": 233,
+          "vulnerability_code": "    function requireSignature (\n\n        bytes32 data,\n\n        address signer,\n\n        uint256 deadline,\n\n        uint256 sigId,\n\n        bytes sig,\n\n        sigStandard sigStd,\n\n        sigDestination sigDest\n\n    ) internal {\n\n        bytes32 r;\n\n        bytes32 s;\n\n        uint8 v;\n\n        assembly { // solium-disable-line security/no-inline-assembly\n\n            r := mload(add(sig, 32))\n\n            s := mload(add(sig, 64)) \t\t   \t  \t\t\t\t  \t  \t      \t\t \t\t\t  \t\t \t  \t \t\t \t \t\t \t\t \t  \t \t\t\t \t   \t\t    \t  \t \t\t\t  \t\t\t \t   \t\t \t \t\t\n\n            v := byte(0, mload(add(sig, 96)))\n\n        }\n\n        if (v < 27)\n\n            v += 27;\n\n        require(block.timestamp <= deadline && !usedSigIds[signer][sigId]); // solium-disable-line security/no-block-members\n\n        if (sigStd == sigStandard.typed) { // Typed signature. This is the most likely scenario to be used and accepted\n\n            require(\n\n                signer == ecrecover(\n\n                    keccak256(\n\n                        sigDest == sigDestination.transfer\n\n                            ? sigDestinationTransfer\n\n                            : sigDest == sigDestination.approve\n\n                                ? sigDestinationApprove\n\n                                : sigDest == sigDestination.approveAndCall\n\n                                    ? sigDestinationApproveAndCall\n\n                                    : sigDestinationTransferFrom,\n\n                        data\n\n                    ),\n\n                    v, r, s\n\n                )\n\n            );\n\n        } else if (sigStd == sigStandard.personal) { // Ethereum signed message signature (Geth and Trezor)\n\n            require(\n\n                signer == ecrecover(keccak256(ethSignedMessagePrefix, \"32\", data), v, r, s) // Geth-adopted\n\n                ||\n\n                signer == ecrecover(keccak256(ethSignedMessagePrefix, \"\\x20\", data), v, r, s) // Trezor-adopted\n\n            );\n\n        } else { // == 2; Signed string hash signature (the most expensive but universal)\n\n            require(\n\n                signer == ecrecover(keccak256(ethSignedMessagePrefix, \"64\", hexToString(data)), v, r, s) // Geth\n\n                ||\n\n                signer == ecrecover(keccak256(ethSignedMessagePrefix, \"\\x40\", hexToString(data)), v, r, s) // Trezor\n\n            );\n\n        }\n\n        usedSigIds[signer][sigId] = true;\n",
+          "message": "DreamTeamToken.requireSignature uses assembly (DreamTeamToken.sol#183-233)\n\t- DreamTeamToken.sol#195-200\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint8 public decimals = 6; // Makes JavaScript able to handle precise calculations (until totalSupply < 9 milliards)\n",
+          "message": "DreamTeamToken.decimals should be constant (DreamTeamToken.sol#62)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 253,
+          "vulnerability_to_line": 256,
+          "vulnerability_code": "    function transfer (address to, uint256 value) public returns (bool) {\n\n        internalTransfer(msg.sender, to, value);\n\n        return true;\n",
+          "message": "DreamTeamToken.transfer (DreamTeamToken.sol#253-256) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 351,
+          "vulnerability_to_line": 355,
+          "vulnerability_code": "    function transferFrom (address from, address to, uint256 value) public returns (bool) {\n\n        allowance[from][msg.sender] = allowance[from][msg.sender].sub(value);\n\n        internalTransfer(from, to, value);\n\n        return true;\n",
+          "message": "DreamTeamToken.transferFrom (DreamTeamToken.sol#351-355) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 401,
+          "vulnerability_to_line": 405,
+          "vulnerability_code": "    function approveAndCall (address spender, uint256 value, bytes extraData) public returns (bool) {\n\n        approve(spender, value);\n\n        tokenRecipient(spender).receiveApproval(msg.sender, value, this, extraData);\n\n        return true;\n",
+          "message": "DreamTeamToken.approveAndCall (DreamTeamToken.sol#401-405) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": 7,
+          "vulnerability_code": "interface tokenRecipient {\n\n    function receiveApproval (address from, uint256 value, address token, bytes extraData) external;\n",
+          "message": "Contract 'tokenRecipient' (DreamTeamToken.sol#5-7) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes constant public ethSignedMessagePrefix = \"\\x19Ethereum Signed Message:\\n\";\n",
+          "message": "Constant 'DreamTeamToken.ethSignedMessagePrefix' (DreamTeamToken.sol#79) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": 89,
+          "vulnerability_code": "    bytes32 constant public sigDestinationTransfer = keccak256(\n\n        \"address Token Contract Address\",\n\n        \"address Sender's Address\",\n\n        \"address Recipient's Address\",\n\n        \"uint256 Amount to Transfer (last six digits are decimals)\",\n\n        \"uint256 Fee in Tokens Paid to Executor (last six digits are decimals)\",\n\n        \"address Account which will Receive Fee\",\n\n        \"uint256 Signature Expiration Timestamp (unix timestamp)\",\n\n        \"uint256 Signature ID\"\n",
+          "message": "Constant 'DreamTeamToken.sigDestinationTransfer' (DreamTeamToken.sol#80-89) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": 100,
+          "vulnerability_code": "    bytes32 constant public sigDestinationTransferFrom = keccak256(\n\n        \"address Token Contract Address\",\n\n        \"address Address Approved for Withdraw\",\n\n        \"address Account to Withdraw From\",\n\n        \"address Withdrawal Recipient Address\",\n\n        \"uint256 Amount to Transfer (last six digits are decimals)\",\n\n        \"uint256 Fee in Tokens Paid to Executor (last six digits are decimals)\",\n\n        \"address Account which will Receive Fee\",\n\n        \"uint256 Signature Expiration Timestamp (unix timestamp)\",\n\n        \"uint256 Signature ID\"\n",
+          "message": "Constant 'DreamTeamToken.sigDestinationTransferFrom' (DreamTeamToken.sol#90-100) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": 110,
+          "vulnerability_code": "    bytes32 constant public sigDestinationApprove = keccak256(\n\n        \"address Token Contract Address\",\n\n        \"address Withdrawal Approval Address\",\n\n        \"address Withdrawal Recipient Address\",\n\n        \"uint256 Amount to Transfer (last six digits are decimals)\",\n\n        \"uint256 Fee in Tokens Paid to Executor (last six digits are decimals)\",\n\n        \"address Account which will Receive Fee\",\n\n        \"uint256 Signature Expiration Timestamp (unix timestamp)\",\n\n        \"uint256 Signature ID\"\n",
+          "message": "Constant 'DreamTeamToken.sigDestinationApprove' (DreamTeamToken.sol#101-110) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 111,
+          "vulnerability_to_line": 121,
+          "vulnerability_code": "    bytes32 constant public sigDestinationApproveAndCall = keccak256(\n\n        \"address Token Contract Address\",\n\n        \"address Withdrawal Approval Address\",\n\n        \"address Withdrawal Recipient Address\",\n\n        \"uint256 Amount to Transfer (last six digits are decimals)\",\n\n        \"bytes Data to Transfer\",\n\n        \"uint256 Fee in Tokens Paid to Executor (last six digits are decimals)\",\n\n        \"address Account which will Receive Fee\",\n\n        \"uint256 Signature Expiration Timestamp (unix timestamp)\",\n\n        \"uint256 Signature ID\"\n",
+          "message": "Constant 'DreamTeamToken.sigDestinationApproveAndCall' (DreamTeamToken.sol#111-121) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    enum sigStandard { typed, personal, stringHex }\n",
+          "message": "Enum 'DreamTeamToken.sigStandard' (DreamTeamToken.sol#76) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    enum sigDestination { transfer, approve, approveAndCall, transferFrom }\n",
+          "message": "Enum 'DreamTeamToken.sigDestination' (DreamTeamToken.sol#77) is not in CapWords\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 486,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        tokenDistributor = 0x0; // Disable multiMint and lastMint functions forever\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 304,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve (address spender, uint256 value) public returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 458,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 0; i < recipients.length; ++i) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 458,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 0; i < recipients.length; ++i) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes32 constant public sigDestinationTransfer = keccak256(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes32 constant public sigDestinationTransferFrom = keccak256(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes32 constant public sigDestinationApprove = keccak256(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 111,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes32 constant public sigDestinationApproveAndCall = keccak256(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 206,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                    keccak256(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 221,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                signer == ecrecover(keccak256(ethSignedMessagePrefix, \"32\", data), v, r, s) // Geth-adopted\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 223,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                signer == ecrecover(keccak256(ethSignedMessagePrefix, \"\\x20\", data), v, r, s) // Trezor-adopted\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 227,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                signer == ecrecover(keccak256(ethSignedMessagePrefix, \"64\", hexToString(data)), v, r, s) // Geth\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 229,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                signer == ecrecover(keccak256(ethSignedMessagePrefix, \"\\x40\", hexToString(data)), v, r, s) // Trezor\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 288,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            keccak256(address(this), from, to, value, fee, feeRecipient, deadline, sigId),\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 336,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            keccak256(address(this), from, spender, value, fee, feeRecipient, deadline, sigId),\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 385,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            keccak256(address(this), from, to, value, fee, feeRecipient, deadline, sigId),\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 434,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            keccak256(address(this), from, spender, value, extraData, fee, feeRecipient, deadline, sigId),\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 127,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor (string tokenName, string tokenSymbol) public {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 127,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor (string tokenName, string tokenSymbol) public {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 188,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes sig,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 239,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function hexToString (bytes32 sig) internal pure returns (bytes) { // /to-try/ convert to two uint256 and test gas\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 401,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approveAndCall (address spender, uint256 value, bytes extraData) public returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 195,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { // solium-disable-line security/no-inline-assembly\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 372,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferFromViaSignature (\n",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    string public name;\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Truncation bugs",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer (address to, uint256 value) external returns (bool);\n",
+          "message": null
+        }
+      ]
+    }
+  }
+}

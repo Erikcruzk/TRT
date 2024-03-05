@@ -1,0 +1,145 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor() internal {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _primary = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    emit PrimaryTransferred(_primary);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 103,
+          "vulnerability_to_line": 105,
+          "vulnerability_code": "  function primary() public view returns (address) {\n\n    return _primary;\n",
+          "message": "Secondary.primary (Escrow.sol#103-105) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 111,
+          "vulnerability_to_line": 115,
+          "vulnerability_code": "  function transferPrimary(address recipient) public onlyPrimary {\n\n    require(recipient != address(0));\n\n    _primary = recipient;\n\n    emit PrimaryTransferred(_primary);\n",
+          "message": "Secondary.transferPrimary (Escrow.sol#111-115) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 143,
+          "vulnerability_to_line": 145,
+          "vulnerability_code": "  function depositsOf(address payee) public view returns (uint256) {\n\n    return _deposits[payee];\n",
+          "message": "Escrow.depositsOf (Escrow.sol#143-145) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 151,
+          "vulnerability_to_line": 156,
+          "vulnerability_code": "  function deposit(address payee) public onlyPrimary payable {\n\n    uint256 amount = msg.value;\n\n    _deposits[payee] = _deposits[payee].add(amount);\n\n\n\n    emit Deposited(payee, amount);\n",
+          "message": "Escrow.deposit (Escrow.sol#151-156) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": 170,
+          "vulnerability_code": "  function withdraw(address payee) public onlyPrimary {\n\n    uint256 payment = _deposits[payee];\n\n\n\n    _deposits[payee] = 0;\n\n\n\n    payee.transfer(payment);\n\n\n\n    emit Withdrawn(payee, payment);\n",
+          "message": "Escrow.withdraw (Escrow.sol#162-170) should be declared external\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  address private _primary;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  mapping(address => uint256) private _deposits;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 136,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

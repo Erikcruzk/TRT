@@ -1,0 +1,283 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_14"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "  function wadMul(uint256 a, uint256 b) internal pure returns (uint256 c) {\n\n    // to avoid overflow, a <= (type(uint256).max - HALF_WAD) / b\n\n    assembly {\n\n      if iszero(or(iszero(b), iszero(gt(a, div(sub(not(0), HALF_WAD), b))))) {\n\n        revert(0, 0)\n\n      }\n\n\n\n      c := div(add(mul(a, b), HALF_WAD), WAD)\n\n    }\n",
+          "message": "WadRayMath.wadMul (WadRayMath.sol#31-40) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": 61,
+          "vulnerability_code": "  function wadDiv(uint256 a, uint256 b) internal pure returns (uint256 c) {\n\n    // to avoid overflow, a <= (type(uint256).max - halfB) / WAD\n\n    assembly {\n\n      if or(\n\n        iszero(b),\n\n        iszero(iszero(gt(a, div(sub(not(0), div(b, 2)), WAD))))\n\n      ) {\n\n        revert(0, 0)\n\n      }\n\n\n\n      c := div(add(mul(a, WAD), div(b, 2)), b)\n\n    }\n",
+          "message": "WadRayMath.wadDiv (WadRayMath.sol#49-61) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": 79,
+          "vulnerability_code": "  function rayMul(uint256 a, uint256 b) internal pure returns (uint256 c) {\n\n    // to avoid overflow, a <= (type(uint256).max - HALF_RAY) / b\n\n    assembly {\n\n      if iszero(or(iszero(b), iszero(gt(a, div(sub(not(0), HALF_RAY), b))))) {\n\n        revert(0, 0)\n\n      }\n\n\n\n      c := div(add(mul(a, b), HALF_RAY), RAY)\n\n    }\n",
+          "message": "WadRayMath.rayMul (WadRayMath.sol#70-79) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": 100,
+          "vulnerability_code": "  function rayDiv(uint256 a, uint256 b) internal pure returns (uint256 c) {\n\n    // to avoid overflow, a <= (type(uint256).max - halfB) / RAY\n\n    assembly {\n\n      if or(\n\n        iszero(b),\n\n        iszero(iszero(gt(a, div(sub(not(0), div(b, 2)), RAY))))\n\n      ) {\n\n        revert(0, 0)\n\n      }\n\n\n\n      c := div(add(mul(a, RAY), div(b, 2)), b)\n\n    }\n",
+          "message": "WadRayMath.rayDiv (WadRayMath.sol#88-100) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": 116,
+          "vulnerability_code": "  function rayToWad(uint256 a) internal pure returns (uint256 b) {\n\n    assembly {\n\n      b := div(a, WAD_RAY_RATIO)\n\n      let remainder := mod(a, WAD_RAY_RATIO)\n\n      if iszero(lt(remainder, div(WAD_RAY_RATIO, 2))) {\n\n        b := add(b, 1)\n\n      }\n\n    }\n",
+          "message": "WadRayMath.rayToWad (WadRayMath.sol#108-116) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": 133,
+          "vulnerability_code": "  function wadToRay(uint256 a) internal pure returns (uint256 b) {\n\n    // to avoid overflow, b/WAD_RAY_RATIO == a\n\n    assembly {\n\n      b := mul(a, WAD_RAY_RATIO)\n\n\n\n      if iszero(eq(div(b, WAD_RAY_RATIO), a)) {\n\n        revert(0, 0)\n\n      }\n\n    }\n",
+          "message": "WadRayMath.wadToRay (WadRayMath.sol#124-133) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "  function wadMul(uint256 a, uint256 b) internal pure returns (uint256 c) {\n\n    // to avoid overflow, a <= (type(uint256).max - HALF_WAD) / b\n\n    assembly {\n\n      if iszero(or(iszero(b), iszero(gt(a, div(sub(not(0), HALF_WAD), b))))) {\n\n        revert(0, 0)\n\n      }\n\n\n\n      c := div(add(mul(a, b), HALF_WAD), WAD)\n\n    }\n",
+          "message": "WadRayMath.wadMul uses assembly (WadRayMath.sol#31-40)\n\t- WadRayMath.sol#33-39\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": 61,
+          "vulnerability_code": "  function wadDiv(uint256 a, uint256 b) internal pure returns (uint256 c) {\n\n    // to avoid overflow, a <= (type(uint256).max - halfB) / WAD\n\n    assembly {\n\n      if or(\n\n        iszero(b),\n\n        iszero(iszero(gt(a, div(sub(not(0), div(b, 2)), WAD))))\n\n      ) {\n\n        revert(0, 0)\n\n      }\n\n\n\n      c := div(add(mul(a, WAD), div(b, 2)), b)\n\n    }\n",
+          "message": "WadRayMath.wadDiv uses assembly (WadRayMath.sol#49-61)\n\t- WadRayMath.sol#51-60\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": 79,
+          "vulnerability_code": "  function rayMul(uint256 a, uint256 b) internal pure returns (uint256 c) {\n\n    // to avoid overflow, a <= (type(uint256).max - HALF_RAY) / b\n\n    assembly {\n\n      if iszero(or(iszero(b), iszero(gt(a, div(sub(not(0), HALF_RAY), b))))) {\n\n        revert(0, 0)\n\n      }\n\n\n\n      c := div(add(mul(a, b), HALF_RAY), RAY)\n\n    }\n",
+          "message": "WadRayMath.rayMul uses assembly (WadRayMath.sol#70-79)\n\t- WadRayMath.sol#72-78\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": 100,
+          "vulnerability_code": "  function rayDiv(uint256 a, uint256 b) internal pure returns (uint256 c) {\n\n    // to avoid overflow, a <= (type(uint256).max - halfB) / RAY\n\n    assembly {\n\n      if or(\n\n        iszero(b),\n\n        iszero(iszero(gt(a, div(sub(not(0), div(b, 2)), RAY))))\n\n      ) {\n\n        revert(0, 0)\n\n      }\n\n\n\n      c := div(add(mul(a, RAY), div(b, 2)), b)\n\n    }\n",
+          "message": "WadRayMath.rayDiv uses assembly (WadRayMath.sol#88-100)\n\t- WadRayMath.sol#90-99\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": 116,
+          "vulnerability_code": "  function rayToWad(uint256 a) internal pure returns (uint256 b) {\n\n    assembly {\n\n      b := div(a, WAD_RAY_RATIO)\n\n      let remainder := mod(a, WAD_RAY_RATIO)\n\n      if iszero(lt(remainder, div(WAD_RAY_RATIO, 2))) {\n\n        b := add(b, 1)\n\n      }\n\n    }\n",
+          "message": "WadRayMath.rayToWad uses assembly (WadRayMath.sol#108-116)\n\t- WadRayMath.sol#109-115\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": 133,
+          "vulnerability_code": "  function wadToRay(uint256 a) internal pure returns (uint256 b) {\n\n    // to avoid overflow, b/WAD_RAY_RATIO == a\n\n    assembly {\n\n      b := mul(a, WAD_RAY_RATIO)\n\n\n\n      if iszero(eq(div(b, WAD_RAY_RATIO), a)) {\n\n        revert(0, 0)\n\n      }\n\n    }\n",
+          "message": "WadRayMath.wadToRay uses assembly (WadRayMath.sol#124-133)\n\t- WadRayMath.sol#126-132\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.6.10 <=0.8.10;\n",
+          "message": "Detected issues with version pragma in WadRayMath.sol:\n\t- pragma solidity>=0.6.10<=0.8.10 (WadRayMath.sol#4): is has a complex pragma\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint256 internal constant WAD = 1e18;\n",
+          "message": "WadRayMath.WAD (WadRayMath.sol#16) is never used in WadRayMath\nWadRayMath.HALF_WAD (WadRayMath.sol#17) is never used in WadRayMath\nWadRayMath.RAY (WadRayMath.sol#19) is never used in WadRayMath\nWadRayMath.HALF_RAY (WadRayMath.sol#20) is never used in WadRayMath\nWadRayMath.WAD_RAY_RATIO (WadRayMath.sol#22) is never used in WadRayMath\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function wadMul(uint256 a, uint256 b) internal pure returns (uint256 c) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function wadDiv(uint256 a, uint256 b) internal pure returns (uint256 c) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function rayMul(uint256 a, uint256 b) internal pure returns (uint256 c) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function rayDiv(uint256 a, uint256 b) internal pure returns (uint256 c) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function rayToWad(uint256 a) internal pure returns (uint256 b) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function wadToRay(uint256 a) internal pure returns (uint256 b) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.6.10 <=0.8.10;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.6.10 <=0.8.10;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function wadMul(uint256 a, uint256 b) internal pure returns (uint256 c) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function wadDiv(uint256 a, uint256 b) internal pure returns (uint256 c) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function rayMul(uint256 a, uint256 b) internal pure returns (uint256 c) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function rayDiv(uint256 a, uint256 b) internal pure returns (uint256 c) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function rayToWad(uint256 a) internal pure returns (uint256 b) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function wadToRay(uint256 a) internal pure returns (uint256 b) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 109,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 126,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solc experienced a fatal error"
+      ],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

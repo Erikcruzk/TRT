@@ -1,0 +1,149 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor () internal {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _primary = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        emit PrimaryTransferred(_primary);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == _primary, \"Secondary: caller is not the primary account\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(recipient != address(0), \"Secondary: new primary is the zero address\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == _primary, \"Secondary: caller is not the primary account\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(recipient != address(0), \"Secondary: new primary is the zero address\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": 39,
+          "vulnerability_code": "    function primary() public view returns (address) {\n\n        return _primary;\n",
+          "message": "Secondary.primary (SecondaryMock.sol#37-39) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": 49,
+          "vulnerability_code": "    function transferPrimary(address recipient) public onlyPrimary {\n\n        require(recipient != address(0), \"Secondary: new primary is the zero address\");\n\n        _primary = recipient;\n\n        emit PrimaryTransferred(_primary);\n",
+          "message": "Secondary.transferPrimary (SecondaryMock.sol#45-49) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": 59,
+          "vulnerability_code": "    function onlyPrimaryMock() public view onlyPrimary {\n\n        // solhint-disable-previous-line no-empty-blocks\n",
+          "message": "SecondaryMock.onlyPrimaryMock (SecondaryMock.sol#57-59) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": "Detected issues with version pragma in SecondaryMock.sol:\n\t- pragma solidity^0.5.0 (SecondaryMock.sol#3): it allows old versions\n\t- pragma solidity^0.5.0 (SecondaryMock.sol#54): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address private _primary;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

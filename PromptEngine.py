@@ -10,6 +10,7 @@ import openai
 from SmartContract import SmartContract;
 import logging
 from langchain.prompts import PromptTemplate
+from lib.py_sol_analyzer import explorer
 
 
 def concatenate_with_and(vulnerabilities: dict) -> str:
@@ -64,7 +65,14 @@ class PromptEngine:
                         vulnerability_name=repair_template_inputs['vulnerability_name'],
                         analyzer=repair_template_inputs['analyzer']
                     )
-                
+                case "sub-src---function":
+                    return self.templates["sub-src---function"].format(
+                        sc_language=self.sc.language,
+                        vulnerable_chunk=repair_template_inputs['vulnerable_chunk'],
+                        flattened_sc_source_code=explorer.Explorer.extract_code_context_with_line_numbers(repair_template_inputs['flattened_sc_source_code'], repair_template_inputs['vulnerability_from_line'], repair_template_inputs['vulnerability_to_line']),
+                        vulnerability_name=repair_template_inputs['vulnerability_name'],
+                        analyzer=repair_template_inputs['analyzer']
+                    )
                 case _:
                     raise KeyError()
                 

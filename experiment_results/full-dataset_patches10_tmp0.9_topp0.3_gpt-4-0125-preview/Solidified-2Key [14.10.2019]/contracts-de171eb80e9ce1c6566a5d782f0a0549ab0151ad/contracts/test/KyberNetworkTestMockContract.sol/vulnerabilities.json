@@ -1,0 +1,672 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool public transfersFrozen = false;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 272,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor (string _name, string _symbol, address _owner) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 273,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        name = _name;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 274,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        symbol = _symbol;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 275,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 276,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        decimals = 18;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 277,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        totalSupply_= 1000000000000000000000000000; // 1B tokens total minted supply\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 278,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        balances[_owner]= totalSupply_;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 279,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 319,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor() public\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 320,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 321,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_58"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "shadowing-state",
+          "vulnerability_from_line": 268,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    string public name;\n",
+          "message": "FungibleMockToken.name (KyberNetworkTestMockContract.sol#268) shadows:\n\t- StandardTokenModified.name (KyberNetworkTestMockContract.sol#105)\n"
+        },
+        {
+          "name": "shadowing-state",
+          "vulnerability_from_line": 269,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    string public symbol;\n",
+          "message": "FungibleMockToken.symbol (KyberNetworkTestMockContract.sol#269) shadows:\n\t- StandardTokenModified.symbol (KyberNetworkTestMockContract.sol#106)\n"
+        },
+        {
+          "name": "shadowing-state",
+          "vulnerability_from_line": 270,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint8 public decimals;\n",
+          "message": "FungibleMockToken.decimals (KyberNetworkTestMockContract.sol#270) shadows:\n\t- StandardTokenModified.decimals (KyberNetworkTestMockContract.sol#107)\n"
+        },
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 323,
+          "vulnerability_to_line": 332,
+          "vulnerability_code": "    function swapEtherToToken(\n\n        ERC20 token,\n\n        uint minConversionRate\n\n    )\n\n    public\n\n    payable\n\n    returns(uint)\n\n    {\n\n        return 1000;\n",
+          "message": "Contract locking ether found in KyberNetworkTestMockContract.sol:\n\tContract KyberNetworkTestMockContract has payable functions:\n\t - swapEtherToToken (KyberNetworkTestMockContract.sol#323-332)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "unused-return",
+          "vulnerability_from_line": 294,
+          "vulnerability_to_line": 297,
+          "vulnerability_code": "    function x(address contractY) public {\n\n        ft.approve(contractY, 100);\n\n        tb.getTokens();\n",
+          "message": "TestA.x (KyberNetworkTestMockContract.sol#294-297) does not use the value returned by external calls:\n\t-ft.approve(contractY,100) (KyberNetworkTestMockContract.sol#295)\n"
+        },
+        {
+          "name": "unused-return",
+          "vulnerability_from_line": 307,
+          "vulnerability_to_line": 309,
+          "vulnerability_code": "    function getTokens() public {\n\n        ft.transferFrom(msg.sender, address(this), 100);\n",
+          "message": "TestB.getTokens (KyberNetworkTestMockContract.sol#307-309) does not use the value returned by external calls:\n\t-ft.transferFrom(msg.sender,address(this),100) (KyberNetworkTestMockContract.sol#308)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 107,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint8 public decimals;\n",
+          "message": "StandardTokenModified.decimals should be constant (KyberNetworkTestMockContract.sol#107)\nStandardTokenModified.name should be constant (KyberNetworkTestMockContract.sol#105)\nStandardTokenModified.symbol should be constant (KyberNetworkTestMockContract.sol#106)\nStandardTokenModified.transfersFrozen should be constant (KyberNetworkTestMockContract.sol#108)\n"
+        },
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": "Different versions of Solidity is used in KyberNetworkTestMockContract.sol:\n\t- Version used: ['^0.4.0', '^0.4.24']\n\t- KyberNetworkTestMockContract.sol#3 declares pragma solidity^0.4.24\n\t- KyberNetworkTestMockContract.sol#25 declares pragma solidity^0.4.24\n\t- KyberNetworkTestMockContract.sol#37 declares pragma solidity^0.4.24\n\t- KyberNetworkTestMockContract.sol#92 declares pragma solidity^0.4.24\n\t- KyberNetworkTestMockContract.sol#261 declares pragma solidity^0.4.24\n\t- KyberNetworkTestMockContract.sol#314 declares pragma solidity^0.4.0\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 228,
+          "vulnerability_to_line": 230,
+          "vulnerability_code": "    function totalSupply() public view returns (uint256) {\n\n        return totalSupply_;\n",
+          "message": "StandardTokenModified.totalSupply (KyberNetworkTestMockContract.sol#228-230) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function totalSupply() public view returns (uint256);\n",
+          "message": "ERC20Basic.totalSupply (KyberNetworkTestMockContract.sol#12) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address _who) public view returns (uint256);\n",
+          "message": "ERC20Basic.balanceOf (KyberNetworkTestMockContract.sol#13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 251,
+          "vulnerability_to_line": 253,
+          "vulnerability_code": "    function balanceOf(address _owner) public view returns (uint256) {\n\n        return balances[_owner];\n",
+          "message": "StandardTokenModified.balanceOf (KyberNetworkTestMockContract.sol#251-253) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 237,
+          "vulnerability_to_line": 244,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public onlyIfNotFrozen returns (bool) {\n\n        require(_value <= balances[msg.sender]);\n\n        require(_to != address(0));\n\n        balances[msg.sender] = balances[msg.sender].sub(_value);\n\n        balances[_to] = balances[_to].add(_value);\n\n        emit Transfer(msg.sender, _to, _value);\n\n        return true;\n",
+          "message": "StandardTokenModified.transfer (KyberNetworkTestMockContract.sol#237-244) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address _to, uint256 _value) public returns (bool);\n",
+          "message": "ERC20Basic.transfer (KyberNetworkTestMockContract.sol#14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 166,
+          "vulnerability_to_line": 175,
+          "vulnerability_code": "    function allowance(\n\n        address _owner,\n\n        address _spender\n\n    )\n\n    public\n\n    view\n\n    returns (uint256)\n\n    {\n\n        return allowed[_owner][_spender];\n",
+          "message": "StandardTokenModified.allowance (KyberNetworkTestMockContract.sol#166-175) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function allowance(address _ocwner, address _spender) public view returns (uint256);\n",
+          "message": "ERC20Basic.allowance (KyberNetworkTestMockContract.sol#15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": 158,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) public returns (bool) {\n\n        allowed[msg.sender][_spender] = _value;\n\n        emit Approval(msg.sender, _spender, _value);\n\n        return true;\n",
+          "message": "StandardTokenModified.approve (KyberNetworkTestMockContract.sol#154-158) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address spender, uint tokens) public returns (bool success);\n",
+          "message": "ERC20Basic.approve (KyberNetworkTestMockContract.sol#16) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": 143,
+          "vulnerability_code": "    function transferFrom(\n\n        address _from,\n\n        address _to,\n\n        uint256 _value\n\n    )\n\n    public\n\n    onlyIfNotFrozen\n\n    returns (bool)\n\n    {\n\n        require(_value <= balances[_from]);\n\n        require(_value <= allowed[_from][msg.sender]);\n\n        require(_to != address(0));\n\n\n\n        balances[_from] = balances[_from].sub(_value);\n\n        balances[_to] = balances[_to].add(_value);\n\n        allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);\n\n        emit Transfer(_from, _to, _value);\n\n        return true;\n",
+          "message": "StandardTokenModified.transferFrom (KyberNetworkTestMockContract.sol#125-143) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address _from, address _to, uint256 _value) public returns (bool);\n",
+          "message": "ERC20Basic.transferFrom (KyberNetworkTestMockContract.sol#17) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 186,
+          "vulnerability_to_line": 197,
+          "vulnerability_code": "    function increaseApproval(\n\n        address _spender,\n\n        uint256 _addedValue\n\n    )\n\n    public\n\n    returns (bool)\n\n    {\n\n        allowed[msg.sender][_spender] = (\n\n        allowed[msg.sender][_spender].add(_addedValue));\n\n        emit Approval(msg.sender, _spender, allowed[msg.sender][_spender]);\n\n        return true;\n",
+          "message": "StandardTokenModified.increaseApproval (KyberNetworkTestMockContract.sol#186-197) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 208,
+          "vulnerability_to_line": 223,
+          "vulnerability_code": "    function decreaseApproval(\n\n        address _spender,\n\n        uint256 _subtractedValue\n\n    )\n\n    public\n\n    returns (bool)\n\n    {\n\n        uint256 oldValue = allowed[msg.sender][_spender];\n\n        if (_subtractedValue >= oldValue) {\n\n            allowed[msg.sender][_spender] = 0;\n\n        } else {\n\n            allowed[msg.sender][_spender] = oldValue.sub(_subtractedValue);\n\n        }\n\n        emit Approval(msg.sender, _spender, allowed[msg.sender][_spender]);\n\n        return true;\n",
+          "message": "StandardTokenModified.decreaseApproval (KyberNetworkTestMockContract.sol#208-223) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 289,
+          "vulnerability_to_line": 292,
+          "vulnerability_code": "    function setTestBAndFt(address _tb, address _ft) public {\n\n        tb = TestB(_tb);\n\n        ft = FungibleMockToken(_ft);\n",
+          "message": "TestA.setTestBAndFt (KyberNetworkTestMockContract.sol#289-292) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 294,
+          "vulnerability_to_line": 297,
+          "vulnerability_code": "    function x(address contractY) public {\n\n        ft.approve(contractY, 100);\n\n        tb.getTokens();\n",
+          "message": "TestA.x (KyberNetworkTestMockContract.sol#294-297) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 303,
+          "vulnerability_to_line": 305,
+          "vulnerability_code": "    function setTestBAndFt(address _ft) public {\n\n        ft = FungibleMockToken(_ft);\n",
+          "message": "TestB.setTestBAndFt (KyberNetworkTestMockContract.sol#303-305) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 307,
+          "vulnerability_to_line": 309,
+          "vulnerability_code": "    function getTokens() public {\n\n        ft.transferFrom(msg.sender, address(this), 100);\n",
+          "message": "TestB.getTokens (KyberNetworkTestMockContract.sol#307-309) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 323,
+          "vulnerability_to_line": 332,
+          "vulnerability_code": "    function swapEtherToToken(\n\n        ERC20 token,\n\n        uint minConversionRate\n\n    )\n\n    public\n\n    payable\n\n    returns(uint)\n\n    {\n\n        return 1000;\n",
+          "message": "KyberNetworkTestMockContract.swapEtherToToken (KyberNetworkTestMockContract.sol#323-332) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 335,
+          "vulnerability_to_line": 346,
+          "vulnerability_code": "    function getExpectedRate(\n\n        ERC20 src,\n\n        ERC20 dest,\n\n        uint srcQty\n\n    )\n\n    public\n\n    view\n\n    returns (uint expectedRate, uint slippageRate)\n\n    {\n\n        expectedRate = 1000;\n\n        slippageRate = 1;\n",
+          "message": "KyberNetworkTestMockContract.getExpectedRate (KyberNetworkTestMockContract.sol#335-346) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 349,
+          "vulnerability_to_line": 355,
+          "vulnerability_code": "    function getBalanceOfEtherOnContract()\n\n    public\n\n    view\n\n    returns (uint)\n\n    {\n\n        return address(this).balance;\n",
+          "message": "KyberNetworkTestMockContract.getBalanceOfEtherOnContract (KyberNetworkTestMockContract.sol#349-355) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 314,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;\n",
+          "message": "Detected issues with version pragma in KyberNetworkTestMockContract.sol:\n\t- pragma solidity^0.4.0 (KyberNetworkTestMockContract.sol#314): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function mul(uint256 _a, uint256 _b) internal pure returns (uint256 c) {\n",
+          "message": "Parameter '_a' of SafeMath.mul (KyberNetworkTestMockContract.sol#49) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function mul(uint256 _a, uint256 _b) internal pure returns (uint256 c) {\n",
+          "message": "Parameter '_b' of SafeMath.mul (KyberNetworkTestMockContract.sol#49) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function div(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_a' of SafeMath.div (KyberNetworkTestMockContract.sol#65) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function div(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_b' of SafeMath.div (KyberNetworkTestMockContract.sol#65) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 75,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function sub(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_a' of SafeMath.sub (KyberNetworkTestMockContract.sol#75) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 75,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function sub(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_b' of SafeMath.sub (KyberNetworkTestMockContract.sol#75) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function add(uint256 _a, uint256 _b) internal pure returns (uint256 c) {\n",
+          "message": "Parameter '_a' of SafeMath.add (KyberNetworkTestMockContract.sol#83) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function add(uint256 _a, uint256 _b) internal pure returns (uint256 c) {\n",
+          "message": "Parameter '_b' of SafeMath.add (KyberNetworkTestMockContract.sol#83) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 251,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address _owner) public view returns (uint256) {\n",
+          "message": "Parameter '_owner' of StandardTokenModified.balanceOf (KyberNetworkTestMockContract.sol#251) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 237,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public onlyIfNotFrozen returns (bool) {\n",
+          "message": "Parameter '_to' of StandardTokenModified.transfer (KyberNetworkTestMockContract.sol#237) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 237,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) public onlyIfNotFrozen returns (bool) {\n",
+          "message": "Parameter '_value' of StandardTokenModified.transfer (KyberNetworkTestMockContract.sol#237) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 167,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _owner,\n",
+          "message": "Parameter '_owner' of StandardTokenModified.allowance (KyberNetworkTestMockContract.sol#167) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 168,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _spender\n",
+          "message": "Parameter '_spender' of StandardTokenModified.allowance (KyberNetworkTestMockContract.sol#168) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_spender' of StandardTokenModified.approve (KyberNetworkTestMockContract.sol#154) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_value' of StandardTokenModified.approve (KyberNetworkTestMockContract.sol#154) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 126,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _from,\n",
+          "message": "Parameter '_from' of StandardTokenModified.transferFrom (KyberNetworkTestMockContract.sol#126) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 127,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _to,\n",
+          "message": "Parameter '_to' of StandardTokenModified.transferFrom (KyberNetworkTestMockContract.sol#127) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 128,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _value\n",
+          "message": "Parameter '_value' of StandardTokenModified.transferFrom (KyberNetworkTestMockContract.sol#128) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 187,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _spender,\n",
+          "message": "Parameter '_spender' of StandardTokenModified.increaseApproval (KyberNetworkTestMockContract.sol#187) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 188,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _addedValue\n",
+          "message": "Parameter '_addedValue' of StandardTokenModified.increaseApproval (KyberNetworkTestMockContract.sol#188) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 209,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _spender,\n",
+          "message": "Parameter '_spender' of StandardTokenModified.decreaseApproval (KyberNetworkTestMockContract.sol#209) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 210,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _subtractedValue\n",
+          "message": "Parameter '_subtractedValue' of StandardTokenModified.decreaseApproval (KyberNetworkTestMockContract.sol#210) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 272,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor (string _name, string _symbol, address _owner) public {\n",
+          "message": "Parameter '_name' of FungibleMockToken. (KyberNetworkTestMockContract.sol#272) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 272,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor (string _name, string _symbol, address _owner) public {\n",
+          "message": "Parameter '_symbol' of FungibleMockToken. (KyberNetworkTestMockContract.sol#272) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 272,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor (string _name, string _symbol, address _owner) public {\n",
+          "message": "Parameter '_owner' of FungibleMockToken. (KyberNetworkTestMockContract.sol#272) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 289,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setTestBAndFt(address _tb, address _ft) public {\n",
+          "message": "Parameter '_tb' of TestA.setTestBAndFt (KyberNetworkTestMockContract.sol#289) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 289,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setTestBAndFt(address _tb, address _ft) public {\n",
+          "message": "Parameter '_ft' of TestA.setTestBAndFt (KyberNetworkTestMockContract.sol#289) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 303,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setTestBAndFt(address _ft) public {\n",
+          "message": "Parameter '_ft' of TestB.setTestBAndFt (KyberNetworkTestMockContract.sol#303) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) public returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 317,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract KyberNetworkTestMockContract {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 92,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 261,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 314,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 272,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor (string _name, string _symbol, address _owner) public {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 272,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor (string _name, string _symbol, address _owner) public {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 268,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    string public name;\n",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 105,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    string public name;\n",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 308,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        ft.transferFrom(msg.sender, address(this), 100);\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 308,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        ft.transferFrom(msg.sender, address(this), 100);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 295,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        ft.approve(contractY, 100);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 296,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        tb.getTokens();\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 296,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        tb.getTokens();\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 296,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        tb.getTokens();\n",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 296,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        tb.getTokens();\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

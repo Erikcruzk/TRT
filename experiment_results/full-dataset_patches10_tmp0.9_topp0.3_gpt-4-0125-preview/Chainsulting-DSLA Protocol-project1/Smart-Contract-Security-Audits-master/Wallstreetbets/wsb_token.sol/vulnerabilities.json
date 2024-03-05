@@ -1,0 +1,416 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < receivers.length; i++) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(string memory name, string memory symbol, uint8 decimals) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _name = name;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _symbol = symbol;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _decimals = decimals;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < receivers.length; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < receivers.length; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_28"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": 101,
+          "vulnerability_code": "  constructor() public payable ERC20Detailed(tokenName, tokenSymbol, tokenDecimals) {\n\n    _mint(msg.sender, _totalSupply);\n",
+          "message": "Contract locking ether found in wsb_token.sol:\n\tContract WallstreetbetsToken has payable functions:\n\t - constructor (wsb_token.sol#99-101)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(string memory name, string memory symbol, uint8 decimals) public {\n",
+          "message": "ERC20Detailed.constructor.name (local variable @ wsb_token.sol#69) shadows:\n\t- ERC20Detailed.name (function @ wsb_token.sol#75-77)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(string memory name, string memory symbol, uint8 decimals) public {\n",
+          "message": "ERC20Detailed.constructor.symbol (local variable @ wsb_token.sol#69) shadows:\n\t- ERC20Detailed.symbol (function @ wsb_token.sol#79-81)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(string memory name, string memory symbol, uint8 decimals) public {\n",
+          "message": "ERC20Detailed.constructor.decimals (local variable @ wsb_token.sol#69) shadows:\n\t- ERC20Detailed.decimals (function @ wsb_token.sol#83-85)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 75,
+          "vulnerability_to_line": 77,
+          "vulnerability_code": "  function name() public view returns(string memory) {\n\n    return _name;\n",
+          "message": "ERC20Detailed.name (wsb_token.sol#75-77) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": 81,
+          "vulnerability_code": "  function symbol() public view returns(string memory) {\n\n    return _symbol;\n",
+          "message": "ERC20Detailed.symbol (wsb_token.sol#79-81) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": 85,
+          "vulnerability_code": "  function decimals() public view returns(uint8) {\n\n    return _decimals;\n",
+          "message": "ERC20Detailed.decimals (wsb_token.sol#83-85) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function totalSupply() external view returns (uint256);\n",
+          "message": "IERC20.totalSupply (wsb_token.sol#53) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 103,
+          "vulnerability_to_line": 105,
+          "vulnerability_code": "  function totalSupply() public view returns (uint256) {\n\n    return _totalSupply;\n",
+          "message": "WallstreetbetsToken.totalSupply (wsb_token.sol#103-105) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address who) external view returns (uint256);\n",
+          "message": "IERC20.balanceOf (wsb_token.sol#54) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 107,
+          "vulnerability_to_line": 109,
+          "vulnerability_code": "  function balanceOf(address owner) public view returns (uint256) {\n\n    return _balances[owner];\n",
+          "message": "WallstreetbetsToken.balanceOf (wsb_token.sol#107-109) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function allowance(address owner, address spender) external view returns (uint256);\n",
+          "message": "IERC20.allowance (wsb_token.sol#55) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 111,
+          "vulnerability_to_line": 113,
+          "vulnerability_code": "  function allowance(address owner, address spender) public view returns (uint256) {\n\n    return _allowed[owner][spender];\n",
+          "message": "WallstreetbetsToken.allowance (wsb_token.sol#111-113) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address spender, uint256 value) external returns (bool);\n",
+          "message": "IERC20.approve (wsb_token.sol#57) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": 139,
+          "vulnerability_code": "  function approve(address spender, uint256 value) public returns (bool) {\n\n    require(spender != address(0));\n\n    _allowed[msg.sender][spender] = value;\n\n    emit Approval(msg.sender, spender, value);\n\n    return true;\n",
+          "message": "WallstreetbetsToken.approve (wsb_token.sol#134-139) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": 155,
+          "vulnerability_code": "  function transferFrom(address from, address to, uint256 value) public returns (bool) {\n\n    require(value <= _balances[from]);\n\n    require(value <= _allowed[from][msg.sender]);\n\n    require(to != address(0));\n\n\n\n    _balances[from] = _balances[from].sub(value);\n\n    _balances[to] = _balances[to].add(value);\n\n    _totalSupply = _totalSupply.sub(value);\n\n\n\n    _allowed[from][msg.sender] = _allowed[from][msg.sender].sub(value);\n\n\n\n    emit Transfer(from, to, value);\n\n\n\n    return true;\n",
+          "message": "WallstreetbetsToken.transferFrom (wsb_token.sol#141-155) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address from, address to, uint256 value) external returns (bool);\n",
+          "message": "IERC20.transferFrom (wsb_token.sol#58) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 128,
+          "vulnerability_to_line": 132,
+          "vulnerability_code": "  function multiTransfer(address[] memory receivers, uint256[] memory amounts) public {\n\n    for (uint256 i = 0; i < receivers.length; i++) {\n\n      transfer(receivers[i], amounts[i]);\n\n    }\n",
+          "message": "WallstreetbetsToken.multiTransfer (wsb_token.sol#128-132) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 157,
+          "vulnerability_to_line": 162,
+          "vulnerability_code": "  function increaseAllowance(address spender, uint256 addedValue) public returns (bool) {\n\n    require(spender != address(0));\n\n    _allowed[msg.sender][spender] = (_allowed[msg.sender][spender].add(addedValue));\n\n    emit Approval(msg.sender, spender, _allowed[msg.sender][spender]);\n\n    return true;\n",
+          "message": "WallstreetbetsToken.increaseAllowance (wsb_token.sol#157-162) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 164,
+          "vulnerability_to_line": 169,
+          "vulnerability_code": "  function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool) {\n\n    require(spender != address(0));\n\n    _allowed[msg.sender][spender] = (_allowed[msg.sender][spender].sub(subtractedValue));\n\n    emit Approval(msg.sender, spender, _allowed[msg.sender][spender]);\n\n    return true;\n",
+          "message": "WallstreetbetsToken.decreaseAllowance (wsb_token.sol#164-169) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": "Detected issues with version pragma in wsb_token.sol:\n\t- pragma solidity^0.5.0 (wsb_token.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 171,
+          "vulnerability_to_line": 175,
+          "vulnerability_code": "  function _mint(address account, uint256 amount) internal {\n\n    require(amount != 0);\n\n    _balances[account] = _balances[account].add(amount);\n\n    emit Transfer(address(0), account, amount);\n",
+          "message": "Function 'WallstreetbetsToken._mint' (wsb_token.sol#171-175) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 181,
+          "vulnerability_to_line": 187,
+          "vulnerability_code": "  function _burn(address account, uint256 amount) internal {\n\n    require(amount != 0);\n\n    require(amount <= _balances[account]);\n\n    _totalSupply = _totalSupply.sub(amount);\n\n    _balances[account] = _balances[account].sub(amount);\n\n    emit Transfer(account, address(0), amount);\n",
+          "message": "Function 'WallstreetbetsToken._burn' (wsb_token.sol#181-187) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  string constant tokenName = \"Wallstreetbets\";\n",
+          "message": "Constant 'WallstreetbetsToken.tokenName' (wsb_token.sol#94) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 95,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  string constant tokenSymbol = \"WSB\";\n",
+          "message": "Constant 'WallstreetbetsToken.tokenSymbol' (wsb_token.sol#95) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint8  constant tokenDecimals = 18;\n",
+          "message": "Constant 'WallstreetbetsToken.tokenDecimals' (wsb_token.sol#96) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint256 _totalSupply = 1E27;\n",
+          "message": "Variable 'WallstreetbetsToken._totalSupply' (wsb_token.sol#97) is not in mixedCase\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  string constant tokenName = \"Wallstreetbets\";\n",
+          "message": "WallstreetbetsToken.tokenName (wsb_token.sol#94) is never used in WallstreetbetsToken\nWallstreetbetsToken.tokenSymbol (wsb_token.sol#95) is never used in WallstreetbetsToken\nWallstreetbetsToken.tokenDecimals (wsb_token.sol#96) is never used in WallstreetbetsToken\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_DIV_MUL",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    return mul(div(d,m),m);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address spender, uint256 value) public returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < receivers.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < receivers.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  string private _name;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  string private _symbol;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint8 private _decimals;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  mapping (address => uint256) private _balances;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 92,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  mapping (address => mapping (address => uint256)) private _allowed;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  string constant tokenName = \"Wallstreetbets\";\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 95,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  string constant tokenSymbol = \"WSB\";\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint8  constant tokenDecimals = 18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint256 _totalSupply = 1E27;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < receivers.length; i++) {\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        },
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 166,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _allowed[msg.sender][spender] = (_allowed[msg.sender][spender].sub(subtractedValue));\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

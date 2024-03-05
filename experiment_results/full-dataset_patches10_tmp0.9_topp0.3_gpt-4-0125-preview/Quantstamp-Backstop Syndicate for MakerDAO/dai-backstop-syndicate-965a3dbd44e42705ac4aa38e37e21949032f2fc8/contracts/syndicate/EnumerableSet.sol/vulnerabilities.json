@@ -1,0 +1,100 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i; i < set.values.length; i++){\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i; i < set.values.length; i++){\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i; i < set.values.length; i++){\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "uninitialized-local",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i; i < set.values.length; i++){\n",
+          "message": "i in EnumerableSet.enumerate (EnumerableSet.sol#97) is a local variable never initialiazed\n"
+        },
+        {
+          "name": "unused-return",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": 72,
+          "vulnerability_code": "  function remove(AuctionIDSet storage set, uint256 value)\n\n    internal\n\n    returns (bool)\n\n  {\n\n    if (contains(set, value)){\n\n      uint256 toDeleteIndex = set.index[value] - 1;\n\n      uint256 lastIndex = set.values.length - 1;\n\n\n\n      // If the element we're deleting is the last one, we can just remove it without doing a swap\n\n      if (lastIndex != toDeleteIndex) {\n\n        uint256 lastValue = set.values[lastIndex];\n\n\n\n        // Move the last value to the index where the deleted value is\n\n        set.values[toDeleteIndex] = lastValue;\n\n        // Update the index for the moved value\n\n        set.index[lastValue] = toDeleteIndex + 1; // All indexes are 1-based\n\n      }\n\n\n\n      // Delete the index entry for the deleted value\n\n      delete set.index[value];\n\n\n\n      // Delete the old entry for the moved value\n\n      set.values.pop();\n\n\n\n      return true;\n\n    } else {\n\n      return false;\n\n    }\n\n  }\n",
+          "message": "EnumerableSet.remove (EnumerableSet.sol#43-72) does not use the value returned by external calls:\n\t-set.values.pop() (EnumerableSet.sol#65)\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity 0.5.16;\n",
+          "message": "Detected issues with version pragma in EnumerableSet.sol:\n\t- pragma solidity0.5.16 (EnumerableSet.sol#3): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i; i < set.values.length; i++){\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i; i < set.values.length; i++){\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

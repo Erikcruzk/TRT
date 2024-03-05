@@ -1,0 +1,78 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": "Different versions of Solidity is used in Structs.sol:\n\t- Version used: ['ABIEncoderV2', '^0.5.16']\n\t- Structs.sol#3 declares pragma solidity^0.5.16\n\t- Structs.sol#4 declares pragma experimentalABIEncoderV2\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function writeEach(uint id, uint16 a, uint16 b, uint96 c) public {\n\n        Inner storage inner = outers[id].inners[msg.sender];\n\n        inner.a = a;\n\n        inner.b = b;\n\n        inner.c = c;\n",
+          "message": "Structs.writeEach (Structs.sol#20-25) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": 30,
+          "vulnerability_code": "    function writeOnce(uint id, uint16 a, uint16 b, uint96 c) public {\n\n        Inner memory inner = Inner({a: a, b: b, c: c});\n\n        outers[id].inners[msg.sender] = inner;\n",
+          "message": "Structs.writeOnce (Structs.sol#27-30) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": "Detected issues with version pragma in Structs.sol:\n\t- pragma solidity^0.5.16 (Structs.sol#3): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -1,0 +1,295 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_12"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 239,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (MathError err, Exp memory fraction) = divScalarByExp(scalar, divisor);\n",
+          "message": "Exponential.divScalarByExpTruncate.fraction (local variable @ Exponential.sol#239) shadows:\n\t- Exponential.fraction (function @ Exponential.sol#469-471)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 268,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        Exp memory fraction = div_ScalarByExp(scalar, divisor);\n",
+          "message": "Exponential.div_ScalarByExpTruncate.fraction (local variable @ Exponential.sol#268) shadows:\n\t- Exponential.fraction (function @ Exponential.sol#469-471)\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": "Detected issues with version pragma in Exponential.sol:\n\t- pragma solidity^0.5.16 (Exponential.sol#3): it allows old versions\n\t- pragma solidity^0.5.16 (Exponential.sol#91): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 190,
+          "vulnerability_to_line": 193,
+          "vulnerability_code": "    function mul_ScalarTruncate(Exp memory a, uint scalar) pure internal returns (uint) {\n\n        Exp memory product = mul_(a, scalar);\n\n        return truncate(product);\n",
+          "message": "Function 'Exponential.mul_ScalarTruncate' (Exponential.sol#190-193) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 198,
+          "vulnerability_to_line": 201,
+          "vulnerability_code": "    function mul_ScalarTruncateAddUInt(Exp memory a, uint scalar, uint addend) pure internal returns (uint) {\n\n        Exp memory product = mul_(a, scalar);\n\n        return add_(truncate(product), addend);\n",
+          "message": "Function 'Exponential.mul_ScalarTruncateAddUInt' (Exponential.sol#198-201) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 250,
+          "vulnerability_to_line": 262,
+          "vulnerability_code": "    function div_ScalarByExp(uint scalar, Exp memory divisor) pure internal returns (Exp memory) {\n\n        /*\n\n          We are doing this as:\n\n          getExp(mulUInt(expScale, scalar), divisor.mantissa)\n\n\n\n          How it works:\n\n          Exp = a / b;\n\n          Scalar = s;\n\n          `s / (a / b)` = `b * s / a` and since for an Exp `a = mantissa, b = expScale`\n\n        */\n\n        uint numerator = mul_(expScale, scalar);\n\n        return Exp({mantissa: div_(numerator, divisor)});\n",
+          "message": "Function 'Exponential.div_ScalarByExp' (Exponential.sol#250-262) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 267,
+          "vulnerability_to_line": 270,
+          "vulnerability_code": "    function div_ScalarByExpTruncate(uint scalar, Exp memory divisor) pure internal returns (uint) {\n\n        Exp memory fraction = div_ScalarByExp(scalar, divisor);\n\n        return truncate(fraction);\n",
+          "message": "Function 'Exponential.div_ScalarByExpTruncate' (Exponential.sol#267-270) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant expScale = 1e18;\n",
+          "message": "Constant 'Exponential.expScale' (Exponential.sol#101) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant doubleScale = 1e36;\n",
+          "message": "Constant 'Exponential.doubleScale' (Exponential.sol#102) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 103,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant halfExpScale = expScale/2;\n",
+          "message": "Constant 'Exponential.halfExpScale' (Exponential.sol#103) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 104,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant mantissaOne = expScale;\n",
+          "message": "Constant 'Exponential.mantissaOne' (Exponential.sol#104) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 104,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant mantissaOne = expScale;\n",
+          "message": "Exponential.mantissaOne (Exponential.sol#104) is never used in Exponential\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulUInt(uint a, uint b) internal pure returns (MathError, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divUInt(uint a, uint b) internal pure returns (MathError, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function subUInt(uint a, uint b) internal pure returns (MathError, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addUInt(uint a, uint b) internal pure returns (MathError, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addThenSubUInt(uint a, uint b, uint c) internal pure returns (MathError, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 119,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getExp(uint num, uint denom) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 136,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addExp(Exp memory a, Exp memory b) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function subExp(Exp memory a, Exp memory b) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulScalar(Exp memory a, uint scalar) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 166,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulScalarTruncate(Exp memory a, uint scalar) pure internal returns (MathError, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 178,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulScalarTruncateAddUInt(Exp memory a, uint scalar, uint addend) pure internal returns (MathError, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 206,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divScalar(Exp memory a, uint scalar) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 218,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divScalarByExp(uint scalar, Exp memory divisor) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 238,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divScalarByExpTruncate(uint scalar, Exp memory divisor) pure internal returns (MathError, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 275,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulExp(Exp memory a, Exp memory b) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 300,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulExp(uint a, uint b) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 307,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulExp3(Exp memory a, Exp memory b, Exp memory c) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 320,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divExp(Exp memory a, Exp memory b) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant expScale = 1e18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant doubleScale = 1e36;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 103,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant halfExpScale = expScale/2;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 104,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant mantissaOne = expScale;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

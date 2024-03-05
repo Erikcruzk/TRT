@@ -1,0 +1,133 @@
+
+
+pragma solidity ^0.4.24;
+
+
+
+
+
+contract Proxy {
+
+    
+
+
+
+    function implementation() public view returns (address);
+
+    
+
+
+
+    function () payable public {
+        address _impl = implementation();
+        require(_impl != address(0));
+
+        assembly {
+            let ptr := mload(0x40)
+            calldatacopy(ptr, 0, calldatasize)
+            let result := delegatecall(gas, _impl, ptr, calldatasize, 0, 0)
+            let size := returndatasize
+            returndatacopy(ptr, 0, size)
+
+            switch result
+            case 0 { revert(ptr, size) }
+            default { return(ptr, size) }
+        }
+    }
+}
+
+
+
+pragma solidity ^0.4.24;
+
+
+
+
+
+interface ITwoKeySingletonesRegistry {
+
+    
+
+
+
+    event ProxyCreated(address proxy);
+
+
+    
+
+
+
+
+    event VersionAdded(string version, address implementation);
+
+    
+
+
+
+
+    function addVersion(string _contractName, string version, address implementation) public;
+
+    
+
+
+
+
+
+    function getVersion(string _contractName, string version) public view returns (address);
+}
+
+
+
+pragma solidity ^0.4.24;
+
+
+
+
+
+contract UpgradeabilityStorage {
+    
+    ITwoKeySingletonesRegistry internal registry;
+
+    
+    address internal _implementation;
+
+    
+
+
+
+    function implementation() public view returns (address) {
+        return _implementation;
+    }
+}
+
+
+
+pragma solidity ^0.4.18;
+
+
+
+
+
+
+
+contract UpgradeabilityProxy is Proxy, UpgradeabilityStorage {
+
+    
+    
+
+
+    constructor (string _contractName, string _version) public {
+        registry = ITwoKeySingletonesRegistry(msg.sender);
+        _implementation = registry.getVersion(_contractName, _version);
+    }
+
+    
+
+
+
+    function upgradeTo(string _contractName, string _version, address _impl) public {
+        require(msg.sender == address(registry));
+        _implementation = _impl;
+    }
+
+}

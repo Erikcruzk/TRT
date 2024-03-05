@@ -1,0 +1,78 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 15,
+          "vulnerability_code": "    function thirdpartyExecutionAllowed(address derivativeOwner) public view returns (bool) {\n\n        return thirdpartyExecutionAllowance[derivativeOwner];\n",
+          "message": "ExecutableByThirdParty.thirdpartyExecutionAllowed (ExecutableByThirdParty.sol#13-15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 21,
+          "vulnerability_code": "    function allowThirdpartyExecution(bool allow) public {\n\n        thirdpartyExecutionAllowance[msg.sender] = allow;\n",
+          "message": "ExecutableByThirdParty.allowThirdpartyExecution (ExecutableByThirdParty.sol#19-21) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": "Detected issues with version pragma in ExecutableByThirdParty.sol:\n\t- pragma solidity^0.5.4 (ExecutableByThirdParty.sol#3): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping (address => bool) thirdpartyExecutionAllowance;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

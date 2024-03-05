@@ -1,0 +1,150 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 110,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 111,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        testToken = new TestERC20BridgeToken();\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 112,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": 152,
+          "vulnerability_code": "    function withdrawTo(\n\n        address tokenAddress,\n\n        address from,\n\n        address to,\n\n        uint256 amount,\n\n        bytes calldata bridgeData\n\n    )\n\n        external\n\n        returns (bytes4)\n\n    {\n\n        emit BridgeWithdrawTo(\n\n            tokenAddress,\n\n            from,\n\n            to,\n\n            amount,\n\n            bridgeData\n\n        );\n\n        // Unpack the bridgeData.\n\n        (\n\n            int256 transferAmount,\n\n            bytes memory revertData,\n\n            bytes memory returnData\n\n        ) = abi.decode(bridgeData, (int256, bytes, bytes));\n\n\n\n        // If `revertData` is set, revert.\n\n        if (revertData.length != 0) {\n\n            assembly { revert(add(revertData, 0x20), mload(revertData)) }\n\n        }\n\n        // Increase `to`'s balance by `transferAmount`.\n\n        TestERC20BridgeToken(tokenAddress).addBalance(to, transferAmount);\n\n        // Return `returnData`.\n\n        assembly { return(add(returnData, 0x20), mload(returnData)) }\n",
+          "message": "TestERC20Bridge.withdrawTo uses assembly (TestERC20Bridge.sol#120-152)\n\t- TestERC20Bridge.sol#146\n\t- TestERC20Bridge.sol#151\n"
+        },
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.9;\n",
+          "message": "Different versions of Solidity is used in TestERC20Bridge.sol:\n\t- Version used: ['ABIEncoderV2', '^0.5.9']\n\t- TestERC20Bridge.sol#21 declares pragma solidity^0.5.9\n\t- TestERC20Bridge.sol#67 declares pragma solidity^0.5.9\n\t- TestERC20Bridge.sol#68 declares pragma experimentalABIEncoderV2\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.9;\n",
+          "message": "Detected issues with version pragma in TestERC20Bridge.sol:\n\t- pragma solidity^0.5.9 (TestERC20Bridge.sol#21): it allows old versions\n\t- pragma solidity^0.5.9 (TestERC20Bridge.sol#67): it allows old versions\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes4 constant internal BRIDGE_SUCCESS = 0xdc1600f3;\n",
+          "message": "IERC20Bridge.BRIDGE_SUCCESS (TestERC20Bridge.sol#27) is never used in TestERC20Bridge\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes4 constant internal BRIDGE_SUCCESS = 0xdc1600f3;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdrawTo(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.9;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.9;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping (address => uint256) private _balances;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            assembly { revert(add(revertData, 0x20), mload(revertData)) }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 151,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { return(add(returnData, 0x20), mload(returnData)) }\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        setBalance(owner, uint256(int256(balanceOf(owner)) + amount));\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

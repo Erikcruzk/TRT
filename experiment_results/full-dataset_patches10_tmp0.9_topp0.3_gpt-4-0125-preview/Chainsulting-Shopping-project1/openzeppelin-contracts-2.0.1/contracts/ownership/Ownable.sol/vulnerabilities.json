@@ -1,0 +1,123 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor() internal {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _owner = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    emit OwnershipTransferred(address(0), _owner);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": 32,
+          "vulnerability_code": "  function owner() public view returns(address) {\n\n    return _owner;\n",
+          "message": "Ownable.owner (Ownable.sol#30-32) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": 58,
+          "vulnerability_code": "  function renounceOwnership() public onlyOwner {\n\n    emit OwnershipTransferred(_owner, address(0));\n\n    _owner = address(0);\n",
+          "message": "Ownable.renounceOwnership (Ownable.sol#55-58) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 64,
+          "vulnerability_to_line": 66,
+          "vulnerability_code": "  function transferOwnership(address newOwner) public onlyOwner {\n\n    _transferOwnership(newOwner);\n",
+          "message": "Ownable.transferOwnership (Ownable.sol#64-66) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": 76,
+          "vulnerability_code": "  function _transferOwnership(address newOwner) internal {\n\n    require(newOwner != address(0));\n\n    emit OwnershipTransferred(_owner, newOwner);\n\n    _owner = newOwner;\n",
+          "message": "Function 'Ownable._transferOwnership' (Ownable.sol#72-76) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _owner = address(0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  address private _owner;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "execution failed"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": false,
+      "errors": [
+        "input files do not contain any valid contracts"
+      ],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

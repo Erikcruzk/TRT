@@ -1,0 +1,253 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(msg.sender.call(abi.encodeWithSelector(data)));\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "inefficient-state-variable-increment",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _guardCounter += 1;\n",
+          "message": "<x> += <y> costs more gas than <x> = <x> + <y> for state variables."
+        },
+        {
+          "name": "inefficient-state-variable-increment",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    counter += 1;\n",
+          "message": "<x> += <y> costs more gas than <x> = <x> + <y> for state variables."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor() internal {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    // The counter starts at one to prevent changing it from zero to a non-zero\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    // value, which is a more expensive operation.\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _guardCounter = 1;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    counter = 0;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": 48,
+          "vulnerability_code": "  function callSender(bytes4 data) public {\n\n    // solium-disable-next-line security/no-low-level-calls\n\n    require(msg.sender.call(abi.encodeWithSelector(data)));\n\n  }\n",
+          "message": "ReentrancyAttack.callSender (ReentrancyMock.sol#44-48) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 75,
+          "vulnerability_to_line": 83,
+          "vulnerability_code": "  function countThisRecursive(uint256 n) public nonReentrant {\n\n    if (n > 0) {\n\n      count();\n\n      // solium-disable-next-line security/no-low-level-calls\n\n      bool result = address(this).call(abi.encodeWithSignature(\"countThisRecursive(uint256)\", n - 1));\n\n      require(result == true);\n\n    }\n\n  }\n",
+          "message": "ReentrancyMock.countThisRecursive (ReentrancyMock.sol#75-83) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 84,
+          "vulnerability_to_line": 89,
+          "vulnerability_code": "  function countAndCall(ReentrancyAttack attacker) public nonReentrant {\n\n    count();\n\n    bytes4 func = bytes4(keccak256(\"callback()\"));\n\n    attacker.callSender(func);\n\n  }\n",
+          "message": "ReentrancyMock.countAndCall (ReentrancyMock.sol#84-89) should be declared external\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": 48,
+          "vulnerability_code": "  function callSender(bytes4 data) public {\n\n    // solium-disable-next-line security/no-low-level-calls\n\n    require(msg.sender.call(abi.encodeWithSelector(data)));\n\n  }\n",
+          "message": "Low level call in ReentrancyAttack.callSender (ReentrancyMock.sol#44-48):\n\t-require(bool)(msg.sender.call(abi.encodeWithSelector(data))) ReentrancyMock.sol#46\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 75,
+          "vulnerability_to_line": 83,
+          "vulnerability_code": "  function countThisRecursive(uint256 n) public nonReentrant {\n\n    if (n > 0) {\n\n      count();\n\n      // solium-disable-next-line security/no-low-level-calls\n\n      bool result = address(this).call(abi.encodeWithSignature(\"countThisRecursive(uint256)\", n - 1));\n\n      require(result == true);\n\n    }\n\n  }\n",
+          "message": "Low level call in ReentrancyMock.countThisRecursive (ReentrancyMock.sol#75-83):\n\t-result = address(this).call(abi.encodeWithSignature(countThisRecursive(uint256),n - 1)) ReentrancyMock.sol#79\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint256 private _guardCounter;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UNCHECKED_CALL",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    attacker.callSender(func);\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(msg.sender.call(abi.encodeWithSelector(data)));\n",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(msg.sender.call(abi.encodeWithSelector(data)));\n",
+          "message": null
+        },
+        {
+          "name": "Callstack Depth Attack Vulnerability",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      bool result = address(this).call(abi.encodeWithSignature(\"countThisRecursive(uint256)\", n - 1));\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(msg.sender.call(abi.encodeWithSelector(data)));\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(localCounter == _guardCounter);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    attacker.callSender(func);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(localCounter == _guardCounter);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _guardCounter += 1;\n",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    counter += 1;\n",
+          "message": null
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,486 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 128,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address _implementation) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assert(IMPLEMENTATION_SLOT == keccak256(\"org.zeppelinos.proxy.implementation\"));\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 131,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _setImplementation(_implementation);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 132,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 205,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address _implementation) UpgradeabilityProxy(_implementation) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 206,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assert(ADMIN_SLOT == keccak256(\"org.zeppelinos.proxy.admin\"));\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 207,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 208,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _setAdmin(msg.sender);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 209,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 261,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _implementation) public AdminUpgradeabilityProxy(_implementation) {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 262,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(AddressUtils.isContract(newImplementation), \"Cannot set a proxy implementation to a non-contract address\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 226,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(newAdmin != address(0), \"Cannot change the admin of a proxy to the zero address\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(AddressUtils.isContract(newImplementation), \"Cannot set a proxy implementation to a non-contract address\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 226,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(newAdmin != address(0), \"Cannot change the admin of a proxy to the zero address\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_26"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": 100,
+          "vulnerability_code": "  function isContract(address addr) internal view returns (bool) {\n\n    uint256 size;\n\n    // XXX Currently there is no better way to check if there is a contract in an address\n\n    // than to check the size of the code at that address.\n\n    // See https://ethereum.stackexchange.com/a/14016/36603\n\n    // for more details about how this works.\n\n    // TODO Check this again before the Serenity release, because all addresses will be\n\n    // contracts then.\n\n    // solium-disable-next-line security/no-inline-assembly\n\n    assembly { size := extcodesize(addr) }\n\n    return size > 0;\n",
+          "message": "AddressUtils.isContract (KaoyaProxy.sol#89-100) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": 139,
+          "vulnerability_code": "  function _implementation() internal override view returns (address impl) {\n\n    bytes32 slot = IMPLEMENTATION_SLOT;\n\n    assembly {\n\n      impl := sload(slot)\n\n    }\n",
+          "message": "UpgradeabilityProxy._implementation (KaoyaProxy.sol#134-139) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 239,
+          "vulnerability_to_line": 244,
+          "vulnerability_code": "  function _admin() internal view returns (address adm) {\n\n    bytes32 slot = ADMIN_SLOT;\n\n    assembly {\n\n      adm := sload(slot)\n\n    }\n",
+          "message": "AdminUpgradeabilityProxy._admin (KaoyaProxy.sol#239-244) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 23,
+          "vulnerability_code": "  receive() payable external{\n\n    assert(msg.sender == wbnb); // only accept ETH via fallback from the WETH contract\n",
+          "message": "Contract locking ether found in KaoyaProxy.sol:\n\tContract KaoyaProxy has payable functions:\n\t - fallback (KaoyaProxy.sol#21-23)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 128,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address _implementation) public {\n",
+          "message": "UpgradeabilityProxy.constructor._implementation (local variable @ KaoyaProxy.sol#128) shadows:\n\t- UpgradeabilityProxy._implementation (function @ KaoyaProxy.sol#134-139)\n\t- Proxy._implementation (function @ KaoyaProxy.sol#28)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 205,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address _implementation) UpgradeabilityProxy(_implementation) public {\n",
+          "message": "AdminUpgradeabilityProxy.constructor._implementation (local variable @ KaoyaProxy.sol#205) shadows:\n\t- UpgradeabilityProxy._implementation (function @ KaoyaProxy.sol#134-139)\n\t- Proxy._implementation (function @ KaoyaProxy.sol#28)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 261,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _implementation) public AdminUpgradeabilityProxy(_implementation) {\n",
+          "message": "KaoyaProxy.constructor._implementation (local variable @ KaoyaProxy.sol#261) shadows:\n\t- UpgradeabilityProxy._implementation (function @ KaoyaProxy.sol#134-139)\n\t- Proxy._implementation (function @ KaoyaProxy.sol#28)\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": 55,
+          "vulnerability_code": "  function _delegate(address implementation) internal {\n\n    assembly {\n\n      // Copy msg.data. We take full control of memory in this inline assembly\n\n      // block because it will not return to Solidity code. We overwrite the\n\n      // Solidity scratch pad at memory position 0.\n\n      calldatacopy(0, 0, calldatasize())\n\n\n\n      // Call the implementation.\n\n      // out and outsize are 0 because we don't know the size yet.\n\n      let result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)\n\n\n\n      // Copy the returned data.\n\n      returndatacopy(0, 0, returndatasize())\n\n\n\n      switch result\n\n      // delegatecall returns 0 on error.\n\n      case 0 { revert(0, returndatasize()) }\n\n      default { return(0, returndatasize()) }\n\n    }\n",
+          "message": "Proxy._delegate uses assembly (KaoyaProxy.sol#36-55)\n\t- KaoyaProxy.sol#37-54\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": 100,
+          "vulnerability_code": "  function isContract(address addr) internal view returns (bool) {\n\n    uint256 size;\n\n    // XXX Currently there is no better way to check if there is a contract in an address\n\n    // than to check the size of the code at that address.\n\n    // See https://ethereum.stackexchange.com/a/14016/36603\n\n    // for more details about how this works.\n\n    // TODO Check this again before the Serenity release, because all addresses will be\n\n    // contracts then.\n\n    // solium-disable-next-line security/no-inline-assembly\n\n    assembly { size := extcodesize(addr) }\n\n    return size > 0;\n",
+          "message": "AddressUtils.isContract uses assembly (KaoyaProxy.sol#89-100)\n\t- KaoyaProxy.sol#98\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": 139,
+          "vulnerability_code": "  function _implementation() internal override view returns (address impl) {\n\n    bytes32 slot = IMPLEMENTATION_SLOT;\n\n    assembly {\n\n      impl := sload(slot)\n\n    }\n",
+          "message": "UpgradeabilityProxy._implementation uses assembly (KaoyaProxy.sol#134-139)\n\t- KaoyaProxy.sol#136-138\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": 162,
+          "vulnerability_code": "  function _setImplementation(address newImplementation) private {\n\n    require(AddressUtils.isContract(newImplementation), \"Cannot set a proxy implementation to a non-contract address\");\n\n\n\n    bytes32 slot = IMPLEMENTATION_SLOT;\n\n\n\n    assembly {\n\n      sstore(slot, newImplementation)\n\n    }\n",
+          "message": "UpgradeabilityProxy._setImplementation uses assembly (KaoyaProxy.sol#154-162)\n\t- KaoyaProxy.sol#159-161\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 239,
+          "vulnerability_to_line": 244,
+          "vulnerability_code": "  function _admin() internal view returns (address adm) {\n\n    bytes32 slot = ADMIN_SLOT;\n\n    assembly {\n\n      adm := sload(slot)\n\n    }\n",
+          "message": "AdminUpgradeabilityProxy._admin uses assembly (KaoyaProxy.sol#239-244)\n\t- KaoyaProxy.sol#241-243\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 245,
+          "vulnerability_to_line": 251,
+          "vulnerability_code": "  function _setAdmin(address newAdmin) internal {\n\n    bytes32 slot = ADMIN_SLOT;\n\n\n\n    assembly {\n\n      sstore(slot, newAdmin)\n\n    }\n",
+          "message": "AdminUpgradeabilityProxy._setAdmin uses assembly (KaoyaProxy.sol#245-251)\n\t- KaoyaProxy.sol#248-250\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.12;\n",
+          "message": "Detected issues with version pragma in KaoyaProxy.sol:\n\t- pragma solidity^0.6.12 (KaoyaProxy.sol#3): it allows old versions\n\t- pragma solidity^0.6.12 (KaoyaProxy.sol#258): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _implementation() internal virtual view returns (address);\n",
+          "message": "Function 'Proxy._implementation' (KaoyaProxy.sol#28) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": 55,
+          "vulnerability_code": "  function _delegate(address implementation) internal {\n\n    assembly {\n\n      // Copy msg.data. We take full control of memory in this inline assembly\n\n      // block because it will not return to Solidity code. We overwrite the\n\n      // Solidity scratch pad at memory position 0.\n\n      calldatacopy(0, 0, calldatasize())\n\n\n\n      // Call the implementation.\n\n      // out and outsize are 0 because we don't know the size yet.\n\n      let result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)\n\n\n\n      // Copy the returned data.\n\n      returndatacopy(0, 0, returndatasize())\n\n\n\n      switch result\n\n      // delegatecall returns 0 on error.\n\n      case 0 { revert(0, returndatasize()) }\n\n      default { return(0, returndatasize()) }\n\n    }\n",
+          "message": "Function 'Proxy._delegate' (KaoyaProxy.sol#36-55) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": 63,
+          "vulnerability_code": "  function _willFallback() internal virtual {\n",
+          "message": "Function 'Proxy._willFallback' (KaoyaProxy.sol#62-63) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": 72,
+          "vulnerability_code": "  function _fallback() internal {\n\n    _willFallback();\n\n    _delegate(_implementation());\n",
+          "message": "Function 'Proxy._fallback' (KaoyaProxy.sol#69-72) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": 139,
+          "vulnerability_code": "  function _implementation() internal override view returns (address impl) {\n\n    bytes32 slot = IMPLEMENTATION_SLOT;\n\n    assembly {\n\n      impl := sload(slot)\n\n    }\n",
+          "message": "Function 'UpgradeabilityProxy._implementation' (KaoyaProxy.sol#134-139) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 128,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address _implementation) public {\n",
+          "message": "Parameter '_implementation' of UpgradeabilityProxy. (KaoyaProxy.sol#128) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": 148,
+          "vulnerability_code": "  function _upgradeTo(address newImplementation) internal {\n\n    _setImplementation(newImplementation);\n\n    emit Upgraded(newImplementation);\n",
+          "message": "Function 'UpgradeabilityProxy._upgradeTo' (KaoyaProxy.sol#145-148) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": 162,
+          "vulnerability_code": "  function _setImplementation(address newImplementation) private {\n\n    require(AddressUtils.isContract(newImplementation), \"Cannot set a proxy implementation to a non-contract address\");\n\n\n\n    bytes32 slot = IMPLEMENTATION_SLOT;\n\n\n\n    assembly {\n\n      sstore(slot, newImplementation)\n\n    }\n",
+          "message": "Function 'UpgradeabilityProxy._setImplementation' (KaoyaProxy.sol#154-162) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 253,
+          "vulnerability_to_line": 255,
+          "vulnerability_code": "  function _willFallback() internal override {\n\n    super._willFallback();\n",
+          "message": "Function 'AdminUpgradeabilityProxy._willFallback' (KaoyaProxy.sol#253-255) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 230,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setwbnb(address _wbnb) external ifAdmin{\n",
+          "message": "Parameter '_wbnb' of AdminUpgradeabilityProxy.setwbnb (KaoyaProxy.sol#230) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 239,
+          "vulnerability_to_line": 244,
+          "vulnerability_code": "  function _admin() internal view returns (address adm) {\n\n    bytes32 slot = ADMIN_SLOT;\n\n    assembly {\n\n      adm := sload(slot)\n\n    }\n",
+          "message": "Function 'AdminUpgradeabilityProxy._admin' (KaoyaProxy.sol#239-244) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 245,
+          "vulnerability_to_line": 251,
+          "vulnerability_code": "  function _setAdmin(address newAdmin) internal {\n\n    bytes32 slot = ADMIN_SLOT;\n\n\n\n    assembly {\n\n      sstore(slot, newAdmin)\n\n    }\n",
+          "message": "Function 'AdminUpgradeabilityProxy._setAdmin' (KaoyaProxy.sol#245-251) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  address wbnb = 0xD7AE40e5EF906caD1633bDBFE47cCe04c4fcf28B;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _implementation() internal override view returns (address impl) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 239,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _admin() internal view returns (address adm) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.12;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 258,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.12;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 122,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes32 private constant IMPLEMENTATION_SLOT = 0x7050c9e0f4ca769c69bd3a8ef740bc37934f8e2c036e5a723fd8ee048ed3f8c3;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 185,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes32 private constant ADMIN_SLOT = 0x10d6a54a4754c8869d6886b5f5d7fbfa5b4522237ea5c60d11bc4e7a1ff9390b;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function isContract(address addr) internal view returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _implementation() internal override view returns (address impl) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 239,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _admin() internal view returns (address adm) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 136,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 159,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 241,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 248,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  address wbnb = 0xD7AE40e5EF906caD1633bDBFE47cCe04c4fcf28B;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  fallback() payable external {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _fallback();\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assert(msg.sender == wbnb); // only accept ETH via fallback from the WETH contract\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        },
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assert(msg.sender == wbnb); // only accept ETH via fallback from the WETH contract\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        },
+        {
+          "name": "Delegatecall to user-supplied address (SWC 112)",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      let result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)\n",
+          "message": "The contract delegates execution to another contract with a user-supplied address.\nThe smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.\nClassification: SWC-112"
+        },
+        {
+          "name": "Delegatecall to user-supplied address (SWC 112)",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      let result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)\n",
+          "message": "The contract delegates execution to another contract with a user-supplied address.\nThe smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.\nClassification: SWC-112"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

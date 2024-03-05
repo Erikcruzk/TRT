@@ -1,0 +1,283 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_23"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "erc20-interface",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": 109,
+          "vulnerability_code": "contract ERC721Basic is ERC165 {\n\n\n\n  bytes4 internal constant InterfaceId_ERC721 = 0x80ac58cd;\n\n  /*\n\n   * 0x80ac58cd ===\n\n   *   bytes4(keccak256('balanceOf(address)')) ^\n\n   *   bytes4(keccak256('ownerOf(uint256)')) ^\n\n   *   bytes4(keccak256('approve(address,uint256)')) ^\n\n   *   bytes4(keccak256('getApproved(uint256)')) ^\n\n   *   bytes4(keccak256('setApprovalForAll(address,bool)')) ^\n\n   *   bytes4(keccak256('isApprovedForAll(address,address)')) ^\n\n   *   bytes4(keccak256('transferFrom(address,address,uint256)')) ^\n\n   *   bytes4(keccak256('safeTransferFrom(address,address,uint256)')) ^\n\n   *   bytes4(keccak256('safeTransferFrom(address,address,uint256,bytes)'))\n\n   */\n\n\n\n  bytes4 internal constant InterfaceId_ERC721Exists = 0x4f558e79;\n\n  /*\n\n   * 0x4f558e79 ===\n\n   *   bytes4(keccak256('exists(uint256)'))\n\n   */\n\n\n\n  bytes4 internal constant InterfaceId_ERC721Enumerable = 0x780e9d63;\n\n  /**\n\n   * 0x780e9d63 ===\n\n   *   bytes4(keccak256('totalSupply()')) ^\n\n   *   bytes4(keccak256('tokenOfOwnerByIndex(address,uint256)')) ^\n\n   *   bytes4(keccak256('tokenByIndex(uint256)'))\n\n   */\n\n\n\n  bytes4 internal constant InterfaceId_ERC721Metadata = 0x5b5e139f;\n\n  /**\n\n   * 0x5b5e139f ===\n\n   *   bytes4(keccak256('name()')) ^\n\n   *   bytes4(keccak256('symbol()')) ^\n\n   *   bytes4(keccak256('tokenURI(uint256)'))\n\n   */\n\n\n\n  event Transfer(\n\n    address indexed _from,\n\n    address indexed _to,\n\n    uint256 indexed _tokenId\n\n  );\n\n  event Approval(\n\n    address indexed _owner,\n\n    address indexed _approved,\n\n    uint256 indexed _tokenId\n\n  );\n\n  event ApprovalForAll(\n\n    address indexed _owner,\n\n    address indexed _operator,\n\n    bool _approved\n\n  );\n\n\n\n  function balanceOf(address _owner) public view returns (uint256 _balance);\n\n  function ownerOf(uint256 _tokenId) public view returns (address _owner);\n\n  function exists(uint256 _tokenId) public view returns (bool _exists);\n\n\n\n  function approve(address _to, uint256 _tokenId) public;\n\n  function getApproved(uint256 _tokenId)\n\n    public view returns (address _operator);\n\n\n\n  function setApprovalForAll(address _operator, bool _approved) public;\n\n  function isApprovedForAll(address _owner, address _operator)\n\n    public view returns (bool);\n\n\n\n  function transferFrom(address _from, address _to, uint256 _tokenId) public;\n\n  function safeTransferFrom(address _from, address _to, uint256 _tokenId)\n\n    public;\n\n\n\n  function safeTransferFrom(\n\n    address _from,\n\n    address _to,\n\n    uint256 _tokenId,\n\n    bytes _data\n\n  )\n\n    public;\n",
+          "message": "ERC721Basic (DeprecatedERC721.sol#32-109) has incorrect ERC20 function interface(s):\n\t-approve (DeprecatedERC721.sol#90)\n\t-transferFrom (DeprecatedERC721.sol#98)\n"
+        },
+        {
+          "name": "erc20-interface",
+          "vulnerability_from_line": 160,
+          "vulnerability_to_line": 164,
+          "vulnerability_code": "contract DeprecatedERC721 is ERC721 {\n\n  function takeOwnership(uint256 _tokenId) public;\n\n  function transfer(address _to, uint256 _tokenId) public;\n\n  function tokensOf(address _owner) public view returns (uint256[]);\n",
+          "message": "DeprecatedERC721 (DeprecatedERC721.sol#160-164) has incorrect ERC20 function interface(s):\n\t-transfer (DeprecatedERC721.sol#162)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address _owner) public view returns (uint256 _balance);\n",
+          "message": "ERC721Basic.balanceOf (DeprecatedERC721.sol#86) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function ownerOf(uint256 _tokenId) public view returns (address _owner);\n",
+          "message": "ERC721Basic.ownerOf (DeprecatedERC721.sol#87) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function exists(uint256 _tokenId) public view returns (bool _exists);\n",
+          "message": "ERC721Basic.exists (DeprecatedERC721.sol#88) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address _to, uint256 _tokenId) public;\n",
+          "message": "ERC721Basic.approve (DeprecatedERC721.sol#90) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": 92,
+          "vulnerability_code": "  function getApproved(uint256 _tokenId)\n",
+          "message": "ERC721Basic.getApproved (DeprecatedERC721.sol#91-92) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setApprovalForAll(address _operator, bool _approved) public;\n",
+          "message": "ERC721Basic.setApprovalForAll (DeprecatedERC721.sol#94) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 95,
+          "vulnerability_to_line": 96,
+          "vulnerability_code": "  function isApprovedForAll(address _owner, address _operator)\n",
+          "message": "ERC721Basic.isApprovedForAll (DeprecatedERC721.sol#95-96) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address _from, address _to, uint256 _tokenId) public;\n",
+          "message": "ERC721Basic.transferFrom (DeprecatedERC721.sol#98) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": 100,
+          "vulnerability_code": "  function safeTransferFrom(address _from, address _to, uint256 _tokenId)\n",
+          "message": "ERC721Basic.safeTransferFrom (DeprecatedERC721.sol#99-100) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": 108,
+          "vulnerability_code": "  function safeTransferFrom(\n\n    address _from,\n\n    address _to,\n\n    uint256 _tokenId,\n\n    bytes _data\n\n  )\n",
+          "message": "ERC721Basic.safeTransferFrom (DeprecatedERC721.sol#102-108) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function totalSupply() public view returns (uint256);\n",
+          "message": "ERC721Enumerable.totalSupply (DeprecatedERC721.sol#120) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 121,
+          "vulnerability_to_line": 127,
+          "vulnerability_code": "  function tokenOfOwnerByIndex(\n\n    address _owner,\n\n    uint256 _index\n\n  )\n\n    public\n\n    view\n",
+          "message": "ERC721Enumerable.tokenOfOwnerByIndex (DeprecatedERC721.sol#121-127) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function tokenByIndex(uint256 _index) public view returns (uint256);\n",
+          "message": "ERC721Enumerable.tokenByIndex (DeprecatedERC721.sol#129) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 140,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function tokenURI(uint256 _tokenId) public view returns (string);\n",
+          "message": "ERC721Metadata.tokenURI (DeprecatedERC721.sol#140) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 161,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function takeOwnership(uint256 _tokenId) public;\n",
+          "message": "DeprecatedERC721.takeOwnership (DeprecatedERC721.sol#161) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address _to, uint256 _tokenId) public;\n",
+          "message": "DeprecatedERC721.transfer (DeprecatedERC721.sol#162) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 163,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function tokensOf(address _owner) public view returns (uint256[]);\n",
+          "message": "DeprecatedERC721.tokensOf (DeprecatedERC721.sol#163) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721 = 0x80ac58cd;\n",
+          "message": "Constant 'ERC721Basic.InterfaceId_ERC721' (DeprecatedERC721.sol#34) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721Exists = 0x4f558e79;\n",
+          "message": "Constant 'ERC721Basic.InterfaceId_ERC721Exists' (DeprecatedERC721.sol#48) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721Enumerable = 0x780e9d63;\n",
+          "message": "Constant 'ERC721Basic.InterfaceId_ERC721Enumerable' (DeprecatedERC721.sol#54) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721Metadata = 0x5b5e139f;\n",
+          "message": "Constant 'ERC721Basic.InterfaceId_ERC721Metadata' (DeprecatedERC721.sol#62) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721 = 0x80ac58cd;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721Exists = 0x4f558e79;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721Enumerable = 0x780e9d63;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721Metadata = 0x5b5e139f;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 153,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 106,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes _data\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 140,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function tokenURI(uint256 _tokenId) public view returns (string);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 163,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function tokensOf(address _owner) public view returns (uint256[]);\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "execution failed"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": false,
+      "errors": [
+        "input files do not contain any valid contracts"
+      ],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -1,0 +1,275 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 74,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public nonce = 0;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(oicash.deposit(_amount), \"Augur deposit failed\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(oicash.withdraw(_amount), \"Augur withdraw failed\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_17"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public arbitrator = 0xd47f72a2d1d0E91b0Ec5e5f5d02B2dc26d00A14D; // kleros.io mainnet address\n",
+          "message": "OracleExampleRealitio1.arbitrator should be constant (oracle.sol#71)\nOracleExampleRealitio1.nonce should be constant (oracle.sol#74-76)\nOracleExampleRealitio1.opening_ts should be constant (oracle.sol#73)\nOracleExampleRealitio1.question should be constant (oracle.sol#69-71)\nOracleExampleRealitio1.template_id should be constant (oracle.sol#68)\nOracleExampleRealitio1.timeout should be constant (oracle.sol#72)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": 25,
+          "vulnerability_code": "    function getWinnerFromAugurBinaryMarket() public view {\n\n        if (market.getWinningPayoutNumerator(0) > 0) {\n\n            // insert logic for Invalid outcome\n\n        } else if (market.getWinningPayoutNumerator(1) > 0)  {\n\n            // insert logic for Yes outcome\n\n        } else if (market.getWinningPayoutNumerator(2) > 0) {\n\n            // insert logic for No outcome\n\n        } else {\n\n            // insert logic for market not yet settled\n\n        }\n",
+          "message": "OracleExampleAugur1.getWinnerFromAugurBinaryMarket (oracle.sol#15-25) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 41,
+          "vulnerability_code": "    function augurDeposit(uint256 _amount) public {\n\n        require(oicash.deposit(_amount), \"Augur deposit failed\");\n",
+          "message": "OracleExampleAugur2.augurDeposit (oracle.sol#39-41) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function augurWithdraw(uint256 _amount) public {\n\n        require(oicash.withdraw(_amount), \"Augur withdraw failed\");\n",
+          "message": "OracleExampleAugur2.augurWithdraw (oracle.sol#43-45) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": 89,
+          "vulnerability_code": "    function _postQuestion() public returns (bytes32) {\n\n        return\n\n            realitio.askQuestion(\n\n            template_id,\n\n            question,\n\n            arbitrator,\n\n            timeout,\n\n            opening_ts,\n\n            nonce\n\n            );\n\n    }\n\n}\n\n\n",
+          "message": "OracleExampleRealitio1._postQuestion (oracle.sol#76-89) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": 107,
+          "vulnerability_code": "    function getWinnerFromRealitioBinaryMarket(bytes32 _questionId) public view {\n\n        if (realitio.isFinalized(_questionId)) {\n\n            bytes32 _winningOutcome = realitio.resultFor(_questionId);\n\n            uint _winningOutcomeUint = uint(_winningOutcome);\n\n            if (_winningOutcomeUint == 0) {\n\n                // insert logic for the first listed outcome\n\n            } else if (_winningOutcomeUint == 1) {\n\n                // insert logic for the second listed outcome\n\n            } else if (_winningOutcomeUint == ((2**256)-1)) {\n\n                // insert logic for Invalid outcome\n\n            }\n\n        }       \n\n    }\n",
+          "message": "OracleExampleRealitio2.getWinnerFromRealitioBinaryMarket (oracle.sol#94-107) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": "Detected issues with version pragma in oracle.sol:\n\t- pragma solidity^0.5.0 (oracle.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function augurDeposit(uint256 _amount) public {\n",
+          "message": "Parameter '_amount' of OracleExampleAugur2.augurDeposit (oracle.sol#39) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function augurWithdraw(uint256 _amount) public {\n",
+          "message": "Parameter '_amount' of OracleExampleAugur2.augurWithdraw (oracle.sol#43) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 template_id, \n",
+          "message": "Parameter 'template_id' of IRealitio.askQuestion (oracle.sol#51) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint32 opening_ts, \n",
+          "message": "Parameter 'opening_ts' of IRealitio.askQuestion (oracle.sol#55) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function resultFor(bytes32 question_id) external view returns (bytes32);\n",
+          "message": "Parameter 'question_id' of IRealitio.resultFor (oracle.sol#58) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function isFinalized(bytes32 question_id) external view returns (bool);\n",
+          "message": "Parameter 'question_id' of IRealitio.isFinalized (oracle.sol#59) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": 89,
+          "vulnerability_code": "    function _postQuestion() public returns (bytes32) {\n\n        return\n\n            realitio.askQuestion(\n\n            template_id,\n\n            question,\n\n            arbitrator,\n\n            timeout,\n\n            opening_ts,\n\n            nonce\n\n            );\n\n    }\n\n}\n\n\n",
+          "message": "Function 'OracleExampleRealitio1._postQuestion' (oracle.sol#76-89) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 68,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public template_id = 2; \n",
+          "message": "Variable 'OracleExampleRealitio1.template_id' (oracle.sol#68) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint32 public opening_ts = 1604448000; // Nov 4th 2020\n",
+          "message": "Variable 'OracleExampleRealitio1.opening_ts' (oracle.sol#73) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getWinnerFromRealitioBinaryMarket(bytes32 _questionId) public view {\n",
+          "message": "Parameter '_questionId' of OracleExampleRealitio2.getWinnerFromRealitioBinaryMarket (oracle.sol#94) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    IMarket public market = IMarket(0x34A971cA2fd6DA2Ce2969D716dF922F17aAA1dB0); \n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    OICash public oicash = OICash(0xbD41281dE5E4cA62602ed7c134f46d831A340B78);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    IRealitio public realitio = IRealitio(0x325a2e0F3CCA2ddbaeBB4DfC38Df8D19ca165b47);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public arbitrator = 0xd47f72a2d1d0E91b0Ec5e5f5d02B2dc26d00A14D; // kleros.io mainnet address\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 92,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    IRealitio public realitio = IRealitio(0x325a2e0F3CCA2ddbaeBB4DfC38Df8D19ca165b47);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function askQuestion(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        string calldata question, \n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address arbitrator, \n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint32 timeout, \n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint32 opening_ts, \n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 nonce) \n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        external payable returns (bytes32);\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

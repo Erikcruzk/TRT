@@ -1,0 +1,797 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 265,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor()\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 266,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    public\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 267,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 268,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _registerInterface(InterfaceId_ERC165);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 269,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 326,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor()\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 327,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    public\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 328,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 329,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    // register the supported interfaces to conform to ERC721 via ERC165\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 330,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _registerInterface(InterfaceId_ERC721);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 331,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _registerInterface(InterfaceId_ERC721Exists);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 332,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_70"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 224,
+          "vulnerability_to_line": 235,
+          "vulnerability_code": "  function isContract(address _addr) internal view returns (bool) {\n\n    uint256 size;\n\n    // XXX Currently there is no better way to check if there is a contract in an address\n\n    // than to check the size of the code at that address.\n\n    // See https://ethereum.stackexchange.com/a/14016/36603\n\n    // for more details about how this works.\n\n    // TODO Check this again before the Serenity release, because all addresses will be\n\n    // contracts then.\n\n    // solium-disable-next-line security/no-inline-assembly\n\n    assembly { size := extcodesize(_addr) }\n\n    return size > 0;\n",
+          "message": "AddressUtils.isContract (ERC721BasicToken.sol#224-235) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "erc20-interface",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": 109,
+          "vulnerability_code": "contract ERC721Basic is ERC165 {\n\n\n\n  bytes4 internal constant InterfaceId_ERC721 = 0x80ac58cd;\n\n  /*\n\n   * 0x80ac58cd ===\n\n   *   bytes4(keccak256('balanceOf(address)')) ^\n\n   *   bytes4(keccak256('ownerOf(uint256)')) ^\n\n   *   bytes4(keccak256('approve(address,uint256)')) ^\n\n   *   bytes4(keccak256('getApproved(uint256)')) ^\n\n   *   bytes4(keccak256('setApprovalForAll(address,bool)')) ^\n\n   *   bytes4(keccak256('isApprovedForAll(address,address)')) ^\n\n   *   bytes4(keccak256('transferFrom(address,address,uint256)')) ^\n\n   *   bytes4(keccak256('safeTransferFrom(address,address,uint256)')) ^\n\n   *   bytes4(keccak256('safeTransferFrom(address,address,uint256,bytes)'))\n\n   */\n\n\n\n  bytes4 internal constant InterfaceId_ERC721Exists = 0x4f558e79;\n\n  /*\n\n   * 0x4f558e79 ===\n\n   *   bytes4(keccak256('exists(uint256)'))\n\n   */\n\n\n\n  bytes4 internal constant InterfaceId_ERC721Enumerable = 0x780e9d63;\n\n  /**\n\n   * 0x780e9d63 ===\n\n   *   bytes4(keccak256('totalSupply()')) ^\n\n   *   bytes4(keccak256('tokenOfOwnerByIndex(address,uint256)')) ^\n\n   *   bytes4(keccak256('tokenByIndex(uint256)'))\n\n   */\n\n\n\n  bytes4 internal constant InterfaceId_ERC721Metadata = 0x5b5e139f;\n\n  /**\n\n   * 0x5b5e139f ===\n\n   *   bytes4(keccak256('name()')) ^\n\n   *   bytes4(keccak256('symbol()')) ^\n\n   *   bytes4(keccak256('tokenURI(uint256)'))\n\n   */\n\n\n\n  event Transfer(\n\n    address indexed _from,\n\n    address indexed _to,\n\n    uint256 indexed _tokenId\n\n  );\n\n  event Approval(\n\n    address indexed _owner,\n\n    address indexed _approved,\n\n    uint256 indexed _tokenId\n\n  );\n\n  event ApprovalForAll(\n\n    address indexed _owner,\n\n    address indexed _operator,\n\n    bool _approved\n\n  );\n\n\n\n  function balanceOf(address _owner) public view returns (uint256 _balance);\n\n  function ownerOf(uint256 _tokenId) public view returns (address _owner);\n\n  function exists(uint256 _tokenId) public view returns (bool _exists);\n\n\n\n  function approve(address _to, uint256 _tokenId) public;\n\n  function getApproved(uint256 _tokenId)\n\n    public view returns (address _operator);\n\n\n\n  function setApprovalForAll(address _operator, bool _approved) public;\n\n  function isApprovedForAll(address _owner, address _operator)\n\n    public view returns (bool);\n\n\n\n  function transferFrom(address _from, address _to, uint256 _tokenId) public;\n\n  function safeTransferFrom(address _from, address _to, uint256 _tokenId)\n\n    public;\n\n\n\n  function safeTransferFrom(\n\n    address _from,\n\n    address _to,\n\n    uint256 _tokenId,\n\n    bytes _data\n\n  )\n\n    public;\n",
+          "message": "ERC721Basic (ERC721BasicToken.sol#32-109) has incorrect ERC20 function interface(s):\n\t-approve (ERC721BasicToken.sol#90)\n\t-transferFrom (ERC721BasicToken.sol#98)\n"
+        },
+        {
+          "name": "erc20-interface",
+          "vulnerability_from_line": 305,
+          "vulnerability_to_line": 603,
+          "vulnerability_code": "contract ERC721BasicToken is SupportsInterfaceWithLookup, ERC721Basic {\n\n\n\n  using SafeMath for uint256;\n\n  using AddressUtils for address;\n\n\n\n  // Equals to `bytes4(keccak256(\"onERC721Received(address,address,uint256,bytes)\"))`\n\n  // which can be also obtained as `ERC721Receiver(0).onERC721Received.selector`\n\n  bytes4 private constant ERC721_RECEIVED = 0x150b7a02;\n\n\n\n  // Mapping from token ID to owner\n\n  mapping (uint256 => address) internal tokenOwner;\n\n\n\n  // Mapping from token ID to approved address\n\n  mapping (uint256 => address) internal tokenApprovals;\n\n\n\n  // Mapping from owner to number of owned token\n\n  mapping (address => uint256) internal ownedTokensCount;\n\n\n\n  // Mapping from owner to operator approvals\n\n  mapping (address => mapping (address => bool)) internal operatorApprovals;\n\n\n\n  constructor()\n\n    public\n\n  {\n\n    // register the supported interfaces to conform to ERC721 via ERC165\n\n    _registerInterface(InterfaceId_ERC721);\n\n    _registerInterface(InterfaceId_ERC721Exists);\n\n  }\n\n\n\n  /**\n\n   * @dev Gets the balance of the specified address\n\n   * @param _owner address to query the balance of\n\n   * @return uint256 representing the amount owned by the passed address\n\n   */\n\n  function balanceOf(address _owner) public view returns (uint256) {\n\n    require(_owner != address(0));\n\n    return ownedTokensCount[_owner];\n\n  }\n\n\n\n  /**\n\n   * @dev Gets the owner of the specified token ID\n\n   * @param _tokenId uint256 ID of the token to query the owner of\n\n   * @return owner address currently marked as the owner of the given token ID\n\n   */\n\n  function ownerOf(uint256 _tokenId) public view returns (address) {\n\n    address owner = tokenOwner[_tokenId];\n\n    require(owner != address(0));\n\n    return owner;\n\n  }\n\n\n\n  /**\n\n   * @dev Returns whether the specified token exists\n\n   * @param _tokenId uint256 ID of the token to query the existence of\n\n   * @return whether the token exists\n\n   */\n\n  function exists(uint256 _tokenId) public view returns (bool) {\n\n    address owner = tokenOwner[_tokenId];\n\n    return owner != address(0);\n\n  }\n\n\n\n  /**\n\n   * @dev Approves another address to transfer the given token ID\n\n   * The zero address indicates there is no approved address.\n\n   * There can only be one approved address per token at a given time.\n\n   * Can only be called by the token owner or an approved operator.\n\n   * @param _to address to be approved for the given token ID\n\n   * @param _tokenId uint256 ID of the token to be approved\n\n   */\n\n  function approve(address _to, uint256 _tokenId) public {\n\n    address owner = ownerOf(_tokenId);\n\n    require(_to != owner);\n\n    require(msg.sender == owner || isApprovedForAll(owner, msg.sender));\n\n\n\n    tokenApprovals[_tokenId] = _to;\n\n    emit Approval(owner, _to, _tokenId);\n\n  }\n\n\n\n  /**\n\n   * @dev Gets the approved address for a token ID, or zero if no address set\n\n   * @param _tokenId uint256 ID of the token to query the approval of\n\n   * @return address currently approved for the given token ID\n\n   */\n\n  function getApproved(uint256 _tokenId) public view returns (address) {\n\n    return tokenApprovals[_tokenId];\n\n  }\n\n\n\n  /**\n\n   * @dev Sets or unsets the approval of a given operator\n\n   * An operator is allowed to transfer all tokens of the sender on their behalf\n\n   * @param _to operator address to set the approval\n\n   * @param _approved representing the status of the approval to be set\n\n   */\n\n  function setApprovalForAll(address _to, bool _approved) public {\n\n    require(_to != msg.sender);\n\n    operatorApprovals[msg.sender][_to] = _approved;\n\n    emit ApprovalForAll(msg.sender, _to, _approved);\n\n  }\n\n\n\n  /**\n\n   * @dev Tells whether an operator is approved by a given owner\n\n   * @param _owner owner address which you want to query the approval of\n\n   * @param _operator operator address which you want to query the approval of\n\n   * @return bool whether the given operator is approved by the given owner\n\n   */\n\n  function isApprovedForAll(\n\n    address _owner,\n\n    address _operator\n\n  )\n\n    public\n\n    view\n\n    returns (bool)\n\n  {\n\n    return operatorApprovals[_owner][_operator];\n\n  }\n\n\n\n  /**\n\n   * @dev Transfers the ownership of a given token ID to another address\n\n   * Usage of this method is discouraged, use `safeTransferFrom` whenever possible\n\n   * Requires the msg sender to be the owner, approved, or operator\n\n   * @param _from current owner of the token\n\n   * @param _to address to receive the ownership of the given token ID\n\n   * @param _tokenId uint256 ID of the token to be transferred\n\n  */\n\n  function transferFrom(\n\n    address _from,\n\n    address _to,\n\n    uint256 _tokenId\n\n  )\n\n    public\n\n  {\n\n    require(isApprovedOrOwner(msg.sender, _tokenId));\n\n    require(_from != address(0));\n\n    require(_to != address(0));\n\n\n\n    clearApproval(_from, _tokenId);\n\n    removeTokenFrom(_from, _tokenId);\n\n    addTokenTo(_to, _tokenId);\n\n\n\n    emit Transfer(_from, _to, _tokenId);\n\n  }\n\n\n\n  /**\n\n   * @dev Safely transfers the ownership of a given token ID to another address\n\n   * If the target address is a contract, it must implement `onERC721Received`,\n\n   * which is called upon a safe transfer, and return the magic value\n\n   * `bytes4(keccak256(\"onERC721Received(address,address,uint256,bytes)\"))`; otherwise,\n\n   * the transfer is reverted.\n\n   *\n\n   * Requires the msg sender to be the owner, approved, or operator\n\n   * @param _from current owner of the token\n\n   * @param _to address to receive the ownership of the given token ID\n\n   * @param _tokenId uint256 ID of the token to be transferred\n\n  */\n\n  function safeTransferFrom(\n\n    address _from,\n\n    address _to,\n\n    uint256 _tokenId\n\n  )\n\n    public\n\n  {\n\n    // solium-disable-next-line arg-overflow\n\n    safeTransferFrom(_from, _to, _tokenId, \"\");\n\n  }\n\n\n\n  /**\n\n   * @dev Safely transfers the ownership of a given token ID to another address\n\n   * If the target address is a contract, it must implement `onERC721Received`,\n\n   * which is called upon a safe transfer, and return the magic value\n\n   * `bytes4(keccak256(\"onERC721Received(address,address,uint256,bytes)\"))`; otherwise,\n\n   * the transfer is reverted.\n\n   * Requires the msg sender to be the owner, approved, or operator\n\n   * @param _from current owner of the token\n\n   * @param _to address to receive the ownership of the given token ID\n\n   * @param _tokenId uint256 ID of the token to be transferred\n\n   * @param _data bytes data to send along with a safe transfer check\n\n   */\n\n  function safeTransferFrom(\n\n    address _from,\n\n    address _to,\n\n    uint256 _tokenId,\n\n    bytes _data\n\n  )\n\n    public\n\n  {\n\n    transferFrom(_from, _to, _tokenId);\n\n    // solium-disable-next-line arg-overflow\n\n    require(checkAndCallSafeTransfer(_from, _to, _tokenId, _data));\n\n  }\n\n\n\n  /**\n\n   * @dev Returns whether the given spender can transfer a given token ID\n\n   * @param _spender address of the spender to query\n\n   * @param _tokenId uint256 ID of the token to be transferred\n\n   * @return bool whether the msg.sender is approved for the given token ID,\n\n   *  is an operator of the owner, or is the owner of the token\n\n   */\n\n  function isApprovedOrOwner(\n\n    address _spender,\n\n    uint256 _tokenId\n\n  )\n\n    internal\n\n    view\n\n    returns (bool)\n\n  {\n\n    address owner = ownerOf(_tokenId);\n\n    // Disable solium check because of\n\n    // https://github.com/duaraghav8/Solium/issues/175\n\n    // solium-disable-next-line operator-whitespace\n\n    return (\n\n      _spender == owner ||\n\n      getApproved(_tokenId) == _spender ||\n\n      isApprovedForAll(owner, _spender)\n\n    );\n\n  }\n\n\n\n  /**\n\n   * @dev Internal function to mint a new token\n\n   * Reverts if the given token ID already exists\n\n   * @param _to The address that will own the minted token\n\n   * @param _tokenId uint256 ID of the token to be minted by the msg.sender\n\n   */\n\n  function _mint(address _to, uint256 _tokenId) internal {\n\n    require(_to != address(0));\n\n    addTokenTo(_to, _tokenId);\n\n    emit Transfer(address(0), _to, _tokenId);\n\n  }\n\n\n\n  /**\n\n   * @dev Internal function to burn a specific token\n\n   * Reverts if the token does not exist\n\n   * @param _tokenId uint256 ID of the token being burned by the msg.sender\n\n   */\n\n  function _burn(address _owner, uint256 _tokenId) internal {\n\n    clearApproval(_owner, _tokenId);\n\n    removeTokenFrom(_owner, _tokenId);\n\n    emit Transfer(_owner, address(0), _tokenId);\n\n  }\n\n\n\n  /**\n\n   * @dev Internal function to clear current approval of a given token ID\n\n   * Reverts if the given address is not indeed the owner of the token\n\n   * @param _owner owner of the token\n\n   * @param _tokenId uint256 ID of the token to be transferred\n\n   */\n\n  function clearApproval(address _owner, uint256 _tokenId) internal {\n\n    require(ownerOf(_tokenId) == _owner);\n\n    if (tokenApprovals[_tokenId] != address(0)) {\n\n      tokenApprovals[_tokenId] = address(0);\n\n    }\n\n  }\n\n\n\n  /**\n\n   * @dev Internal function to add a token ID to the list of a given address\n\n   * @param _to address representing the new owner of the given token ID\n\n   * @param _tokenId uint256 ID of the token to be added to the tokens list of the given address\n\n   */\n\n  function addTokenTo(address _to, uint256 _tokenId) internal {\n\n    require(tokenOwner[_tokenId] == address(0));\n\n    tokenOwner[_tokenId] = _to;\n\n    ownedTokensCount[_to] = ownedTokensCount[_to].add(1);\n\n  }\n\n\n\n  /**\n\n   * @dev Internal function to remove a token ID from the list of a given address\n\n   * @param _from address representing the previous owner of the given token ID\n\n   * @param _tokenId uint256 ID of the token to be removed from the tokens list of the given address\n\n   */\n\n  function removeTokenFrom(address _from, uint256 _tokenId) internal {\n\n    require(ownerOf(_tokenId) == _from);\n\n    ownedTokensCount[_from] = ownedTokensCount[_from].sub(1);\n\n    tokenOwner[_tokenId] = address(0);\n\n  }\n\n\n\n  /**\n\n   * @dev Internal function to invoke `onERC721Received` on a target address\n\n   * The call is not executed if the target address is not a contract\n\n   * @param _from address representing the previous owner of the given token ID\n\n   * @param _to target address that will receive the tokens\n\n   * @param _tokenId uint256 ID of the token to be transferred\n\n   * @param _data bytes optional data to send along with the call\n\n   * @return whether the call correctly returned the expected magic value\n\n   */\n\n  function checkAndCallSafeTransfer(\n\n    address _from,\n\n    address _to,\n\n    uint256 _tokenId,\n\n    bytes _data\n\n  )\n\n    internal\n\n    returns (bool)\n\n  {\n\n    if (!_to.isContract()) {\n\n      return true;\n\n    }\n\n    bytes4 retval = ERC721Receiver(_to).onERC721Received(\n\n      msg.sender, _from, _tokenId, _data);\n\n    return (retval == ERC721_RECEIVED);\n\n  }\n",
+          "message": "ERC721BasicToken (ERC721BasicToken.sol#305-603) has incorrect ERC20 function interface(s):\n\t-approve (ERC721BasicToken.sol#373-380)\n\t-transferFrom (ERC721BasicToken.sol#428-444)\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 224,
+          "vulnerability_to_line": 235,
+          "vulnerability_code": "  function isContract(address _addr) internal view returns (bool) {\n\n    uint256 size;\n\n    // XXX Currently there is no better way to check if there is a contract in an address\n\n    // than to check the size of the code at that address.\n\n    // See https://ethereum.stackexchange.com/a/14016/36603\n\n    // for more details about how this works.\n\n    // TODO Check this again before the Serenity release, because all addresses will be\n\n    // contracts then.\n\n    // solium-disable-next-line security/no-inline-assembly\n\n    assembly { size := extcodesize(_addr) }\n\n    return size > 0;\n",
+          "message": "AddressUtils.isContract uses assembly (ERC721BasicToken.sol#224-235)\n\t- ERC721BasicToken.sol#233-234\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 339,
+          "vulnerability_to_line": 342,
+          "vulnerability_code": "  function balanceOf(address _owner) public view returns (uint256) {\n\n    require(_owner != address(0));\n\n    return ownedTokensCount[_owner];\n",
+          "message": "ERC721BasicToken.balanceOf (ERC721BasicToken.sol#339-342) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address _owner) public view returns (uint256 _balance);\n",
+          "message": "ERC721Basic.balanceOf (ERC721BasicToken.sol#86) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function exists(uint256 _tokenId) public view returns (bool _exists);\n",
+          "message": "ERC721Basic.exists (ERC721BasicToken.sol#88) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 360,
+          "vulnerability_to_line": 363,
+          "vulnerability_code": "  function exists(uint256 _tokenId) public view returns (bool) {\n\n    address owner = tokenOwner[_tokenId];\n\n    return owner != address(0);\n",
+          "message": "ERC721BasicToken.exists (ERC721BasicToken.sol#360-363) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address _to, uint256 _tokenId) public;\n",
+          "message": "ERC721Basic.approve (ERC721BasicToken.sol#90) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 373,
+          "vulnerability_to_line": 380,
+          "vulnerability_code": "  function approve(address _to, uint256 _tokenId) public {\n\n    address owner = ownerOf(_tokenId);\n\n    require(_to != owner);\n\n    require(msg.sender == owner || isApprovedForAll(owner, msg.sender));\n\n\n\n    tokenApprovals[_tokenId] = _to;\n\n    emit Approval(owner, _to, _tokenId);\n",
+          "message": "ERC721BasicToken.approve (ERC721BasicToken.sol#373-380) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setApprovalForAll(address _operator, bool _approved) public;\n",
+          "message": "ERC721Basic.setApprovalForAll (ERC721BasicToken.sol#94) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 397,
+          "vulnerability_to_line": 401,
+          "vulnerability_code": "  function setApprovalForAll(address _to, bool _approved) public {\n\n    require(_to != msg.sender);\n\n    operatorApprovals[msg.sender][_to] = _approved;\n\n    emit ApprovalForAll(msg.sender, _to, _approved);\n",
+          "message": "ERC721BasicToken.setApprovalForAll (ERC721BasicToken.sol#397-401) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": 100,
+          "vulnerability_code": "  function safeTransferFrom(address _from, address _to, uint256 _tokenId)\n",
+          "message": "ERC721Basic.safeTransferFrom (ERC721BasicToken.sol#99-100) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 458,
+          "vulnerability_to_line": 467,
+          "vulnerability_code": "  function safeTransferFrom(\n\n    address _from,\n\n    address _to,\n\n    uint256 _tokenId\n\n  )\n\n    public\n\n  {\n\n    // solium-disable-next-line arg-overflow\n\n    safeTransferFrom(_from, _to, _tokenId, \"\");\n",
+          "message": "ERC721BasicToken.safeTransferFrom (ERC721BasicToken.sol#458-467) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 142,
+          "vulnerability_to_line": 149,
+          "vulnerability_code": "  function onERC721Received(\n\n    address _operator,\n\n    address _from,\n\n    uint256 _tokenId,\n\n    bytes _data\n\n  )\n\n    public\n",
+          "message": "ERC721Receiver.onERC721Received (ERC721BasicToken.sol#142-149) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721 = 0x80ac58cd;\n",
+          "message": "Constant 'ERC721Basic.InterfaceId_ERC721' (ERC721BasicToken.sol#34) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721Exists = 0x4f558e79;\n",
+          "message": "Constant 'ERC721Basic.InterfaceId_ERC721Exists' (ERC721BasicToken.sol#48) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721Enumerable = 0x780e9d63;\n",
+          "message": "Constant 'ERC721Basic.InterfaceId_ERC721Enumerable' (ERC721BasicToken.sol#54) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721Metadata = 0x5b5e139f;\n",
+          "message": "Constant 'ERC721Basic.InterfaceId_ERC721Metadata' (ERC721BasicToken.sol#62) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 166,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function mul(uint256 _a, uint256 _b) internal pure returns (uint256 c) {\n",
+          "message": "Parameter '_a' of SafeMath.mul (ERC721BasicToken.sol#166) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 166,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function mul(uint256 _a, uint256 _b) internal pure returns (uint256 c) {\n",
+          "message": "Parameter '_b' of SafeMath.mul (ERC721BasicToken.sol#166) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 182,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function div(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_a' of SafeMath.div (ERC721BasicToken.sol#182) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 182,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function div(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_b' of SafeMath.div (ERC721BasicToken.sol#182) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 192,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function sub(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_a' of SafeMath.sub (ERC721BasicToken.sol#192) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 192,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function sub(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_b' of SafeMath.sub (ERC721BasicToken.sol#192) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 200,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function add(uint256 _a, uint256 _b) internal pure returns (uint256 c) {\n",
+          "message": "Parameter '_a' of SafeMath.add (ERC721BasicToken.sol#200) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 200,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function add(uint256 _a, uint256 _b) internal pure returns (uint256 c) {\n",
+          "message": "Parameter '_b' of SafeMath.add (ERC721BasicToken.sol#200) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 274,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function supportsInterface(bytes4 _interfaceId)\n",
+          "message": "Parameter '_interfaceId' of SupportsInterfaceWithLookup.supportsInterface (ERC721BasicToken.sol#274) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 285,
+          "vulnerability_to_line": 290,
+          "vulnerability_code": "  function _registerInterface(bytes4 _interfaceId)\n\n    internal\n\n  {\n\n    require(_interfaceId != 0xffffffff);\n\n    supportedInterfaces[_interfaceId] = true;\n",
+          "message": "Function 'SupportsInterfaceWithLookup._registerInterface' (ERC721BasicToken.sol#285-290) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 285,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _registerInterface(bytes4 _interfaceId)\n",
+          "message": "Parameter '_interfaceId' of SupportsInterfaceWithLookup._registerInterface (ERC721BasicToken.sol#285) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 250,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 public constant InterfaceId_ERC165 = 0x01ffc9a7;\n",
+          "message": "Constant 'SupportsInterfaceWithLookup.InterfaceId_ERC165' (ERC721BasicToken.sol#250) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 339,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address _owner) public view returns (uint256) {\n",
+          "message": "Parameter '_owner' of ERC721BasicToken.balanceOf (ERC721BasicToken.sol#339) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 349,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function ownerOf(uint256 _tokenId) public view returns (address) {\n",
+          "message": "Parameter '_tokenId' of ERC721BasicToken.ownerOf (ERC721BasicToken.sol#349) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 360,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function exists(uint256 _tokenId) public view returns (bool) {\n",
+          "message": "Parameter '_tokenId' of ERC721BasicToken.exists (ERC721BasicToken.sol#360) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 373,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address _to, uint256 _tokenId) public {\n",
+          "message": "Parameter '_to' of ERC721BasicToken.approve (ERC721BasicToken.sol#373) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 373,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address _to, uint256 _tokenId) public {\n",
+          "message": "Parameter '_tokenId' of ERC721BasicToken.approve (ERC721BasicToken.sol#373) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 387,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function getApproved(uint256 _tokenId) public view returns (address) {\n",
+          "message": "Parameter '_tokenId' of ERC721BasicToken.getApproved (ERC721BasicToken.sol#387) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 397,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setApprovalForAll(address _to, bool _approved) public {\n",
+          "message": "Parameter '_to' of ERC721BasicToken.setApprovalForAll (ERC721BasicToken.sol#397) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 397,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setApprovalForAll(address _to, bool _approved) public {\n",
+          "message": "Parameter '_approved' of ERC721BasicToken.setApprovalForAll (ERC721BasicToken.sol#397) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 410,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _owner,\n",
+          "message": "Parameter '_owner' of ERC721BasicToken.isApprovedForAll (ERC721BasicToken.sol#410) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 411,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _operator\n",
+          "message": "Parameter '_operator' of ERC721BasicToken.isApprovedForAll (ERC721BasicToken.sol#411) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 429,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _from,\n",
+          "message": "Parameter '_from' of ERC721BasicToken.transferFrom (ERC721BasicToken.sol#429) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 430,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _to,\n",
+          "message": "Parameter '_to' of ERC721BasicToken.transferFrom (ERC721BasicToken.sol#430) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 431,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 _tokenId\n",
+          "message": "Parameter '_tokenId' of ERC721BasicToken.transferFrom (ERC721BasicToken.sol#431) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 459,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _from,\n",
+          "message": "Parameter '_from' of ERC721BasicToken.safeTransferFrom (ERC721BasicToken.sol#459) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 460,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _to,\n",
+          "message": "Parameter '_to' of ERC721BasicToken.safeTransferFrom (ERC721BasicToken.sol#460) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 461,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 _tokenId\n",
+          "message": "Parameter '_tokenId' of ERC721BasicToken.safeTransferFrom (ERC721BasicToken.sol#461) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 482,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _from,\n",
+          "message": "Parameter '_from' of ERC721BasicToken.safeTransferFrom (ERC721BasicToken.sol#482) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 483,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _to,\n",
+          "message": "Parameter '_to' of ERC721BasicToken.safeTransferFrom (ERC721BasicToken.sol#483) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 484,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 _tokenId,\n",
+          "message": "Parameter '_tokenId' of ERC721BasicToken.safeTransferFrom (ERC721BasicToken.sol#484) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 485,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes _data\n",
+          "message": "Parameter '_data' of ERC721BasicToken.safeTransferFrom (ERC721BasicToken.sol#485) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 502,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _spender,\n",
+          "message": "Parameter '_spender' of ERC721BasicToken.isApprovedOrOwner (ERC721BasicToken.sol#502) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 503,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 _tokenId\n",
+          "message": "Parameter '_tokenId' of ERC721BasicToken.isApprovedOrOwner (ERC721BasicToken.sol#503) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 526,
+          "vulnerability_to_line": 530,
+          "vulnerability_code": "  function _mint(address _to, uint256 _tokenId) internal {\n\n    require(_to != address(0));\n\n    addTokenTo(_to, _tokenId);\n\n    emit Transfer(address(0), _to, _tokenId);\n",
+          "message": "Function 'ERC721BasicToken._mint' (ERC721BasicToken.sol#526-530) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 526,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _mint(address _to, uint256 _tokenId) internal {\n",
+          "message": "Parameter '_to' of ERC721BasicToken._mint (ERC721BasicToken.sol#526) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 526,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _mint(address _to, uint256 _tokenId) internal {\n",
+          "message": "Parameter '_tokenId' of ERC721BasicToken._mint (ERC721BasicToken.sol#526) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 537,
+          "vulnerability_to_line": 541,
+          "vulnerability_code": "  function _burn(address _owner, uint256 _tokenId) internal {\n\n    clearApproval(_owner, _tokenId);\n\n    removeTokenFrom(_owner, _tokenId);\n\n    emit Transfer(_owner, address(0), _tokenId);\n",
+          "message": "Function 'ERC721BasicToken._burn' (ERC721BasicToken.sol#537-541) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 537,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _burn(address _owner, uint256 _tokenId) internal {\n",
+          "message": "Parameter '_owner' of ERC721BasicToken._burn (ERC721BasicToken.sol#537) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 537,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _burn(address _owner, uint256 _tokenId) internal {\n",
+          "message": "Parameter '_tokenId' of ERC721BasicToken._burn (ERC721BasicToken.sol#537) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 549,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function clearApproval(address _owner, uint256 _tokenId) internal {\n",
+          "message": "Parameter '_owner' of ERC721BasicToken.clearApproval (ERC721BasicToken.sol#549) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 549,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function clearApproval(address _owner, uint256 _tokenId) internal {\n",
+          "message": "Parameter '_tokenId' of ERC721BasicToken.clearApproval (ERC721BasicToken.sol#549) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 561,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function addTokenTo(address _to, uint256 _tokenId) internal {\n",
+          "message": "Parameter '_to' of ERC721BasicToken.addTokenTo (ERC721BasicToken.sol#561) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 561,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function addTokenTo(address _to, uint256 _tokenId) internal {\n",
+          "message": "Parameter '_tokenId' of ERC721BasicToken.addTokenTo (ERC721BasicToken.sol#561) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 572,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function removeTokenFrom(address _from, uint256 _tokenId) internal {\n",
+          "message": "Parameter '_from' of ERC721BasicToken.removeTokenFrom (ERC721BasicToken.sol#572) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 572,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function removeTokenFrom(address _from, uint256 _tokenId) internal {\n",
+          "message": "Parameter '_tokenId' of ERC721BasicToken.removeTokenFrom (ERC721BasicToken.sol#572) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 588,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _from,\n",
+          "message": "Parameter '_from' of ERC721BasicToken.checkAndCallSafeTransfer (ERC721BasicToken.sol#588) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 589,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _to,\n",
+          "message": "Parameter '_to' of ERC721BasicToken.checkAndCallSafeTransfer (ERC721BasicToken.sol#589) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 590,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 _tokenId,\n",
+          "message": "Parameter '_tokenId' of ERC721BasicToken.checkAndCallSafeTransfer (ERC721BasicToken.sol#590) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 591,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes _data\n",
+          "message": "Parameter '_data' of ERC721BasicToken.checkAndCallSafeTransfer (ERC721BasicToken.sol#591) is not in mixedCase\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721Enumerable = 0x780e9d63;\n",
+          "message": "ERC721Basic.InterfaceId_ERC721Enumerable (ERC721BasicToken.sol#54) is never used in ERC721BasicToken\nERC721Basic.InterfaceId_ERC721Metadata (ERC721BasicToken.sol#62) is never used in ERC721BasicToken\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721 = 0x80ac58cd;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721Exists = 0x4f558e79;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721Enumerable = 0x780e9d63;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant InterfaceId_ERC721Metadata = 0x5b5e139f;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 127,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 internal constant ERC721_RECEIVED = 0x150b7a02;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 250,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 public constant InterfaceId_ERC165 = 0x01ffc9a7;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 288,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_interfaceId != 0xffffffff);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 312,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 private constant ERC721_RECEIVED = 0x150b7a02;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 552,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      tokenApprovals[_tokenId] = address(0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 575,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    tokenOwner[_tokenId] = address(0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 373,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address _to, uint256 _tokenId) public {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 209,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 241,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 295,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 312,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 private constant ERC721_RECEIVED = 0x150b7a02;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 307,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 224,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function isContract(address _addr) internal view returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 106,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes _data\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes _data\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 485,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes _data\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 591,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes _data\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 481,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function safeTransferFrom(\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -225,3 +225,26 @@ class Explorer:
                 'type': None, 
                 'name': None
             }
+    
+
+    @staticmethod
+    def extract_code_context_with_line_numbers(full_code, start_line, end_line=None, context_span=20):
+        # If end_line is None, set it to start_line
+        if end_line is None:
+            end_line = start_line
+        
+        # Ensure line numbers are indexed from 0 for internal processing
+        start_line -= 1
+        end_line -= 1
+        
+        # Split the full code into lines
+        lines = full_code.split('\n')
+        
+        # Calculate start and end indices, making sure they are within the bounds of the source code lines
+        start_index = max(0, start_line - context_span)
+        end_index = min(len(lines), end_line + context_span + 1) # +1 to include the end line itself
+        
+        # Join the relevant lines back into a single string
+        context = '\n'.join(lines[start_index:end_index])
+        
+        return context

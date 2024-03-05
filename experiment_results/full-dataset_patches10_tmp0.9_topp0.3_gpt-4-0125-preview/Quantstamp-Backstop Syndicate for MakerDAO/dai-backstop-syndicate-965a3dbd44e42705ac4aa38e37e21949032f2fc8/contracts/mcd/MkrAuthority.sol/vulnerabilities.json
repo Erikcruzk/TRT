@@ -1,0 +1,177 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    root = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_9"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": 33,
+          "vulnerability_code": "  function setRoot(address usr) public sudo {\n\n    root = usr;\n\n    emit LogSetRoot(usr);\n",
+          "message": "MkrAuthority.setRoot (MkrAuthority.sol#30-33) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function rely(address usr) public sudo { wards[usr] = 1; emit LogRely(usr); }\n",
+          "message": "MkrAuthority.rely (MkrAuthority.sol#37) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function deny(address usr) public sudo { wards[usr] = 0; emit LogDeny(usr); }\n",
+          "message": "MkrAuthority.deny (MkrAuthority.sol#39) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": 62,
+          "vulnerability_code": "  function canCall(address src, address, bytes4 sig)\n\n      public view returns (bool)\n\n  {\n\n    if (sig == burn || sig == burnFrom || src == root) {\n\n      return true;\n\n    } else if (sig == mint) {\n\n      return (wards[src] == 1);\n\n    } else {\n\n      return false;\n\n    }\n",
+          "message": "MkrAuthority.canCall (MkrAuthority.sol#52-62) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.12;\n",
+          "message": "Detected issues with version pragma in MkrAuthority.sol:\n\t- pragma solidity^0.5.12 (MkrAuthority.sol#24): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function canCall(address src, address, bytes4 sig)\n",
+          "message": "Parameter '' of MkrAuthority.canCall (MkrAuthority.sol#52) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 constant burn = bytes4(0x42966c68);\n",
+          "message": "Constant 'MkrAuthority.burn' (MkrAuthority.sol#46) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 constant burnFrom = bytes4(0x9dc29fac);\n",
+          "message": "Constant 'MkrAuthority.burnFrom' (MkrAuthority.sol#48) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 constant mint = bytes4(0x40c10f19);\n",
+          "message": "Constant 'MkrAuthority.mint' (MkrAuthority.sol#50) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 constant burn = bytes4(0x42966c68);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 constant burnFrom = bytes4(0x9dc29fac);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 constant mint = bytes4(0x40c10f19);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.12;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 constant burn = bytes4(0x42966c68);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 constant burnFrom = bytes4(0x9dc29fac);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bytes4 constant mint = bytes4(0x40c10f19);\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

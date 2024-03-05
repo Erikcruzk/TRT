@@ -1,0 +1,93 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(ms.getLatestAddress(\"GV\") == msg.sender, \"Not authorized\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "uninitialized-state",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  address public masterAddress; // Name of the dApp, needs to be set by contracts inheriting this contract\n",
+          "message": "Governed.masterAddress (Governed.sol#24) is never initialized. It is used in:\n\t- isAuthorizedToGovern (Governed.sol#34-37)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  address public masterAddress; // Name of the dApp, needs to be set by contracts inheriting this contract\n",
+          "message": "Governed.masterAddress should be constant (Governed.sol#24)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "  function isAuthorizedToGovern(address _toCheck) public view returns (bool) {\n\n    IMaster ms = IMaster(masterAddress);\n\n    return (ms.getLatestAddress(\"GV\") == _toCheck);\n",
+          "message": "Governed.isAuthorizedToGovern (Governed.sol#34-37) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": "Detected issues with version pragma in Governed.sol:\n\t- pragma solidity^0.5.0 (Governed.sol#15): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function isAuthorizedToGovern(address _toCheck) public view returns (bool) {\n",
+          "message": "Parameter '_toCheck' of Governed.isAuthorizedToGovern (Governed.sol#34) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

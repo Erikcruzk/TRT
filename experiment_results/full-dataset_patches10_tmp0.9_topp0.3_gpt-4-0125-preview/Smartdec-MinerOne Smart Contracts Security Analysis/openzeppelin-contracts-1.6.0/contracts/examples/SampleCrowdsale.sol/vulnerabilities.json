@@ -1,0 +1,681 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 290,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract MintableToken is StandardToken, Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 483,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract FinalizableCrowdsale is Crowdsale, Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 524,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract RefundVault is Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 294,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bool public mintingFinished = false;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 486,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bool public isFinalized = false;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_56"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "unused-return",
+          "vulnerability_from_line": 388,
+          "vulnerability_to_line": 404,
+          "vulnerability_code": "  function buyTokens(address beneficiary) public payable {\n\n    require(beneficiary != address(0));\n\n    require(validPurchase());\n\n\n\n    uint256 weiAmount = msg.value;\n\n\n\n    // calculate token amount to be created\n\n    uint256 tokens = getTokenAmount(weiAmount);\n\n\n\n    // update state\n\n    weiRaised = weiRaised.add(weiAmount);\n\n\n\n    token.mint(beneficiary, tokens);\n\n    TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);\n\n\n\n    forwardFunds();\n",
+          "message": "Crowdsale.buyTokens (SampleCrowdsale.sol#388-404) does not use the value returned by external calls:\n\t-token.mint(beneficiary,tokens) (SampleCrowdsale.sol#400)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function totalSupply() public view returns (uint256);\n",
+          "message": "ERC20Basic.totalSupply (SampleCrowdsale.sol#63) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": 90,
+          "vulnerability_code": "  function totalSupply() public view returns (uint256) {\n\n    return totalSupply_;\n",
+          "message": "BasicToken.totalSupply (SampleCrowdsale.sol#88-90) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": 115,
+          "vulnerability_code": "  function balanceOf(address _owner) public view returns (uint256 balance) {\n\n    return balances[_owner];\n",
+          "message": "BasicToken.balanceOf (SampleCrowdsale.sol#113-115) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 64,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address who) public view returns (uint256);\n",
+          "message": "ERC20Basic.balanceOf (SampleCrowdsale.sol#64) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address to, uint256 value) public returns (bool);\n",
+          "message": "ERC20Basic.transfer (SampleCrowdsale.sol#65) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": 106,
+          "vulnerability_code": "  function transfer(address _to, uint256 _value) public returns (bool) {\n\n    require(_to != address(0));\n\n    require(_value <= balances[msg.sender]);\n\n\n\n    // SafeMath.sub will throw if there is not enough balance.\n\n    balances[msg.sender] = balances[msg.sender].sub(_value);\n\n    balances[_to] = balances[_to].add(_value);\n\n    Transfer(msg.sender, _to, _value);\n\n    return true;\n",
+          "message": "BasicToken.transfer (SampleCrowdsale.sol#97-106) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 128,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function allowance(address owner, address spender) public view returns (uint256);\n",
+          "message": "ERC20.allowance (SampleCrowdsale.sol#128) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 191,
+          "vulnerability_to_line": 193,
+          "vulnerability_code": "  function allowance(address _owner, address _spender) public view returns (uint256) {\n\n    return allowed[_owner][_spender];\n",
+          "message": "StandardToken.allowance (SampleCrowdsale.sol#191-193) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 157,
+          "vulnerability_to_line": 167,
+          "vulnerability_code": "  function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {\n\n    require(_to != address(0));\n\n    require(_value <= balances[_from]);\n\n    require(_value <= allowed[_from][msg.sender]);\n\n\n\n    balances[_from] = balances[_from].sub(_value);\n\n    balances[_to] = balances[_to].add(_value);\n\n    allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);\n\n    Transfer(_from, _to, _value);\n\n    return true;\n",
+          "message": "StandardToken.transferFrom (SampleCrowdsale.sol#157-167) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address from, address to, uint256 value) public returns (bool);\n",
+          "message": "ERC20.transferFrom (SampleCrowdsale.sol#129) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": 183,
+          "vulnerability_code": "  function approve(address _spender, uint256 _value) public returns (bool) {\n\n    allowed[msg.sender][_spender] = _value;\n\n    Approval(msg.sender, _spender, _value);\n\n    return true;\n",
+          "message": "StandardToken.approve (SampleCrowdsale.sol#179-183) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address spender, uint256 value) public returns (bool);\n",
+          "message": "ERC20.approve (SampleCrowdsale.sol#130) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 205,
+          "vulnerability_to_line": 209,
+          "vulnerability_code": "  function increaseApproval(address _spender, uint _addedValue) public returns (bool) {\n\n    allowed[msg.sender][_spender] = allowed[msg.sender][_spender].add(_addedValue);\n\n    Approval(msg.sender, _spender, allowed[msg.sender][_spender]);\n\n    return true;\n",
+          "message": "StandardToken.increaseApproval (SampleCrowdsale.sol#205-209) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 221,
+          "vulnerability_to_line": 230,
+          "vulnerability_code": "  function decreaseApproval(address _spender, uint _subtractedValue) public returns (bool) {\n\n    uint oldValue = allowed[msg.sender][_spender];\n\n    if (_subtractedValue > oldValue) {\n\n      allowed[msg.sender][_spender] = 0;\n\n    } else {\n\n      allowed[msg.sender][_spender] = oldValue.sub(_subtractedValue);\n\n    }\n\n    Approval(msg.sender, _spender, allowed[msg.sender][_spender]);\n\n    return true;\n",
+          "message": "StandardToken.decreaseApproval (SampleCrowdsale.sol#221-230) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 271,
+          "vulnerability_to_line": 275,
+          "vulnerability_code": "  function transferOwnership(address newOwner) public onlyOwner {\n\n    require(newOwner != address(0));\n\n    OwnershipTransferred(owner, newOwner);\n\n    owner = newOwner;\n",
+          "message": "Ownable.transferOwnership (SampleCrowdsale.sol#271-275) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 308,
+          "vulnerability_to_line": 314,
+          "vulnerability_code": "  function mint(address _to, uint256 _amount) onlyOwner canMint public returns (bool) {\n\n    totalSupply_ = totalSupply_.add(_amount);\n\n    balances[_to] = balances[_to].add(_amount);\n\n    Mint(_to, _amount);\n\n    Transfer(address(0), _to, _amount);\n\n    return true;\n",
+          "message": "MintableToken.mint (SampleCrowdsale.sol#308-314) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 320,
+          "vulnerability_to_line": 324,
+          "vulnerability_code": "  function finishMinting() onlyOwner canMint public returns (bool) {\n\n    mintingFinished = true;\n\n    MintFinished();\n\n    return true;\n",
+          "message": "MintableToken.finishMinting (SampleCrowdsale.sol#320-324) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 494,
+          "vulnerability_to_line": 502,
+          "vulnerability_code": "  function finalize() onlyOwner public {\n\n    require(!isFinalized);\n\n    require(hasEnded());\n\n\n\n    finalization();\n\n    Finalized();\n\n\n\n    isFinalized = true;\n",
+          "message": "FinalizableCrowdsale.finalize (SampleCrowdsale.sol#494-502) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 543,
+          "vulnerability_to_line": 546,
+          "vulnerability_code": "  function deposit(address investor) onlyOwner public payable {\n\n    require(state == State.Active);\n\n    deposited[investor] = deposited[investor].add(msg.value);\n",
+          "message": "RefundVault.deposit (SampleCrowdsale.sol#543-546) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 548,
+          "vulnerability_to_line": 553,
+          "vulnerability_code": "  function close() onlyOwner public {\n\n    require(state == State.Active);\n\n    state = State.Closed;\n\n    Closed();\n\n    wallet.transfer(this.balance);\n",
+          "message": "RefundVault.close (SampleCrowdsale.sol#548-553) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 555,
+          "vulnerability_to_line": 559,
+          "vulnerability_code": "  function enableRefunds() onlyOwner public {\n\n    require(state == State.Active);\n\n    state = State.Refunding;\n\n    RefundsEnabled();\n",
+          "message": "RefundVault.enableRefunds (SampleCrowdsale.sol#555-559) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 561,
+          "vulnerability_to_line": 567,
+          "vulnerability_code": "  function refund(address investor) public {\n\n    require(state == State.Refunding);\n\n    uint256 depositedValue = deposited[investor];\n\n    deposited[investor] = 0;\n\n    investor.transfer(depositedValue);\n\n    Refunded(investor, depositedValue);\n",
+          "message": "RefundVault.refund (SampleCrowdsale.sol#561-567) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 598,
+          "vulnerability_to_line": 603,
+          "vulnerability_code": "  function claimRefund() public {\n\n    require(isFinalized);\n\n    require(!goalReached());\n\n\n\n    vault.refund(msg.sender);\n",
+          "message": "RefundableCrowdsale.claimRefund (SampleCrowdsale.sol#598-603) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": "Detected issues with version pragma in SampleCrowdsale.sol:\n\t- pragma solidity^0.4.18 (SampleCrowdsale.sol#3): it allows old versions\n\t- pragma solidity^0.4.18 (SampleCrowdsale.sol#54): it allows old versions\n\t- pragma solidity^0.4.18 (SampleCrowdsale.sol#71): it allows old versions\n\t- pragma solidity^0.4.18 (SampleCrowdsale.sol#121): it allows old versions\n\t- pragma solidity^0.4.18 (SampleCrowdsale.sol#136): it allows old versions\n\t- pragma solidity^0.4.18 (SampleCrowdsale.sol#236): it allows old versions\n\t- pragma solidity^0.4.18 (SampleCrowdsale.sol#281): it allows old versions\n\t- pragma solidity^0.4.18 (SampleCrowdsale.sol#329): it allows old versions\n\t- pragma solidity^0.4.18 (SampleCrowdsale.sol#439): it allows old versions\n\t- pragma solidity^0.4.18 (SampleCrowdsale.sol#474): it allows old versions\n\t- pragma solidity^0.4.18 (SampleCrowdsale.sol#515): it allows old versions\n\t- pragma solidity^0.4.18 (SampleCrowdsale.sol#572): it allows old versions\n\t- pragma solidity^0.4.18 (SampleCrowdsale.sol#631): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address _owner) public view returns (uint256 balance) {\n",
+          "message": "Parameter '_owner' of BasicToken.balanceOf (SampleCrowdsale.sol#113) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_to' of BasicToken.transfer (SampleCrowdsale.sol#97) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_value' of BasicToken.transfer (SampleCrowdsale.sol#97) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 191,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function allowance(address _owner, address _spender) public view returns (uint256) {\n",
+          "message": "Parameter '_owner' of StandardToken.allowance (SampleCrowdsale.sol#191) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 191,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function allowance(address _owner, address _spender) public view returns (uint256) {\n",
+          "message": "Parameter '_spender' of StandardToken.allowance (SampleCrowdsale.sol#191) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 157,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_from' of StandardToken.transferFrom (SampleCrowdsale.sol#157) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 157,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_to' of StandardToken.transferFrom (SampleCrowdsale.sol#157) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 157,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_value' of StandardToken.transferFrom (SampleCrowdsale.sol#157) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address _spender, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_spender' of StandardToken.approve (SampleCrowdsale.sol#179) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address _spender, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_value' of StandardToken.approve (SampleCrowdsale.sol#179) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 205,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function increaseApproval(address _spender, uint _addedValue) public returns (bool) {\n",
+          "message": "Parameter '_spender' of StandardToken.increaseApproval (SampleCrowdsale.sol#205) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 205,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function increaseApproval(address _spender, uint _addedValue) public returns (bool) {\n",
+          "message": "Parameter '_addedValue' of StandardToken.increaseApproval (SampleCrowdsale.sol#205) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 221,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function decreaseApproval(address _spender, uint _subtractedValue) public returns (bool) {\n",
+          "message": "Parameter '_spender' of StandardToken.decreaseApproval (SampleCrowdsale.sol#221) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 221,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function decreaseApproval(address _spender, uint _subtractedValue) public returns (bool) {\n",
+          "message": "Parameter '_subtractedValue' of StandardToken.decreaseApproval (SampleCrowdsale.sol#221) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 255,
+          "vulnerability_to_line": 257,
+          "vulnerability_code": "  function Ownable() public {\n\n    owner = msg.sender;\n",
+          "message": "Function 'Ownable.Ownable' (SampleCrowdsale.sol#255-257) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 308,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function mint(address _to, uint256 _amount) onlyOwner canMint public returns (bool) {\n",
+          "message": "Parameter '_to' of MintableToken.mint (SampleCrowdsale.sol#308) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 308,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function mint(address _to, uint256 _amount) onlyOwner canMint public returns (bool) {\n",
+          "message": "Parameter '_amount' of MintableToken.mint (SampleCrowdsale.sol#308) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 369,
+          "vulnerability_to_line": 380,
+          "vulnerability_code": "  function Crowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, address _wallet) public {\n\n    require(_startTime >= now);\n\n    require(_endTime >= _startTime);\n\n    require(_rate > 0);\n\n    require(_wallet != address(0));\n\n\n\n    token = createTokenContract();\n\n    startTime = _startTime;\n\n    endTime = _endTime;\n\n    rate = _rate;\n\n    wallet = _wallet;\n",
+          "message": "Function 'Crowdsale.Crowdsale' (SampleCrowdsale.sol#369-380) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 369,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function Crowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, address _wallet) public {\n",
+          "message": "Parameter '_startTime' of Crowdsale.Crowdsale (SampleCrowdsale.sol#369) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 369,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function Crowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, address _wallet) public {\n",
+          "message": "Parameter '_endTime' of Crowdsale.Crowdsale (SampleCrowdsale.sol#369) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 369,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function Crowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, address _wallet) public {\n",
+          "message": "Parameter '_rate' of Crowdsale.Crowdsale (SampleCrowdsale.sol#369) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 369,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function Crowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, address _wallet) public {\n",
+          "message": "Parameter '_wallet' of Crowdsale.Crowdsale (SampleCrowdsale.sol#369) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 451,
+          "vulnerability_to_line": 454,
+          "vulnerability_code": "  function CappedCrowdsale(uint256 _cap) public {\n\n    require(_cap > 0);\n\n    cap = _cap;\n",
+          "message": "Function 'CappedCrowdsale.CappedCrowdsale' (SampleCrowdsale.sol#451-454) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 451,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function CappedCrowdsale(uint256 _cap) public {\n",
+          "message": "Parameter '_cap' of CappedCrowdsale.CappedCrowdsale (SampleCrowdsale.sol#451) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 537,
+          "vulnerability_to_line": 541,
+          "vulnerability_code": "  function RefundVault(address _wallet) public {\n\n    require(_wallet != address(0));\n\n    wallet = _wallet;\n\n    state = State.Active;\n",
+          "message": "Function 'RefundVault.RefundVault' (SampleCrowdsale.sol#537-541) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 537,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function RefundVault(address _wallet) public {\n",
+          "message": "Parameter '_wallet' of RefundVault.RefundVault (SampleCrowdsale.sol#537) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 591,
+          "vulnerability_to_line": 595,
+          "vulnerability_code": "  function RefundableCrowdsale(uint256 _goal) public {\n\n    require(_goal > 0);\n\n    vault = new RefundVault(wallet);\n\n    goal = _goal;\n",
+          "message": "Function 'RefundableCrowdsale.RefundableCrowdsale' (SampleCrowdsale.sol#591-595) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 591,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function RefundableCrowdsale(uint256 _goal) public {\n",
+          "message": "Parameter '_goal' of RefundableCrowdsale.RefundableCrowdsale (SampleCrowdsale.sol#591) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 662,
+          "vulnerability_to_line": 671,
+          "vulnerability_code": "  function SampleCrowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, uint256 _goal, uint256 _cap, address _wallet) public\n\n    CappedCrowdsale(_cap)\n\n    FinalizableCrowdsale()\n\n    RefundableCrowdsale(_goal)\n\n    Crowdsale(_startTime, _endTime, _rate, _wallet)\n\n  {\n\n    //As goal needs to be met for a successful crowdsale\n\n    //the value needs to less or equal than a cap which is limit for accepted funds\n\n    require(_goal <= _cap);\n",
+          "message": "Function 'SampleCrowdsale.SampleCrowdsale' (SampleCrowdsale.sol#662-671) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 662,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function SampleCrowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, uint256 _goal, uint256 _cap, address _wallet) public\n",
+          "message": "Parameter '_goal' of SampleCrowdsale.SampleCrowdsale (SampleCrowdsale.sol#662) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 662,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function SampleCrowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, uint256 _goal, uint256 _cap, address _wallet) public\n",
+          "message": "Parameter '_cap' of SampleCrowdsale.SampleCrowdsale (SampleCrowdsale.sol#662) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address _spender, uint256 _value) public returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 121,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 136,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 236,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 281,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 329,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 439,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 474,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 515,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 572,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 631,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 341,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 447,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 484,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 525,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 583,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  mapping(address => uint256) balances;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint256 totalSupply_;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 c = a + b;\n",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 c = a + b;\n",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 c = a + b;\n",
+          "message": null
+        },
+        {
+          "name": "Transaction-Ordering Dependence (TOD)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 c = a + b;\n",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 c = a + b;\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Concurrency bug",
+          "vulnerability_from_line": 552,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    wallet.transfer(this.balance);\n",
+          "message": null
+        },
+        {
+          "name": "Concurrency bug",
+          "vulnerability_from_line": 565,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    investor.transfer(depositedValue);\n",
+          "message": null
+        }
+      ]
+    }
+  }
+}

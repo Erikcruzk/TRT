@@ -1,0 +1,193 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(ms.isMember(msg.sender), \"Not member\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      require(address(ms) == msg.sender, \"Not master\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-multiple-require",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(ms.isPause() == false && ms.isMember(msg.sender) == true);\n",
+          "message": "Using multiple require statements is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_15"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  address public owner;\n",
+          "message": "INXMMaster.owner should be constant (Iupgradable.sol#24)\nINXMMaster.pauseTime should be constant (Iupgradable.sol#26)\nINXMMaster.tokenAddress should be constant (Iupgradable.sol#22)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function masterInitialized() public view returns (bool);\n",
+          "message": "INXMMaster.masterInitialized (Iupgradable.sol#30) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function isInternal(address _add) public view returns (bool);\n",
+          "message": "INXMMaster.isInternal (Iupgradable.sol#32) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function isPause() public view returns (bool check);\n",
+          "message": "INXMMaster.isPause (Iupgradable.sol#34) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function isOwner(address _add) public view returns (bool);\n",
+          "message": "INXMMaster.isOwner (Iupgradable.sol#36) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function isMember(address _add) public view returns (bool);\n",
+          "message": "INXMMaster.isMember (Iupgradable.sol#38) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function checkIsAuthToGoverned(address _add) public view returns (bool);\n",
+          "message": "INXMMaster.checkIsAuthToGoverned (Iupgradable.sol#40) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updatePauseTime(uint _time) public;\n",
+          "message": "INXMMaster.updatePauseTime (Iupgradable.sol#42) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function dAppLocker() public view returns (address _add);\n",
+          "message": "INXMMaster.dAppLocker (Iupgradable.sol#44) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function dAppToken() public view returns (address _add);\n",
+          "message": "INXMMaster.dAppToken (Iupgradable.sol#46) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function getLatestAddress(bytes2 _contractName) public view returns (address payable contractAddress);\n",
+          "message": "INXMMaster.getLatestAddress (Iupgradable.sol#48) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function changeDependentContractAddress() public;\n",
+          "message": "Iupgradable.changeDependentContractAddress (Iupgradable.sol#88) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": 101,
+          "vulnerability_code": "  function changeMasterAddress(address _masterAddress) public {\n\n    if (address(ms) != address(0)) {\n\n      require(address(ms) == msg.sender, \"Not master\");\n\n    }\n\n\n\n    ms = INXMMaster(_masterAddress);\n\n    nxMasterAddress = _masterAddress;\n",
+          "message": "Iupgradable.changeMasterAddress (Iupgradable.sol#94-101) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": "Detected issues with version pragma in Iupgradable.sol:\n\t- pragma solidity^0.5.0 (Iupgradable.sol#18): it allows old versions\n\t- pragma solidity^0.5.0 (Iupgradable.sol#53): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function changeMasterAddress(address _masterAddress) public {\n",
+          "message": "Parameter '_masterAddress' of Iupgradable.changeMasterAddress (Iupgradable.sol#94) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function getLatestAddress(bytes2 _contractName) public view returns (address payable contractAddress);\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "execution failed"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": false,
+      "errors": [
+        "input files do not contain any valid contracts"
+      ],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

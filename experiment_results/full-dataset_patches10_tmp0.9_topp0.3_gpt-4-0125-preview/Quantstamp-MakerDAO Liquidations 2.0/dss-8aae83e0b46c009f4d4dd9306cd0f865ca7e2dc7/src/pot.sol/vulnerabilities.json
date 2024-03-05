@@ -1,0 +1,305 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address vat_) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        wards[msg.sender] = 1;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        vat = VatLike(vat_);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        dsr = ONE;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        chi = ONE;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        rho = now;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        live = 1;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(wards[msg.sender] == 1, \"Pot/not-authorized\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(live == 1, \"Pot/not-live\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(now == rho, \"Pot/rho-not-updated\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 132,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        else revert(\"Pot/file-unrecognized-param\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 137,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        else revert(\"Pot/file-unrecognized-param\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 147,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(now >= rho, \"Pot/invalid-now\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 157,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(now == rho, \"Pot/rho-not-updated\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_13"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": 109,
+          "vulnerability_code": "    function rpow(uint x, uint n, uint base) internal pure returns (uint z) {\n\n        assembly {\n\n            switch x case 0 {switch n case 0 {z := base} default {z := 0}}\n\n            default {\n\n                switch mod(n, 2) case 0 { z := base } default { z := x }\n\n                let half := div(base, 2)  // for rounding.\n\n                for { n := div(n, 2) } n { n := div(n,2) } {\n\n                    let xx := mul(x, x)\n\n                    if iszero(eq(div(xx, x), x)) { revert(0,0) }\n\n                    let xxRound := add(xx, half)\n\n                    if lt(xxRound, xx) { revert(0,0) }\n\n                    x := div(xxRound, base)\n\n                    if mod(n,2) {\n\n                        let zx := mul(z, x)\n\n                        if and(iszero(iszero(x)), iszero(eq(div(zx, x), z))) { revert(0,0) }\n\n                        let zxRound := add(zx, half)\n\n                        if lt(zxRound, zx) { revert(0,0) }\n\n                        z := div(zxRound, base)\n\n                    }\n\n                }\n\n            }\n\n        }\n",
+          "message": "Pot.rpow (pot.sol#87-109) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "incorrect-equality",
+          "vulnerability_from_line": 128,
+          "vulnerability_to_line": 133,
+          "vulnerability_code": "    function file(bytes32 what, uint256 data) external auth {\n\n        require(live == 1, \"Pot/not-live\");\n\n        require(now == rho, \"Pot/rho-not-updated\");\n\n        if (what == \"dsr\") dsr = data;\n\n        else revert(\"Pot/file-unrecognized-param\");\n",
+          "message": "Pot.file (pot.sol#128-133) uses a dangerous strict equality:\n\t- require(bool,string)(now == rho,Pot/rho-not-updated)\n"
+        },
+        {
+          "name": "incorrect-equality",
+          "vulnerability_from_line": 128,
+          "vulnerability_to_line": 133,
+          "vulnerability_code": "    function file(bytes32 what, uint256 data) external auth {\n\n        require(live == 1, \"Pot/not-live\");\n\n        require(now == rho, \"Pot/rho-not-updated\");\n\n        if (what == \"dsr\") dsr = data;\n\n        else revert(\"Pot/file-unrecognized-param\");\n",
+          "message": "Pot.file (pot.sol#128-133) uses a dangerous strict equality:\n\t- require(bool,string)(now == rho,Pot/rho-not-updated)\nPot.join (pot.sol#156-161) uses a dangerous strict equality:\n\t- require(bool,string)(now == rho,Pot/rho-not-updated)\n"
+        },
+        {
+          "name": "incorrect-equality",
+          "vulnerability_from_line": 128,
+          "vulnerability_to_line": 133,
+          "vulnerability_code": "    function file(bytes32 what, uint256 data) external auth {\n\n        require(live == 1, \"Pot/not-live\");\n\n        require(now == rho, \"Pot/rho-not-updated\");\n\n        if (what == \"dsr\") dsr = data;\n\n        else revert(\"Pot/file-unrecognized-param\");\n",
+          "message": "Pot.file (pot.sol#128-133) uses a dangerous strict equality:\n\t- require(bool,string)(now == rho,Pot/rho-not-updated)\nPot.join (pot.sol#156-161) uses a dangerous strict equality:\n\t- require(bool,string)(now == rho,Pot/rho-not-updated)\nPot.mul (pot.sol#123-125) uses a dangerous strict equality:\n\t- require(bool)(y == 0 || (z = x * y) / y == x)\n\t- require(bool)(y == 0 || (z = x * y) / y == x)\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": 109,
+          "vulnerability_code": "    function rpow(uint x, uint n, uint base) internal pure returns (uint z) {\n\n        assembly {\n\n            switch x case 0 {switch n case 0 {z := base} default {z := 0}}\n\n            default {\n\n                switch mod(n, 2) case 0 { z := base } default { z := x }\n\n                let half := div(base, 2)  // for rounding.\n\n                for { n := div(n, 2) } n { n := div(n,2) } {\n\n                    let xx := mul(x, x)\n\n                    if iszero(eq(div(xx, x), x)) { revert(0,0) }\n\n                    let xxRound := add(xx, half)\n\n                    if lt(xxRound, xx) { revert(0,0) }\n\n                    x := div(xxRound, base)\n\n                    if mod(n,2) {\n\n                        let zx := mul(z, x)\n\n                        if and(iszero(iszero(x)), iszero(eq(div(zx, x), z))) { revert(0,0) }\n\n                        let zxRound := add(zx, half)\n\n                        if lt(zxRound, zx) { revert(0,0) }\n\n                        z := div(zxRound, base)\n\n                    }\n\n                }\n\n            }\n\n        }\n",
+          "message": "Pot.rpow uses assembly (pot.sol#87-109)\n\t- pot.sol#88-108\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.5.12;\n",
+          "message": "Detected issues with version pragma in pot.sol:\n\t- pragma solidity>=0.5.12 (pot.sol#22): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function move(address,address,uint256) external;\n",
+          "message": "Parameter '' of VatLike.move (pot.sol#48) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function move(address,address,uint256) external;\n",
+          "message": "Parameter '_scope_0' of VatLike.move (pot.sol#48) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function move(address,address,uint256) external;\n",
+          "message": "Parameter '_scope_1' of VatLike.move (pot.sol#48) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function suck(address,address,uint256) external;\n",
+          "message": "Parameter '' of VatLike.suck (pot.sol#49) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function suck(address,address,uint256) external;\n",
+          "message": "Parameter '_scope_0' of VatLike.suck (pot.sol#49) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function suck(address,address,uint256) external;\n",
+          "message": "Parameter '_scope_1' of VatLike.suck (pot.sol#49) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public Pie;   // Total Normalised Savings Dai  [wad]\n",
+          "message": "Variable 'Pot.Pie' (pot.sol#65) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_EXACT_TIME",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(now == rho, \"Pot/rho-not-updated\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_EXACT_TIME",
+          "vulnerability_from_line": 157,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(now == rho, \"Pot/rho-not-updated\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function rpow(uint x, uint n, uint base) internal pure returns (uint z) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.5.12;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 131,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (what == \"dsr\") dsr = data;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 136,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (what == \"vow\") vow = addr;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function rpow(uint x, uint n, uint base) internal pure returns (uint z) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 constant ONE = 10 ** 27;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solc experienced a fatal error"
+      ],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

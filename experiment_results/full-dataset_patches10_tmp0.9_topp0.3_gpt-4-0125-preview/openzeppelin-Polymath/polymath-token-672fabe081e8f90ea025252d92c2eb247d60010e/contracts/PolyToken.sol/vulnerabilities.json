@@ -1,0 +1,321 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_31"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  string public name = 'Polymath';\n",
+          "message": "PolyToken.name should be constant (PolyToken.sol#94)\nPolyToken.symbol should be constant (PolyToken.sol#95)\nPolyToken.totalSupply should be constant (PolyToken.sol#98)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address who) public view returns (uint256);\n",
+          "message": "IERC20.balanceOf (PolyToken.sol#10) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": 117,
+          "vulnerability_code": "  function balanceOf(address _owner) public view returns (uint256 balance) {\n\n    return balances[_owner];\n",
+          "message": "PolyToken.balanceOf (PolyToken.sol#115-117) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": 127,
+          "vulnerability_code": "  function allowance(address _owner, address _spender) public view returns (uint256) {\n\n    return allowed[_owner][_spender];\n",
+          "message": "PolyToken.allowance (PolyToken.sol#125-127) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function allowance(address owner, address spender) public view returns (uint256);\n",
+          "message": "IERC20.allowance (PolyToken.sol#11) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address to, uint256 value) public returns (bool);\n",
+          "message": "IERC20.transfer (PolyToken.sol#12) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": 143,
+          "vulnerability_code": "  function transfer(address _to, uint256 _value) public returns (bool) {\n\n    require(_to != address(0));\n\n    require(_value <= balances[msg.sender]);\n\n\n\n    // SafeMath.sub will throw if there is not enough balance.\n\n    balances[msg.sender] = balances[msg.sender].sub(_value);\n\n    balances[_to] = balances[_to].add(_value);\n\n    Transfer(msg.sender, _to, _value);\n\n    return true;\n",
+          "message": "PolyToken.transfer (PolyToken.sol#134-143) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address from, address to, uint256 value) public returns (bool);\n",
+          "message": "IERC20.transferFrom (PolyToken.sol#13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 151,
+          "vulnerability_to_line": 161,
+          "vulnerability_code": "  function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {\n\n    require(_to != address(0));\n\n    require(_value <= balances[_from]);\n\n    require(_value <= allowed[_from][msg.sender]);\n\n\n\n    balances[_from] = balances[_from].sub(_value);\n\n    balances[_to] = balances[_to].add(_value);\n\n    allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);\n\n    Transfer(_from, _to, _value);\n\n    return true;\n",
+          "message": "PolyToken.transferFrom (PolyToken.sol#151-161) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 173,
+          "vulnerability_to_line": 177,
+          "vulnerability_code": "  function approve(address _spender, uint256 _value) public returns (bool) {\n\n    allowed[msg.sender][_spender] = _value;\n\n    Approval(msg.sender, _spender, _value);\n\n    return true;\n",
+          "message": "PolyToken.approve (PolyToken.sol#173-177) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address spender, uint256 value) public returns (bool);\n",
+          "message": "IERC20.approve (PolyToken.sol#14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 189,
+          "vulnerability_to_line": 193,
+          "vulnerability_code": "  function increaseApproval(address _spender, uint _addedValue) public returns (bool) {\n\n    allowed[msg.sender][_spender] = allowed[msg.sender][_spender].add(_addedValue);\n\n    Approval(msg.sender, _spender, allowed[msg.sender][_spender]);\n\n    return true;\n",
+          "message": "PolyToken.increaseApproval (PolyToken.sol#189-193) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 205,
+          "vulnerability_to_line": 214,
+          "vulnerability_code": "  function decreaseApproval(address _spender, uint _subtractedValue) public returns (bool) {\n\n    uint oldValue = allowed[msg.sender][_spender];\n\n    if (_subtractedValue > oldValue) {\n\n      allowed[msg.sender][_spender] = 0;\n\n    } else {\n\n      allowed[msg.sender][_spender] = oldValue.sub(_subtractedValue);\n\n    }\n\n    Approval(msg.sender, _spender, allowed[msg.sender][_spender]);\n\n    return true;\n",
+          "message": "PolyToken.decreaseApproval (PolyToken.sol#205-214) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": "Detected issues with version pragma in PolyToken.sol:\n\t- pragma solidity^0.4.18 (PolyToken.sol#3): it allows old versions\n\t- pragma solidity^0.4.18 (PolyToken.sol#21): it allows old versions\n\t- pragma solidity^0.4.18 (PolyToken.sol#81): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address _owner) public view returns (uint256 balance) {\n",
+          "message": "Parameter '_owner' of PolyToken.balanceOf (PolyToken.sol#115) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function allowance(address _owner, address _spender) public view returns (uint256) {\n",
+          "message": "Parameter '_owner' of PolyToken.allowance (PolyToken.sol#125) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function allowance(address _owner, address _spender) public view returns (uint256) {\n",
+          "message": "Parameter '_spender' of PolyToken.allowance (PolyToken.sol#125) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_to' of PolyToken.transfer (PolyToken.sol#134) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_value' of PolyToken.transfer (PolyToken.sol#134) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 151,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_from' of PolyToken.transferFrom (PolyToken.sol#151) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 151,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_to' of PolyToken.transferFrom (PolyToken.sol#151) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 151,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_value' of PolyToken.transferFrom (PolyToken.sol#151) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 173,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address _spender, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_spender' of PolyToken.approve (PolyToken.sol#173) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 173,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address _spender, uint256 _value) public returns (bool) {\n",
+          "message": "Parameter '_value' of PolyToken.approve (PolyToken.sol#173) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 106,
+          "vulnerability_to_line": 108,
+          "vulnerability_code": "  function PolyToken(address _polyDistributionContractAddress) public {\n\n    balances[_polyDistributionContractAddress] = totalSupply;\n",
+          "message": "Function 'PolyToken.PolyToken' (PolyToken.sol#106-108) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 106,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function PolyToken(address _polyDistributionContractAddress) public {\n",
+          "message": "Parameter '_polyDistributionContractAddress' of PolyToken.PolyToken (PolyToken.sol#106) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 189,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function increaseApproval(address _spender, uint _addedValue) public returns (bool) {\n",
+          "message": "Parameter '_spender' of PolyToken.increaseApproval (PolyToken.sol#189) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 189,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function increaseApproval(address _spender, uint _addedValue) public returns (bool) {\n",
+          "message": "Parameter '_addedValue' of PolyToken.increaseApproval (PolyToken.sol#189) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 205,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function decreaseApproval(address _spender, uint _subtractedValue) public returns (bool) {\n",
+          "message": "Parameter '_spender' of PolyToken.decreaseApproval (PolyToken.sol#205) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 205,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function decreaseApproval(address _spender, uint _subtractedValue) public returns (bool) {\n",
+          "message": "Parameter '_subtractedValue' of PolyToken.decreaseApproval (PolyToken.sol#205) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint256 public constant decimalFactor = 10 ** uint256(decimals);\n",
+          "message": "Constant 'PolyToken.decimalFactor' (PolyToken.sol#97) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 173,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address _spender, uint256 _value) public returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  mapping (address => uint256) balances;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 c = a + b;\n",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  string public name = 'Polymath';\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 190,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    allowed[msg.sender][_spender] = allowed[msg.sender][_spender].add(_addedValue);\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

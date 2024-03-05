@@ -1,0 +1,138 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function() payable public  {\n\n        if(a == 0) {\n\n             a = 1;\n\n             withdrawable.withdrawCashback();\n\n        }\n",
+          "message": "Contract locking ether found in ErrorCashbackUser.sol:\n\tContract ErrorCashbackUser has payable functions:\n\t - fallback (ErrorCashbackUser.sol#24-29)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 6,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function withdrawCashback() public;\n",
+          "message": "IWithdrawCashback.withdrawCashback (ErrorCashbackUser.sol#6) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": 29,
+          "vulnerability_code": "    function() payable public  {\n\n        if(a == 0) {\n\n             a = 1;\n\n             withdrawable.withdrawCashback();\n\n        }\n",
+          "message": "ErrorCashbackUser.fallback (ErrorCashbackUser.sol#24-29) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": 33,
+          "vulnerability_code": "    function withdraw() public {\n\n        withdrawable.withdrawCashback();\n",
+          "message": "ErrorCashbackUser.withdraw (ErrorCashbackUser.sol#31-33) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": "Detected issues with version pragma in ErrorCashbackUser.sol:\n\t- pragma solidity^0.4.18 (ErrorCashbackUser.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": 22,
+          "vulnerability_code": "    function ErrorCashbackUser(IWithdrawCashback _withdrawable) public {\n\n        withdrawable = _withdrawable;\n",
+          "message": "Function 'ErrorCashbackUser.ErrorCashbackUser' (ErrorCashbackUser.sol#20-22) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function ErrorCashbackUser(IWithdrawCashback _withdrawable) public {\n",
+          "message": "Parameter '_withdrawable' of ErrorCashbackUser.ErrorCashbackUser (ErrorCashbackUser.sol#20) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract ErrorCashbackUser {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() payable public  {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint8 a;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    IWithdrawCashback withdrawable;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "             withdrawable.withdrawCashback();\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        withdrawable.withdrawCashback();\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

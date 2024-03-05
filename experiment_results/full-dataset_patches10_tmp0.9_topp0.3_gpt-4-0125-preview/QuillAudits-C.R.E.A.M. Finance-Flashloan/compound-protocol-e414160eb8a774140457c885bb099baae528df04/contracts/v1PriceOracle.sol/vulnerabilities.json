@@ -1,0 +1,471 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 404,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _poster) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 405,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        anchorAdmin = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 406,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        poster = _poster;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 407,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        maxSwing = Exp({mantissa : maxSwingMantissa});\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 408,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 862,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 0; i < numAssets; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 862,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 0; i < numAssets; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_25"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "incorrect-equality",
+          "vulnerability_from_line": 773,
+          "vulnerability_to_line": 788,
+          "vulnerability_code": "    function calculateSwing(Exp memory anchorPrice, Exp memory price) pure internal returns (Error, Exp memory) {\n\n        Exp memory numerator;\n\n        Error err;\n\n\n\n        if (greaterThanExp(anchorPrice, price)) {\n\n            (err, numerator) = subExp(anchorPrice, price);\n\n            // can't underflow\n\n            assert(err == Error.NO_ERROR);\n\n        } else {\n\n            (err, numerator) = subExp(price, anchorPrice);\n\n            // Given greaterThan check above, price >= anchorPrice so can't underflow.\n\n            assert(err == Error.NO_ERROR);\n\n        }\n\n\n\n        return divExp(numerator, anchorPrice);\n",
+          "message": "PriceOracle.calculateSwing (v1PriceOracle.sol#773-788) uses a dangerous strict equality:\n\t- assert(bool)(err == Error.NO_ERROR)\n\t- assert(bool)(err == Error.NO_ERROR)\n"
+        },
+        {
+          "name": "incorrect-equality",
+          "vulnerability_from_line": 773,
+          "vulnerability_to_line": 788,
+          "vulnerability_code": "    function calculateSwing(Exp memory anchorPrice, Exp memory price) pure internal returns (Error, Exp memory) {\n\n        Exp memory numerator;\n\n        Error err;\n\n\n\n        if (greaterThanExp(anchorPrice, price)) {\n\n            (err, numerator) = subExp(anchorPrice, price);\n\n            // can't underflow\n\n            assert(err == Error.NO_ERROR);\n\n        } else {\n\n            (err, numerator) = subExp(price, anchorPrice);\n\n            // Given greaterThan check above, price >= anchorPrice so can't underflow.\n\n            assert(err == Error.NO_ERROR);\n\n        }\n\n\n\n        return divExp(numerator, anchorPrice);\n",
+          "message": "PriceOracle.calculateSwing (v1PriceOracle.sol#773-788) uses a dangerous strict equality:\n\t- assert(bool)(err == Error.NO_ERROR)\n\t- assert(bool)(err == Error.NO_ERROR)\nPriceOracle.capToMax (v1PriceOracle.sol#790-833) uses a dangerous strict equality:\n\t- assert(bool)(err == Error.NO_ERROR)\n"
+        },
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 413,
+          "vulnerability_to_line": 415,
+          "vulnerability_code": "    function() payable external {\n\n        revert();\n",
+          "message": "Contract locking ether found in v1PriceOracle.sol:\n\tContract PriceOracle has payable functions:\n\t - fallback (v1PriceOracle.sol#413-415)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "uninitialized-local",
+          "vulnerability_from_line": 685,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        SetPriceLocalVars memory localVars;\n",
+          "message": "localVars in PriceOracle.setPriceInternal (v1PriceOracle.sol#685) is a local variable never initialiazed\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 518,
+          "vulnerability_to_line": 530,
+          "vulnerability_code": "    function _setPendingAnchor(address asset, uint newScaledPrice) public returns (uint) {\n\n        // Check caller = anchorAdmin. Note: Deliberately not allowing admin. They can just change anchorAdmin if desired.\n\n        if (msg.sender != anchorAdmin) {\n\n            return failOracle(asset, OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PENDING_ANCHOR_PERMISSION_CHECK);\n\n        }\n\n\n\n        uint oldScaledPrice = pendingAnchors[asset];\n\n        pendingAnchors[asset] = newScaledPrice;\n\n\n\n        emit NewPendingAnchor(msg.sender, asset, oldScaledPrice, newScaledPrice);\n\n\n\n        return uint(OracleError.NO_ERROR);\n",
+          "message": "PriceOracle._setPendingAnchor (v1PriceOracle.sol#518-530) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 563,
+          "vulnerability_to_line": 573,
+          "vulnerability_code": "    function _setPaused(bool requestedState) public returns (uint) {\n\n        // Check caller = anchorAdmin\n\n        if (msg.sender != anchorAdmin) {\n\n            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PAUSED_OWNER_CHECK);\n\n        }\n\n\n\n        paused = requestedState;\n\n        emit SetPaused(requestedState);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "PriceOracle._setPaused (v1PriceOracle.sol#563-573) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 583,
+          "vulnerability_to_line": 597,
+          "vulnerability_code": "    function _setPendingAnchorAdmin(address newPendingAnchorAdmin) public returns (uint) {\n\n        // Check caller = anchorAdmin\n\n        if (msg.sender != anchorAdmin) {\n\n            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PENDING_ANCHOR_ADMIN_OWNER_CHECK);\n\n        }\n\n\n\n        // save current value, if any, for inclusion in log\n\n        address oldPendingAnchorAdmin = pendingAnchorAdmin;\n\n        // Store pendingAdmin = newPendingAdmin\n\n        pendingAnchorAdmin = newPendingAnchorAdmin;\n\n\n\n        emit NewPendingAnchorAdmin(oldPendingAnchorAdmin, newPendingAnchorAdmin);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "PriceOracle._setPendingAnchorAdmin (v1PriceOracle.sol#583-597) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 604,
+          "vulnerability_to_line": 621,
+          "vulnerability_code": "    function _acceptAnchorAdmin() public returns (uint) {\n\n        // Check caller = pendingAnchorAdmin\n\n        // msg.sender can't be zero\n\n        if (msg.sender != pendingAnchorAdmin) {\n\n            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.ACCEPT_ANCHOR_ADMIN_PENDING_ANCHOR_ADMIN_CHECK);\n\n        }\n\n\n\n        // Save current value for inclusion in log\n\n        address oldAnchorAdmin = anchorAdmin;\n\n        // Store admin = pendingAnchorAdmin\n\n        anchorAdmin = pendingAnchorAdmin;\n\n        // Clear the pending value\n\n        pendingAnchorAdmin = address(0);\n\n\n\n        emit NewAnchorAdmin(oldAnchorAdmin, msg.sender);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "PriceOracle._acceptAnchorAdmin (v1PriceOracle.sol#604-621) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 651,
+          "vulnerability_to_line": 653,
+          "vulnerability_code": "    function getPrice(address asset) public view returns (uint) {\n\n        return assetPrices(asset);\n",
+          "message": "PriceOracle.getPrice (v1PriceOracle.sol#651-653) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 673,
+          "vulnerability_to_line": 680,
+          "vulnerability_code": "    function setPrice(address asset, uint requestedPriceMantissa) public returns (uint) {\n\n        // Fail when msg.sender is not poster\n\n        if (msg.sender != poster) {\n\n            return failOracle(asset, OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PRICE_PERMISSION_CHECK);\n\n        }\n\n\n\n        return setPriceInternal(asset, requestedPriceMantissa);\n",
+          "message": "PriceOracle.setPrice (v1PriceOracle.sol#673-680) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 842,
+          "vulnerability_to_line": 867,
+          "vulnerability_code": "    function setPrices(address[] memory assets, uint[] memory requestedPriceMantissas) public returns (uint[] memory) {\n\n        uint numAssets = assets.length;\n\n        uint numPrices = requestedPriceMantissas.length;\n\n        uint[] memory result;\n\n\n\n        // Fail when msg.sender is not poster\n\n        if (msg.sender != poster) {\n\n            result = new uint[](1);\n\n            result[0] = failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PRICE_PERMISSION_CHECK);\n\n            return result;\n\n        }\n\n\n\n        if ((numAssets == 0) || (numPrices != numAssets)) {\n\n            result = new uint[](1);\n\n            result[0] = failOracle(address(0), OracleError.FAILED_TO_SET_PRICE, OracleFailureInfo.SET_PRICES_PARAM_VALIDATION);\n\n            return result;\n\n        }\n\n\n\n        result = new uint[](numAssets);\n\n\n\n        for (uint i = 0; i < numAssets; i++) {\n\n            result[i] = setPriceInternal(assets[i], requestedPriceMantissas[i]);\n\n        }\n\n\n\n        return result;\n",
+          "message": "PriceOracle.setPrices (v1PriceOracle.sol#842-867) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": "Detected issues with version pragma in v1PriceOracle.sol:\n\t- pragma solidity^0.5.16 (v1PriceOracle.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 220,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant expScale = 10**18;\n",
+          "message": "Constant 'Exponential.expScale' (v1PriceOracle.sol#220) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 223,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant halfExpScale = expScale/2;\n",
+          "message": "Constant 'Exponential.halfExpScale' (v1PriceOracle.sol#223) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 229,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant mantissaOne = 10**18;\n",
+          "message": "Constant 'Exponential.mantissaOne' (v1PriceOracle.sol#229) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 230,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant mantissaOneTenth = 10**17;\n",
+          "message": "Constant 'Exponential.mantissaOneTenth' (v1PriceOracle.sol#230) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 404,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _poster) public {\n",
+          "message": "Parameter '_poster' of PriceOracle. (v1PriceOracle.sol#404) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 518,
+          "vulnerability_to_line": 530,
+          "vulnerability_code": "    function _setPendingAnchor(address asset, uint newScaledPrice) public returns (uint) {\n\n        // Check caller = anchorAdmin. Note: Deliberately not allowing admin. They can just change anchorAdmin if desired.\n\n        if (msg.sender != anchorAdmin) {\n\n            return failOracle(asset, OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PENDING_ANCHOR_PERMISSION_CHECK);\n\n        }\n\n\n\n        uint oldScaledPrice = pendingAnchors[asset];\n\n        pendingAnchors[asset] = newScaledPrice;\n\n\n\n        emit NewPendingAnchor(msg.sender, asset, oldScaledPrice, newScaledPrice);\n\n\n\n        return uint(OracleError.NO_ERROR);\n",
+          "message": "Function 'PriceOracle._setPendingAnchor' (v1PriceOracle.sol#518-530) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 563,
+          "vulnerability_to_line": 573,
+          "vulnerability_code": "    function _setPaused(bool requestedState) public returns (uint) {\n\n        // Check caller = anchorAdmin\n\n        if (msg.sender != anchorAdmin) {\n\n            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PAUSED_OWNER_CHECK);\n\n        }\n\n\n\n        paused = requestedState;\n\n        emit SetPaused(requestedState);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "Function 'PriceOracle._setPaused' (v1PriceOracle.sol#563-573) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 583,
+          "vulnerability_to_line": 597,
+          "vulnerability_code": "    function _setPendingAnchorAdmin(address newPendingAnchorAdmin) public returns (uint) {\n\n        // Check caller = anchorAdmin\n\n        if (msg.sender != anchorAdmin) {\n\n            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PENDING_ANCHOR_ADMIN_OWNER_CHECK);\n\n        }\n\n\n\n        // save current value, if any, for inclusion in log\n\n        address oldPendingAnchorAdmin = pendingAnchorAdmin;\n\n        // Store pendingAdmin = newPendingAdmin\n\n        pendingAnchorAdmin = newPendingAnchorAdmin;\n\n\n\n        emit NewPendingAnchorAdmin(oldPendingAnchorAdmin, newPendingAnchorAdmin);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "Function 'PriceOracle._setPendingAnchorAdmin' (v1PriceOracle.sol#583-597) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 604,
+          "vulnerability_to_line": 621,
+          "vulnerability_code": "    function _acceptAnchorAdmin() public returns (uint) {\n\n        // Check caller = pendingAnchorAdmin\n\n        // msg.sender can't be zero\n\n        if (msg.sender != pendingAnchorAdmin) {\n\n            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.ACCEPT_ANCHOR_ADMIN_PENDING_ANCHOR_ADMIN_CHECK);\n\n        }\n\n\n\n        // Save current value for inclusion in log\n\n        address oldAnchorAdmin = anchorAdmin;\n\n        // Store admin = pendingAnchorAdmin\n\n        anchorAdmin = pendingAnchorAdmin;\n\n        // Clear the pending value\n\n        pendingAnchorAdmin = address(0);\n\n\n\n        emit NewAnchorAdmin(oldAnchorAdmin, msg.sender);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "Function 'PriceOracle._acceptAnchorAdmin' (v1PriceOracle.sol#604-621) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 392,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public constant numBlocksPerPeriod = 240; // approximately 1 hour: 60 seconds/minute * 60 minutes/hour * 1 block/15 seconds\n",
+          "message": "Constant 'PriceOracle.numBlocksPerPeriod' (v1PriceOracle.sol#392) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 394,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public constant maxSwingMantissa = (10 ** 17); // 0.1\n",
+          "message": "Constant 'PriceOracle.maxSwingMantissa' (v1PriceOracle.sol#394) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 402,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => Exp) public _assetPrices;\n",
+          "message": "Variable 'PriceOracle._assetPrices' (v1PriceOracle.sol#402) is not in mixedCase\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 230,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant mantissaOneTenth = 10**17;\n",
+          "message": "Exponential.mantissaOneTenth (v1PriceOracle.sol#230) is never used in PriceOracle\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 566,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PAUSED_OWNER_CHECK);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 586,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PENDING_ANCHOR_ADMIN_OWNER_CHECK);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 608,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.ACCEPT_ANCHOR_ADMIN_PENDING_ANCHOR_ADMIN_CHECK);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 616,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        pendingAnchorAdmin = address(0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 850,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            result[0] = failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PRICE_PERMISSION_CHECK);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 856,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            result[0] = failOracle(address(0), OracleError.FAILED_TO_SET_PRICE, OracleFailureInfo.SET_PRICES_PARAM_VALIDATION);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 862,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 0; i < numAssets; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 384,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract PriceOracle is Exponential {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REDUNDANT_FALLBACK_REJECT",
+          "vulnerability_from_line": 413,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() payable external {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 153,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mul(uint a, uint b) internal pure returns (Error, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 170,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function div(uint a, uint b) internal pure returns (Error, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 181,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function sub(uint a, uint b) internal pure returns (Error, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 192,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function add(uint a, uint b) internal pure returns (Error, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 205,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addThenSub(uint a, uint b, uint c) internal pure returns (Error, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 237,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getExp(uint num, uint denom) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 254,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addExp(Exp memory a, Exp memory b) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 263,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function subExp(Exp memory a, Exp memory b) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 272,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulScalar(Exp memory a, uint scalar) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 284,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divScalar(Exp memory a, uint scalar) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 296,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divScalarByExp(uint scalar, Exp memory divisor) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 316,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulExp(Exp memory a, Exp memory b) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 343,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divExp(Exp memory a, Exp memory b) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 773,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function calculateSwing(Exp memory anchorPrice, Exp memory price) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 790,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function capToMax(Exp memory anchorPrice, Exp memory price) view internal returns (Error, bool, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 220,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant expScale = 10**18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 223,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant halfExpScale = expScale/2;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 229,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant mantissaOne = 10**18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 230,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant mantissaOneTenth = 10**17;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(uint borrowRate_) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        borrowRate = borrowRate_;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(!failBorrowRate, \"INTEREST_RATE_MODEL_ERROR\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_8"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "    function getBorrowRate(uint _cash, uint _borrows, uint _reserves) public view returns (uint) {\n\n        _cash;     // unused\n\n        _borrows;  // unused\n\n        _reserves; // unused\n\n        require(!failBorrowRate, \"INTEREST_RATE_MODEL_ERROR\");\n\n        return borrowRate;\n",
+          "message": "InterestRateModelHarness.getBorrowRate (InterestRateModelHarness.sol#59-65) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getBorrowRate(uint cash, uint borrows, uint reserves) external view returns (uint);\n",
+          "message": "InterestRateModel.getBorrowRate (InterestRateModelHarness.sol#20) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": 53,
+          "vulnerability_code": "    function setFailBorrowRate(bool failBorrowRate_) public {\n\n        failBorrowRate = failBorrowRate_;\n",
+          "message": "InterestRateModelHarness.setFailBorrowRate (InterestRateModelHarness.sol#51-53) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": 57,
+          "vulnerability_code": "    function setBorrowRate(uint borrowRate_) public {\n\n        borrowRate = borrowRate_;\n",
+          "message": "InterestRateModelHarness.setBorrowRate (InterestRateModelHarness.sol#55-57) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": "Detected issues with version pragma in InterestRateModelHarness.sol:\n\t- pragma solidity^0.5.16 (InterestRateModelHarness.sol#3): it allows old versions\n\t- pragma solidity^0.5.16 (InterestRateModelHarness.sol#36): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool public constant isInterestRateModel = true;\n",
+          "message": "Constant 'InterestRateModel.isInterestRateModel' (InterestRateModelHarness.sol#11) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getSupplyRate(uint _cash, uint _borrows, uint _reserves, uint _reserveFactor) external view returns (uint) {\n",
+          "message": "Parameter '_reserveFactor' of InterestRateModelHarness.getSupplyRate (InterestRateModelHarness.sol#67) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public constant opaqueBorrowFailureCode = 20;\n",
+          "message": "Constant 'InterestRateModelHarness.opaqueBorrowFailureCode' (InterestRateModelHarness.sol#43) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return borrowRate * (1 - _reserveFactor);\n",
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

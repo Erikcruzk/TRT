@@ -1,0 +1,366 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 161,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address _founderAddress, uint _initialSupply) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _mint(_founderAddress, _initialSupply);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 163,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_36"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 147,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint8 public decimals = 18;\n",
+          "message": "NXMToken.decimals should be constant (NXMToken.sol#147)\nNXMToken.name should be constant (NXMToken.sol#145)\nNXMToken.symbol should be constant (NXMToken.sol#146)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address to, uint256 value) external returns (bool);\n",
+          "message": "OZIERC20.transfer (NXMToken.sol#11) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 327,
+          "vulnerability_to_line": 333,
+          "vulnerability_code": "  function transfer(address to, uint256 value) public canTransfer(to) returns (bool) {\n\n\n\n    require(isLockedForMV[msg.sender] < now); // if not voted under governance\n\n    require(value <= _balances[msg.sender]);\n\n    _transfer(to, value);\n\n    return true;\n",
+          "message": "NXMToken.transfer (NXMToken.sol#327-333) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "  function approve(address spender, uint256 value)\n",
+          "message": "OZIERC20.approve (NXMToken.sol#13-14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 207,
+          "vulnerability_to_line": 213,
+          "vulnerability_code": "  function approve(address spender, uint256 value) public returns (bool) {\n\n    require(spender != address(0));\n\n\n\n    _allowed[msg.sender][spender] = value;\n\n    emit Approval(msg.sender, spender, value);\n\n    return true;\n",
+          "message": "NXMToken.approve (NXMToken.sol#207-213) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 17,
+          "vulnerability_code": "  function transferFrom(address from, address to, uint256 value)\n",
+          "message": "OZIERC20.transferFrom (NXMToken.sol#16-17) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 352,
+          "vulnerability_to_line": 366,
+          "vulnerability_code": "  function transferFrom(\n\n    address from,\n\n    address to,\n\n    uint256 value\n\n  )\n\n  public\n\n  canTransfer(to)\n\n  returns (bool)\n\n  {\n\n    require(isLockedForMV[from] < now); // if not voted under governance\n\n    require(value <= _balances[from]);\n\n    require(value <= _allowed[from][msg.sender]);\n\n    _transferFrom(from, to, value);\n\n    return true;\n",
+          "message": "NXMToken.transferFrom (NXMToken.sol#352-366) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 168,
+          "vulnerability_to_line": 170,
+          "vulnerability_code": "  function totalSupply() public view returns (uint256) {\n\n    return _totalSupply;\n",
+          "message": "NXMToken.totalSupply (NXMToken.sol#168-170) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function totalSupply() external view returns (uint256);\n",
+          "message": "OZIERC20.totalSupply (NXMToken.sol#19) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address who) external view returns (uint256);\n",
+          "message": "OZIERC20.balanceOf (NXMToken.sol#21) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 177,
+          "vulnerability_to_line": 179,
+          "vulnerability_code": "  function balanceOf(address owner) public view returns (uint256) {\n\n    return _balances[owner];\n",
+          "message": "NXMToken.balanceOf (NXMToken.sol#177-179) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 187,
+          "vulnerability_to_line": 196,
+          "vulnerability_code": "  function allowance(\n\n    address owner,\n\n    address spender\n\n  )\n\n  public\n\n  view\n\n  returns (uint256)\n\n  {\n\n    return _allowed[owner][spender];\n",
+          "message": "NXMToken.allowance (NXMToken.sol#187-196) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": 24,
+          "vulnerability_code": "  function allowance(address owner, address spender)\n",
+          "message": "OZIERC20.allowance (NXMToken.sol#23-24) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 224,
+          "vulnerability_to_line": 237,
+          "vulnerability_code": "  function increaseAllowance(\n\n    address spender,\n\n    uint256 addedValue\n\n  )\n\n  public\n\n  returns (bool)\n\n  {\n\n    require(spender != address(0));\n\n\n\n    _allowed[msg.sender][spender] = (\n\n    _allowed[msg.sender][spender].add(addedValue));\n\n    emit Approval(msg.sender, spender, _allowed[msg.sender][spender]);\n\n    return true;\n",
+          "message": "NXMToken.increaseAllowance (NXMToken.sol#224-237) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 248,
+          "vulnerability_to_line": 261,
+          "vulnerability_code": "  function decreaseAllowance(\n\n    address spender,\n\n    uint256 subtractedValue\n\n  )\n\n  public\n\n  returns (bool)\n\n  {\n\n    require(spender != address(0));\n\n\n\n    _allowed[msg.sender][spender] = (\n\n    _allowed[msg.sender][spender].sub(subtractedValue));\n\n    emit Approval(msg.sender, spender, _allowed[msg.sender][spender]);\n\n    return true;\n",
+          "message": "NXMToken.decreaseAllowance (NXMToken.sol#248-261) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 267,
+          "vulnerability_to_line": 271,
+          "vulnerability_code": "  function addToWhiteList(address _member) public onlyOperator returns (bool) {\n\n    whiteListed[_member] = true;\n\n    emit WhiteListed(_member);\n\n    return true;\n",
+          "message": "NXMToken.addToWhiteList (NXMToken.sol#267-271) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 277,
+          "vulnerability_to_line": 281,
+          "vulnerability_code": "  function removeFromWhiteList(address _member) public onlyOperator returns (bool) {\n\n    whiteListed[_member] = false;\n\n    emit BlackListed(_member);\n\n    return true;\n",
+          "message": "NXMToken.removeFromWhiteList (NXMToken.sol#277-281) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 287,
+          "vulnerability_to_line": 290,
+          "vulnerability_code": "  function changeOperator(address _newOperator) public onlyOperator returns (bool) {\n\n    operator = _newOperator;\n\n    return true;\n",
+          "message": "NXMToken.changeOperator (NXMToken.sol#287-290) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 297,
+          "vulnerability_to_line": 300,
+          "vulnerability_code": "  function burn(uint256 amount) public returns (bool) {\n\n    _burn(msg.sender, amount);\n\n    return true;\n",
+          "message": "NXMToken.burn (NXMToken.sol#297-300) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 307,
+          "vulnerability_to_line": 310,
+          "vulnerability_code": "  function burnFrom(address from, uint256 value) public returns (bool) {\n\n    _burnFrom(from, value);\n\n    return true;\n",
+          "message": "NXMToken.burnFrom (NXMToken.sol#307-310) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 318,
+          "vulnerability_to_line": 320,
+          "vulnerability_code": "  function mint(address account, uint256 amount) public onlyOperator {\n\n    _mint(account, amount);\n",
+          "message": "NXMToken.mint (NXMToken.sol#318-320) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 340,
+          "vulnerability_to_line": 344,
+          "vulnerability_code": "  function operatorTransfer(address from, uint256 value) public onlyOperator returns (bool) {\n\n    require(value <= _balances[from]);\n\n    _transferFrom(from, operator, value);\n\n    return true;\n",
+          "message": "NXMToken.operatorTransfer (NXMToken.sol#340-344) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 372,
+          "vulnerability_to_line": 375,
+          "vulnerability_code": "  function lockForMemberVote(address _of, uint _days) public onlyOperator {\n\n    if (_days.add(now) > isLockedForMV[_of])\n\n      isLockedForMV[_of] = _days.add(now);\n",
+          "message": "NXMToken.lockForMemberVote (NXMToken.sol#372-375) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": "Detected issues with version pragma in NXMToken.sol:\n\t- pragma solidity^0.5.0 (NXMToken.sol#3): it allows old versions\n\t- pragma solidity^0.5.0 (NXMToken.sol#41): it allows old versions\n\t- pragma solidity^0.5.0 (NXMToken.sol#125): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 161,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address _founderAddress, uint _initialSupply) public {\n",
+          "message": "Parameter '_founderAddress' of NXMToken. (NXMToken.sol#161) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 161,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address _founderAddress, uint _initialSupply) public {\n",
+          "message": "Parameter '_initialSupply' of NXMToken. (NXMToken.sol#161) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 267,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function addToWhiteList(address _member) public onlyOperator returns (bool) {\n",
+          "message": "Parameter '_member' of NXMToken.addToWhiteList (NXMToken.sol#267) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 277,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function removeFromWhiteList(address _member) public onlyOperator returns (bool) {\n",
+          "message": "Parameter '_member' of NXMToken.removeFromWhiteList (NXMToken.sol#277) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 287,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function changeOperator(address _newOperator) public onlyOperator returns (bool) {\n",
+          "message": "Parameter '_newOperator' of NXMToken.changeOperator (NXMToken.sol#287) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 372,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function lockForMemberVote(address _of, uint _days) public onlyOperator {\n",
+          "message": "Parameter '_of' of NXMToken.lockForMemberVote (NXMToken.sol#372) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 372,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function lockForMemberVote(address _of, uint _days) public onlyOperator {\n",
+          "message": "Parameter '_days' of NXMToken.lockForMemberVote (NXMToken.sol#372) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 382,
+          "vulnerability_to_line": 386,
+          "vulnerability_code": "  function _transfer(address to, uint256 value) internal {\n\n    _balances[msg.sender] = _balances[msg.sender].sub(value);\n\n    _balances[to] = _balances[to].add(value);\n\n    emit Transfer(msg.sender, to, value);\n",
+          "message": "Function 'NXMToken._transfer' (NXMToken.sol#382-386) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 394,
+          "vulnerability_to_line": 405,
+          "vulnerability_code": "  function _transferFrom(\n\n    address from,\n\n    address to,\n\n    uint256 value\n\n  )\n\n  internal\n\n  {\n\n    _balances[from] = _balances[from].sub(value);\n\n    _balances[to] = _balances[to].add(value);\n\n    _allowed[from][msg.sender] = _allowed[from][msg.sender].sub(value);\n\n    emit Transfer(from, to, value);\n",
+          "message": "Function 'NXMToken._transferFrom' (NXMToken.sol#394-405) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 414,
+          "vulnerability_to_line": 419,
+          "vulnerability_code": "  function _mint(address account, uint256 amount) internal {\n\n    require(account != address(0));\n\n    _totalSupply = _totalSupply.add(amount);\n\n    _balances[account] = _balances[account].add(amount);\n\n    emit Transfer(address(0), account, amount);\n",
+          "message": "Function 'NXMToken._mint' (NXMToken.sol#414-419) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 427,
+          "vulnerability_to_line": 433,
+          "vulnerability_code": "  function _burn(address account, uint256 amount) internal {\n\n    require(amount <= _balances[account]);\n\n\n\n    _totalSupply = _totalSupply.sub(amount);\n\n    _balances[account] = _balances[account].sub(amount);\n\n    emit Transfer(account, address(0), amount);\n",
+          "message": "Function 'NXMToken._burn' (NXMToken.sol#427-433) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 442,
+          "vulnerability_to_line": 450,
+          "vulnerability_code": "  function _burnFrom(address account, uint256 value) internal {\n\n    require(value <= _allowed[account][msg.sender]);\n\n\n\n    // Should https://github.com/OpenZeppelin/zeppelin-solidity/issues/707 be accepted,\n\n    // this function needs to emit an event with the updated approval.\n\n    _allowed[account][msg.sender] = _allowed[account][msg.sender].sub(\n\n      value);\n\n    _burn(account, value);\n",
+          "message": "Function 'NXMToken._burnFrom' (NXMToken.sol#442-450) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 207,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address spender, uint256 value) public returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 135,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  mapping(address => uint256) private _balances;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 137,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  mapping(address => mapping(address => uint256)) private _allowed;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 143,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint256 private _totalSupply;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

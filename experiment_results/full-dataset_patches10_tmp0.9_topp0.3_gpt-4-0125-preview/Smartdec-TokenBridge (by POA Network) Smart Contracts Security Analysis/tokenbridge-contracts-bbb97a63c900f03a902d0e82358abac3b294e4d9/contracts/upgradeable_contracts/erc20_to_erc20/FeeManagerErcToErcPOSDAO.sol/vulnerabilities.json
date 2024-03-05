@@ -1,0 +1,420 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-multiple-require",
+          "vulnerability_from_line": 199,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_blockReward != address(0) && isContract(_blockReward) && (IBlockReward(_blockReward).bridgesAllowedLength() != 0));\n",
+          "message": "Using multiple require statements is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_29"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 208,
+          "vulnerability_to_line": 213,
+          "vulnerability_code": "    function isContract(address _addr) internal view returns (bool)\n\n    {\n\n        uint length;\n\n        assembly { length := extcodesize(_addr) }\n\n        return length > 0;\n",
+          "message": "FeeManagerErcToErcPOSDAO.isContract (FeeManagerErcToErcPOSDAO.sol#208-213) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "reentrancy-benign",
+          "vulnerability_from_line": 198,
+          "vulnerability_to_line": 201,
+          "vulnerability_code": "    function setBlockRewardContract(address _blockReward) external {\n\n        require(_blockReward != address(0) && isContract(_blockReward) && (IBlockReward(_blockReward).bridgesAllowedLength() != 0));\n\n        addressStorage[keccak256(abi.encodePacked(\"blockRewardContract\"))] = _blockReward;\n",
+          "message": "Reentrancy in FeeManagerErcToErcPOSDAO.setBlockRewardContract (FeeManagerErcToErcPOSDAO.sol#198-201):\n\tExternal calls:\n\t- require(bool)(_blockReward != address(0) && isContract(_blockReward) && (IBlockReward(_blockReward).bridgesAllowedLength() != 0)) (FeeManagerErcToErcPOSDAO.sol#199)\n\tState variables written after the call(s):\n\t- addressStorage (FeeManagerErcToErcPOSDAO.sol#200)\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 208,
+          "vulnerability_to_line": 213,
+          "vulnerability_code": "    function isContract(address _addr) internal view returns (bool)\n\n    {\n\n        uint length;\n\n        assembly { length := extcodesize(_addr) }\n\n        return length > 0;\n",
+          "message": "FeeManagerErcToErcPOSDAO.isContract uses assembly (FeeManagerErcToErcPOSDAO.sol#208-213)\n\t- FeeManagerErcToErcPOSDAO.sol#211-212\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function isValidator(address _validator) public view returns(bool);\n",
+          "message": "IRewardableValidators.isValidator (FeeManagerErcToErcPOSDAO.sol#78) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function requiredSignatures() public view returns(uint256);\n",
+          "message": "IRewardableValidators.requiredSignatures (FeeManagerErcToErcPOSDAO.sol#79) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function owner() public view returns(address);\n",
+          "message": "IRewardableValidators.owner (FeeManagerErcToErcPOSDAO.sol#80) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function validatorList() public view returns (address[]);\n",
+          "message": "IRewardableValidators.validatorList (FeeManagerErcToErcPOSDAO.sol#81) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getValidatorRewardAddress(address _validator) public view returns(address);\n",
+          "message": "IRewardableValidators.getValidatorRewardAddress (FeeManagerErcToErcPOSDAO.sol#82) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function validatorCount() public view returns (uint256);\n",
+          "message": "IRewardableValidators.validatorCount (FeeManagerErcToErcPOSDAO.sol#83) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 84,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getNextValidator(address _address) public view returns (address);\n",
+          "message": "IRewardableValidators.getNextValidator (FeeManagerErcToErcPOSDAO.sol#84) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 110,
+          "vulnerability_to_line": 117,
+          "vulnerability_code": "    function calculateFee(uint256 _value, bool _recover, bytes32 _feeType) public view returns(uint256) {\n\n        uint256 fee = _feeType == HOME_FEE ? getHomeFee() : getForeignFee();\n\n        uint256 eth = 1 ether;\n\n        if (!_recover) {\n\n            return _value.mul(fee).div(eth);\n\n        }\n\n        return _value.mul(fee).div(eth.sub(fee));\n",
+          "message": "BaseFeeManager.calculateFee (FeeManagerErcToErcPOSDAO.sol#110-117) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getFeeManagerMode() public pure returns(bytes4);\n",
+          "message": "BaseFeeManager.getFeeManagerMode (FeeManagerErcToErcPOSDAO.sol#141) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 190,
+          "vulnerability_to_line": 192,
+          "vulnerability_code": "    function getFeeManagerMode() public pure returns(bytes4) {\n\n        return bytes4(keccak256(abi.encodePacked(\"manages-both-directions\")));\n",
+          "message": "FeeManagerErcToErcPOSDAO.getFeeManagerMode (FeeManagerErcToErcPOSDAO.sol#190-192) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 143,
+          "vulnerability_to_line": 145,
+          "vulnerability_code": "    function random(uint256 _count) public view returns(uint256) {\n\n        return uint256(blockhash(block.number.sub(1))) % _count;\n",
+          "message": "BaseFeeManager.random (FeeManagerErcToErcPOSDAO.sol#143-145) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mintedTotally() public view returns (uint256);\n",
+          "message": "IBlockReward.mintedTotally (FeeManagerErcToErcPOSDAO.sol#155) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 156,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mintedTotallyByBridge(address _bridge) public view returns(uint256);\n",
+          "message": "IBlockReward.mintedTotallyByBridge (FeeManagerErcToErcPOSDAO.sol#156) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 194,
+          "vulnerability_to_line": 196,
+          "vulnerability_code": "    function blockRewardContract() public view returns(address) {\n\n        return _blockRewardContract();\n",
+          "message": "FeeManagerErcToErcPOSDAO.blockRewardContract (FeeManagerErcToErcPOSDAO.sol#194-196) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 110,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function calculateFee(uint256 _value, bool _recover, bytes32 _feeType) public view returns(uint256) {\n",
+          "message": "Parameter '_value' of BaseFeeManager.calculateFee (FeeManagerErcToErcPOSDAO.sol#110) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 110,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function calculateFee(uint256 _value, bool _recover, bytes32 _feeType) public view returns(uint256) {\n",
+          "message": "Parameter '_recover' of BaseFeeManager.calculateFee (FeeManagerErcToErcPOSDAO.sol#110) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 110,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function calculateFee(uint256 _value, bool _recover, bytes32 _feeType) public view returns(uint256) {\n",
+          "message": "Parameter '_feeType' of BaseFeeManager.calculateFee (FeeManagerErcToErcPOSDAO.sol#110) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 119,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setHomeFee(uint256 _fee) external {\n",
+          "message": "Parameter '_fee' of BaseFeeManager.setHomeFee (FeeManagerErcToErcPOSDAO.sol#119) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 128,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setForeignFee(uint256 _fee) external {\n",
+          "message": "Parameter '_fee' of BaseFeeManager.setForeignFee (FeeManagerErcToErcPOSDAO.sol#128) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 143,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function random(uint256 _count) public view returns(uint256) {\n",
+          "message": "Parameter '_count' of BaseFeeManager.random (FeeManagerErcToErcPOSDAO.sol#143) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 169,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function distributeFeeFromAffirmation(uint256 _fee) external {\n",
+          "message": "Parameter '_fee' of BlockRewardFeeManager.distributeFeeFromAffirmation (FeeManagerErcToErcPOSDAO.sol#169) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 173,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function distributeFeeFromSignatures(uint256 _fee) external {\n",
+          "message": "Parameter '_fee' of BlockRewardFeeManager.distributeFeeFromSignatures (FeeManagerErcToErcPOSDAO.sol#173) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 177,
+          "vulnerability_to_line": 179,
+          "vulnerability_code": "    function _blockRewardContract() internal view returns(IBlockReward) {\n\n        return IBlockReward(addressStorage[keccak256(abi.encodePacked(\"blockRewardContract\"))]);\n",
+          "message": "Function 'BlockRewardFeeManager._blockRewardContract' (FeeManagerErcToErcPOSDAO.sol#177-179) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 203,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function distributeFeeFromBlockReward(uint256 _fee) internal {\n",
+          "message": "Parameter '_fee' of FeeManagerErcToErcPOSDAO.distributeFeeFromBlockReward (FeeManagerErcToErcPOSDAO.sol#203) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 198,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setBlockRewardContract(address _blockReward) external {\n",
+          "message": "Parameter '_blockReward' of FeeManagerErcToErcPOSDAO.setBlockRewardContract (FeeManagerErcToErcPOSDAO.sol#198) is not in mixedCase\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(bytes32 => string) internal stringStorage;\n",
+          "message": "EternalStorage.stringStorage (FeeManagerErcToErcPOSDAO.sol#13) is never used in FeeManagerErcToErcPOSDAO\nEternalStorage.bytesStorage (FeeManagerErcToErcPOSDAO.sol#15) is never used in FeeManagerErcToErcPOSDAO\nEternalStorage.boolStorage (FeeManagerErcToErcPOSDAO.sol#16) is never used in FeeManagerErcToErcPOSDAO\nEternalStorage.intStorage (FeeManagerErcToErcPOSDAO.sol#17) is never used in FeeManagerErcToErcPOSDAO\nFeeTypes.FOREIGN_FEE (FeeManagerErcToErcPOSDAO.sol#94) is never used in FeeManagerErcToErcPOSDAO\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 105,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 208,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function isContract(address _addr) internal view returns (bool)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function validatorList() public view returns (address[]);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function isValidator(address _validator) public view returns(bool);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function requiredSignatures() public view returns(uint256);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function owner() public view returns(address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function validatorList() public view returns (address[]);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getValidatorRewardAddress(address _validator) public view returns(address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function validatorCount() public view returns (uint256);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 84,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getNextValidator(address _address) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mintedTotally() public view returns (uint256);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 156,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mintedTotallyByBridge(address _bridge) public view returns(uint256);\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        emit ForeignFeeUpdated(_fee);\n",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 178,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return IBlockReward(addressStorage[keccak256(abi.encodePacked(\"blockRewardContract\"))]);\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 199,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_blockReward != address(0) && isContract(_blockReward) && (IBlockReward(_blockReward).bridgesAllowedLength() != 0));\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 200,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        addressStorage[keccak256(abi.encodePacked(\"blockRewardContract\"))] = _blockReward;\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 200,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        addressStorage[keccak256(abi.encodePacked(\"blockRewardContract\"))] = _blockReward;\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function sub(uint256 a, uint256 b) internal pure returns (uint256) {\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 205,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        blockReward.addBridgeTokenFeeReceivers(_fee);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 c = a * b;\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 116,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return _value.mul(fee).div(eth.sub(fee));\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 120)",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assert(b <= a);\n",
+          "message": "A control flow decision is made based on The block.number environment variable.\nThe block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-120"
+        },
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 144,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return uint256(blockhash(block.number.sub(1))) % _count;\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        },
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 116,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return _value.mul(fee).div(eth.sub(fee));\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

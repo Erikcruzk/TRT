@@ -1,0 +1,199 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "    fallback() external payable {\n\n        address _impl = implementation();\n\n        require(_impl != address(0));\n\n\n\n        assembly {\n\n            let ptr := mload(0x40)\n\n            calldatacopy(ptr, 0, calldatasize())\n\n            let result := delegatecall(gas(), _impl, ptr, calldatasize(), 0, 0)\n\n            let size := returndatasize()\n\n            returndatacopy(ptr, 0, size)\n\n\n\n            switch result\n\n                case 0 {\n\n                    revert(ptr, size)\n\n                }\n\n                default {\n\n                    return(ptr, size)\n\n                }\n\n        }\n",
+          "message": "Contract locking ether found in Proxy.sol:\n\tContract Proxy has payable functions:\n\t - fallback (Proxy.sol#21-40)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "    fallback() external payable {\n\n        address _impl = implementation();\n\n        require(_impl != address(0));\n\n\n\n        assembly {\n\n            let ptr := mload(0x40)\n\n            calldatacopy(ptr, 0, calldatasize())\n\n            let result := delegatecall(gas(), _impl, ptr, calldatasize(), 0, 0)\n\n            let size := returndatasize()\n\n            returndatacopy(ptr, 0, size)\n\n\n\n            switch result\n\n                case 0 {\n\n                    revert(ptr, size)\n\n                }\n\n                default {\n\n                    return(ptr, size)\n\n                }\n\n        }\n",
+          "message": "Proxy.fallback uses assembly (Proxy.sol#21-40)\n\t- Proxy.sol#25-39\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity 0.6.10;\n",
+          "message": "Detected issues with version pragma in Proxy.sol:\n\t- pragma solidity0.6.10 (Proxy.sol#4): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    fallback() external payable {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _impl = implementation();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_impl != address(0));\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_impl != address(0));\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_impl != address(0));\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            let ptr := mload(0x40)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            let ptr := mload(0x40)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            calldatacopy(ptr, 0, calldatasize())\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            calldatacopy(ptr, 0, calldatasize())\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            let result := delegatecall(gas(), _impl, ptr, calldatasize(), 0, 0)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            let result := delegatecall(gas(), _impl, ptr, calldatasize(), 0, 0)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            let result := delegatecall(gas(), _impl, ptr, calldatasize(), 0, 0)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            let result := delegatecall(gas(), _impl, ptr, calldatasize(), 0, 0)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            let size := returndatasize()\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            let size := returndatasize()\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            returndatacopy(ptr, 0, size)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            switch result\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                    revert(ptr, size)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                    revert(ptr, size)\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "execution failed"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": false,
+      "errors": [
+        "input files do not contain any valid contracts"
+      ],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

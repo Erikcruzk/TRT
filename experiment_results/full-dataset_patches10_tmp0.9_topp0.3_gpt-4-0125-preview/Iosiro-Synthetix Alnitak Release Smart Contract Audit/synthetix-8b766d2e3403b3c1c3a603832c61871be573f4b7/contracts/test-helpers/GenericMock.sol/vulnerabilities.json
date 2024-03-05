@@ -1,0 +1,100 @@
+{
+  "smartbugs_completed": "No vulnerabilities found",
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_2"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": 16,
+          "vulnerability_code": "    function() external {\n\n        bytes memory ret = mockConfig[msg.sig];\n\n        assembly {\n\n            return(add(ret, 0x20), mload(ret))\n\n        }\n",
+          "message": "GenericMock.fallback uses assembly (GenericMock.sol#11-16)\n\t- GenericMock.sol#13-15\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": "Detected issues with version pragma in GenericMock.sol:\n\t- pragma solidity^0.5.16 (GenericMock.sol#5): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes memory ret = mockConfig[msg.sig];\n",
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(bytes4 => bytes) public mockConfig;\n",
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(bytes4 => bytes) public mockConfig;\n",
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "The arithmetic operator can underflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.\nClassification: SWC-101"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

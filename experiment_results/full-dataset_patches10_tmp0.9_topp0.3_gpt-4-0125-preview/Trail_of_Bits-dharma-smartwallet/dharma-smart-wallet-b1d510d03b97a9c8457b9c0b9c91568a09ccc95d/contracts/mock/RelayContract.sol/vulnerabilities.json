@@ -1,0 +1,113 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_8"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 74,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function () external payable {}\n",
+          "message": "Contract locking ether found in RelayContract.sol:\n\tContract RelayContract has payable functions:\n\t - fallback (RelayContract.sol#74)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity 0.5.11;\n",
+          "message": "Different versions of Solidity is used in RelayContract.sol:\n\t- Version used: ['0.5.11', 'ABIEncoderV2']\n\t- RelayContract.sol#3 declares pragma solidity0.5.11\n\t- RelayContract.sol#4 declares pragma experimentalABIEncoderV2\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": 59,
+          "vulnerability_code": "    function setController(address candidate) public {\n\n        emit SetControllerAttempt(candidate);\n\n\n\n        if (msg.sender == controller) {\n\n            controller = candidate;\n\n\n\n            emit SetControllerSuccess(candidate);\n\n        } else {\n\n            emit SetControllerFailure(candidate);\n\n        }\n",
+          "message": "RelayContract.setController (RelayContract.sol#49-59) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": 64,
+          "vulnerability_code": "    function getController() public view returns (address) {\n\n        return controller;\n",
+          "message": "RelayContract.getController (RelayContract.sol#62-64) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": 71,
+          "vulnerability_code": "    function recoverSignerAddress(\n\n        bytes32 prefixedHash,\n\n        ECDSASignature memory signature\n\n    ) public view returns (address signer) {\n\n        return ecrecover(prefixedHash, signature.v, signature.r, signature.s);\n",
+          "message": "RelayContract.recoverSignerAddress (RelayContract.sol#66-71) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity 0.5.11;\n",
+          "message": "Detected issues with version pragma in RelayContract.sol:\n\t- pragma solidity0.5.11 (RelayContract.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    struct transactionParameters {\n\n        address to;\n\n        bytes data;\n\n        uint value;\n\n        ECDSASignature signature;\n\n        address signer;\n\n        uint nonce;\n",
+          "message": "Struct 'RelayContract.transactionParameters' (RelayContract.sol#21-28) is not in CapWords\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes constant internal PREFIX = \"\\x19Ethereum Signed Message:\\n32\";\n",
+          "message": "RelayContract.PREFIX (RelayContract.sol#46) is never used in RelayContract\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract RelayContract {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_OVERPOWERED_ROLE",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setController(address candidate) public {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "UNKNOWN INSTRUCTION: SHR"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

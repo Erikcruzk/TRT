@@ -1,0 +1,95 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_6"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public exchangeRate;\n",
+          "message": "OracleFailMock.exchangeRate should be constant (OracleFailMock.sol#21)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function query(address token, address pr) public returns(bool);\n",
+          "message": "OracleInterface.query (OracleFailMock.sol#8) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": 30,
+          "vulnerability_code": "    function query(address pr, address token) public returns(bool) {\n\n        uint256 rate = 0;\n\n        setRate(pr, token, rate);\n\n        return true;\n",
+          "message": "OracleFailMock.query (OracleFailMock.sol#26-30) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity 0.4.18;\n",
+          "message": "Detected issues with version pragma in OracleFailMock.sol:\n\t- pragma solidity0.4.18 (OracleFailMock.sol#3): it allows old versions\n\t- pragma solidity0.4.18 (OracleFailMock.sol#13): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setExchangeRate(address, uint256) external;\n",
+          "message": "Parameter '' of PayrollInterface.setExchangeRate (OracleFailMock.sol#16) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setExchangeRate(address, uint256) external;\n",
+          "message": "Parameter '_scope_0' of PayrollInterface.setExchangeRate (OracleFailMock.sol#16) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        payroll.setExchangeRate(token, rate);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        payroll.setExchangeRate(token, rate);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

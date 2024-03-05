@@ -1,0 +1,300 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 171,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract FeeService is IFeeService, Ownable {     \n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 119,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 121,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 192,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            if(success && sharePerEther > 0) {\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 193,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                require(sharePerEther <= 1 ether);\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 194,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                affShare = (msg.value * sharePerEther) / 1 ether;\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 195,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                if(affShare > 0) {\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 196,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                    affiliate.sendRevenueShare.value(affShare)(poolCreator);\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 197,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                }            \n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 198,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            }\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_14"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "uninitialized-local",
+          "vulnerability_from_line": 187,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint affShare;\n",
+          "message": "affShare in FeeService.sendFee (FeeService.sol#187) is a local variable never initialiazed\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 236,
+          "vulnerability_to_line": 238,
+          "vulnerability_code": "    function getFeePerEther() public view returns(uint) {\n\n        return feePerEther;\n",
+          "message": "FeeService.getFeePerEther (FeeService.sol#236-238) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getFeePerEther() public view returns(uint);\n",
+          "message": "IFeeService.getFeePerEther (FeeService.sol#10) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 137,
+          "vulnerability_to_line": 140,
+          "vulnerability_code": "    function renounceOwnership() public onlyOwner {        \n\n        emit OwnershipRenounced(owner);\n\n        owner = address(0);\n",
+          "message": "Ownable.renounceOwnership (FeeService.sol#137-140) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": 148,
+          "vulnerability_code": "    function transferOwnership(address newOwner) public onlyOwner {\n\n        _transferOwnership(newOwner);\n",
+          "message": "Ownable.transferOwnership (FeeService.sol#146-148) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mul(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_a' of SafeMath.mul (FeeService.sol#41) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mul(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_b' of SafeMath.mul (FeeService.sol#41) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function div(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_a' of SafeMath.div (FeeService.sol#58) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function div(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_b' of SafeMath.div (FeeService.sol#58) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function sub(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_a' of SafeMath.sub (FeeService.sol#69) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function sub(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_b' of SafeMath.sub (FeeService.sol#69) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function add(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_a' of SafeMath.add (FeeService.sol#79) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function add(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_b' of SafeMath.add (FeeService.sol#79) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": 158,
+          "vulnerability_code": "    function _transferOwnership(address newOwner) internal {\n\n        require(newOwner != address(0));\n\n        emit OwnershipTransferred(owner, newOwner);\n\n        owner = newOwner;\n",
+          "message": "Function 'Ownable._transferOwnership' (FeeService.sol#154-158) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 139,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner = address(0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract IFeeService {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract IAffiliate {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_OVERPOWERED_ROLE",
+          "vulnerability_from_line": 220,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setFeePerEther(uint newFeePerEther) external onlyOwner {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_OVERPOWERED_ROLE",
+          "vulnerability_from_line": 228,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setAffiliate(address newAffiliate) external onlyOwner {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 163,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Unprotected Ether Withdrawal (SWC 105)",
+          "vulnerability_from_line": 214,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner.transfer(address(this).balance);\n",
+          "message": "Any sender can withdraw Ether from the contract account.\nArbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.\nClassification: SWC-105"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 191,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            (sharePerEther, success) = affiliate.getSharePerEther(poolCreator);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -1,0 +1,1007 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 401,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=0; i<referrers.length; i++) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 403,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            int referrerScore = PROXY_STORAGE_CONTRACT.getInt(keyHashReferrerScore);\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 404,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            PROXY_STORAGE_CONTRACT.setInt(keyHashReferrerScore, referrerScore + initialRewardWei/d);\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 401,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=0; i<referrers.length; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 401,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=0; i<referrers.length; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_66"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "uninitialized-state",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ITwoKeySingletonesRegistry internal registry;\n",
+          "message": "UpgradeabilityStorage.registry (TwoKeyBaseReputationRegistry.sol#51) is never initialized. It is used in:\n\t- initialize (TwoKeyBaseReputationRegistry.sol#74-76)\n"
+        },
+        {
+          "name": "uninitialized-state",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address internal _implementation;\n",
+          "message": "UpgradeabilityStorage._implementation (TwoKeyBaseReputationRegistry.sol#54) is never initialized. It is used in:\n\t- implementation (TwoKeyBaseReputationRegistry.sol#60-62)\n"
+        },
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 74,
+          "vulnerability_to_line": 76,
+          "vulnerability_code": "    function initialize(address sender) public payable {\n\n        require(msg.sender == address(registry));\n",
+          "message": "Contract locking ether found in TwoKeyBaseReputationRegistry.sol:\n\tContract TwoKeyBaseReputationRegistry has payable functions:\n\t - initialize (TwoKeyBaseReputationRegistry.sol#74-76)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "calls-loop",
+          "vulnerability_from_line": 403,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            int referrerScore = PROXY_STORAGE_CONTRACT.getInt(keyHashReferrerScore);\n",
+          "message": "TwoKeyBaseReputationRegistry.updateOnConversionExecutedEvent has external calls inside a loop:\n\t- referrerScore = PROXY_STORAGE_CONTRACT.getInt(keyHashReferrerScore) (TwoKeyBaseReputationRegistry.sol#403)\n"
+        },
+        {
+          "name": "calls-loop",
+          "vulnerability_from_line": 404,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            PROXY_STORAGE_CONTRACT.setInt(keyHashReferrerScore, referrerScore + initialRewardWei/d);\n",
+          "message": "TwoKeyBaseReputationRegistry.updateOnConversionExecutedEvent has external calls inside a loop:\n\t- PROXY_STORAGE_CONTRACT.setInt(keyHashReferrerScore,referrerScore + initialRewardWei / d) (TwoKeyBaseReputationRegistry.sol#404)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 153,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public conversionHandler;\n",
+          "message": "ITwoKeyAcquisitionCampaignStateVariables.conversionHandler should be constant (TwoKeyBaseReputationRegistry.sol#153)\nITwoKeyAcquisitionCampaignStateVariables.twoKeyAcquisitionLogicHandler should be constant (TwoKeyBaseReputationRegistry.sol#152)\nITwoKeyAcquisitionLogicHandler.IS_CAMPAIGN_ACTIVE should be constant (TwoKeyBaseReputationRegistry.sol#115)\nITwoKeyCampaignPublicAddresses.contractor should be constant (TwoKeyBaseReputationRegistry.sol#138)\nITwoKeyCampaignPublicAddresses.moderator should be constant (TwoKeyBaseReputationRegistry.sol#139)\nITwoKeyCampaignPublicAddresses.twoKeySingletonesRegistry should be constant (TwoKeyBaseReputationRegistry.sol#137)\nUpgradeabilityStorage._implementation should be constant (TwoKeyBaseReputationRegistry.sol#54)\n"
+        },
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": "Different versions of Solidity is used in TwoKeyBaseReputationRegistry.sol:\n\t- Version used: ['^0.4.0', '^0.4.24']\n\t- TwoKeyBaseReputationRegistry.sol#3 declares pragma solidity^0.4.24\n\t- TwoKeyBaseReputationRegistry.sol#43 declares pragma solidity^0.4.24\n\t- TwoKeyBaseReputationRegistry.sol#67 declares pragma solidity^0.4.24\n\t- TwoKeyBaseReputationRegistry.sol#81 declares pragma solidity^0.4.24\n\t- TwoKeyBaseReputationRegistry.sol#108 declares pragma solidity^0.4.24\n\t- TwoKeyBaseReputationRegistry.sol#131 declares pragma solidity^0.4.24\n\t- TwoKeyBaseReputationRegistry.sol#145 declares pragma solidity^0.4.24\n\t- TwoKeyBaseReputationRegistry.sol#160 declares pragma solidity^0.4.24\n\t- TwoKeyBaseReputationRegistry.sol#173 declares pragma solidity^0.4.24\n\t- TwoKeyBaseReputationRegistry.sol#187 declares pragma solidity^0.4.24\n\t- TwoKeyBaseReputationRegistry.sol#242 declares pragma solidity^0.4.24\n\t- TwoKeyBaseReputationRegistry.sol#250 declares pragma solidity^0.4.24\n\t- TwoKeyBaseReputationRegistry.sol#273 declares pragma solidity^0.4.0\n\t- TwoKeyBaseReputationRegistry.sol#324 declares pragma solidity^0.4.24\n\t- TwoKeyBaseReputationRegistry.sol#332 declares pragma solidity^0.4.24\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addVersion(string _contractName, string version, address implementation) public;\n",
+          "message": "ITwoKeySingletonesRegistry.addVersion (TwoKeyBaseReputationRegistry.sol#30) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getVersion(string _contractName, string version) public view returns (address);\n",
+          "message": "ITwoKeySingletonesRegistry.getVersion (TwoKeyBaseReputationRegistry.sol#38) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": 62,
+          "vulnerability_code": "    function implementation() public view returns (address) {\n\n        return _implementation;\n",
+          "message": "UpgradeabilityStorage.implementation (TwoKeyBaseReputationRegistry.sol#60-62) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 74,
+          "vulnerability_to_line": 76,
+          "vulnerability_code": "    function initialize(address sender) public payable {\n\n        require(msg.sender == address(registry));\n",
+          "message": "Upgradeable.initialize (TwoKeyBaseReputationRegistry.sol#74-76) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 85,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addTwoKeyEventSource(address _twoKeyEventSource) public;\n",
+          "message": "ITwoKeyReg.addTwoKeyEventSource (TwoKeyBaseReputationRegistry.sol#85) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function changeTwoKeyEventSource(address _twoKeyEventSource) public;\n",
+          "message": "ITwoKeyReg.changeTwoKeyEventSource (TwoKeyBaseReputationRegistry.sol#86) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addWhereContractor(address _userAddress, address _contractAddress) public;\n",
+          "message": "ITwoKeyReg.addWhereContractor (TwoKeyBaseReputationRegistry.sol#87) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addWhereModerator(address _userAddress, address _contractAddress) public;\n",
+          "message": "ITwoKeyReg.addWhereModerator (TwoKeyBaseReputationRegistry.sol#88) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addWhereReferrer(address _userAddress, address _contractAddress) public;\n",
+          "message": "ITwoKeyReg.addWhereReferrer (TwoKeyBaseReputationRegistry.sol#89) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addWhereConverter(address _userAddress, address _contractAddress) public;\n",
+          "message": "ITwoKeyReg.addWhereConverter (TwoKeyBaseReputationRegistry.sol#90) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractsWhereUserIsContractor(address _userAddress) public view returns (address[]);\n",
+          "message": "ITwoKeyReg.getContractsWhereUserIsContractor (TwoKeyBaseReputationRegistry.sol#91) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 92,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractsWhereUserIsModerator(address _userAddress) public view returns (address[]);\n",
+          "message": "ITwoKeyReg.getContractsWhereUserIsModerator (TwoKeyBaseReputationRegistry.sol#92) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 93,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractsWhereUserIsRefferer(address _userAddress) public view returns (address[]);\n",
+          "message": "ITwoKeyReg.getContractsWhereUserIsRefferer (TwoKeyBaseReputationRegistry.sol#93) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractsWhereUserIsConverter(address _userAddress) public view returns (address[]);\n",
+          "message": "ITwoKeyReg.getContractsWhereUserIsConverter (TwoKeyBaseReputationRegistry.sol#94) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 95,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getTwoKeyEventSourceAddress() public view returns (address);\n",
+          "message": "ITwoKeyReg.getTwoKeyEventSourceAddress (TwoKeyBaseReputationRegistry.sol#95) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addName(string _name, address _sender, string _fullName, string _email, bytes signature) public;\n",
+          "message": "ITwoKeyReg.addName (TwoKeyBaseReputationRegistry.sol#96) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addNameByUser(string _name) public;\n",
+          "message": "ITwoKeyReg.addNameByUser (TwoKeyBaseReputationRegistry.sol#97) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getName2Owner(string _name) public view returns (address);\n",
+          "message": "ITwoKeyReg.getName2Owner (TwoKeyBaseReputationRegistry.sol#98) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getOwner2Name(address _sender) public view returns (string);\n",
+          "message": "ITwoKeyReg.getOwner2Name (TwoKeyBaseReputationRegistry.sol#99) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 100,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getPlasmaToEthereum(address plasma) public view returns (address);\n",
+          "message": "ITwoKeyReg.getPlasmaToEthereum (TwoKeyBaseReputationRegistry.sol#100) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getEthereumToPlasma(address ethereum) public view returns (address);\n",
+          "message": "ITwoKeyReg.getEthereumToPlasma (TwoKeyBaseReputationRegistry.sol#101) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function checkIfTwoKeyMaintainerExists(address _maintainer) public view returns (bool);\n",
+          "message": "ITwoKeyReg.checkIfTwoKeyMaintainerExists (TwoKeyBaseReputationRegistry.sol#102) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 114,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function checkIsCampaignActive() public view returns (bool);\n",
+          "message": "ITwoKeyAcquisitionLogicHandler.checkIsCampaignActive (TwoKeyBaseReputationRegistry.sol#114) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 116,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function canConversionBeCreated(address converter, uint amountWillingToSpend, bool isFiat) public view returns (bool);\n",
+          "message": "ITwoKeyAcquisitionLogicHandler.canConversionBeCreated (TwoKeyBaseReputationRegistry.sol#116) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 117,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getEstimatedTokenAmount(uint conversionAmountETHWei, bool isFiatConversion) public view returns (uint, uint);\n",
+          "message": "ITwoKeyAcquisitionLogicHandler.getEstimatedTokenAmount (TwoKeyBaseReputationRegistry.sol#117) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 119,
+          "vulnerability_to_line": 122,
+          "vulnerability_code": "    function setTwoKeyAcquisitionCampaignContract(\n\n        address _acquisitionCampaignAddress,\n\n        address twoKeySingletoneRegistry,\n",
+          "message": "ITwoKeyAcquisitionLogicHandler.setTwoKeyAcquisitionCampaignContract (TwoKeyBaseReputationRegistry.sol#119-122) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getReferrers(address customer, address acquisitionCampaignContract) public view returns (address[]);\n",
+          "message": "ITwoKeyAcquisitionLogicHandler.getReferrers (TwoKeyBaseReputationRegistry.sol#124) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function updateRefchainRewards(uint256 _maxReferralRewardETHWei, address _converter, uint _conversionId, uint totalBounty2keys) public;\n",
+          "message": "ITwoKeyAcquisitionLogicHandler.updateRefchainRewards (TwoKeyBaseReputationRegistry.sol#125) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 126,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getReferrerPlasmaTotalEarnings(address _referrer) public view returns (uint);\n",
+          "message": "ITwoKeyAcquisitionLogicHandler.getReferrerPlasmaTotalEarnings (TwoKeyBaseReputationRegistry.sol#126) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 140,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function publicLinkKeyOf(address me) public view returns (address);\n",
+          "message": "ITwoKeyCampaignPublicAddresses.publicLinkKeyOf (TwoKeyBaseReputationRegistry.sol#140) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getInventoryBalance() public view returns (uint);\n",
+          "message": "ITwoKeyAcquisitionCampaignStateVariables.getInventoryBalance (TwoKeyBaseReputationRegistry.sol#155) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 166,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractProxyAddress(string _contractName) public view returns (address);\n",
+          "message": "ITwoKeySingletoneRegistryFetchAddress.getContractProxyAddress (TwoKeyBaseReputationRegistry.sol#166) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 167,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getNonUpgradableContractAddress(string contractName) public view returns (address);\n",
+          "message": "ITwoKeySingletoneRegistryFetchAddress.getNonUpgradableContractAddress (TwoKeyBaseReputationRegistry.sol#167) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 168,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getLatestContractVersion(string contractName) public view returns (string);\n",
+          "message": "ITwoKeySingletoneRegistryFetchAddress.getLatestContractVersion (TwoKeyBaseReputationRegistry.sol#168) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function isCampaignValidated(address campaign) public view returns (bool);\n",
+          "message": "ITwoKeyCampaignValidator.isCampaignValidated (TwoKeyBaseReputationRegistry.sol#179) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 180,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function isConversionHandlerCodeValid(address conversionHandler) public view returns (bool);\n",
+          "message": "ITwoKeyCampaignValidator.isConversionHandlerCodeValid (TwoKeyBaseReputationRegistry.sol#180) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 181,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function validateAcquisitionCampaign(address campaign, string nonSingletonHash) public;\n",
+          "message": "ITwoKeyCampaignValidator.validateAcquisitionCampaign (TwoKeyBaseReputationRegistry.sol#181) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 182,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function validateDonationCampaign(address campaign, address donationConversionHandler, string nonSingletonHash) public;\n",
+          "message": "ITwoKeyCampaignValidator.validateDonationCampaign (TwoKeyBaseReputationRegistry.sol#182) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 245,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function onlyMaintainer(address _sender) public view returns (bool);\n",
+          "message": "ITwoKeyMaintainersRegistry.onlyMaintainer (TwoKeyBaseReputationRegistry.sol#245) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 357,
+          "vulnerability_to_line": 369,
+          "vulnerability_code": "    function setInitialParams(\n\n        address _twoKeySingletoneRegistry,\n\n        address _proxyStorage\n\n    )\n\n    public\n\n    {\n\n        require(initialized == false);\n\n\n\n        TWO_KEY_SINGLETON_REGISTRY = _twoKeySingletoneRegistry;\n\n        PROXY_STORAGE_CONTRACT = ITwoKeyBaseReputationRegistryStorage(_proxyStorage);\n\n\n\n        initialized = true;\n",
+          "message": "TwoKeyBaseReputationRegistry.setInitialParams (TwoKeyBaseReputationRegistry.sol#357-369) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 378,
+          "vulnerability_to_line": 407,
+          "vulnerability_code": "    function updateOnConversionExecutedEvent(\n\n        address converter,\n\n        address contractor,\n\n        address acquisitionCampaign\n\n    )\n\n    public\n\n    {\n\n        validateCall(acquisitionCampaign);\n\n        int d = 1;\n\n        int initialRewardWei = 10*(10**18);\n\n\n\n        address logicHandlerAddress = getLogicHandlerAddress(acquisitionCampaign);\n\n\n\n        bytes32 keyHashContractorScore = keccak256(\"address2contractorGlobalReputationScoreWei\", contractor);\n\n        int contractorScore = PROXY_STORAGE_CONTRACT.getInt(keyHashContractorScore);\n\n        PROXY_STORAGE_CONTRACT.setInt(keyHashContractorScore, contractorScore + initialRewardWei);\n\n\n\n        bytes32 keyHashConverterScore = keccak256(\"address2converterGlobalReputationScoreWei\", converter);\n\n        int converterScore = PROXY_STORAGE_CONTRACT.getInt(keyHashConverterScore);\n\n        PROXY_STORAGE_CONTRACT.setInt(keyHashConverterScore, converterScore + initialRewardWei);\n\n\n\n        address[] memory referrers = ITwoKeyAcquisitionLogicHandler(logicHandlerAddress).getReferrers(converter, acquisitionCampaign);\n\n\n\n        for(uint i=0; i<referrers.length; i++) {\n\n            bytes32 keyHashReferrerScore = keccak256(\"plasmaAddress2referrerGlobalReputationScoreWei\", referrers[i]);\n\n            int referrerScore = PROXY_STORAGE_CONTRACT.getInt(keyHashReferrerScore);\n\n            PROXY_STORAGE_CONTRACT.setInt(keyHashReferrerScore, referrerScore + initialRewardWei/d);\n\n            d = d + 1;\n\n        }\n",
+          "message": "TwoKeyBaseReputationRegistry.updateOnConversionExecutedEvent (TwoKeyBaseReputationRegistry.sol#378-407) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 416,
+          "vulnerability_to_line": 442,
+          "vulnerability_code": "    function updateOnConversionRejectedEvent(\n\n        address converter,\n\n        address contractor,\n\n        address acquisitionCampaign\n\n    )\n\n    public\n\n    {\n\n        validateCall(acquisitionCampaign);\n\n        int d = 1;\n\n        int initialPenaltyWei = 5*(10**18);\n\n\n\n        address logicHandlerAddress = getLogicHandlerAddress(acquisitionCampaign);\n\n\n\n        bytes32 keyHashContractorScore = keccak256(\"address2contractorGlobalReputationScoreWei\", contractor);\n\n        int contractorScore = PROXY_STORAGE_CONTRACT.getInt(keyHashContractorScore);\n\n        PROXY_STORAGE_CONTRACT.setInt(keyHashContractorScore, contractorScore - initialPenaltyWei);\n\n\n\n        bytes32 keyHashConverterScore = keccak256(\"address2converterGlobalReputationScoreWei\", converter);\n\n        int converterScore = PROXY_STORAGE_CONTRACT.getInt(keyHashConverterScore);\n\n        PROXY_STORAGE_CONTRACT.setInt(keyHashConverterScore, converterScore - initialPenaltyWei);\n\n\n\n        address[] memory referrers = ITwoKeyAcquisitionLogicHandler(logicHandlerAddress).getReferrers(converter, acquisitionCampaign);\n\n        //TODO: Check spec why here is not loop\n\n        bytes32 keyHashReferrerScore = keccak256(\"plasmaAddress2referrerGlobalReputationScoreWei\", referrers[0]);\n\n        int referrerScore = PROXY_STORAGE_CONTRACT.getInt(keyHashReferrerScore);\n\n        PROXY_STORAGE_CONTRACT.setInt(keyHashReferrerScore, referrerScore - initialPenaltyWei);\n",
+          "message": "TwoKeyBaseReputationRegistry.updateOnConversionRejectedEvent (TwoKeyBaseReputationRegistry.sol#416-442) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 509,
+          "vulnerability_to_line": 535,
+          "vulnerability_code": "    function getRewardsByAddress(\n\n        address _address\n\n    )\n\n    public\n\n    view\n\n    returns (int,int,int)\n\n    {\n\n        address twoKeyRegistry = ITwoKeySingletoneRegistryFetchAddress(TWO_KEY_SINGLETON_REGISTRY).getContractProxyAddress(\"TwoKeyRegistry\");\n\n        address plasma = ITwoKeyReg(twoKeyRegistry).getEthereumToPlasma(_address);\n\n\n\n        bytes32 keyHashContractorScore = keccak256(\"address2contractorGlobalReputationScoreWei\", _address);\n\n        int contractorScore = PROXY_STORAGE_CONTRACT.getInt(keyHashContractorScore);\n\n\n\n        bytes32 keyHashConverterScore = keccak256(\"address2converterGlobalReputationScoreWei\", _address);\n\n        int converterScore = PROXY_STORAGE_CONTRACT.getInt(keyHashConverterScore);\n\n\n\n        bytes32 keyHashReferrerScore = keccak256(\"plasmaAddress2referrerGlobalReputationScoreWei\", plasma);\n\n        int referrerScore = PROXY_STORAGE_CONTRACT.getInt(keyHashReferrerScore);\n\n\n\n\n\n        return (\n\n            contractorScore,\n\n            converterScore,\n\n            referrerScore\n\n        );\n\n\n",
+          "message": "TwoKeyBaseReputationRegistry.getRewardsByAddress (TwoKeyBaseReputationRegistry.sol#509-535) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 273,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;\n",
+          "message": "Detected issues with version pragma in TwoKeyBaseReputationRegistry.sol:\n\t- pragma solidity^0.4.0 (TwoKeyBaseReputationRegistry.sol#273): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address internal _implementation;\n",
+          "message": "Variable 'UpgradeabilityStorage._implementation' (TwoKeyBaseReputationRegistry.sol#54) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool public IS_CAMPAIGN_ACTIVE;\n",
+          "message": "Variable 'ITwoKeyAcquisitionLogicHandler.IS_CAMPAIGN_ACTIVE' (TwoKeyBaseReputationRegistry.sol#115) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 199,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function mul(uint256 _a, uint256 _b) internal pure returns (uint256 c) {\n",
+          "message": "Parameter '_a' of SafeMath.mul (TwoKeyBaseReputationRegistry.sol#199) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 199,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function mul(uint256 _a, uint256 _b) internal pure returns (uint256 c) {\n",
+          "message": "Parameter '_b' of SafeMath.mul (TwoKeyBaseReputationRegistry.sol#199) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 215,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function div(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_a' of SafeMath.div (TwoKeyBaseReputationRegistry.sol#215) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 215,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function div(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_b' of SafeMath.div (TwoKeyBaseReputationRegistry.sol#215) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 225,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function sub(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_a' of SafeMath.sub (TwoKeyBaseReputationRegistry.sol#225) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 225,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function sub(uint256 _a, uint256 _b) internal pure returns (uint256) {\n",
+          "message": "Parameter '_b' of SafeMath.sub (TwoKeyBaseReputationRegistry.sol#225) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 233,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function add(uint256 _a, uint256 _b) internal pure returns (uint256 c) {\n",
+          "message": "Parameter '_a' of SafeMath.add (TwoKeyBaseReputationRegistry.sol#233) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 233,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function add(uint256 _a, uint256 _b) internal pure returns (uint256 c) {\n",
+          "message": "Parameter '_b' of SafeMath.add (TwoKeyBaseReputationRegistry.sol#233) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 255,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address public TWO_KEY_SINGLETON_REGISTRY;\n",
+          "message": "Variable 'ITwoKeySingletonUtils.TWO_KEY_SINGLETON_REGISTRY' (TwoKeyBaseReputationRegistry.sol#255) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 358,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _twoKeySingletoneRegistry,\n",
+          "message": "Parameter '_twoKeySingletoneRegistry' of TwoKeyBaseReputationRegistry.setInitialParams (TwoKeyBaseReputationRegistry.sol#358) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 359,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _proxyStorage\n",
+          "message": "Parameter '_proxyStorage' of TwoKeyBaseReputationRegistry.setInitialParams (TwoKeyBaseReputationRegistry.sol#359) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 510,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _address\n",
+          "message": "Parameter '_address' of TwoKeyBaseReputationRegistry.getRewardsByAddress (TwoKeyBaseReputationRegistry.sol#510) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 351,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ITwoKeyBaseReputationRegistryStorage public PROXY_STORAGE_CONTRACT;\n",
+          "message": "Variable 'TwoKeyBaseReputationRegistry.PROXY_STORAGE_CONTRACT' (TwoKeyBaseReputationRegistry.sol#351) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 401,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=0; i<referrers.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 401,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint i=0; i<referrers.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Upgradeable is UpgradeabilityStorage {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 131,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 160,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 173,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 187,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 242,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 250,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 273,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 324,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 332,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 347,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    using SafeMath for uint;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 391,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes32 keyHashContractorScore = keccak256(\"address2contractorGlobalReputationScoreWei\", contractor);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 395,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes32 keyHashConverterScore = keccak256(\"address2converterGlobalReputationScoreWei\", converter);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 402,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            bytes32 keyHashReferrerScore = keccak256(\"plasmaAddress2referrerGlobalReputationScoreWei\", referrers[i]);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 429,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes32 keyHashContractorScore = keccak256(\"address2contractorGlobalReputationScoreWei\", contractor);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 433,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes32 keyHashConverterScore = keccak256(\"address2converterGlobalReputationScoreWei\", converter);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 439,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes32 keyHashReferrerScore = keccak256(\"plasmaAddress2referrerGlobalReputationScoreWei\", referrers[0]);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 519,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes32 keyHashContractorScore = keccak256(\"address2contractorGlobalReputationScoreWei\", _address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 522,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes32 keyHashConverterScore = keccak256(\"address2converterGlobalReputationScoreWei\", _address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 525,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bytes32 keyHashReferrerScore = keccak256(\"plasmaAddress2referrerGlobalReputationScoreWei\", plasma);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addVersion(string _contractName, string version, address implementation) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addVersion(string _contractName, string version, address implementation) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getVersion(string _contractName, string version) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getVersion(string _contractName, string version) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractsWhereUserIsContractor(address _userAddress) public view returns (address[]);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 92,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractsWhereUserIsModerator(address _userAddress) public view returns (address[]);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 93,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractsWhereUserIsRefferer(address _userAddress) public view returns (address[]);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractsWhereUserIsConverter(address _userAddress) public view returns (address[]);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addName(string _name, address _sender, string _fullName, string _email, bytes signature) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addName(string _name, address _sender, string _fullName, string _email, bytes signature) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addName(string _name, address _sender, string _fullName, string _email, bytes signature) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addName(string _name, address _sender, string _fullName, string _email, bytes signature) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addNameByUser(string _name) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getName2Owner(string _name) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getOwner2Name(address _sender) public view returns (string);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getReferrers(address customer, address acquisitionCampaignContract) public view returns (address[]);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 166,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getContractProxyAddress(string _contractName) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 167,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getNonUpgradableContractAddress(string contractName) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 168,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getLatestContractVersion(string contractName) public view returns (string);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 168,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getLatestContractVersion(string contractName) public view returns (string);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 181,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function validateAcquisitionCampaign(address campaign, string nonSingletonHash) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 182,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function validateDonationCampaign(address campaign, address donationConversionHandler, string nonSingletonHash) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 265,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getAddressFromTwoKeySingletonRegistry(string contractName) internal view returns (address) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 498,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    returns (address[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 30,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addVersion(string _contractName, string version, address implementation) public;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getVersion(string _contractName, string version) public view returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 349,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool initialized;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 516,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address twoKeyRegistry = ITwoKeySingletoneRegistryFetchAddress(TWO_KEY_SINGLETON_REGISTRY).getContractProxyAddress(\"TwoKeyRegistry\");\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 517,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address plasma = ITwoKeyReg(twoKeyRegistry).getEthereumToPlasma(_address);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 517,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address plasma = ITwoKeyReg(twoKeyRegistry).getEthereumToPlasma(_address);\n",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 520,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        int contractorScore = PROXY_STORAGE_CONTRACT.getInt(keyHashContractorScore);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 520,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        int contractorScore = PROXY_STORAGE_CONTRACT.getInt(keyHashContractorScore);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 520,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        int contractorScore = PROXY_STORAGE_CONTRACT.getInt(keyHashContractorScore);\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 523,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        int converterScore = PROXY_STORAGE_CONTRACT.getInt(keyHashConverterScore);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 523,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        int converterScore = PROXY_STORAGE_CONTRACT.getInt(keyHashConverterScore);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 523,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        int converterScore = PROXY_STORAGE_CONTRACT.getInt(keyHashConverterScore);\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 526,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        int referrerScore = PROXY_STORAGE_CONTRACT.getInt(keyHashReferrerScore);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 526,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        int referrerScore = PROXY_STORAGE_CONTRACT.getInt(keyHashReferrerScore);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 526,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        int referrerScore = PROXY_STORAGE_CONTRACT.getInt(keyHashReferrerScore);\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

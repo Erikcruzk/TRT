@@ -1,0 +1,590 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 448,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _poster, address addr0, address reader0, address addr1, address reader1) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 449,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        anchorAdmin = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 450,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        poster = _poster;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 451,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        maxSwing = Exp({mantissa : maxSwingMantissa});\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 452,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 453,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        // Make sure the assets are zero or different\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 454,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assert(addr0 == address(0) || (addr0 != addr1));\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 455,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 456,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (addr0 != address(0)) {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 457,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            assert(reader0 != address(0));\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 948,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 0; i < numAssets; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 948,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 0; i < numAssets; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_32"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "incorrect-equality",
+          "vulnerability_from_line": 859,
+          "vulnerability_to_line": 874,
+          "vulnerability_code": "    function calculateSwing(Exp memory anchorPrice, Exp memory price) pure internal returns (Error, Exp memory) {\n\n        Exp memory numerator;\n\n        Error err;\n\n\n\n        if (greaterThanExp(anchorPrice, price)) {\n\n            (err, numerator) = subExp(anchorPrice, price);\n\n            // can't underflow\n\n            assert(err == Error.NO_ERROR);\n\n        } else {\n\n            (err, numerator) = subExp(price, anchorPrice);\n\n            // Given greaterThan check above, price >= anchorPrice so can't underflow.\n\n            assert(err == Error.NO_ERROR);\n\n        }\n\n\n\n        return divExp(numerator, anchorPrice);\n",
+          "message": "_PriceOracle.calculateSwing (_PriceOracle.sol#859-874) uses a dangerous strict equality:\n\t- assert(bool)(err == Error.NO_ERROR)\n\t- assert(bool)(err == Error.NO_ERROR)\n"
+        },
+        {
+          "name": "incorrect-equality",
+          "vulnerability_from_line": 859,
+          "vulnerability_to_line": 874,
+          "vulnerability_code": "    function calculateSwing(Exp memory anchorPrice, Exp memory price) pure internal returns (Error, Exp memory) {\n\n        Exp memory numerator;\n\n        Error err;\n\n\n\n        if (greaterThanExp(anchorPrice, price)) {\n\n            (err, numerator) = subExp(anchorPrice, price);\n\n            // can't underflow\n\n            assert(err == Error.NO_ERROR);\n\n        } else {\n\n            (err, numerator) = subExp(price, anchorPrice);\n\n            // Given greaterThan check above, price >= anchorPrice so can't underflow.\n\n            assert(err == Error.NO_ERROR);\n\n        }\n\n\n\n        return divExp(numerator, anchorPrice);\n",
+          "message": "_PriceOracle.calculateSwing (_PriceOracle.sol#859-874) uses a dangerous strict equality:\n\t- assert(bool)(err == Error.NO_ERROR)\n\t- assert(bool)(err == Error.NO_ERROR)\n_PriceOracle.capToMax (_PriceOracle.sol#876-919) uses a dangerous strict equality:\n\t- assert(bool)(err == Error.NO_ERROR)\n"
+        },
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 474,
+          "vulnerability_to_line": 476,
+          "vulnerability_code": "    function() payable external {\n\n        revert();\n",
+          "message": "Contract locking ether found in _PriceOracle.sol:\n\tContract _PriceOracle has payable functions:\n\t - fallback (_PriceOracle.sol#474-476)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "uninitialized-local",
+          "vulnerability_from_line": 767,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        SetPriceLocalVars memory localVars;\n",
+          "message": "localVars in _PriceOracle.setPriceInternal (_PriceOracle.sol#767) is a local variable never initialiazed\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 406,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function peek() public view returns (bytes32, bool);\n",
+          "message": "_DSValue.peek (_PriceOracle.sol#406) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 408,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function read() public view returns (bytes32);\n",
+          "message": "_DSValue.read (_PriceOracle.sol#408) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 580,
+          "vulnerability_to_line": 592,
+          "vulnerability_code": "    function _setPendingAnchor(address asset, uint newScaledPrice) public returns (uint) {\n\n        // Check caller = anchorAdmin. Note: Deliberately not allowing admin. They can just change anchorAdmin if desired.\n\n        if (msg.sender != anchorAdmin) {\n\n            return failOracle(asset, OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PENDING_ANCHOR_PERMISSION_CHECK);\n\n        }\n\n\n\n        uint oldScaledPrice = pendingAnchors[asset];\n\n        pendingAnchors[asset] = newScaledPrice;\n\n\n\n        emit NewPendingAnchor(msg.sender, asset, oldScaledPrice, newScaledPrice);\n\n\n\n        return uint(OracleError.NO_ERROR);\n",
+          "message": "_PriceOracle._setPendingAnchor (_PriceOracle.sol#580-592) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 625,
+          "vulnerability_to_line": 635,
+          "vulnerability_code": "    function _setPaused(bool requestedState) public returns (uint) {\n\n        // Check caller = anchorAdmin\n\n        if (msg.sender != anchorAdmin) {\n\n            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PAUSED_OWNER_CHECK);\n\n        }\n\n\n\n        paused = requestedState;\n\n        emit SetPaused(requestedState);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "_PriceOracle._setPaused (_PriceOracle.sol#625-635) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 645,
+          "vulnerability_to_line": 659,
+          "vulnerability_code": "    function _setPendingAnchorAdmin(address newPendingAnchorAdmin) public returns (uint) {\n\n        // Check caller = anchorAdmin\n\n        if (msg.sender != anchorAdmin) {\n\n            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PENDING_ANCHOR_ADMIN_OWNER_CHECK);\n\n        }\n\n\n\n        // save current value, if any, for inclusion in log\n\n        address oldPendingAnchorAdmin = pendingAnchorAdmin;\n\n        // Store pendingAdmin = newPendingAdmin\n\n        pendingAnchorAdmin = newPendingAnchorAdmin;\n\n\n\n        emit NewPendingAnchorAdmin(oldPendingAnchorAdmin, newPendingAnchorAdmin);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "_PriceOracle._setPendingAnchorAdmin (_PriceOracle.sol#645-659) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 666,
+          "vulnerability_to_line": 683,
+          "vulnerability_code": "    function _acceptAnchorAdmin() public returns (uint) {\n\n        // Check caller = pendingAnchorAdmin\n\n        // msg.sender can't be zero\n\n        if (msg.sender != pendingAnchorAdmin) {\n\n            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.ACCEPT_ANCHOR_ADMIN_PENDING_ANCHOR_ADMIN_CHECK);\n\n        }\n\n\n\n        // Save current value for inclusion in log\n\n        address oldAnchorAdmin = anchorAdmin;\n\n        // Store admin = pendingAnchorAdmin\n\n        anchorAdmin = pendingAnchorAdmin;\n\n        // Clear the pending value\n\n        pendingAnchorAdmin = address(0);\n\n\n\n        emit NewAnchorAdmin(oldAnchorAdmin, msg.sender);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "_PriceOracle._acceptAnchorAdmin (_PriceOracle.sol#666-683) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 733,
+          "vulnerability_to_line": 735,
+          "vulnerability_code": "    function getPrice(address asset) public view returns (uint) {\n\n        return assetPrices(asset);\n",
+          "message": "_PriceOracle.getPrice (_PriceOracle.sol#733-735) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 755,
+          "vulnerability_to_line": 762,
+          "vulnerability_code": "    function setPrice(address asset, uint requestedPriceMantissa) public returns (uint) {\n\n        // Fail when msg.sender is not poster\n\n        if (msg.sender != poster) {\n\n            return failOracle(asset, OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PRICE_PERMISSION_CHECK);\n\n        }\n\n\n\n        return setPriceInternal(asset, requestedPriceMantissa);\n",
+          "message": "_PriceOracle.setPrice (_PriceOracle.sol#755-762) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 928,
+          "vulnerability_to_line": 953,
+          "vulnerability_code": "    function setPrices(address[] memory assets, uint[] memory requestedPriceMantissas) public returns (uint[] memory) {\n\n        uint numAssets = assets.length;\n\n        uint numPrices = requestedPriceMantissas.length;\n\n        uint[] memory result;\n\n\n\n        // Fail when msg.sender is not poster\n\n        if (msg.sender != poster) {\n\n            result = new uint[](1);\n\n            result[0] = failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PRICE_PERMISSION_CHECK);\n\n            return result;\n\n        }\n\n\n\n        if ((numAssets == 0) || (numPrices != numAssets)) {\n\n            result = new uint[](1);\n\n            result[0] = failOracle(address(0), OracleError.FAILED_TO_SET_PRICE, OracleFailureInfo.SET_PRICES_PARAM_VALIDATION);\n\n            return result;\n\n        }\n\n\n\n        result = new uint[](numAssets);\n\n\n\n        for (uint i = 0; i < numAssets; i++) {\n\n            result[i] = setPriceInternal(assets[i], requestedPriceMantissas[i]);\n\n        }\n\n\n\n        return result;\n",
+          "message": "_PriceOracle.setPrices (_PriceOracle.sol#928-953) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.10;\n",
+          "message": "Detected issues with version pragma in _PriceOracle.sol:\n\t- pragma solidity^0.5.10 (_PriceOracle.sol#3): it allows old versions\n\t- pragma solidity^0.5.10 (_PriceOracle.sol#156): it allows old versions\n\t- pragma solidity^0.5.10 (_PriceOracle.sol#228): it allows old versions\n\t- pragma solidity^0.5.10 (_PriceOracle.sol#402): it allows old versions\n\t- pragma solidity^0.5.10 (_PriceOracle.sol#413): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": 152,
+          "vulnerability_code": "contract _ErrorReporter {\n\n\n\n    /**\n\n      * @dev `error` corresponds to enum Error; `info` corresponds to enum FailureInfo, and `detail` is an arbitrary\n\n      * contract-specific code that enables us to report opaque error codes from upgradeable contracts.\n\n      **/\n\n    event Failure(uint error, uint info, uint detail);\n\n\n\n    enum Error {\n\n        NO_ERROR,\n\n        OPAQUE_ERROR, // To be used when reporting errors from upgradeable contracts; the opaque code should be given as `detail` in the `Failure` event\n\n        UNAUTHORIZED,\n\n        INTEGER_OVERFLOW,\n\n        INTEGER_UNDERFLOW,\n\n        DIVISION_BY_ZERO,\n\n        BAD_INPUT,\n\n        TOKEN_INSUFFICIENT_ALLOWANCE,\n\n        TOKEN_INSUFFICIENT_BALANCE,\n\n        TOKEN_TRANSFER_FAILED,\n\n        MARKET_NOT_SUPPORTED,\n\n        SUPPLY_RATE_CALCULATION_FAILED,\n\n        BORROW_RATE_CALCULATION_FAILED,\n\n        TOKEN_INSUFFICIENT_CASH,\n\n        TOKEN_TRANSFER_OUT_FAILED,\n\n        INSUFFICIENT_LIQUIDITY,\n\n        INSUFFICIENT_BALANCE,\n\n        INVALID_COLLATERAL_RATIO,\n\n        MISSING_ASSET_PRICE,\n\n        EQUITY_INSUFFICIENT_BALANCE,\n\n        INVALID_CLOSE_AMOUNT_REQUESTED,\n\n        ASSET_NOT_PRICED,\n\n        INVALID_LIQUIDATION_DISCOUNT,\n\n        INVALID_COMBINED_RISK_PARAMETERS\n\n    }\n\n\n\n    /*\n\n     * Note: FailureInfo (but not Error) is kept in alphabetical order\n\n     *       This is because FailureInfo grows significantly faster, and\n\n     *       the order of Error has some meaning, while the order of FailureInfo\n\n     *       is entirely arbitrary.\n\n     */\n\n    enum FailureInfo {\n\n        BORROW_ACCOUNT_LIQUIDITY_CALCULATION_FAILED,\n\n        BORROW_ACCOUNT_SHORTFALL_PRESENT,\n\n        BORROW_ACCUMULATED_BALANCE_CALCULATION_FAILED,\n\n        BORROW_AMOUNT_LIQUIDITY_SHORTFALL,\n\n        BORROW_AMOUNT_VALUE_CALCULATION_FAILED,\n\n        BORROW_MARKET_NOT_SUPPORTED,\n\n        BORROW_NEW_BORROW_INDEX_CALCULATION_FAILED,\n\n        BORROW_NEW_BORROW_RATE_CALCULATION_FAILED,\n\n        BORROW_NEW_SUPPLY_INDEX_CALCULATION_FAILED,\n\n        BORROW_NEW_SUPPLY_RATE_CALCULATION_FAILED,\n\n        BORROW_NEW_TOTAL_BALANCE_CALCULATION_FAILED,\n\n        BORROW_NEW_TOTAL_BORROW_CALCULATION_FAILED,\n\n        BORROW_NEW_TOTAL_CASH_CALCULATION_FAILED,\n\n        BORROW_ORIGINATION_FEE_CALCULATION_FAILED,\n\n        BORROW_TRANSFER_OUT_FAILED,\n\n        EQUITY_WITHDRAWAL_AMOUNT_VALIDATION,\n\n        EQUITY_WITHDRAWAL_CALCULATE_EQUITY,\n\n        EQUITY_WITHDRAWAL_MODEL_OWNER_CHECK,\n\n        EQUITY_WITHDRAWAL_TRANSFER_OUT_FAILED,\n\n        LIQUIDATE_ACCUMULATED_BORROW_BALANCE_CALCULATION_FAILED,\n\n        LIQUIDATE_ACCUMULATED_SUPPLY_BALANCE_CALCULATION_FAILED_BORROWER_COLLATERAL_ASSET,\n\n        LIQUIDATE_ACCUMULATED_SUPPLY_BALANCE_CALCULATION_FAILED_LIQUIDATOR_COLLATERAL_ASSET,\n\n        LIQUIDATE_AMOUNT_SEIZE_CALCULATION_FAILED,\n\n        LIQUIDATE_BORROW_DENOMINATED_COLLATERAL_CALCULATION_FAILED,\n\n        LIQUIDATE_CLOSE_AMOUNT_TOO_HIGH,\n\n        LIQUIDATE_DISCOUNTED_REPAY_TO_EVEN_AMOUNT_CALCULATION_FAILED,\n\n        LIQUIDATE_NEW_BORROW_INDEX_CALCULATION_FAILED_BORROWED_ASSET,\n\n        LIQUIDATE_NEW_BORROW_INDEX_CALCULATION_FAILED_COLLATERAL_ASSET,\n\n        LIQUIDATE_NEW_BORROW_RATE_CALCULATION_FAILED_BORROWED_ASSET,\n\n        LIQUIDATE_NEW_SUPPLY_INDEX_CALCULATION_FAILED_BORROWED_ASSET,\n\n        LIQUIDATE_NEW_SUPPLY_INDEX_CALCULATION_FAILED_COLLATERAL_ASSET,\n\n        LIQUIDATE_NEW_SUPPLY_RATE_CALCULATION_FAILED_BORROWED_ASSET,\n\n        LIQUIDATE_NEW_TOTAL_BORROW_CALCULATION_FAILED_BORROWED_ASSET,\n\n        LIQUIDATE_NEW_TOTAL_CASH_CALCULATION_FAILED_BORROWED_ASSET,\n\n        LIQUIDATE_NEW_TOTAL_SUPPLY_BALANCE_CALCULATION_FAILED_BORROWER_COLLATERAL_ASSET,\n\n        LIQUIDATE_NEW_TOTAL_SUPPLY_BALANCE_CALCULATION_FAILED_LIQUIDATOR_COLLATERAL_ASSET,\n\n        LIQUIDATE_TRANSFER_IN_FAILED,\n\n        LIQUIDATE_TRANSFER_IN_NOT_POSSIBLE,\n\n        REPAY_BORROW_ACCUMULATED_BALANCE_CALCULATION_FAILED,\n\n        REPAY_BORROW_NEW_BORROW_INDEX_CALCULATION_FAILED,\n\n        REPAY_BORROW_NEW_BORROW_RATE_CALCULATION_FAILED,\n\n        REPAY_BORROW_NEW_SUPPLY_INDEX_CALCULATION_FAILED,\n\n        REPAY_BORROW_NEW_SUPPLY_RATE_CALCULATION_FAILED,\n\n        REPAY_BORROW_NEW_TOTAL_BALANCE_CALCULATION_FAILED,\n\n        REPAY_BORROW_NEW_TOTAL_BORROW_CALCULATION_FAILED,\n\n        REPAY_BORROW_NEW_TOTAL_CASH_CALCULATION_FAILED,\n\n        REPAY_BORROW_TRANSFER_IN_FAILED,\n\n        REPAY_BORROW_TRANSFER_IN_NOT_POSSIBLE,\n\n        SET_ADMIN_OWNER_CHECK,\n\n        SET_ASSET_PRICE_CHECK_ORACLE,\n\n        SET_MARKET_INTEREST_RATE_MODEL_OWNER_CHECK,\n\n        SET_ORACLE_OWNER_CHECK,\n\n        SET_ORIGINATION_FEE_OWNER_CHECK,\n\n        SET_RISK_PARAMETERS_OWNER_CHECK,\n\n        SET_RISK_PARAMETERS_VALIDATION,\n\n        SUPPLY_ACCUMULATED_BALANCE_CALCULATION_FAILED,\n\n        SUPPLY_MARKET_NOT_SUPPORTED,\n\n        SUPPLY_NEW_BORROW_INDEX_CALCULATION_FAILED,\n\n        SUPPLY_NEW_BORROW_RATE_CALCULATION_FAILED,\n\n        SUPPLY_NEW_SUPPLY_INDEX_CALCULATION_FAILED,\n\n        SUPPLY_NEW_SUPPLY_RATE_CALCULATION_FAILED,\n\n        SUPPLY_NEW_TOTAL_BALANCE_CALCULATION_FAILED,\n\n        SUPPLY_NEW_TOTAL_CASH_CALCULATION_FAILED,\n\n        SUPPLY_NEW_TOTAL_SUPPLY_CALCULATION_FAILED,\n\n        SUPPLY_TRANSFER_IN_FAILED,\n\n        SUPPLY_TRANSFER_IN_NOT_POSSIBLE,\n\n        SUPPORT_MARKET_OWNER_CHECK,\n\n        SUPPORT_MARKET_PRICE_CHECK,\n\n        SUSPEND_MARKET_OWNER_CHECK,\n\n        WITHDRAW_ACCOUNT_LIQUIDITY_CALCULATION_FAILED,\n\n        WITHDRAW_ACCOUNT_SHORTFALL_PRESENT,\n\n        WITHDRAW_ACCUMULATED_BALANCE_CALCULATION_FAILED,\n\n        WITHDRAW_AMOUNT_LIQUIDITY_SHORTFALL,\n\n        WITHDRAW_AMOUNT_VALUE_CALCULATION_FAILED,\n\n        WITHDRAW_CAPACITY_CALCULATION_FAILED,\n\n        WITHDRAW_NEW_BORROW_INDEX_CALCULATION_FAILED,\n\n        WITHDRAW_NEW_BORROW_RATE_CALCULATION_FAILED,\n\n        WITHDRAW_NEW_SUPPLY_INDEX_CALCULATION_FAILED,\n\n        WITHDRAW_NEW_SUPPLY_RATE_CALCULATION_FAILED,\n\n        WITHDRAW_NEW_TOTAL_BALANCE_CALCULATION_FAILED,\n\n        WITHDRAW_NEW_TOTAL_SUPPLY_CALCULATION_FAILED,\n\n        WITHDRAW_TRANSFER_OUT_FAILED,\n\n        WITHDRAW_TRANSFER_OUT_NOT_POSSIBLE\n\n    }\n\n\n\n\n\n    /**\n\n      * @dev use this when reporting a known error from the money market or a non-upgradeable collaborator\n\n      */\n\n    function fail(Error err, FailureInfo info) internal returns (uint) {\n\n        emit Failure(uint(err), uint(info), 0);\n\n\n\n        return uint(err);\n\n    }\n\n\n\n\n\n    /**\n\n      * @dev use this when reporting an opaque error from an upgradeable collaborator contract\n\n      */\n\n    function failOpaque(FailureInfo info, uint opaqueError) internal returns (uint) {\n\n        emit Failure(uint(Error.OPAQUE_ERROR), uint(info), opaqueError);\n\n\n\n        return uint(Error.OPAQUE_ERROR);\n\n    }\n\n\n",
+          "message": "Contract '_ErrorReporter' (_PriceOracle.sol#5-152) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 158,
+          "vulnerability_to_line": 224,
+          "vulnerability_code": "contract _CarefulMath is _ErrorReporter {\n\n\n\n    /**\n\n    * @dev Multiplies two numbers, returns an error on overflow.\n\n    */\n\n    function mul(uint a, uint b) internal pure returns (Error, uint) {\n\n        if (a == 0) {\n\n            return (Error.NO_ERROR, 0);\n\n        }\n\n\n\n        uint c = a * b;\n\n\n\n        if (c / a != b) {\n\n            return (Error.INTEGER_OVERFLOW, 0);\n\n        } else {\n\n            return (Error.NO_ERROR, c);\n\n        }\n\n    }\n\n\n\n    /**\n\n    * @dev Integer division of two numbers, truncating the quotient.\n\n    */\n\n    function div(uint a, uint b) internal pure returns (Error, uint) {\n\n        if (b == 0) {\n\n            return (Error.DIVISION_BY_ZERO, 0);\n\n        }\n\n\n\n        return (Error.NO_ERROR, a / b);\n\n    }\n\n\n\n    /**\n\n    * @dev Subtracts two numbers, returns an error on overflow (i.e. if subtrahend is greater than minuend).\n\n    */\n\n    function sub(uint a, uint b) internal pure returns (Error, uint) {\n\n        if (b <= a) {\n\n            return (Error.NO_ERROR, a - b);\n\n        } else {\n\n            return (Error.INTEGER_UNDERFLOW, 0);\n\n        }\n\n    }\n\n\n\n    /**\n\n    * @dev Adds two numbers, returns an error on overflow.\n\n    */\n\n    function add(uint a, uint b) internal pure returns (Error, uint) {\n\n        uint c = a + b;\n\n\n\n        if (c >= a) {\n\n            return (Error.NO_ERROR, c);\n\n        } else {\n\n            return (Error.INTEGER_OVERFLOW, 0);\n\n        }\n\n    }\n\n\n\n    /**\n\n    * @dev add a and b and then subtract c\n\n    */\n\n    function addThenSub(uint a, uint b, uint c) internal pure returns (Error, uint) {\n\n        (Error err0, uint sum) = add(a, b);\n\n\n\n        if (err0 != Error.NO_ERROR) {\n\n            return (err0, 0);\n\n        }\n\n\n\n        return sub(sum, c);\n\n    }\n",
+          "message": "Contract '_CarefulMath' (_PriceOracle.sol#158-224) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 230,
+          "vulnerability_to_line": 398,
+          "vulnerability_code": "contract _Exponential is _ErrorReporter, _CarefulMath {\n\n\n\n    // TODO: We may wish to put the result of 10**18 here instead of the expression.\n\n    // Per https://solidity.readthedocs.io/en/latest/contracts.html#constant-state-variables\n\n    // the optimizer MAY replace the expression 10**18 with its calculated value.\n\n    uint constant expScale = 10**18;\n\n\n\n    // See TODO on expScale\n\n    uint constant halfExpScale = expScale/2;\n\n\n\n    struct Exp {\n\n        uint mantissa;\n\n    }\n\n\n\n    uint constant mantissaOne = 10**18;\n\n    uint constant mantissaOneTenth = 10**17;\n\n\n\n    /**\n\n    * @dev Creates an exponential from numerator and denominator values.\n\n    *      Note: Returns an error if (`num` * 10e18) > MAX_INT,\n\n    *            or if `denom` is zero.\n\n    */\n\n    function getExp(uint num, uint denom) pure internal returns (Error, Exp memory) {\n\n        (Error err0, uint scaledNumerator) = mul(num, expScale);\n\n        if (err0 != Error.NO_ERROR) {\n\n            return (err0, Exp({mantissa: 0}));\n\n        }\n\n\n\n        (Error err1, uint rational) = div(scaledNumerator, denom);\n\n        if (err1 != Error.NO_ERROR) {\n\n            return (err1, Exp({mantissa: 0}));\n\n        }\n\n\n\n        return (Error.NO_ERROR, Exp({mantissa: rational}));\n\n    }\n\n\n\n    /**\n\n    * @dev Adds two exponentials, returning a new exponential.\n\n    */\n\n    function addExp(Exp memory a, Exp memory b) pure internal returns (Error, Exp memory) {\n\n        (Error error, uint result) = add(a.mantissa, b.mantissa);\n\n\n\n        return (error, Exp({mantissa: result}));\n\n    }\n\n\n\n    /**\n\n    * @dev Subtracts two exponentials, returning a new exponential.\n\n    */\n\n    function subExp(Exp memory a, Exp memory b) pure internal returns (Error, Exp memory) {\n\n        (Error error, uint result) = sub(a.mantissa, b.mantissa);\n\n\n\n        return (error, Exp({mantissa: result}));\n\n    }\n\n\n\n    /**\n\n    * @dev Multiply an Exp by a scalar, returning a new Exp.\n\n    */\n\n    function mulScalar(Exp memory a, uint scalar) pure internal returns (Error, Exp memory) {\n\n        (Error err0, uint scaledMantissa) = mul(a.mantissa, scalar);\n\n        if (err0 != Error.NO_ERROR) {\n\n            return (err0, Exp({mantissa: 0}));\n\n        }\n\n\n\n        return (Error.NO_ERROR, Exp({mantissa: scaledMantissa}));\n\n    }\n\n\n\n    /**\n\n    * @dev Divide an Exp by a scalar, returning a new Exp.\n\n    */\n\n    function divScalar(Exp memory a, uint scalar) pure internal returns (Error, Exp memory) {\n\n        (Error err0, uint descaledMantissa) = div(a.mantissa, scalar);\n\n        if (err0 != Error.NO_ERROR) {\n\n            return (err0, Exp({mantissa: 0}));\n\n        }\n\n\n\n        return (Error.NO_ERROR, Exp({mantissa: descaledMantissa}));\n\n    }\n\n\n\n    /**\n\n    * @dev Divide a scalar by an Exp, returning a new Exp.\n\n    */\n\n    function divScalarByExp(uint scalar, Exp memory divisor) pure internal returns (Error, Exp memory) {\n\n        /*\n\n            We are doing this as:\n\n            getExp(mul(expScale, scalar), divisor.mantissa)\n\n\n\n            How it works:\n\n            Exp = a / b;\n\n            Scalar = s;\n\n            `s / (a / b)` = `b * s / a` and since for an Exp `a = mantissa, b = expScale`\n\n        */\n\n        (Error err0, uint numerator) = mul(expScale, scalar);\n\n        if (err0 != Error.NO_ERROR) {\n\n            return (err0, Exp({mantissa: 0}));\n\n        }\n\n        return getExp(numerator, divisor.mantissa);\n\n    }\n\n\n\n    /**\n\n    * @dev Multiplies two exponentials, returning a new exponential.\n\n    */\n\n    function mulExp(Exp memory a, Exp memory b) pure internal returns (Error, Exp memory) {\n\n\n\n        (Error err0, uint doubleScaledProduct) = mul(a.mantissa, b.mantissa);\n\n        if (err0 != Error.NO_ERROR) {\n\n            return (err0, Exp({mantissa: 0}));\n\n        }\n\n\n\n        // We add half the scale before dividing so that we get rounding instead of truncation.\n\n        //  See \"Listing 6\" and text above it at https://accu.org/index.php/journals/1717\n\n        // Without this change, a result like 6.6...e-19 will be truncated to 0 instead of being rounded to 1e-18.\n\n        (Error err1, uint doubleScaledProductWithHalfScale) = add(halfExpScale, doubleScaledProduct);\n\n        if (err1 != Error.NO_ERROR) {\n\n            return (err1, Exp({mantissa: 0}));\n\n        }\n\n\n\n        (Error err2, uint product) = div(doubleScaledProductWithHalfScale, expScale);\n\n        // The only error `div` can return is Error.DIVISION_BY_ZERO but we control `expScale` and it is not zero.\n\n        assert(err2 == Error.NO_ERROR);\n\n\n\n        return (Error.NO_ERROR, Exp({mantissa: product}));\n\n    }\n\n\n\n    /**\n\n      * @dev Divides two exponentials, returning a new exponential.\n\n      *     (a/scale) / (b/scale) = (a/scale) * (scale/b) = a/b,\n\n      *  which we can scale as an Exp by calling getExp(a.mantissa, b.mantissa)\n\n      */\n\n    function divExp(Exp memory a, Exp memory b) pure internal returns (Error, Exp memory) {\n\n        return getExp(a.mantissa, b.mantissa);\n\n    }\n\n\n\n    /**\n\n      * @dev Truncates the given exp to a whole number value.\n\n      *      For example, truncate(Exp{mantissa: 15 * (10**18)}) = 15\n\n      */\n\n    function truncate(Exp memory exp) pure internal returns (uint) {\n\n        // Note: We are not using careful math here as we're performing a division that cannot fail\n\n        return exp.mantissa / 10**18;\n\n    }\n\n\n\n    /**\n\n      * @dev Checks if first Exp is less than second Exp.\n\n      */\n\n    function lessThanExp(Exp memory left, Exp memory right) pure internal returns (bool) {\n\n        return left.mantissa < right.mantissa; //TODO: Add some simple tests and this in another PR yo.\n\n    }\n\n\n\n    /**\n\n      * @dev Checks if left Exp <= right Exp.\n\n      */\n\n    function lessThanOrEqualExp(Exp memory left, Exp memory right) pure internal returns (bool) {\n\n        return left.mantissa <= right.mantissa;\n\n    }\n\n\n\n    /**\n\n      * @dev Checks if first Exp is greater than second Exp.\n\n      */\n\n    function greaterThanExp(Exp memory left, Exp memory right) pure internal returns (bool) {\n\n        return left.mantissa > right.mantissa;\n\n    }\n\n\n\n    /**\n\n      * @dev returns true if Exp is exactly zero\n\n      */\n\n    function isZeroExp(Exp memory value) pure internal returns (bool) {\n\n        return value.mantissa == 0;\n\n    }\n",
+          "message": "Contract '_Exponential' (_PriceOracle.sol#230-398) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 235,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant expScale = 10**18;\n",
+          "message": "Constant '_Exponential.expScale' (_PriceOracle.sol#235) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 238,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant halfExpScale = expScale/2;\n",
+          "message": "Constant '_Exponential.halfExpScale' (_PriceOracle.sol#238) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 244,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant mantissaOne = 10**18;\n",
+          "message": "Constant '_Exponential.mantissaOne' (_PriceOracle.sol#244) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 245,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant mantissaOneTenth = 10**17;\n",
+          "message": "Constant '_Exponential.mantissaOneTenth' (_PriceOracle.sol#245) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 404,
+          "vulnerability_to_line": 409,
+          "vulnerability_code": "contract _DSValue {\n\n    // TODO: View or constant? It's clearly a view...\n\n    function peek() public view returns (bytes32, bool);\n\n\n\n    function read() public view returns (bytes32);\n",
+          "message": "Contract '_DSValue' (_PriceOracle.sol#404-409) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 415,
+          "vulnerability_to_line": 954,
+          "vulnerability_code": "contract _PriceOracle is _Exponential {\n\n\n\n    /**\n\n      * @dev flag for whether or not contract is paused\n\n      *\n\n      */\n\n    bool public paused;\n\n\n\n    uint public constant numBlocksPerPeriod = 240; // approximately 1 hour: 60 seconds/minute * 60 minutes/hour * 1 block/15 seconds\n\n\n\n    uint public constant maxSwingMantissa = (10 ** 17); // 0.1\n\n\n\n    /**\n\n      * @dev Mapping of asset addresses to DSValue price oracle contracts. The price contracts\n\n      *      should be DSValue contracts whose value is the `eth:asset` price scaled by 1e18.\n\n      *      That is, 1 eth is worth how much of the asset (e.g. 1 eth = 100 USD). We want\n\n      *      to know the inverse, which is how much eth is one asset worth. This `asset:eth`\n\n      *      is the multiplicative inverse (in that example, 1/100). The math is a bit trickier\n\n      *      since we need to descale the number by 1e18, inverse, and then rescale the number.\n\n      *      We perform this operation to return the `asset:eth` price for these reader assets.\n\n      *\n\n      * map: assetAddress -> DSValue price oracle\n\n      */\n\n    mapping(address => _DSValue) public readers;\n\n\n\n    /**\n\n      * @dev Mapping of asset addresses and their corresponding price in terms of Eth-Wei\n\n      *      which is simply equal to AssetWeiPrice * 10e18. For instance, if OMG token was\n\n      *      worth 5x Eth then the price for OMG would be 5*10e18 or Exp({mantissa: 5000000000000000000}).\n\n      * map: assetAddress -> Exp\n\n      */\n\n    mapping(address => Exp) public _assetPrices;\n\n\n\n    constructor(address _poster, address addr0, address reader0, address addr1, address reader1) public {\n\n        anchorAdmin = msg.sender;\n\n        poster = _poster;\n\n        maxSwing = Exp({mantissa : maxSwingMantissa});\n\n\n\n        // Make sure the assets are zero or different\n\n        assert(addr0 == address(0) || (addr0 != addr1));\n\n\n\n        if (addr0 != address(0)) {\n\n            assert(reader0 != address(0));\n\n            readers[addr0] = _DSValue(reader0);\n\n        } else {\n\n            assert(reader0 == address(0));\n\n        }\n\n\n\n        if (addr1 != address(0)) {\n\n            assert(reader1 != address(0));\n\n            readers[addr1] = _DSValue(reader1);\n\n        } else {\n\n            assert(reader1 == address(0));\n\n        }\n\n    }\n\n\n\n    /**\n\n      * @notice Do not pay into PriceOracle\n\n      */\n\n    function() payable external {\n\n        revert();\n\n    }\n\n\n\n    enum OracleError {\n\n        NO_ERROR,\n\n        UNAUTHORIZED,\n\n        FAILED_TO_SET_PRICE\n\n    }\n\n\n\n    enum OracleFailureInfo {\n\n        ACCEPT_ANCHOR_ADMIN_PENDING_ANCHOR_ADMIN_CHECK,\n\n        SET_PAUSED_OWNER_CHECK,\n\n        SET_PENDING_ANCHOR_ADMIN_OWNER_CHECK,\n\n        SET_PENDING_ANCHOR_PERMISSION_CHECK,\n\n        SET_PRICE_CALCULATE_SWING,\n\n        SET_PRICE_CAP_TO_MAX,\n\n        SET_PRICE_MAX_SWING_CHECK,\n\n        SET_PRICE_NO_ANCHOR_PRICE_OR_INITIAL_PRICE_ZERO,\n\n        SET_PRICE_PERMISSION_CHECK,\n\n        SET_PRICE_ZERO_PRICE,\n\n        SET_PRICES_PARAM_VALIDATION,\n\n        SET_PRICE_IS_READER_ASSET\n\n    }\n\n\n\n    /**\n\n      * @dev `msgSender` is msg.sender; `error` corresponds to enum OracleError; `info` corresponds to enum OracleFailureInfo, and `detail` is an arbitrary\n\n      * contract-specific code that enables us to report opaque error codes from upgradeable contracts.\n\n      **/\n\n    event OracleFailure(address msgSender, address asset, uint error, uint info, uint detail);\n\n\n\n    /**\n\n      * @dev use this when reporting a known error from the price oracle or a non-upgradeable collaborator\n\n      *      Using Oracle in name because we already inherit a `fail` function from ErrorReporter.sol via Exponential.sol\n\n      */\n\n    function failOracle(address asset, OracleError err, OracleFailureInfo info) internal returns (uint) {\n\n        emit OracleFailure(msg.sender, asset, uint(err), uint(info), 0);\n\n\n\n        return uint(err);\n\n    }\n\n\n\n    /**\n\n      * @dev Use this when reporting an error from the money market. Give the money market result as `details`\n\n      */\n\n    function failOracleWithDetails(address asset, OracleError err, OracleFailureInfo info, uint details) internal returns (uint) {\n\n        emit OracleFailure(msg.sender, asset, uint(err), uint(info), details);\n\n\n\n        return uint(err);\n\n    }\n\n\n\n    /**\n\n      * @dev An administrator who can set the pending anchor value for assets.\n\n      *      Set in the constructor.\n\n      */\n\n    address public anchorAdmin;\n\n\n\n    /**\n\n      * @dev pending anchor administrator for this contract.\n\n      */\n\n    address public pendingAnchorAdmin;\n\n\n\n    /**\n\n      * @dev Address of the price poster.\n\n      *      Set in the constructor.\n\n      */\n\n    address public poster;\n\n\n\n    /**\n\n      * @dev maxSwing the maximum allowed percentage difference between a new price and the anchor's price\n\n      *      Set only in the constructor\n\n      */\n\n    Exp public maxSwing;\n\n\n\n    struct Anchor {\n\n        // floor(block.number / numBlocksPerPeriod) + 1\n\n        uint period;\n\n\n\n        // Price in ETH, scaled by 10**18\n\n        uint priceMantissa;\n\n    }\n\n\n\n    /**\n\n      * @dev anchors by asset\n\n      */\n\n    mapping(address => Anchor) public anchors;\n\n\n\n    /**\n\n      * @dev pending anchor prices by asset\n\n      */\n\n    mapping(address => uint) public pendingAnchors;\n\n\n\n    /**\n\n      * @dev emitted when a pending anchor is set\n\n      * @param asset Asset for which to set a pending anchor\n\n      * @param oldScaledPrice if an unused pending anchor was present, its value; otherwise 0.\n\n      * @param newScaledPrice the new scaled pending anchor price\n\n      */\n\n    event NewPendingAnchor(address anchorAdmin, address asset, uint oldScaledPrice, uint newScaledPrice);\n\n\n\n    /**\n\n      * @notice provides ability to override the anchor price for an asset\n\n      * @dev Admin function to set the anchor price for an asset\n\n      * @param asset Asset for which to override the anchor price\n\n      * @param newScaledPrice New anchor price\n\n      * @return uint 0=success, otherwise a failure (see enum OracleError for details)\n\n      */\n\n    function _setPendingAnchor(address asset, uint newScaledPrice) public returns (uint) {\n\n        // Check caller = anchorAdmin. Note: Deliberately not allowing admin. They can just change anchorAdmin if desired.\n\n        if (msg.sender != anchorAdmin) {\n\n            return failOracle(asset, OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PENDING_ANCHOR_PERMISSION_CHECK);\n\n        }\n\n\n\n        uint oldScaledPrice = pendingAnchors[asset];\n\n        pendingAnchors[asset] = newScaledPrice;\n\n\n\n        emit NewPendingAnchor(msg.sender, asset, oldScaledPrice, newScaledPrice);\n\n\n\n        return uint(OracleError.NO_ERROR);\n\n    }\n\n\n\n    /**\n\n      * @dev emitted for all price changes\n\n      */\n\n    event PricePosted(address asset, uint previousPriceMantissa, uint requestedPriceMantissa, uint newPriceMantissa);\n\n\n\n    /**\n\n      * @dev emitted if this contract successfully posts a capped-to-max price to the money market\n\n      */\n\n    event CappedPricePosted(address asset, uint requestedPriceMantissa, uint anchorPriceMantissa, uint cappedPriceMantissa);\n\n\n\n    /**\n\n      * @dev emitted when admin either pauses or resumes the contract; newState is the resulting state\n\n      */\n\n    event SetPaused(bool newState);\n\n\n\n    /**\n\n      * @dev emitted when pendingAnchorAdmin is changed\n\n      */\n\n    event NewPendingAnchorAdmin(address oldPendingAnchorAdmin, address newPendingAnchorAdmin);\n\n\n\n    /**\n\n      * @dev emitted when pendingAnchorAdmin is accepted, which means anchor admin is updated\n\n      */\n\n    event NewAnchorAdmin(address oldAnchorAdmin, address newAnchorAdmin);\n\n\n\n    /**\n\n      * @notice set `paused` to the specified state\n\n      * @dev Admin function to pause or resume the market\n\n      * @param requestedState value to assign to `paused`\n\n      * @return uint 0=success, otherwise a failure\n\n      */\n\n    function _setPaused(bool requestedState) public returns (uint) {\n\n        // Check caller = anchorAdmin\n\n        if (msg.sender != anchorAdmin) {\n\n            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PAUSED_OWNER_CHECK);\n\n        }\n\n\n\n        paused = requestedState;\n\n        emit SetPaused(requestedState);\n\n\n\n        return uint(Error.NO_ERROR);\n\n    }\n\n\n\n    /**\n\n      * @notice Begins transfer of anchor admin rights. The newPendingAnchorAdmin must call `_acceptAnchorAdmin` to finalize the transfer.\n\n      * @dev Admin function to begin change of anchor admin. The newPendingAnchorAdmin must call `_acceptAnchorAdmin` to finalize the transfer.\n\n      * @param newPendingAnchorAdmin New pending anchor admin.\n\n      * @return uint 0=success, otherwise a failure\n\n      *\n\n      * TODO: Should we add a second arg to verify, like a checksum of `newAnchorAdmin` address?\n\n      */\n\n    function _setPendingAnchorAdmin(address newPendingAnchorAdmin) public returns (uint) {\n\n        // Check caller = anchorAdmin\n\n        if (msg.sender != anchorAdmin) {\n\n            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PENDING_ANCHOR_ADMIN_OWNER_CHECK);\n\n        }\n\n\n\n        // save current value, if any, for inclusion in log\n\n        address oldPendingAnchorAdmin = pendingAnchorAdmin;\n\n        // Store pendingAdmin = newPendingAdmin\n\n        pendingAnchorAdmin = newPendingAnchorAdmin;\n\n\n\n        emit NewPendingAnchorAdmin(oldPendingAnchorAdmin, newPendingAnchorAdmin);\n\n\n\n        return uint(Error.NO_ERROR);\n\n    }\n\n\n\n    /**\n\n      * @notice Accepts transfer of anchor admin rights. msg.sender must be pendingAnchorAdmin\n\n      * @dev Admin function for pending anchor admin to accept role and update anchor admin\n\n      * @return uint 0=success, otherwise a failure\n\n      */\n\n    function _acceptAnchorAdmin() public returns (uint) {\n\n        // Check caller = pendingAnchorAdmin\n\n        // msg.sender can't be zero\n\n        if (msg.sender != pendingAnchorAdmin) {\n\n            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.ACCEPT_ANCHOR_ADMIN_PENDING_ANCHOR_ADMIN_CHECK);\n\n        }\n\n\n\n        // Save current value for inclusion in log\n\n        address oldAnchorAdmin = anchorAdmin;\n\n        // Store admin = pendingAnchorAdmin\n\n        anchorAdmin = pendingAnchorAdmin;\n\n        // Clear the pending value\n\n        pendingAnchorAdmin = address(0);\n\n\n\n        emit NewAnchorAdmin(oldAnchorAdmin, msg.sender);\n\n\n\n        return uint(Error.NO_ERROR);\n\n    }\n\n\n\n    /**\n\n      * @notice retrieves price of an asset\n\n      * @dev function to get price for an asset\n\n      * @param asset Asset for which to get the price\n\n      * @return uint mantissa of asset price (scaled by 1e18) or zero if unset or contract paused\n\n      */\n\n    function assetPrices(address asset) public view returns (uint) {\n\n        // Note: zero is treated by the money market as an invalid\n\n        //       price and will cease operations with that asset\n\n        //       when zero.\n\n        //\n\n        // We get the price as:\n\n        //\n\n        //  1. If the contract is paused, return 0.\n\n        //  2. If the asset is a reader asset:\n\n        //    a. If the reader has a value set, invert it and return.\n\n        //    b. Else, return 0.\n\n        //  3. Return price in `_assetPrices`, which may be zero.\n\n\n\n        if (paused) {\n\n            return 0;\n\n        } else {\n\n            if (address(readers[asset]) != address(0)) {\n\n                (bytes32 readValue, bool foundValue) = readers[asset].peek();\n\n\n\n                if (foundValue) {\n\n                    (Error error, Exp memory invertedVal) = getExp(mantissaOne, uint256(readValue));\n\n\n\n                    if (error != Error.NO_ERROR) {\n\n                        return 0;\n\n                    }\n\n\n\n                    return invertedVal.mantissa;\n\n                } else {\n\n                    return 0;\n\n                }\n\n            } else {\n\n                return _assetPrices[asset].mantissa;\n\n            }\n\n        }\n\n    }\n\n\n\n    /**\n\n      * @notice retrieves price of an asset\n\n      * @dev function to get price for an asset\n\n      * @param asset Asset for which to get the price\n\n      * @return uint mantissa of asset price (scaled by 1e18) or zero if unset or contract paused\n\n      */\n\n    function getPrice(address asset) public view returns (uint) {\n\n        return assetPrices(asset);\n\n    }\n\n\n\n    struct SetPriceLocalVars {\n\n        Exp price;\n\n        Exp swing;\n\n        Exp anchorPrice;\n\n        uint anchorPeriod;\n\n        uint currentPeriod;\n\n        bool priceCapped;\n\n        uint cappingAnchorPriceMantissa;\n\n        uint pendingAnchorMantissa;\n\n    }\n\n\n\n    /**\n\n      * @notice entry point for updating prices\n\n      * @dev function to set price for an asset\n\n      * @param asset Asset for which to set the price\n\n      * @param requestedPriceMantissa requested new price, scaled by 10**18\n\n      * @return uint 0=success, otherwise a failure (see enum OracleError for details)\n\n      */\n\n    function setPrice(address asset, uint requestedPriceMantissa) public returns (uint) {\n\n        // Fail when msg.sender is not poster\n\n        if (msg.sender != poster) {\n\n            return failOracle(asset, OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PRICE_PERMISSION_CHECK);\n\n        }\n\n\n\n        return setPriceInternal(asset, requestedPriceMantissa);\n\n    }\n\n\n\n    function setPriceInternal(address asset, uint requestedPriceMantissa) internal returns (uint) {\n\n        // re-used for intermediate errors\n\n        Error err;\n\n        SetPriceLocalVars memory localVars;\n\n        // We add 1 for currentPeriod so that it can never be zero and there's no ambiguity about an unset value.\n\n        // (It can be a problem in tests with low block numbers.)\n\n        localVars.currentPeriod = (block.number / numBlocksPerPeriod) + 1;\n\n        localVars.pendingAnchorMantissa = pendingAnchors[asset];\n\n        localVars.price = Exp({mantissa : requestedPriceMantissa});\n\n\n\n        if (address(readers[asset]) != address(0)) {\n\n            return failOracle(asset, OracleError.FAILED_TO_SET_PRICE, OracleFailureInfo.SET_PRICE_IS_READER_ASSET);\n\n        }\n\n\n\n        if (localVars.pendingAnchorMantissa != 0) {\n\n            // let's explicitly set to 0 rather than relying on default of declaration\n\n            localVars.anchorPeriod = 0;\n\n            localVars.anchorPrice = Exp({mantissa : localVars.pendingAnchorMantissa});\n\n\n\n            // Verify movement is within max swing of pending anchor (currently: 10%)\n\n            (err, localVars.swing) = calculateSwing(localVars.anchorPrice, localVars.price);\n\n            if (err != Error.NO_ERROR) {\n\n                return failOracleWithDetails(asset, OracleError.FAILED_TO_SET_PRICE, OracleFailureInfo.SET_PRICE_CALCULATE_SWING, uint(err));\n\n            }\n\n\n\n            // Fail when swing > maxSwing\n\n            if (greaterThanExp(localVars.swing, maxSwing)) {\n\n                return failOracleWithDetails(asset, OracleError.FAILED_TO_SET_PRICE, OracleFailureInfo.SET_PRICE_MAX_SWING_CHECK, localVars.swing.mantissa);\n\n            }\n\n        } else {\n\n            localVars.anchorPeriod = anchors[asset].period;\n\n            localVars.anchorPrice = Exp({mantissa : anchors[asset].priceMantissa});\n\n\n\n            if (localVars.anchorPeriod != 0) {\n\n                (err, localVars.priceCapped, localVars.price) = capToMax(localVars.anchorPrice, localVars.price);\n\n                if (err != Error.NO_ERROR) {\n\n                    return failOracleWithDetails(asset, OracleError.FAILED_TO_SET_PRICE, OracleFailureInfo.SET_PRICE_CAP_TO_MAX, uint(err));\n\n                }\n\n                if (localVars.priceCapped) {\n\n                    // save for use in log\n\n                    localVars.cappingAnchorPriceMantissa = localVars.anchorPrice.mantissa;\n\n                }\n\n            } else {\n\n                // Setting first price. Accept as is (already assigned above from requestedPriceMantissa) and use as anchor\n\n                localVars.anchorPrice = Exp({mantissa : requestedPriceMantissa});\n\n            }\n\n        }\n\n\n\n        // Fail if anchorPrice or price is zero.\n\n        // zero anchor represents an unexpected situation likely due to a problem in this contract\n\n        // zero price is more likely as the result of bad input from the caller of this function\n\n        if (isZeroExp(localVars.anchorPrice)) {\n\n            // If we get here price could also be zero, but it does not seem worthwhile to distinguish the 3rd case\n\n            return failOracle(asset, OracleError.FAILED_TO_SET_PRICE, OracleFailureInfo.SET_PRICE_NO_ANCHOR_PRICE_OR_INITIAL_PRICE_ZERO);\n\n        }\n\n\n\n        if (isZeroExp(localVars.price)) {\n\n            return failOracle(asset, OracleError.FAILED_TO_SET_PRICE, OracleFailureInfo.SET_PRICE_ZERO_PRICE);\n\n        }\n\n\n\n        // BEGIN SIDE EFFECTS\n\n\n\n        // Set pendingAnchor = Nothing\n\n        // Pending anchor is only used once.\n\n        if (pendingAnchors[asset] != 0) {\n\n            pendingAnchors[asset] = 0;\n\n        }\n\n\n\n        // If currentPeriod > anchorPeriod:\n\n        //  Set anchors[asset] = (currentPeriod, price)\n\n        //  The new anchor is if we're in a new period or we had a pending anchor, then we become the new anchor\n\n        if (localVars.currentPeriod > localVars.anchorPeriod) {\n\n            anchors[asset] = Anchor({period : localVars.currentPeriod, priceMantissa : localVars.price.mantissa});\n\n        }\n\n\n\n        uint previousPrice = _assetPrices[asset].mantissa;\n\n\n\n        setPriceStorageInternal(asset, localVars.price.mantissa);\n\n\n\n        emit PricePosted(asset, previousPrice, requestedPriceMantissa, localVars.price.mantissa);\n\n\n\n        if (localVars.priceCapped) {\n\n            // We have set a capped price. Log it so we can detect the situation and investigate.\n\n            emit CappedPricePosted(asset, requestedPriceMantissa, localVars.cappingAnchorPriceMantissa, localVars.price.mantissa);\n\n        }\n\n\n\n        return uint(OracleError.NO_ERROR);\n\n    }\n\n\n\n    // As a function to allow harness overrides\n\n    function setPriceStorageInternal(address asset, uint256 priceMantissa) internal {\n\n        _assetPrices[asset] = Exp({mantissa: priceMantissa});\n\n    }\n\n\n\n    // abs(price - anchorPrice) / anchorPrice\n\n    function calculateSwing(Exp memory anchorPrice, Exp memory price) pure internal returns (Error, Exp memory) {\n\n        Exp memory numerator;\n\n        Error err;\n\n\n\n        if (greaterThanExp(anchorPrice, price)) {\n\n            (err, numerator) = subExp(anchorPrice, price);\n\n            // can't underflow\n\n            assert(err == Error.NO_ERROR);\n\n        } else {\n\n            (err, numerator) = subExp(price, anchorPrice);\n\n            // Given greaterThan check above, price >= anchorPrice so can't underflow.\n\n            assert(err == Error.NO_ERROR);\n\n        }\n\n\n\n        return divExp(numerator, anchorPrice);\n\n    }\n\n\n\n    function capToMax(Exp memory anchorPrice, Exp memory price) view internal returns (Error, bool, Exp memory) {\n\n        Exp memory one = Exp({mantissa : mantissaOne});\n\n        Exp memory onePlusMaxSwing;\n\n        Exp memory oneMinusMaxSwing;\n\n        Exp memory max;\n\n        Exp memory min;\n\n        // re-used for intermediate errors\n\n        Error err;\n\n\n\n        (err, onePlusMaxSwing) = addExp(one, maxSwing);\n\n        if (err != Error.NO_ERROR) {\n\n            return (err, false, Exp({mantissa : 0}));\n\n        }\n\n\n\n        // max = anchorPrice * (1 + maxSwing)\n\n        (err, max) = mulExp(anchorPrice, onePlusMaxSwing);\n\n        if (err != Error.NO_ERROR) {\n\n            return (err, false, Exp({mantissa : 0}));\n\n        }\n\n\n\n        // If price > anchorPrice * (1 + maxSwing)\n\n        // Set price = anchorPrice * (1 + maxSwing)\n\n        if (greaterThanExp(price, max)) {\n\n            return (Error.NO_ERROR, true, max);\n\n        }\n\n\n\n        (err, oneMinusMaxSwing) = subExp(one, maxSwing);\n\n        if (err != Error.NO_ERROR) {\n\n            return (err, false, Exp({mantissa : 0}));\n\n        }\n\n\n\n        // min = anchorPrice * (1 - maxSwing)\n\n        (err, min) = mulExp(anchorPrice, oneMinusMaxSwing);\n\n        // We can't overflow here or we would have already overflowed above when calculating `max`\n\n        assert(err == Error.NO_ERROR);\n\n\n\n        // If  price < anchorPrice * (1 - maxSwing)\n\n        // Set price = anchorPrice * (1 - maxSwing)\n\n        if (lessThanExp(price, min)) {\n\n            return (Error.NO_ERROR, true, min);\n\n        }\n\n\n\n        return (Error.NO_ERROR, false, price);\n\n    }\n\n\n\n    /**\n\n      * @notice entry point for updating multiple prices\n\n      * @dev function to set prices for a variable number of assets.\n\n      * @param assets a list of up to assets for which to set a price. required: 0 < assets.length == requestedPriceMantissas.length\n\n      * @param requestedPriceMantissas requested new prices for the assets, scaled by 10**18. required: 0 < assets.length == requestedPriceMantissas.length\n\n      * @return uint values in same order as inputs. For each: 0=success, otherwise a failure (see enum OracleError for details)\n\n      */\n\n    function setPrices(address[] memory assets, uint[] memory requestedPriceMantissas) public returns (uint[] memory) {\n\n        uint numAssets = assets.length;\n\n        uint numPrices = requestedPriceMantissas.length;\n\n        uint[] memory result;\n\n\n\n        // Fail when msg.sender is not poster\n\n        if (msg.sender != poster) {\n\n            result = new uint[](1);\n\n            result[0] = failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PRICE_PERMISSION_CHECK);\n\n            return result;\n\n        }\n\n\n\n        if ((numAssets == 0) || (numPrices != numAssets)) {\n\n            result = new uint[](1);\n\n            result[0] = failOracle(address(0), OracleError.FAILED_TO_SET_PRICE, OracleFailureInfo.SET_PRICES_PARAM_VALIDATION);\n\n            return result;\n\n        }\n\n\n\n        result = new uint[](numAssets);\n\n\n\n        for (uint i = 0; i < numAssets; i++) {\n\n            result[i] = setPriceInternal(assets[i], requestedPriceMantissas[i]);\n\n        }\n\n\n\n        return result;\n\n    }\n",
+          "message": "Contract '_PriceOracle' (_PriceOracle.sol#415-954) is not in CapWords\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 448,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _poster, address addr0, address reader0, address addr1, address reader1) public {\n",
+          "message": "Parameter '_poster' of _PriceOracle. (_PriceOracle.sol#448) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 580,
+          "vulnerability_to_line": 592,
+          "vulnerability_code": "    function _setPendingAnchor(address asset, uint newScaledPrice) public returns (uint) {\n\n        // Check caller = anchorAdmin. Note: Deliberately not allowing admin. They can just change anchorAdmin if desired.\n\n        if (msg.sender != anchorAdmin) {\n\n            return failOracle(asset, OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PENDING_ANCHOR_PERMISSION_CHECK);\n\n        }\n\n\n\n        uint oldScaledPrice = pendingAnchors[asset];\n\n        pendingAnchors[asset] = newScaledPrice;\n\n\n\n        emit NewPendingAnchor(msg.sender, asset, oldScaledPrice, newScaledPrice);\n\n\n\n        return uint(OracleError.NO_ERROR);\n",
+          "message": "Function '_PriceOracle._setPendingAnchor' (_PriceOracle.sol#580-592) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 625,
+          "vulnerability_to_line": 635,
+          "vulnerability_code": "    function _setPaused(bool requestedState) public returns (uint) {\n\n        // Check caller = anchorAdmin\n\n        if (msg.sender != anchorAdmin) {\n\n            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PAUSED_OWNER_CHECK);\n\n        }\n\n\n\n        paused = requestedState;\n\n        emit SetPaused(requestedState);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "Function '_PriceOracle._setPaused' (_PriceOracle.sol#625-635) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 645,
+          "vulnerability_to_line": 659,
+          "vulnerability_code": "    function _setPendingAnchorAdmin(address newPendingAnchorAdmin) public returns (uint) {\n\n        // Check caller = anchorAdmin\n\n        if (msg.sender != anchorAdmin) {\n\n            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PENDING_ANCHOR_ADMIN_OWNER_CHECK);\n\n        }\n\n\n\n        // save current value, if any, for inclusion in log\n\n        address oldPendingAnchorAdmin = pendingAnchorAdmin;\n\n        // Store pendingAdmin = newPendingAdmin\n\n        pendingAnchorAdmin = newPendingAnchorAdmin;\n\n\n\n        emit NewPendingAnchorAdmin(oldPendingAnchorAdmin, newPendingAnchorAdmin);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "Function '_PriceOracle._setPendingAnchorAdmin' (_PriceOracle.sol#645-659) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 666,
+          "vulnerability_to_line": 683,
+          "vulnerability_code": "    function _acceptAnchorAdmin() public returns (uint) {\n\n        // Check caller = pendingAnchorAdmin\n\n        // msg.sender can't be zero\n\n        if (msg.sender != pendingAnchorAdmin) {\n\n            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.ACCEPT_ANCHOR_ADMIN_PENDING_ANCHOR_ADMIN_CHECK);\n\n        }\n\n\n\n        // Save current value for inclusion in log\n\n        address oldAnchorAdmin = anchorAdmin;\n\n        // Store admin = pendingAnchorAdmin\n\n        anchorAdmin = pendingAnchorAdmin;\n\n        // Clear the pending value\n\n        pendingAnchorAdmin = address(0);\n\n\n\n        emit NewAnchorAdmin(oldAnchorAdmin, msg.sender);\n\n\n\n        return uint(Error.NO_ERROR);\n",
+          "message": "Function '_PriceOracle._acceptAnchorAdmin' (_PriceOracle.sol#666-683) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 423,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public constant numBlocksPerPeriod = 240; // approximately 1 hour: 60 seconds/minute * 60 minutes/hour * 1 block/15 seconds\n",
+          "message": "Constant '_PriceOracle.numBlocksPerPeriod' (_PriceOracle.sol#423) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 425,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public constant maxSwingMantissa = (10 ** 17); // 0.1\n",
+          "message": "Constant '_PriceOracle.maxSwingMantissa' (_PriceOracle.sol#425) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 446,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => Exp) public _assetPrices;\n",
+          "message": "Variable '_PriceOracle._assetPrices' (_PriceOracle.sol#446) is not in mixedCase\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 245,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant mantissaOneTenth = 10**17;\n",
+          "message": "_Exponential.mantissaOneTenth (_PriceOracle.sol#245) is never used in _PriceOracle\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 628,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PAUSED_OWNER_CHECK);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 648,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PENDING_ANCHOR_ADMIN_OWNER_CHECK);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 670,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.ACCEPT_ANCHOR_ADMIN_PENDING_ANCHOR_ADMIN_CHECK);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 678,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        pendingAnchorAdmin = address(0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 936,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            result[0] = failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PRICE_PERMISSION_CHECK);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 942,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            result[0] = failOracle(address(0), OracleError.FAILED_TO_SET_PRICE, OracleFailureInfo.SET_PRICES_PARAM_VALIDATION);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 948,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint i = 0; i < numAssets; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 415,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract _PriceOracle is _Exponential {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.10;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 156,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.10;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 228,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.10;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 402,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.10;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 413,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.10;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REDUNDANT_FALLBACK_REJECT",
+          "vulnerability_from_line": 474,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function() payable external {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 163,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mul(uint a, uint b) internal pure returns (Error, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 180,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function div(uint a, uint b) internal pure returns (Error, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 191,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function sub(uint a, uint b) internal pure returns (Error, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 202,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function add(uint a, uint b) internal pure returns (Error, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 215,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addThenSub(uint a, uint b, uint c) internal pure returns (Error, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 252,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getExp(uint num, uint denom) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 269,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addExp(Exp memory a, Exp memory b) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 278,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function subExp(Exp memory a, Exp memory b) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 287,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulScalar(Exp memory a, uint scalar) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 299,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divScalar(Exp memory a, uint scalar) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 311,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divScalarByExp(uint scalar, Exp memory divisor) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 331,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulExp(Exp memory a, Exp memory b) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 358,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divExp(Exp memory a, Exp memory b) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 406,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function peek() public view returns (bytes32, bool);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 859,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function calculateSwing(Exp memory anchorPrice, Exp memory price) pure internal returns (Error, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 876,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function capToMax(Exp memory anchorPrice, Exp memory price) view internal returns (Error, bool, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 235,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant expScale = 10**18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 238,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant halfExpScale = expScale/2;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 244,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant mantissaOne = 10**18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 245,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant mantissaOneTenth = 10**17;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

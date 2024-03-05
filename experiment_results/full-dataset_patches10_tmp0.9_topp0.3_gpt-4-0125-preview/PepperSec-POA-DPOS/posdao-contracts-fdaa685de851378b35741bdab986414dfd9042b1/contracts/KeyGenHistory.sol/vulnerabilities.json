@@ -1,0 +1,337 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_38"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "uninitialized-state",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address internal _owner;\n",
+          "message": "EternalStorage._owner (KeyGenHistory.sol#66) is never initialized. It is used in:\n"
+        },
+        {
+          "name": "reentrancy-benign",
+          "vulnerability_from_line": 187,
+          "vulnerability_to_line": 199,
+          "vulnerability_code": "    function writePart(bytes memory _part) public onlyValidator {\n\n        IValidatorSet validatorSetContract = validatorSet();\n\n        IStaking stakingContract = IStaking(validatorSetContract.stakingContract());\n\n\n\n        uint256 stakingEpoch = stakingContract.stakingEpoch();\n\n        uint256 changeRequestCount = validatorSetContract.changeRequestCount();\n\n\n\n        require(!validatorWrotePart(changeRequestCount, msg.sender));\n\n\n\n        _setValidatorWrotePart(changeRequestCount, msg.sender);\n\n\n\n        emit PartWritten(msg.sender, _part, stakingEpoch, changeRequestCount);\n",
+          "message": "Reentrancy in KeyGenHistory.writePart (KeyGenHistory.sol#187-199):\n\tExternal calls:\n\t- stakingContract = IStaking(validatorSetContract.stakingContract()) (KeyGenHistory.sol#189)\n\t- stakingEpoch = stakingContract.stakingEpoch() (KeyGenHistory.sol#191)\n\t- changeRequestCount = validatorSetContract.changeRequestCount() (KeyGenHistory.sol#192)\n\tState variables written after the call(s):\n\t- boolStorage (KeyGenHistory.sol#196)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address internal _owner;\n",
+          "message": "EternalStorage._owner should be constant (KeyGenHistory.sol#66)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": 183,
+          "vulnerability_code": "    function setValidatorSetContract(IValidatorSet _validatorSet) public onlyOwner {\n\n        require(address(validatorSet()) == address(0));\n\n        require(address(_validatorSet) != address(0));\n\n        addressStorage[VALIDATOR_SET] = address(_validatorSet);\n",
+          "message": "KeyGenHistory.setValidatorSetContract (KeyGenHistory.sol#179-183) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 187,
+          "vulnerability_to_line": 199,
+          "vulnerability_code": "    function writePart(bytes memory _part) public onlyValidator {\n\n        IValidatorSet validatorSetContract = validatorSet();\n\n        IStaking stakingContract = IStaking(validatorSetContract.stakingContract());\n\n\n\n        uint256 stakingEpoch = stakingContract.stakingEpoch();\n\n        uint256 changeRequestCount = validatorSetContract.changeRequestCount();\n\n\n\n        require(!validatorWrotePart(changeRequestCount, msg.sender));\n\n\n\n        _setValidatorWrotePart(changeRequestCount, msg.sender);\n\n\n\n        emit PartWritten(msg.sender, _part, stakingEpoch, changeRequestCount);\n",
+          "message": "KeyGenHistory.writePart (KeyGenHistory.sol#187-199) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 203,
+          "vulnerability_to_line": 211,
+          "vulnerability_code": "    function writeAck(bytes memory _ack) public onlyValidator {\n\n        IValidatorSet validatorSetContract = validatorSet();\n\n        IStaking stakingContract = IStaking(validatorSetContract.stakingContract());\n\n\n\n        uint256 stakingEpoch = stakingContract.stakingEpoch();\n\n        uint256 changeRequestCount = validatorSetContract.changeRequestCount();\n\n\n\n        emit AckWritten(msg.sender, _ack, stakingEpoch, changeRequestCount);\n",
+          "message": "KeyGenHistory.writeAck (KeyGenHistory.sol#203-211) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity 0.5.9;\n",
+          "message": "Detected issues with version pragma in KeyGenHistory.sol:\n\t- pragma solidity0.5.9 (KeyGenHistory.sol#3): it allows old versions\n\t- pragma solidity0.5.9 (KeyGenHistory.sol#38): it allows old versions\n\t- pragma solidity0.5.9 (KeyGenHistory.sol#58): it allows old versions\n\t- pragma solidity0.5.9 (KeyGenHistory.sol#89): it allows old versions\n\t- pragma solidity0.5.9 (KeyGenHistory.sol#107): it allows old versions\n\t- pragma solidity0.5.9 (KeyGenHistory.sol#146): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address,\n",
+          "message": "Parameter '' of IValidatorSet.initialize (KeyGenHistory.sol#8) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address,\n",
+          "message": "Parameter '_scope_0' of IValidatorSet.initialize (KeyGenHistory.sol#9) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address,\n",
+          "message": "Parameter '_scope_1' of IValidatorSet.initialize (KeyGenHistory.sol#10) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address[] calldata,\n",
+          "message": "Parameter '_scope_2' of IValidatorSet.initialize (KeyGenHistory.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address[] calldata,\n",
+          "message": "Parameter '_scope_3' of IValidatorSet.initialize (KeyGenHistory.sol#12) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        bool\n",
+          "message": "Parameter '_scope_4' of IValidatorSet.initialize (KeyGenHistory.sol#13) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setStakingAddress(address, address) external;\n",
+          "message": "Parameter '' of IValidatorSet.setStakingAddress (KeyGenHistory.sol#16) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setStakingAddress(address, address) external;\n",
+          "message": "Parameter '_scope_0' of IValidatorSet.setStakingAddress (KeyGenHistory.sol#16) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function isReportValidatorValid(address) external view returns(bool);\n",
+          "message": "Parameter '' of IValidatorSet.isReportValidatorValid (KeyGenHistory.sol#23) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function isValidator(address) external view returns(bool);\n",
+          "message": "Parameter '' of IValidatorSet.isValidator (KeyGenHistory.sol#24) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function isValidatorBanned(address) external view returns(bool);\n",
+          "message": "Parameter '' of IValidatorSet.isValidatorBanned (KeyGenHistory.sol#25) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function MAX_VALIDATORS() external view returns(uint256); // solhint-disable-line func-name-mixedcase\n",
+          "message": "Function 'IValidatorSet.MAX_VALIDATORS' (KeyGenHistory.sol#26) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function miningByStakingAddress(address) external view returns(address);\n",
+          "message": "Parameter '' of IValidatorSet.miningByStakingAddress (KeyGenHistory.sol#27) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function stakingByMiningAddress(address) external view returns(address);\n",
+          "message": "Parameter '' of IValidatorSet.stakingByMiningAddress (KeyGenHistory.sol#29) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function validatorIndex(address) external view returns(uint256);\n",
+          "message": "Parameter '' of IValidatorSet.validatorIndex (KeyGenHistory.sol#32) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function clearUnremovableValidator(address) external;\n",
+          "message": "Parameter '' of IStaking.clearUnremovableValidator (KeyGenHistory.sol#42) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function removePool(address) external;\n",
+          "message": "Parameter '' of IStaking.removePool (KeyGenHistory.sol#44) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function poolDelegators(address) external view returns(address[] memory);\n",
+          "message": "Parameter '' of IStaking.poolDelegators (KeyGenHistory.sol#50) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function stakeAmountMinusOrderedWithdraw(address, address) external view returns(uint256);\n",
+          "message": "Parameter '' of IStaking.stakeAmountMinusOrderedWithdraw (KeyGenHistory.sol#51) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function stakeAmountMinusOrderedWithdraw(address, address) external view returns(uint256);\n",
+          "message": "Parameter '_scope_0' of IStaking.stakeAmountMinusOrderedWithdraw (KeyGenHistory.sol#51) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function stakeAmountTotalMinusOrderedWithdraw(address) external view returns(uint256);\n",
+          "message": "Parameter '' of IStaking.stakeAmountTotalMinusOrderedWithdraw (KeyGenHistory.sol#52) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address internal _owner;\n",
+          "message": "Variable 'EternalStorage._owner' (KeyGenHistory.sol#66) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setValidatorSetContract(IValidatorSet _validatorSet) public onlyOwner {\n",
+          "message": "Parameter '_validatorSet' of KeyGenHistory.setValidatorSetContract (KeyGenHistory.sol#179) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 187,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function writePart(bytes memory _part) public onlyValidator {\n",
+          "message": "Parameter '_part' of KeyGenHistory.writePart (KeyGenHistory.sol#187) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 203,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function writeAck(bytes memory _ack) public onlyValidator {\n",
+          "message": "Parameter '_ack' of KeyGenHistory.writeAck (KeyGenHistory.sol#203) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 219,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function validatorWrotePart(uint256 _changeRequestCount, address _validator) public view returns(bool) {\n",
+          "message": "Parameter '_changeRequestCount' of KeyGenHistory.validatorWrotePart (KeyGenHistory.sol#219) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 219,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function validatorWrotePart(uint256 _changeRequestCount, address _validator) public view returns(bool) {\n",
+          "message": "Parameter '_validator' of KeyGenHistory.validatorWrotePart (KeyGenHistory.sol#219) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 230,
+          "vulnerability_to_line": 234,
+          "vulnerability_code": "    function _setValidatorWrotePart(uint256 _changeRequestCount, address _validator) internal {\n\n        boolStorage[\n\n            keccak256(abi.encode(VALIDATOR_WROTE_PART, _changeRequestCount, _validator))\n\n        ] = true;\n",
+          "message": "Function 'KeyGenHistory._setValidatorWrotePart' (KeyGenHistory.sol#230-234) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 230,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setValidatorWrotePart(uint256 _changeRequestCount, address _validator) internal {\n",
+          "message": "Parameter '_changeRequestCount' of KeyGenHistory._setValidatorWrotePart (KeyGenHistory.sol#230) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 230,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setValidatorWrotePart(uint256 _changeRequestCount, address _validator) internal {\n",
+          "message": "Parameter '_validator' of KeyGenHistory._setValidatorWrotePart (KeyGenHistory.sol#230) is not in mixedCase\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(bytes32 => uint256) internal uintStorage;\n",
+          "message": "EternalStorage.uintStorage (KeyGenHistory.sol#69) is never used in KeyGenHistory\nEternalStorage.stringStorage (KeyGenHistory.sol#70) is never used in KeyGenHistory\nEternalStorage.bytesStorage (KeyGenHistory.sol#72) is never used in KeyGenHistory\nEternalStorage.intStorage (KeyGenHistory.sol#74) is never used in KeyGenHistory\nEternalStorage.bytes32Storage (KeyGenHistory.sol#75) is never used in KeyGenHistory\nEternalStorage.uintArrayStorage (KeyGenHistory.sol#77) is never used in KeyGenHistory\nEternalStorage.stringArrayStorage (KeyGenHistory.sol#78) is never used in KeyGenHistory\nEternalStorage.addressArrayStorage (KeyGenHistory.sol#79) is never used in KeyGenHistory\nEternalStorage.bytesArrayStorage (KeyGenHistory.sol#80) is never used in KeyGenHistory\nEternalStorage.boolArrayStorage (KeyGenHistory.sol#81) is never used in KeyGenHistory\nEternalStorage.intArrayStorage (KeyGenHistory.sol#82) is never used in KeyGenHistory\nEternalStorage.bytes32ArrayStorage (KeyGenHistory.sol#83) is never used in KeyGenHistory\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_OVERPOWERED_ROLE",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setValidatorSetContract(IValidatorSet _validatorSet) public onlyOwner {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 152,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function newValidatorSet() external returns(bool, uint256);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getPoolsLikelihood() external view returns(int256[] memory, int256);\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

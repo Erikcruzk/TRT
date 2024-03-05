@@ -1,0 +1,237 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_14"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 22,
+          "vulnerability_code": "    function fromMontgomery(uint256 val) internal pure returns (uint256 res) {\n\n        // uint256 res = fmul(val, kMontgomeryRInv);\n\n        assembly {\n\n            res := mulmod(val, K_MONTGOMERY_R_INV, K_MODULUS)\n\n        }\n\n        return res;\n",
+          "message": "PrimeFieldElement0.fromMontgomery (PrimeFieldElement0.sol#16-22) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function toMontgomeryInt(uint256 val) internal pure returns (uint256 res) {\n\n        //uint256 res = fmul(val, kMontgomeryR);\n\n        assembly {\n\n            res := mulmod(val, K_MONTGOMERY_R, K_MODULUS)\n\n        }\n\n        return res;\n",
+          "message": "PrimeFieldElement0.toMontgomeryInt (PrimeFieldElement0.sol#31-37) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function fmul(uint256 a, uint256 b) internal pure returns (uint256 res) {\n\n        //uint256 res = mulmod(a, b, kModulus);\n\n        assembly {\n\n            res := mulmod(a, b, K_MODULUS)\n\n        }\n\n        return res;\n",
+          "message": "PrimeFieldElement0.fmul (PrimeFieldElement0.sol#39-45) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": 53,
+          "vulnerability_code": "    function fadd(uint256 a, uint256 b) internal pure returns (uint256 res) {\n\n        // uint256 res = addmod(a, b, kModulus);\n\n        assembly {\n\n            res := addmod(a, b, K_MODULUS)\n\n        }\n\n        return res;\n",
+          "message": "PrimeFieldElement0.fadd (PrimeFieldElement0.sol#47-53) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": 61,
+          "vulnerability_code": "    function fsub(uint256 a, uint256 b) internal pure returns (uint256 res) {\n\n        // uint256 res = addmod(a, kModulus - b, kModulus);\n\n        assembly {\n\n            res := addmod(a, sub(K_MODULUS, b), K_MODULUS)\n\n        }\n\n        return res;\n",
+          "message": "PrimeFieldElement0.fsub (PrimeFieldElement0.sol#55-61) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": 86,
+          "vulnerability_code": "    function expmod(\n\n        uint256 base,\n\n        uint256 exponent,\n\n        uint256 modulus\n\n    ) internal view returns (uint256 res) {\n\n        assembly {\n\n            let p := mload(0x40)\n\n            mstore(p, 0x20) // Length of Base.\n\n            mstore(add(p, 0x20), 0x20) // Length of Exponent.\n\n            mstore(add(p, 0x40), 0x20) // Length of Modulus.\n\n            mstore(add(p, 0x60), base) // Base.\n\n            mstore(add(p, 0x80), exponent) // Exponent.\n\n            mstore(add(p, 0xa0), modulus) // Modulus.\n\n            // Call modexp precompile.\n\n            if iszero(staticcall(gas(), 0x05, p, 0xc0, p, 0x20)) {\n\n                revert(0, 0)\n\n            }\n\n            res := mload(p)\n\n        }\n",
+          "message": "PrimeFieldElement0.expmod (PrimeFieldElement0.sol#67-86) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 22,
+          "vulnerability_code": "    function fromMontgomery(uint256 val) internal pure returns (uint256 res) {\n\n        // uint256 res = fmul(val, kMontgomeryRInv);\n\n        assembly {\n\n            res := mulmod(val, K_MONTGOMERY_R_INV, K_MODULUS)\n\n        }\n\n        return res;\n",
+          "message": "PrimeFieldElement0.fromMontgomery uses assembly (PrimeFieldElement0.sol#16-22)\n\t- PrimeFieldElement0.sol#18-20\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function toMontgomeryInt(uint256 val) internal pure returns (uint256 res) {\n\n        //uint256 res = fmul(val, kMontgomeryR);\n\n        assembly {\n\n            res := mulmod(val, K_MONTGOMERY_R, K_MODULUS)\n\n        }\n\n        return res;\n",
+          "message": "PrimeFieldElement0.toMontgomeryInt uses assembly (PrimeFieldElement0.sol#31-37)\n\t- PrimeFieldElement0.sol#33-35\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function fmul(uint256 a, uint256 b) internal pure returns (uint256 res) {\n\n        //uint256 res = mulmod(a, b, kModulus);\n\n        assembly {\n\n            res := mulmod(a, b, K_MODULUS)\n\n        }\n\n        return res;\n",
+          "message": "PrimeFieldElement0.fmul uses assembly (PrimeFieldElement0.sol#39-45)\n\t- PrimeFieldElement0.sol#41-43\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": 53,
+          "vulnerability_code": "    function fadd(uint256 a, uint256 b) internal pure returns (uint256 res) {\n\n        // uint256 res = addmod(a, b, kModulus);\n\n        assembly {\n\n            res := addmod(a, b, K_MODULUS)\n\n        }\n\n        return res;\n",
+          "message": "PrimeFieldElement0.fadd uses assembly (PrimeFieldElement0.sol#47-53)\n\t- PrimeFieldElement0.sol#49-51\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": 61,
+          "vulnerability_code": "    function fsub(uint256 a, uint256 b) internal pure returns (uint256 res) {\n\n        // uint256 res = addmod(a, kModulus - b, kModulus);\n\n        assembly {\n\n            res := addmod(a, sub(K_MODULUS, b), K_MODULUS)\n\n        }\n\n        return res;\n",
+          "message": "PrimeFieldElement0.fsub uses assembly (PrimeFieldElement0.sol#55-61)\n\t- PrimeFieldElement0.sol#57-59\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": 86,
+          "vulnerability_code": "    function expmod(\n\n        uint256 base,\n\n        uint256 exponent,\n\n        uint256 modulus\n\n    ) internal view returns (uint256 res) {\n\n        assembly {\n\n            let p := mload(0x40)\n\n            mstore(p, 0x20) // Length of Base.\n\n            mstore(add(p, 0x20), 0x20) // Length of Exponent.\n\n            mstore(add(p, 0x40), 0x20) // Length of Modulus.\n\n            mstore(add(p, 0x60), base) // Base.\n\n            mstore(add(p, 0x80), exponent) // Exponent.\n\n            mstore(add(p, 0xa0), modulus) // Modulus.\n\n            // Call modexp precompile.\n\n            if iszero(staticcall(gas(), 0x05, p, 0xc0, p, 0x20)) {\n\n                revert(0, 0)\n\n            }\n\n            res := mload(p)\n\n        }\n",
+          "message": "PrimeFieldElement0.expmod uses assembly (PrimeFieldElement0.sol#67-86)\n\t- PrimeFieldElement0.sol#72-85\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.12;\n",
+          "message": "Detected issues with version pragma in PrimeFieldElement0.sol:\n\t- pragma solidity^0.6.12 (PrimeFieldElement0.sol#4): it allows old versions\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": 10,
+          "vulnerability_code": "    uint256 internal constant K_MONTGOMERY_R =\n",
+          "message": "PrimeFieldElement0.K_MONTGOMERY_R (PrimeFieldElement0.sol#9-10) is never used in PrimeFieldElement0\nPrimeFieldElement0.K_MONTGOMERY_R_INV (PrimeFieldElement0.sol#11-12) is never used in PrimeFieldElement0\nPrimeFieldElement0.GENERATOR_VAL (PrimeFieldElement0.sol#13) is never used in PrimeFieldElement0\nPrimeFieldElement0.ONE_VAL (PrimeFieldElement0.sol#14) is never used in PrimeFieldElement0\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function expmod(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.12;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function fromMontgomery(uint256 val) internal pure returns (uint256 res) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function toMontgomeryInt(uint256 val) internal pure returns (uint256 res) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function fmul(uint256 a, uint256 b) internal pure returns (uint256 res) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function fadd(uint256 a, uint256 b) internal pure returns (uint256 res) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function fsub(uint256 a, uint256 b) internal pure returns (uint256 res) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function expmod(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 18,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (len = 0; ptr < end; len++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_2"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "    function strlen(string memory s) internal pure returns (uint) {\n\n        s; // Don't warn about unused variables\n\n        // Starting here means the LSB will be the byte we care about\n\n        uint ptr;\n\n        uint end;\n\n        assembly {\n\n            ptr := add(s, 1)\n\n            end := add(mload(s), ptr)\n\n        }\n\n        uint len;\n\n        for (len = 0; ptr < end; len++) {\n\n            uint8 b;\n\n            assembly { b := and(mload(ptr), 0xFF) }\n\n            if (b < 0x80) {\n\n                ptr += 1;\n\n            } else if (b < 0xE0) {\n\n                ptr += 2;\n\n            } else if (b < 0xF0) {\n\n                ptr += 3;\n\n            } else if (b < 0xF8) {\n\n                ptr += 4;\n\n            } else if (b < 0xFC) {\n\n                ptr += 5;\n\n            } else {\n\n                ptr += 6;\n\n            }\n\n        }\n\n        return len;\n",
+          "message": "StringUtils.strlen (StringUtils.sol#12-40) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": 40,
+          "vulnerability_code": "    function strlen(string memory s) internal pure returns (uint) {\n\n        s; // Don't warn about unused variables\n\n        // Starting here means the LSB will be the byte we care about\n\n        uint ptr;\n\n        uint end;\n\n        assembly {\n\n            ptr := add(s, 1)\n\n            end := add(mload(s), ptr)\n\n        }\n\n        uint len;\n\n        for (len = 0; ptr < end; len++) {\n\n            uint8 b;\n\n            assembly { b := and(mload(ptr), 0xFF) }\n\n            if (b < 0x80) {\n\n                ptr += 1;\n\n            } else if (b < 0xE0) {\n\n                ptr += 2;\n\n            } else if (b < 0xF0) {\n\n                ptr += 3;\n\n            } else if (b < 0xF8) {\n\n                ptr += 4;\n\n            } else if (b < 0xFC) {\n\n                ptr += 5;\n\n            } else {\n\n                ptr += 6;\n\n            }\n\n        }\n\n        return len;\n",
+          "message": "StringUtils.strlen uses assembly (StringUtils.sol#12-40)\n\t- StringUtils.sol#17-21\n\t- StringUtils.sol#24-25\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            if (b < 0x80) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            } else if (b < 0xE0) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            } else if (b < 0xF0) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 31,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            } else if (b < 0xF8) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            } else if (b < 0xFC) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity >=0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function strlen(string memory s) internal pure returns (uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            assembly { b := and(mload(ptr), 0xFF) }\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values). This issue is reported for internal compiler generated code.\nClassification: SWC-110"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -1,0 +1,518 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public yesCounter = 0;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public noCounter = 0;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public totalVoted = 0;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 261,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public holdEndTime = 0;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "use-multiple-require",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(now >= startTime && now <= endTime);\n",
+          "message": "Using multiple require statements is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-multiple-require",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_startTime >= now && _endTime > _startTime);\n",
+          "message": "Using multiple require statements is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 284,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if(holdEndTime > 0 && holdEndTime > endTime) {\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 285,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(now >= holdEndTime);\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 286,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        } else {\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 287,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(now >= endTime);\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 288,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        }\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_24"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-no-eth",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": 148,
+          "vulnerability_code": "    function vote(bool agree) public checkTime {\n\n        require(votesByAddress[msg.sender].time == 0);\n\n\n\n        uint256 voiceWeight = token.balanceOf(msg.sender);\n\n        uint256 maxVoiceWeight = safeDiv(token.totalSupply(), MAX_TOKENS_WEIGHT_DENOM);\n\n        voiceWeight =  voiceWeight <= maxVoiceWeight ? voiceWeight : maxVoiceWeight;\n\n\n\n        if(agree) {\n\n            yesCounter = safeAdd(yesCounter, voiceWeight);\n\n        } else {\n\n            noCounter = safeAdd(noCounter, voiceWeight);\n\n\n\n        }\n\n\n\n        votesByAddress[msg.sender].time = now;\n\n        votesByAddress[msg.sender].weight = voiceWeight;\n\n        votesByAddress[msg.sender].agree = agree;\n\n\n\n        totalVoted = safeAdd(totalVoted, 1);\n",
+          "message": "Reentrancy in BasePoll.vote (RefundPoll.sol#129-148):\n\tExternal calls:\n\t- voiceWeight = token.balanceOf(msg.sender) (RefundPoll.sol#132)\n\t- maxVoiceWeight = safeDiv(token.totalSupply(),MAX_TOKENS_WEIGHT_DENOM) (RefundPoll.sol#133)\n\tState variables written after the call(s):\n\t- votesByAddress (RefundPoll.sol#143)\n\t- votesByAddress (RefundPoll.sol#144)\n\t- votesByAddress (RefundPoll.sol#145)\n"
+        },
+        {
+          "name": "reentrancy-benign",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": 148,
+          "vulnerability_code": "    function vote(bool agree) public checkTime {\n\n        require(votesByAddress[msg.sender].time == 0);\n\n\n\n        uint256 voiceWeight = token.balanceOf(msg.sender);\n\n        uint256 maxVoiceWeight = safeDiv(token.totalSupply(), MAX_TOKENS_WEIGHT_DENOM);\n\n        voiceWeight =  voiceWeight <= maxVoiceWeight ? voiceWeight : maxVoiceWeight;\n\n\n\n        if(agree) {\n\n            yesCounter = safeAdd(yesCounter, voiceWeight);\n\n        } else {\n\n            noCounter = safeAdd(noCounter, voiceWeight);\n\n\n\n        }\n\n\n\n        votesByAddress[msg.sender].time = now;\n\n        votesByAddress[msg.sender].weight = voiceWeight;\n\n        votesByAddress[msg.sender].agree = agree;\n\n\n\n        totalVoted = safeAdd(totalVoted, 1);\n",
+          "message": "Reentrancy in BasePoll.vote (RefundPoll.sol#129-148):\n\tExternal calls:\n\t- voiceWeight = token.balanceOf(msg.sender) (RefundPoll.sol#132)\n\t- maxVoiceWeight = safeDiv(token.totalSupply(),MAX_TOKENS_WEIGHT_DENOM) (RefundPoll.sol#133)\n\tState variables written after the call(s):\n\t- noCounter (RefundPoll.sol#139)\n\t- totalVoted (RefundPoll.sol#147)\n\t- yesCounter (RefundPoll.sol#137)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint8 public decimals;\n",
+          "message": "IERC20Token.decimals should be constant (RefundPoll.sol#51)\nIERC20Token.name should be constant (RefundPoll.sol#49)\nIERC20Token.symbol should be constant (RefundPoll.sol#50)\nIERC20Token.totalSupply should be constant (RefundPoll.sol#52)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address _owner) public constant returns (uint256 balance);\n",
+          "message": "IERC20Token.balanceOf (RefundPoll.sol#54) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value)  public returns (bool success);\n",
+          "message": "IERC20Token.transfer (RefundPoll.sol#55) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value)  public returns (bool success);\n",
+          "message": "IERC20Token.transferFrom (RefundPoll.sol#56) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value)  public returns (bool success);\n",
+          "message": "IERC20Token.approve (RefundPoll.sol#57) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function allowance(address _owner, address _spender)  public constant returns (uint256 remaining);\n",
+          "message": "IERC20Token.allowance (RefundPoll.sol#58) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": 148,
+          "vulnerability_code": "    function vote(bool agree) public checkTime {\n\n        require(votesByAddress[msg.sender].time == 0);\n\n\n\n        uint256 voiceWeight = token.balanceOf(msg.sender);\n\n        uint256 maxVoiceWeight = safeDiv(token.totalSupply(), MAX_TOKENS_WEIGHT_DENOM);\n\n        voiceWeight =  voiceWeight <= maxVoiceWeight ? voiceWeight : maxVoiceWeight;\n\n\n\n        if(agree) {\n\n            yesCounter = safeAdd(yesCounter, voiceWeight);\n\n        } else {\n\n            noCounter = safeAdd(noCounter, voiceWeight);\n\n\n\n        }\n\n\n\n        votesByAddress[msg.sender].time = now;\n\n        votesByAddress[msg.sender].weight = voiceWeight;\n\n        votesByAddress[msg.sender].agree = agree;\n\n\n\n        totalVoted = safeAdd(totalVoted, 1);\n",
+          "message": "BasePoll.vote (RefundPoll.sol#129-148) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 153,
+          "vulnerability_to_line": 169,
+          "vulnerability_code": "    function revokeVote() public checkTime {\n\n        require(votesByAddress[msg.sender].time > 0);\n\n\n\n        uint256 voiceWeight = votesByAddress[msg.sender].weight;\n\n        bool agree = votesByAddress[msg.sender].agree;\n\n\n\n        votesByAddress[msg.sender].time = 0;\n\n        votesByAddress[msg.sender].weight = 0;\n\n        votesByAddress[msg.sender].agree = false;\n\n\n\n        totalVoted = safeSub(totalVoted, 1);\n\n        if(agree) {\n\n            yesCounter = safeSub(yesCounter, voiceWeight);\n\n        } else {\n\n            noCounter = safeSub(noCounter, voiceWeight);\n\n        }\n",
+          "message": "BasePoll.revokeVote (RefundPoll.sol#153-169) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 175,
+          "vulnerability_to_line": 200,
+          "vulnerability_code": "    function onTokenTransfer(address tokenHolder, uint256 amount) public {\n\n        require(msg.sender == fundAddress);\n\n        if(votesByAddress[tokenHolder].time == 0) {\n\n            return;\n\n        }\n\n        if(!checkTransfersAfterEnd) {\n\n             if(finalized || (now < startTime || now > endTime)) {\n\n                 return;\n\n             }\n\n        }\n\n\n\n        if(token.balanceOf(tokenHolder) >= votesByAddress[tokenHolder].weight) {\n\n            return;\n\n        }\n\n        uint256 voiceWeight = amount;\n\n        if(amount > votesByAddress[tokenHolder].weight) {\n\n            voiceWeight = votesByAddress[tokenHolder].weight;\n\n        }\n\n\n\n        if(votesByAddress[tokenHolder].agree) {\n\n            yesCounter = safeSub(yesCounter, voiceWeight);\n\n        } else {\n\n            noCounter = safeSub(noCounter, voiceWeight);\n\n        }\n\n        votesByAddress[tokenHolder].weight = safeSub(votesByAddress[tokenHolder].weight, voiceWeight);\n",
+          "message": "BasePoll.onTokenTransfer (RefundPoll.sol#175-200) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 205,
+          "vulnerability_to_line": 212,
+          "vulnerability_code": "    function tryToFinalize() public notFinalized returns(bool) {\n\n        if(now < endTime) {\n\n            return false;\n\n        }\n\n        finalized = true;\n\n        onPollFinish(isSubjectApproved());\n\n        return true;\n",
+          "message": "BasePoll.tryToFinalize (RefundPoll.sol#205-212) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 283,
+          "vulnerability_to_line": 293,
+          "vulnerability_code": "    function tryToFinalize() public returns(bool) {\n\n        if(holdEndTime > 0 && holdEndTime > endTime) {\n\n            require(now >= holdEndTime);\n\n        } else {\n\n            require(now >= endTime);\n\n        }\n\n\n\n        finalized = true;\n\n        onPollFinish(isSubjectApproved());\n\n        return true;\n",
+          "message": "RefundPoll.tryToFinalize (RefundPoll.sol#283-293) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 214,
+          "vulnerability_to_line": 216,
+          "vulnerability_code": "    function isNowApproved() public view returns(bool) {\n\n        return isSubjectApproved();\n",
+          "message": "BasePoll.isNowApproved (RefundPoll.sol#214-216) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.21;\n",
+          "message": "Detected issues with version pragma in RefundPoll.sol:\n\t- pragma solidity^0.4.21 (RefundPoll.sol#3): it allows old versions\n\t- pragma solidity^0.4.21 (RefundPoll.sol#41): it allows old versions\n\t- pragma solidity^0.4.21 (RefundPoll.sol#66): it allows old versions\n\t- pragma solidity^0.4.21 (RefundPoll.sol#230): it allows old versions\n\t- pragma solidity^0.4.21 (RefundPoll.sol#253): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    function SafeMath() public {\n",
+          "message": "Function 'SafeMath.SafeMath' (RefundPoll.sol#13-14) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": 123,
+          "vulnerability_code": "    function BasePoll(address _tokenAddress, address _fundAddress, uint256 _startTime, uint256 _endTime, bool _checkTransfersAfterEnd) public {\n\n        require(_tokenAddress != address(0));\n\n        require(_startTime >= now && _endTime > _startTime);\n\n\n\n        token = IERC20Token(_tokenAddress);\n\n        fundAddress = _fundAddress;\n\n        startTime = _startTime;\n\n        endTime = _endTime;\n\n        finalized = false;\n\n        checkTransfersAfterEnd = _checkTransfersAfterEnd;\n",
+          "message": "Function 'BasePoll.BasePoll' (RefundPoll.sol#113-123) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function BasePoll(address _tokenAddress, address _fundAddress, uint256 _startTime, uint256 _endTime, bool _checkTransfersAfterEnd) public {\n",
+          "message": "Parameter '_tokenAddress' of BasePoll.BasePoll (RefundPoll.sol#113) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function BasePoll(address _tokenAddress, address _fundAddress, uint256 _startTime, uint256 _endTime, bool _checkTransfersAfterEnd) public {\n",
+          "message": "Parameter '_fundAddress' of BasePoll.BasePoll (RefundPoll.sol#113) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function BasePoll(address _tokenAddress, address _fundAddress, uint256 _startTime, uint256 _endTime, bool _checkTransfersAfterEnd) public {\n",
+          "message": "Parameter '_startTime' of BasePoll.BasePoll (RefundPoll.sol#113) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function BasePoll(address _tokenAddress, address _fundAddress, uint256 _startTime, uint256 _endTime, bool _checkTransfersAfterEnd) public {\n",
+          "message": "Parameter '_endTime' of BasePoll.BasePoll (RefundPoll.sol#113) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 113,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function BasePoll(address _tokenAddress, address _fundAddress, uint256 _startTime, uint256 _endTime, bool _checkTransfersAfterEnd) public {\n",
+          "message": "Parameter '_checkTransfersAfterEnd' of BasePoll.BasePoll (RefundPoll.sol#113) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 270,
+          "vulnerability_to_line": 281,
+          "vulnerability_code": "    function RefundPoll(\n\n        address _tokenAddress,\n\n        address _fundAddress,\n\n        uint256 _startTime,\n\n        uint256 _endTime,\n\n        uint256 _holdEndTime,\n\n        bool _checkTransfersAfterEnd\n\n    ) public\n\n        BasePoll(_tokenAddress, _fundAddress, _startTime, _endTime, _checkTransfersAfterEnd)\n\n    {\n\n        holdEndTime = _holdEndTime;\n",
+          "message": "Function 'RefundPoll.RefundPoll' (RefundPoll.sol#270-281) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 275,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 _holdEndTime,\n",
+          "message": "Parameter '_holdEndTime' of RefundPoll.RefundPoll (RefundPoll.sol#275) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address _owner) public constant returns (uint256 balance);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function allowance(address _owner, address _spender)  public constant returns (uint256 remaining);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.21;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.21;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.21;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 230,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.21;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 253,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.21;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool checkTransfersAfterEnd;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 156,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 voiceWeight = votesByAddress[msg.sender].weight;\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Dependence on predictable environment variable (SWC 116)",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_startTime >= now && _endTime > _startTime);\n",
+          "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 116)",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(_startTime >= now && _endTime > _startTime);\n",
+          "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 116)",
+          "vulnerability_from_line": 285,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(now >= holdEndTime);\n",
+          "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 116)",
+          "vulnerability_from_line": 287,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(now >= endTime);\n",
+          "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 116)",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(now >= startTime && now <= endTime);\n",
+          "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 116)",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(now >= startTime && now <= endTime);\n",
+          "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 116)",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(now >= startTime && now <= endTime);\n",
+          "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 116)",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(now >= startTime && now <= endTime);\n",
+          "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 132,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 voiceWeight = token.balanceOf(msg.sender);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 133,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 maxVoiceWeight = safeDiv(token.totalSupply(), MAX_TOKENS_WEIGHT_DENOM);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 133,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 maxVoiceWeight = safeDiv(token.totalSupply(), MAX_TOKENS_WEIGHT_DENOM);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 133,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 maxVoiceWeight = safeDiv(token.totalSupply(), MAX_TOKENS_WEIGHT_DENOM);\n",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 133,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 maxVoiceWeight = safeDiv(token.totalSupply(), MAX_TOKENS_WEIGHT_DENOM);\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 137,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            yesCounter = safeAdd(yesCounter, voiceWeight);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 137,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            yesCounter = safeAdd(yesCounter, voiceWeight);\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 139,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            noCounter = safeAdd(noCounter, voiceWeight);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 139,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            noCounter = safeAdd(noCounter, voiceWeight);\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 143,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        votesByAddress[msg.sender].time = now;\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 144,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        votesByAddress[msg.sender].weight = voiceWeight;\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        votesByAddress[msg.sender].agree = agree;\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        votesByAddress[msg.sender].agree = agree;\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 147,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        totalVoted = safeAdd(totalVoted, 1);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 147,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        totalVoted = safeAdd(totalVoted, 1);\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 301,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        fund.onRefundPollFinish(agree);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

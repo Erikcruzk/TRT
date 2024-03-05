@@ -1,0 +1,520 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return abi.encodeWithSelector(\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            INVALID_BYTE_OPERATION_ERROR_SELECTOR,\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            errorCode,\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            offset,\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            required\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        );\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return abi.encodeWithSelector(\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 100,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            STANDARD_ERROR_SELECTOR,\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            bytes(message)\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        );\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_27"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": 115,
+          "vulnerability_code": "    function rrevert(bytes memory errorData)\n\n        internal\n\n        pure\n\n    {\n\n        assembly {\n\n            revert(add(errorData, 0x20), mload(errorData))\n\n        }\n",
+          "message": "LibRichErrorsV06.rrevert (LibBytesV06.sol#108-115) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 150,
+          "vulnerability_to_line": 159,
+          "vulnerability_code": "    function rawAddress(bytes memory input)\n\n        internal\n\n        pure\n\n        returns (uint256 memoryAddress)\n\n    {\n\n        assembly {\n\n            memoryAddress := input\n\n        }\n\n        return memoryAddress;\n",
+          "message": "LibBytesV06.rawAddress (LibBytesV06.sol#150-159) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 164,
+          "vulnerability_to_line": 173,
+          "vulnerability_code": "    function contentAddress(bytes memory input)\n\n        internal\n\n        pure\n\n        returns (uint256 memoryAddress)\n\n    {\n\n        assembly {\n\n            memoryAddress := add(input, 32)\n\n        }\n\n        return memoryAddress;\n",
+          "message": "LibBytesV06.contentAddress (LibBytesV06.sol#164-173) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": 280,
+          "vulnerability_code": "    function memCopy(\n\n        uint256 dest,\n\n        uint256 source,\n\n        uint256 length\n\n    )\n\n        internal\n\n        pure\n\n    {\n\n        if (length < 32) {\n\n            // Handle a partial word by reading destination and masking\n\n            // off the bits we are interested in.\n\n            // This correctly handles overlap, zero lengths and source == dest\n\n            assembly {\n\n                let mask := sub(exp(256, sub(32, length)), 1)\n\n                let s := and(mload(source), not(mask))\n\n                let d := and(mload(dest), mask)\n\n                mstore(dest, or(s, d))\n\n            }\n\n        } else {\n\n            // Skip the O(length) loop when source == dest.\n\n            if (source == dest) {\n\n                return;\n\n            }\n\n\n\n            // For large copies we copy whole words at a time. The final\n\n            // word is aligned to the end of the range (instead of after the\n\n            // previous) to handle partial words. So a copy will look like this:\n\n            //\n\n            //  ####\n\n            //      ####\n\n            //          ####\n\n            //            ####\n\n            //\n\n            // We handle overlap in the source and destination range by\n\n            // changing the copying direction. This prevents us from\n\n            // overwriting parts of source that we still need to copy.\n\n            //\n\n            // This correctly handles source == dest\n\n            //\n\n            if (source > dest) {\n\n                assembly {\n\n                    // We subtract 32 from `sEnd` and `dEnd` because it\n\n                    // is easier to compare with in the loop, and these\n\n                    // are also the addresses we need for copying the\n\n                    // last bytes.\n\n                    length := sub(length, 32)\n\n                    let sEnd := add(source, length)\n\n                    let dEnd := add(dest, length)\n\n\n\n                    // Remember the last 32 bytes of source\n\n                    // This needs to be done here and not after the loop\n\n                    // because we may have overwritten the last bytes in\n\n                    // source already due to overlap.\n\n                    let last := mload(sEnd)\n\n\n\n                    // Copy whole words front to back\n\n                    // Note: the first check is always true,\n\n                    // this could have been a do-while loop.\n\n                    // solhint-disable-next-line no-empty-blocks\n\n                    for {} lt(source, sEnd) {} {\n\n                        mstore(dest, mload(source))\n\n                        source := add(source, 32)\n\n                        dest := add(dest, 32)\n\n                    }\n\n\n\n                    // Write the last 32 bytes\n\n                    mstore(dEnd, last)\n\n                }\n\n            } else {\n\n                assembly {\n\n                    // We subtract 32 from `sEnd` and `dEnd` because those\n\n                    // are the starting points when copying a word at the end.\n\n                    length := sub(length, 32)\n\n                    let sEnd := add(source, length)\n\n                    let dEnd := add(dest, length)\n\n\n\n                    // Remember the first 32 bytes of source\n\n                    // This needs to be done here and not after the loop\n\n                    // because we may have overwritten the first bytes in\n\n                    // source already due to overlap.\n\n                    let first := mload(source)\n\n\n\n                    // Copy whole words back to front\n\n                    // We use a signed comparisson here to allow dEnd to become\n\n                    // negative (happens when source and dest < 32). Valid\n\n                    // addresses in local memory will never be larger than\n\n                    // 2**255, so they can be safely re-interpreted as signed.\n\n                    // Note: the first check is always true,\n\n                    // this could have been a do-while loop.\n\n                    // solhint-disable-next-line no-empty-blocks\n\n                    for {} slt(dest, dEnd) {} {\n\n                        mstore(dEnd, mload(sEnd))\n\n                        sEnd := sub(sEnd, 32)\n\n                        dEnd := sub(dEnd, 32)\n\n                    }\n\n\n\n                    // Write the first 32 bytes\n\n                    mstore(dest, first)\n\n                }\n\n            }\n\n        }\n",
+          "message": "LibBytesV06.memCopy (LibBytesV06.sol#179-280) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 330,
+          "vulnerability_to_line": 362,
+          "vulnerability_code": "    function sliceDestructive(\n\n        bytes memory b,\n\n        uint256 from,\n\n        uint256 to\n\n    )\n\n        internal\n\n        pure\n\n        returns (bytes memory result)\n\n    {\n\n        // Ensure that the from and to positions are valid positions for a slice within\n\n        // the byte array that is being used.\n\n        if (from > to) {\n\n            LibRichErrorsV06.rrevert(LibBytesRichErrorsV06.InvalidByteOperationError(\n\n                LibBytesRichErrorsV06.InvalidByteOperationErrorCodes.FromLessThanOrEqualsToRequired,\n\n                from,\n\n                to\n\n            ));\n\n        }\n\n        if (to > b.length) {\n\n            LibRichErrorsV06.rrevert(LibBytesRichErrorsV06.InvalidByteOperationError(\n\n                LibBytesRichErrorsV06.InvalidByteOperationErrorCodes.ToLessThanOrEqualsLengthRequired,\n\n                to,\n\n                b.length\n\n            ));\n\n        }\n\n\n\n        // Create a new bytes structure around [from, to) in-place.\n\n        assembly {\n\n            result := add(b, from)\n\n            mstore(result, sub(to, from))\n\n        }\n\n        return result;\n",
+          "message": "LibBytesV06.sliceDestructive (LibBytesV06.sol#330-362) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 367,
+          "vulnerability_to_line": 389,
+          "vulnerability_code": "    function popLastByte(bytes memory b)\n\n        internal\n\n        pure\n\n        returns (bytes1 result)\n\n    {\n\n        if (b.length == 0) {\n\n            LibRichErrorsV06.rrevert(LibBytesRichErrorsV06.InvalidByteOperationError(\n\n                LibBytesRichErrorsV06.InvalidByteOperationErrorCodes.LengthGreaterThanZeroRequired,\n\n                b.length,\n\n                0\n\n            ));\n\n        }\n\n\n\n        // Store last byte.\n\n        result = b[b.length - 1];\n\n\n\n        assembly {\n\n            // Decrement length of byte array.\n\n            let newLen := sub(mload(b), 1)\n\n            mstore(b, newLen)\n\n        }\n\n        return result;\n",
+          "message": "LibBytesV06.popLastByte (LibBytesV06.sol#367-389) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 413,
+          "vulnerability_to_line": 442,
+          "vulnerability_code": "    function readAddress(\n\n        bytes memory b,\n\n        uint256 index\n\n    )\n\n        internal\n\n        pure\n\n        returns (address result)\n\n    {\n\n        if (b.length < index + 20) {\n\n            LibRichErrorsV06.rrevert(LibBytesRichErrorsV06.InvalidByteOperationError(\n\n                LibBytesRichErrorsV06.InvalidByteOperationErrorCodes.LengthGreaterThanOrEqualsTwentyRequired,\n\n                b.length,\n\n                index + 20 // 20 is length of address\n\n            ));\n\n        }\n\n\n\n        // Add offset to index:\n\n        // 1. Arrays are prefixed by 32-byte length parameter (add 32 to index)\n\n        // 2. Account for size difference between address length and 32-byte storage word (subtract 12 from index)\n\n        index += 20;\n\n\n\n        // Read address from array memory\n\n        assembly {\n\n            // 1. Add index to address of bytes array\n\n            // 2. Load 32-byte word from memory\n\n            // 3. Apply 20-byte mask to obtain address\n\n            result := and(mload(add(b, index)), 0xffffffffffffffffffffffffffffffffffffffff)\n\n        }\n\n        return result;\n",
+          "message": "LibBytesV06.readAddress (LibBytesV06.sol#413-442) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 448,
+          "vulnerability_to_line": 491,
+          "vulnerability_code": "    function writeAddress(\n\n        bytes memory b,\n\n        uint256 index,\n\n        address input\n\n    )\n\n        internal\n\n        pure\n\n    {\n\n        if (b.length < index + 20) {\n\n            LibRichErrorsV06.rrevert(LibBytesRichErrorsV06.InvalidByteOperationError(\n\n                LibBytesRichErrorsV06.InvalidByteOperationErrorCodes.LengthGreaterThanOrEqualsTwentyRequired,\n\n                b.length,\n\n                index + 20 // 20 is length of address\n\n            ));\n\n        }\n\n\n\n        // Add offset to index:\n\n        // 1. Arrays are prefixed by 32-byte length parameter (add 32 to index)\n\n        // 2. Account for size difference between address length and 32-byte storage word (subtract 12 from index)\n\n        index += 20;\n\n\n\n        // Store address into array memory\n\n        assembly {\n\n            // The address occupies 20 bytes and mstore stores 32 bytes.\n\n            // First fetch the 32-byte word where we'll be storing the address, then\n\n            // apply a mask so we have only the bytes in the word that the address will not occupy.\n\n            // Then combine these bytes with the address and store the 32 bytes back to memory with mstore.\n\n\n\n            // 1. Add index to address of bytes array\n\n            // 2. Load 32-byte word from memory\n\n            // 3. Apply 12-byte mask to obtain extra bytes occupying word of memory where we'll store the address\n\n            let neighbors := and(\n\n                mload(add(b, index)),\n\n                0xffffffffffffffffffffffff0000000000000000000000000000000000000000\n\n            )\n\n\n\n            // Make sure input address is clean.\n\n            // (Solidity does not guarantee this)\n\n            input := and(input, 0xffffffffffffffffffffffffffffffffffffffff)\n\n\n\n            // Store the neighbors and address into memory\n\n            mstore(add(b, index), xor(input, neighbors))\n\n        }\n",
+          "message": "LibBytesV06.writeAddress (LibBytesV06.sol#448-491) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 497,
+          "vulnerability_to_line": 521,
+          "vulnerability_code": "    function readBytes32(\n\n        bytes memory b,\n\n        uint256 index\n\n    )\n\n        internal\n\n        pure\n\n        returns (bytes32 result)\n\n    {\n\n        if (b.length < index + 32) {\n\n            LibRichErrorsV06.rrevert(LibBytesRichErrorsV06.InvalidByteOperationError(\n\n                LibBytesRichErrorsV06.InvalidByteOperationErrorCodes.LengthGreaterThanOrEqualsThirtyTwoRequired,\n\n                b.length,\n\n                index + 32\n\n            ));\n\n        }\n\n\n\n        // Arrays are prefixed by a 256 bit length parameter\n\n        index += 32;\n\n\n\n        // Read the bytes32 from array memory\n\n        assembly {\n\n            result := mload(add(b, index))\n\n        }\n\n        return result;\n",
+          "message": "LibBytesV06.readBytes32 (LibBytesV06.sol#497-521) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 527,
+          "vulnerability_to_line": 550,
+          "vulnerability_code": "    function writeBytes32(\n\n        bytes memory b,\n\n        uint256 index,\n\n        bytes32 input\n\n    )\n\n        internal\n\n        pure\n\n    {\n\n        if (b.length < index + 32) {\n\n            LibRichErrorsV06.rrevert(LibBytesRichErrorsV06.InvalidByteOperationError(\n\n                LibBytesRichErrorsV06.InvalidByteOperationErrorCodes.LengthGreaterThanOrEqualsThirtyTwoRequired,\n\n                b.length,\n\n                index + 32\n\n            ));\n\n        }\n\n\n\n        // Arrays are prefixed by a 256 bit length parameter\n\n        index += 32;\n\n\n\n        // Read the bytes32 from array memory\n\n        assembly {\n\n            mstore(add(b, index), input)\n\n        }\n",
+          "message": "LibBytesV06.writeBytes32 (LibBytesV06.sol#527-550) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 587,
+          "vulnerability_to_line": 614,
+          "vulnerability_code": "    function readBytes4(\n\n        bytes memory b,\n\n        uint256 index\n\n    )\n\n        internal\n\n        pure\n\n        returns (bytes4 result)\n\n    {\n\n        if (b.length < index + 4) {\n\n            LibRichErrorsV06.rrevert(LibBytesRichErrorsV06.InvalidByteOperationError(\n\n                LibBytesRichErrorsV06.InvalidByteOperationErrorCodes.LengthGreaterThanOrEqualsFourRequired,\n\n                b.length,\n\n                index + 4\n\n            ));\n\n        }\n\n\n\n        // Arrays are prefixed by a 32 byte length field\n\n        index += 32;\n\n\n\n        // Read the bytes4 from array memory\n\n        assembly {\n\n            result := mload(add(b, index))\n\n            // Solidity does not require us to clean the trailing bytes.\n\n            // We do it anyway\n\n            result := and(result, 0xFFFFFFFF00000000000000000000000000000000000000000000000000000000)\n\n        }\n\n        return result;\n",
+          "message": "LibBytesV06.readBytes4 (LibBytesV06.sol#587-614) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 621,
+          "vulnerability_to_line": 628,
+          "vulnerability_code": "    function writeLength(bytes memory b, uint256 length)\n\n        internal\n\n        pure\n\n    {\n\n        assembly {\n\n            mstore(b, length)\n\n        }\n",
+          "message": "LibBytesV06.writeLength (LibBytesV06.sol#621-628) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": 115,
+          "vulnerability_code": "    function rrevert(bytes memory errorData)\n\n        internal\n\n        pure\n\n    {\n\n        assembly {\n\n            revert(add(errorData, 0x20), mload(errorData))\n\n        }\n",
+          "message": "LibRichErrorsV06.rrevert uses assembly (LibBytesV06.sol#108-115)\n\t- LibBytesV06.sol#112-114\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 150,
+          "vulnerability_to_line": 159,
+          "vulnerability_code": "    function rawAddress(bytes memory input)\n\n        internal\n\n        pure\n\n        returns (uint256 memoryAddress)\n\n    {\n\n        assembly {\n\n            memoryAddress := input\n\n        }\n\n        return memoryAddress;\n",
+          "message": "LibBytesV06.rawAddress uses assembly (LibBytesV06.sol#150-159)\n\t- LibBytesV06.sol#155-157\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 164,
+          "vulnerability_to_line": 173,
+          "vulnerability_code": "    function contentAddress(bytes memory input)\n\n        internal\n\n        pure\n\n        returns (uint256 memoryAddress)\n\n    {\n\n        assembly {\n\n            memoryAddress := add(input, 32)\n\n        }\n\n        return memoryAddress;\n",
+          "message": "LibBytesV06.contentAddress uses assembly (LibBytesV06.sol#164-173)\n\t- LibBytesV06.sol#169-171\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": 280,
+          "vulnerability_code": "    function memCopy(\n\n        uint256 dest,\n\n        uint256 source,\n\n        uint256 length\n\n    )\n\n        internal\n\n        pure\n\n    {\n\n        if (length < 32) {\n\n            // Handle a partial word by reading destination and masking\n\n            // off the bits we are interested in.\n\n            // This correctly handles overlap, zero lengths and source == dest\n\n            assembly {\n\n                let mask := sub(exp(256, sub(32, length)), 1)\n\n                let s := and(mload(source), not(mask))\n\n                let d := and(mload(dest), mask)\n\n                mstore(dest, or(s, d))\n\n            }\n\n        } else {\n\n            // Skip the O(length) loop when source == dest.\n\n            if (source == dest) {\n\n                return;\n\n            }\n\n\n\n            // For large copies we copy whole words at a time. The final\n\n            // word is aligned to the end of the range (instead of after the\n\n            // previous) to handle partial words. So a copy will look like this:\n\n            //\n\n            //  ####\n\n            //      ####\n\n            //          ####\n\n            //            ####\n\n            //\n\n            // We handle overlap in the source and destination range by\n\n            // changing the copying direction. This prevents us from\n\n            // overwriting parts of source that we still need to copy.\n\n            //\n\n            // This correctly handles source == dest\n\n            //\n\n            if (source > dest) {\n\n                assembly {\n\n                    // We subtract 32 from `sEnd` and `dEnd` because it\n\n                    // is easier to compare with in the loop, and these\n\n                    // are also the addresses we need for copying the\n\n                    // last bytes.\n\n                    length := sub(length, 32)\n\n                    let sEnd := add(source, length)\n\n                    let dEnd := add(dest, length)\n\n\n\n                    // Remember the last 32 bytes of source\n\n                    // This needs to be done here and not after the loop\n\n                    // because we may have overwritten the last bytes in\n\n                    // source already due to overlap.\n\n                    let last := mload(sEnd)\n\n\n\n                    // Copy whole words front to back\n\n                    // Note: the first check is always true,\n\n                    // this could have been a do-while loop.\n\n                    // solhint-disable-next-line no-empty-blocks\n\n                    for {} lt(source, sEnd) {} {\n\n                        mstore(dest, mload(source))\n\n                        source := add(source, 32)\n\n                        dest := add(dest, 32)\n\n                    }\n\n\n\n                    // Write the last 32 bytes\n\n                    mstore(dEnd, last)\n\n                }\n\n            } else {\n\n                assembly {\n\n                    // We subtract 32 from `sEnd` and `dEnd` because those\n\n                    // are the starting points when copying a word at the end.\n\n                    length := sub(length, 32)\n\n                    let sEnd := add(source, length)\n\n                    let dEnd := add(dest, length)\n\n\n\n                    // Remember the first 32 bytes of source\n\n                    // This needs to be done here and not after the loop\n\n                    // because we may have overwritten the first bytes in\n\n                    // source already due to overlap.\n\n                    let first := mload(source)\n\n\n\n                    // Copy whole words back to front\n\n                    // We use a signed comparisson here to allow dEnd to become\n\n                    // negative (happens when source and dest < 32). Valid\n\n                    // addresses in local memory will never be larger than\n\n                    // 2**255, so they can be safely re-interpreted as signed.\n\n                    // Note: the first check is always true,\n\n                    // this could have been a do-while loop.\n\n                    // solhint-disable-next-line no-empty-blocks\n\n                    for {} slt(dest, dEnd) {} {\n\n                        mstore(dEnd, mload(sEnd))\n\n                        sEnd := sub(sEnd, 32)\n\n                        dEnd := sub(dEnd, 32)\n\n                    }\n\n\n\n                    // Write the first 32 bytes\n\n                    mstore(dest, first)\n\n                }\n\n            }\n\n        }\n",
+          "message": "LibBytesV06.memCopy uses assembly (LibBytesV06.sol#179-280)\n\t- LibBytesV06.sol#191-196\n\t- LibBytesV06.sol#219-246\n\t- LibBytesV06.sol#248-277\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 330,
+          "vulnerability_to_line": 362,
+          "vulnerability_code": "    function sliceDestructive(\n\n        bytes memory b,\n\n        uint256 from,\n\n        uint256 to\n\n    )\n\n        internal\n\n        pure\n\n        returns (bytes memory result)\n\n    {\n\n        // Ensure that the from and to positions are valid positions for a slice within\n\n        // the byte array that is being used.\n\n        if (from > to) {\n\n            LibRichErrorsV06.rrevert(LibBytesRichErrorsV06.InvalidByteOperationError(\n\n                LibBytesRichErrorsV06.InvalidByteOperationErrorCodes.FromLessThanOrEqualsToRequired,\n\n                from,\n\n                to\n\n            ));\n\n        }\n\n        if (to > b.length) {\n\n            LibRichErrorsV06.rrevert(LibBytesRichErrorsV06.InvalidByteOperationError(\n\n                LibBytesRichErrorsV06.InvalidByteOperationErrorCodes.ToLessThanOrEqualsLengthRequired,\n\n                to,\n\n                b.length\n\n            ));\n\n        }\n\n\n\n        // Create a new bytes structure around [from, to) in-place.\n\n        assembly {\n\n            result := add(b, from)\n\n            mstore(result, sub(to, from))\n\n        }\n\n        return result;\n",
+          "message": "LibBytesV06.sliceDestructive uses assembly (LibBytesV06.sol#330-362)\n\t- LibBytesV06.sol#357-360\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 367,
+          "vulnerability_to_line": 389,
+          "vulnerability_code": "    function popLastByte(bytes memory b)\n\n        internal\n\n        pure\n\n        returns (bytes1 result)\n\n    {\n\n        if (b.length == 0) {\n\n            LibRichErrorsV06.rrevert(LibBytesRichErrorsV06.InvalidByteOperationError(\n\n                LibBytesRichErrorsV06.InvalidByteOperationErrorCodes.LengthGreaterThanZeroRequired,\n\n                b.length,\n\n                0\n\n            ));\n\n        }\n\n\n\n        // Store last byte.\n\n        result = b[b.length - 1];\n\n\n\n        assembly {\n\n            // Decrement length of byte array.\n\n            let newLen := sub(mload(b), 1)\n\n            mstore(b, newLen)\n\n        }\n\n        return result;\n",
+          "message": "LibBytesV06.popLastByte uses assembly (LibBytesV06.sol#367-389)\n\t- LibBytesV06.sol#383-387\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 413,
+          "vulnerability_to_line": 442,
+          "vulnerability_code": "    function readAddress(\n\n        bytes memory b,\n\n        uint256 index\n\n    )\n\n        internal\n\n        pure\n\n        returns (address result)\n\n    {\n\n        if (b.length < index + 20) {\n\n            LibRichErrorsV06.rrevert(LibBytesRichErrorsV06.InvalidByteOperationError(\n\n                LibBytesRichErrorsV06.InvalidByteOperationErrorCodes.LengthGreaterThanOrEqualsTwentyRequired,\n\n                b.length,\n\n                index + 20 // 20 is length of address\n\n            ));\n\n        }\n\n\n\n        // Add offset to index:\n\n        // 1. Arrays are prefixed by 32-byte length parameter (add 32 to index)\n\n        // 2. Account for size difference between address length and 32-byte storage word (subtract 12 from index)\n\n        index += 20;\n\n\n\n        // Read address from array memory\n\n        assembly {\n\n            // 1. Add index to address of bytes array\n\n            // 2. Load 32-byte word from memory\n\n            // 3. Apply 20-byte mask to obtain address\n\n            result := and(mload(add(b, index)), 0xffffffffffffffffffffffffffffffffffffffff)\n\n        }\n\n        return result;\n",
+          "message": "LibBytesV06.readAddress uses assembly (LibBytesV06.sol#413-442)\n\t- LibBytesV06.sol#435-440\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 448,
+          "vulnerability_to_line": 491,
+          "vulnerability_code": "    function writeAddress(\n\n        bytes memory b,\n\n        uint256 index,\n\n        address input\n\n    )\n\n        internal\n\n        pure\n\n    {\n\n        if (b.length < index + 20) {\n\n            LibRichErrorsV06.rrevert(LibBytesRichErrorsV06.InvalidByteOperationError(\n\n                LibBytesRichErrorsV06.InvalidByteOperationErrorCodes.LengthGreaterThanOrEqualsTwentyRequired,\n\n                b.length,\n\n                index + 20 // 20 is length of address\n\n            ));\n\n        }\n\n\n\n        // Add offset to index:\n\n        // 1. Arrays are prefixed by 32-byte length parameter (add 32 to index)\n\n        // 2. Account for size difference between address length and 32-byte storage word (subtract 12 from index)\n\n        index += 20;\n\n\n\n        // Store address into array memory\n\n        assembly {\n\n            // The address occupies 20 bytes and mstore stores 32 bytes.\n\n            // First fetch the 32-byte word where we'll be storing the address, then\n\n            // apply a mask so we have only the bytes in the word that the address will not occupy.\n\n            // Then combine these bytes with the address and store the 32 bytes back to memory with mstore.\n\n\n\n            // 1. Add index to address of bytes array\n\n            // 2. Load 32-byte word from memory\n\n            // 3. Apply 12-byte mask to obtain extra bytes occupying word of memory where we'll store the address\n\n            let neighbors := and(\n\n                mload(add(b, index)),\n\n                0xffffffffffffffffffffffff0000000000000000000000000000000000000000\n\n            )\n\n\n\n            // Make sure input address is clean.\n\n            // (Solidity does not guarantee this)\n\n            input := and(input, 0xffffffffffffffffffffffffffffffffffffffff)\n\n\n\n            // Store the neighbors and address into memory\n\n            mstore(add(b, index), xor(input, neighbors))\n\n        }\n",
+          "message": "LibBytesV06.writeAddress uses assembly (LibBytesV06.sol#448-491)\n\t- LibBytesV06.sol#470-490\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 497,
+          "vulnerability_to_line": 521,
+          "vulnerability_code": "    function readBytes32(\n\n        bytes memory b,\n\n        uint256 index\n\n    )\n\n        internal\n\n        pure\n\n        returns (bytes32 result)\n\n    {\n\n        if (b.length < index + 32) {\n\n            LibRichErrorsV06.rrevert(LibBytesRichErrorsV06.InvalidByteOperationError(\n\n                LibBytesRichErrorsV06.InvalidByteOperationErrorCodes.LengthGreaterThanOrEqualsThirtyTwoRequired,\n\n                b.length,\n\n                index + 32\n\n            ));\n\n        }\n\n\n\n        // Arrays are prefixed by a 256 bit length parameter\n\n        index += 32;\n\n\n\n        // Read the bytes32 from array memory\n\n        assembly {\n\n            result := mload(add(b, index))\n\n        }\n\n        return result;\n",
+          "message": "LibBytesV06.readBytes32 uses assembly (LibBytesV06.sol#497-521)\n\t- LibBytesV06.sol#517-519\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 527,
+          "vulnerability_to_line": 550,
+          "vulnerability_code": "    function writeBytes32(\n\n        bytes memory b,\n\n        uint256 index,\n\n        bytes32 input\n\n    )\n\n        internal\n\n        pure\n\n    {\n\n        if (b.length < index + 32) {\n\n            LibRichErrorsV06.rrevert(LibBytesRichErrorsV06.InvalidByteOperationError(\n\n                LibBytesRichErrorsV06.InvalidByteOperationErrorCodes.LengthGreaterThanOrEqualsThirtyTwoRequired,\n\n                b.length,\n\n                index + 32\n\n            ));\n\n        }\n\n\n\n        // Arrays are prefixed by a 256 bit length parameter\n\n        index += 32;\n\n\n\n        // Read the bytes32 from array memory\n\n        assembly {\n\n            mstore(add(b, index), input)\n\n        }\n",
+          "message": "LibBytesV06.writeBytes32 uses assembly (LibBytesV06.sol#527-550)\n\t- LibBytesV06.sol#547-549\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 587,
+          "vulnerability_to_line": 614,
+          "vulnerability_code": "    function readBytes4(\n\n        bytes memory b,\n\n        uint256 index\n\n    )\n\n        internal\n\n        pure\n\n        returns (bytes4 result)\n\n    {\n\n        if (b.length < index + 4) {\n\n            LibRichErrorsV06.rrevert(LibBytesRichErrorsV06.InvalidByteOperationError(\n\n                LibBytesRichErrorsV06.InvalidByteOperationErrorCodes.LengthGreaterThanOrEqualsFourRequired,\n\n                b.length,\n\n                index + 4\n\n            ));\n\n        }\n\n\n\n        // Arrays are prefixed by a 32 byte length field\n\n        index += 32;\n\n\n\n        // Read the bytes4 from array memory\n\n        assembly {\n\n            result := mload(add(b, index))\n\n            // Solidity does not require us to clean the trailing bytes.\n\n            // We do it anyway\n\n            result := and(result, 0xFFFFFFFF00000000000000000000000000000000000000000000000000000000)\n\n        }\n\n        return result;\n",
+          "message": "LibBytesV06.readBytes4 uses assembly (LibBytesV06.sol#587-614)\n\t- LibBytesV06.sol#607-612\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 621,
+          "vulnerability_to_line": 628,
+          "vulnerability_code": "    function writeLength(bytes memory b, uint256 length)\n\n        internal\n\n        pure\n\n    {\n\n        assembly {\n\n            mstore(b, length)\n\n        }\n",
+          "message": "LibBytesV06.writeLength uses assembly (LibBytesV06.sol#621-628)\n\t- LibBytesV06.sol#625-627\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.5;\n",
+          "message": "Detected issues with version pragma in LibBytesV06.sol:\n\t- pragma solidity^0.6.5 (LibBytesV06.sol#21): it allows old versions\n\t- pragma solidity^0.6.5 (LibBytesV06.sol#80): it allows old versions\n\t- pragma solidity^0.6.5 (LibBytesV06.sol#138): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": 57,
+          "vulnerability_code": "    function InvalidByteOperationError(\n\n        InvalidByteOperationErrorCodes errorCode,\n\n        uint256 offset,\n\n        uint256 required\n\n    )\n\n        internal\n\n        pure\n\n        returns (bytes memory)\n\n    {\n\n        return abi.encodeWithSelector(\n\n            INVALID_BYTE_OPERATION_ERROR_SELECTOR,\n\n            errorCode,\n\n            offset,\n\n            required\n\n        );\n",
+          "message": "Function 'LibBytesRichErrorsV06.InvalidByteOperationError' (LibBytesV06.sol#42-57) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": 103,
+          "vulnerability_code": "    function StandardError(string memory message)\n\n        internal\n\n        pure\n\n        returns (bytes memory)\n\n    {\n\n        return abi.encodeWithSelector(\n\n            STANDARD_ERROR_SELECTOR,\n\n            bytes(message)\n\n        );\n",
+          "message": "Function 'LibRichErrorsV06.StandardError' (LibBytesV06.sol#94-103) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        0x28006595;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes4 internal constant STANDARD_ERROR_SELECTOR = 0x08c379a0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.5;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.5;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 138,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.5;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function rrevert(bytes memory errorData)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 150,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function rawAddress(bytes memory input)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 164,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function contentAddress(bytes memory input)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function memCopy(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 330,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function sliceDestructive(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 367,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function popLastByte(bytes memory b)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 413,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function readAddress(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 448,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function writeAddress(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 497,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function readBytes32(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 527,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function writeBytes32(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 587,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function readBytes4(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 621,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function writeLength(bytes memory b, uint256 length)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 112,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 169,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 191,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 219,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 248,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 357,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 383,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 435,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 470,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 517,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 547,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 607,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 625,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

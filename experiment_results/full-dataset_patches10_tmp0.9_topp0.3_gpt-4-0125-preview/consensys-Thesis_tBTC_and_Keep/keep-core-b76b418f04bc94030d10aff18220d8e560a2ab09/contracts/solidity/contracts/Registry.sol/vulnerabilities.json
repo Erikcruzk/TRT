@@ -1,0 +1,212 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        governance = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        registryKeeper = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        panicButton = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 34,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(governance == msg.sender, \"Not authorized\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(registryKeeper == msg.sender, \"Not authorized\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(panicButton == msg.sender, \"Not authorized\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_15"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": 58,
+          "vulnerability_code": "    function setGovernance(address _governance) public onlyGovernance {\n\n        governance = _governance;\n\n    }\n\n\n",
+          "message": "Registry.setGovernance (Registry.sol#54-58) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": 62,
+          "vulnerability_code": "    function setRegistryKeeper(address _registryKeeper) public onlyGovernance {\n\n        registryKeeper = _registryKeeper;\n\n    }\n\n\n",
+          "message": "Registry.setRegistryKeeper (Registry.sol#58-62) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": 66,
+          "vulnerability_code": "    function setPanicButton(address _panicButton) public onlyGovernance {\n\n        panicButton = _panicButton;\n\n    }\n\n\n",
+          "message": "Registry.setPanicButton (Registry.sol#62-66) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": 70,
+          "vulnerability_code": "    function setOperatorContractUpgrader(address _serviceContract, address _operatorContractUpgrader) public onlyGovernance {\n\n        operatorContractUpgraders[_serviceContract] = _operatorContractUpgrader;\n\n    }\n\n\n",
+          "message": "Registry.setOperatorContractUpgrader (Registry.sol#66-70) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": 74,
+          "vulnerability_code": "    function approveOperatorContract(address operatorContract) public onlyRegistryKeeper {\n\n        operatorContracts[operatorContract] = 1;\n\n    }\n\n\n",
+          "message": "Registry.approveOperatorContract (Registry.sol#70-74) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 74,
+          "vulnerability_to_line": 78,
+          "vulnerability_code": "    function disableOperatorContract(address operatorContract) public onlyPanicButton {\n\n        operatorContracts[operatorContract] = 2;\n\n    }\n\n\n",
+          "message": "Registry.disableOperatorContract (Registry.sol#74-78) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": 82,
+          "vulnerability_code": "    function isApprovedOperatorContract(address operatorContract) public view returns (bool) {\n\n        return operatorContracts[operatorContract] == 1;\n\n    }\n\n\n",
+          "message": "Registry.isApprovedOperatorContract (Registry.sol#78-82) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": 85,
+          "vulnerability_code": "    function operatorContractUpgraderFor(address _serviceContract) public view returns (address) {\n\n        return operatorContractUpgraders[_serviceContract];\n\n    }\n",
+          "message": "Registry.operatorContractUpgraderFor (Registry.sol#82-85) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": "Detected issues with version pragma in Registry.sol:\n\t- pragma solidity^0.5.4 (Registry.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setGovernance(address _governance) public onlyGovernance {\n",
+          "message": "Parameter '_governance' of Registry.setGovernance (Registry.sol#54) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setRegistryKeeper(address _registryKeeper) public onlyGovernance {\n",
+          "message": "Parameter '_registryKeeper' of Registry.setRegistryKeeper (Registry.sol#58) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setPanicButton(address _panicButton) public onlyGovernance {\n",
+          "message": "Parameter '_panicButton' of Registry.setPanicButton (Registry.sol#62) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setOperatorContractUpgrader(address _serviceContract, address _operatorContractUpgrader) public onlyGovernance {\n",
+          "message": "Parameter '_serviceContract' of Registry.setOperatorContractUpgrader (Registry.sol#66) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setOperatorContractUpgrader(address _serviceContract, address _operatorContractUpgrader) public onlyGovernance {\n",
+          "message": "Parameter '_operatorContractUpgrader' of Registry.setOperatorContractUpgrader (Registry.sol#66) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function operatorContractUpgraderFor(address _serviceContract) public view returns (address) {\n",
+          "message": "Parameter '_serviceContract' of Registry.operatorContractUpgraderFor (Registry.sol#82) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

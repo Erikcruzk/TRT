@@ -1,0 +1,895 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_79"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "erc20-interface",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": 82,
+          "vulnerability_code": "contract MintedCappedTokenMockUtils {\n\n\n\n  function getSelectors() public pure returns (bytes4[] memory selectors) {\n\n    selectors = new bytes4[](23);\n\n\n\n    selectors[0] = this.initializeCrowdsale.selector;\n\n    selectors[1] = this.finalizeCrowdsale.selector;\n\n    selectors[2] = this.updateTierMinimum.selector;\n\n    selectors[3] = this.createCrowdsaleTiers.selector;\n\n    selectors[4] = this.whitelistMultiForTier.selector;\n\n    selectors[5] = this.updateTierDuration.selector;\n\n\n\n    selectors[6] = this.initCrowdsaleToken.selector;\n\n    selectors[7] = this.setTransferAgentStatus.selector;\n\n    selectors[8] = this.updateMultipleReservedTokens.selector;\n\n    selectors[9] = this.removeReservedTokens.selector;\n\n    selectors[10] = this.distributeReservedTokens.selector;\n\n    selectors[11] = this.finalizeCrowdsaleAndToken.selector;\n\n    selectors[12] = this.finalizeAndDistributeToken.selector;\n\n\n\n    selectors[13] = this.buy.selector;\n\n\n\n    selectors[14] = bytes4(keccak256('transfer(address,uint256)'));\n\n    selectors[15] = this.transferFrom.selector;\n\n    selectors[16] = this.approve.selector;\n\n    selectors[17] = this.increaseApproval.selector;\n\n    selectors[18] = this.decreaseApproval.selector;\n\n\n\n    selectors[19] = this.setBalance.selector;\n\n    selectors[20] = this.unlockToken.selector;\n\n    selectors[21] = this.setTransferAgent.selector;\n\n    selectors[22] = this.setTotalSold.selector;\n\n  }\n\n\n\n  // Mock\n\n  function setBalance(address, uint) public pure returns (bytes) { return msg.data; }\n\n  function unlockToken() public pure returns (bytes) { return msg.data; }\n\n  function setTransferAgent(address, bool) public pure returns (bytes) { return msg.data; }\n\n  function setTotalSold(uint) public pure returns (bytes) { return msg.data; }\n\n\n\n  // SaleManager\n\n  function initializeCrowdsale() public pure returns (bytes) { return msg.data; }\n\n  function finalizeCrowdsale() public pure returns (bytes) { return msg.data; }\n\n  function updateTierMinimum(uint, uint) public pure returns (bytes) { return msg.data; }\n\n  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n\n      public pure returns (bytes) { return msg.data; }\n\n  function whitelistMultiForTier(uint, address[], uint[], uint[])\n\n      public pure returns (bytes) { return msg.data; }\n\n  function updateTierDuration(uint, uint) public pure returns (bytes) { return msg.data; }\n\n\n\n  // TokenManager\n\n  function initCrowdsaleToken(bytes32, bytes32, uint) public pure returns (bytes) { return msg.data; }\n\n  function setTransferAgentStatus(address, bool) public pure returns (bytes) { return msg.data; }\n\n  function updateMultipleReservedTokens(address[], uint[], uint[], uint[])\n\n      public pure returns (bytes) { return msg.data; }\n\n  function removeReservedTokens(address) public pure returns (bytes) { return msg.data; }\n\n  function distributeReservedTokens(uint) public pure returns (bytes) { return msg.data; }\n\n  function finalizeCrowdsaleAndToken() public pure returns (bytes) { return msg.data; }\n\n  function finalizeAndDistributeToken() public pure returns (bytes) { return msg.data; }\n\n\n\n  // Sale\n\n  function buy() public pure returns (bytes) { return msg.data; }\n\n\n\n  // Token\n\n  function transfer(address, uint) public pure returns (bytes) { return msg.data; }\n\n  function transferFrom(address, address, uint) public pure returns (bytes) { return msg.data; }\n\n  function approve(address, uint) public pure returns (bytes) { return msg.data; }\n\n  function increaseApproval(address, uint) public pure returns (bytes) { return msg.data; }\n\n  function decreaseApproval(address, uint) public pure returns (bytes) { return msg.data; }\n\n\n\n  function init(\n\n    address, uint, bytes32, uint, uint, uint, uint, bool, bool, address\n\n  ) public pure returns (bytes memory) {\n\n    return msg.data;\n\n  }\n\n\n\n\n",
+          "message": "MintedCappedTokenMockUtils (MintedCappedTokenMockUtils.sol#5-82) has incorrect ERC20 function interface(s):\n\t-transfer (MintedCappedTokenMockUtils.sol#69)\n\t-transferFrom (MintedCappedTokenMockUtils.sol#70)\n\t-approve (MintedCappedTokenMockUtils.sol#71)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "  function getSelectors() public pure returns (bytes4[] memory selectors) {\n\n    selectors = new bytes4[](23);\n\n\n\n    selectors[0] = this.initializeCrowdsale.selector;\n\n    selectors[1] = this.finalizeCrowdsale.selector;\n\n    selectors[2] = this.updateTierMinimum.selector;\n\n    selectors[3] = this.createCrowdsaleTiers.selector;\n\n    selectors[4] = this.whitelistMultiForTier.selector;\n\n    selectors[5] = this.updateTierDuration.selector;\n\n\n\n    selectors[6] = this.initCrowdsaleToken.selector;\n\n    selectors[7] = this.setTransferAgentStatus.selector;\n\n    selectors[8] = this.updateMultipleReservedTokens.selector;\n\n    selectors[9] = this.removeReservedTokens.selector;\n\n    selectors[10] = this.distributeReservedTokens.selector;\n\n    selectors[11] = this.finalizeCrowdsaleAndToken.selector;\n\n    selectors[12] = this.finalizeAndDistributeToken.selector;\n\n\n\n    selectors[13] = this.buy.selector;\n\n\n\n    selectors[14] = bytes4(keccak256('transfer(address,uint256)'));\n\n    selectors[15] = this.transferFrom.selector;\n\n    selectors[16] = this.approve.selector;\n\n    selectors[17] = this.increaseApproval.selector;\n\n    selectors[18] = this.decreaseApproval.selector;\n\n\n\n    selectors[19] = this.setBalance.selector;\n\n    selectors[20] = this.unlockToken.selector;\n\n    selectors[21] = this.setTransferAgent.selector;\n\n    selectors[22] = this.setTotalSold.selector;\n",
+          "message": "MintedCappedTokenMockUtils.getSelectors (MintedCappedTokenMockUtils.sol#7-37) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setBalance(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.setBalance (MintedCappedTokenMockUtils.sol#40) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function unlockToken() public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.unlockToken (MintedCappedTokenMockUtils.sol#41) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setTransferAgent(address, bool) public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.setTransferAgent (MintedCappedTokenMockUtils.sol#42) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setTotalSold(uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.setTotalSold (MintedCappedTokenMockUtils.sol#43) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function initializeCrowdsale() public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.initializeCrowdsale (MintedCappedTokenMockUtils.sol#46) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function finalizeCrowdsale() public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.finalizeCrowdsale (MintedCappedTokenMockUtils.sol#47) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateTierMinimum(uint, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.updateTierMinimum (MintedCappedTokenMockUtils.sol#48) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": 50,
+          "vulnerability_code": "  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n",
+          "message": "MintedCappedTokenMockUtils.createCrowdsaleTiers (MintedCappedTokenMockUtils.sol#49-50) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": 52,
+          "vulnerability_code": "  function whitelistMultiForTier(uint, address[], uint[], uint[])\n",
+          "message": "MintedCappedTokenMockUtils.whitelistMultiForTier (MintedCappedTokenMockUtils.sol#51-52) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateTierDuration(uint, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.updateTierDuration (MintedCappedTokenMockUtils.sol#53) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function initCrowdsaleToken(bytes32, bytes32, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.initCrowdsaleToken (MintedCappedTokenMockUtils.sol#56) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setTransferAgentStatus(address, bool) public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.setTransferAgentStatus (MintedCappedTokenMockUtils.sol#57) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": 59,
+          "vulnerability_code": "  function updateMultipleReservedTokens(address[], uint[], uint[], uint[])\n",
+          "message": "MintedCappedTokenMockUtils.updateMultipleReservedTokens (MintedCappedTokenMockUtils.sol#58-59) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function removeReservedTokens(address) public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.removeReservedTokens (MintedCappedTokenMockUtils.sol#60) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function distributeReservedTokens(uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.distributeReservedTokens (MintedCappedTokenMockUtils.sol#61) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function finalizeCrowdsaleAndToken() public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.finalizeCrowdsaleAndToken (MintedCappedTokenMockUtils.sol#62) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function finalizeAndDistributeToken() public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.finalizeAndDistributeToken (MintedCappedTokenMockUtils.sol#63) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function buy() public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.buy (MintedCappedTokenMockUtils.sol#66) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.transfer (MintedCappedTokenMockUtils.sol#69) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address, address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.transferFrom (MintedCappedTokenMockUtils.sol#70) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.approve (MintedCappedTokenMockUtils.sol#71) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function increaseApproval(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.increaseApproval (MintedCappedTokenMockUtils.sol#72) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function decreaseApproval(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "MintedCappedTokenMockUtils.decreaseApproval (MintedCappedTokenMockUtils.sol#73) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 75,
+          "vulnerability_to_line": 79,
+          "vulnerability_code": "  function init(\n\n    address, uint, bytes32, uint, uint, uint, uint, bool, bool, address\n\n  ) public pure returns (bytes memory) {\n\n    return msg.data;\n",
+          "message": "MintedCappedTokenMockUtils.init (MintedCappedTokenMockUtils.sol#75-79) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;\n",
+          "message": "Detected issues with version pragma in MintedCappedTokenMockUtils.sol:\n\t- pragma solidity^0.4.23 (MintedCappedTokenMockUtils.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setBalance(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.setBalance (MintedCappedTokenMockUtils.sol#40) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setBalance(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '_scope_0' of MintedCappedTokenMockUtils.setBalance (MintedCappedTokenMockUtils.sol#40) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setTransferAgent(address, bool) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.setTransferAgent (MintedCappedTokenMockUtils.sol#42) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setTransferAgent(address, bool) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '_scope_0' of MintedCappedTokenMockUtils.setTransferAgent (MintedCappedTokenMockUtils.sol#42) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setTotalSold(uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.setTotalSold (MintedCappedTokenMockUtils.sol#43) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateTierMinimum(uint, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.updateTierMinimum (MintedCappedTokenMockUtils.sol#48) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateTierMinimum(uint, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '_scope_0' of MintedCappedTokenMockUtils.updateTierMinimum (MintedCappedTokenMockUtils.sol#48) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.createCrowdsaleTiers (MintedCappedTokenMockUtils.sol#49) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n",
+          "message": "Parameter '_scope_0' of MintedCappedTokenMockUtils.createCrowdsaleTiers (MintedCappedTokenMockUtils.sol#49) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n",
+          "message": "Parameter '_scope_1' of MintedCappedTokenMockUtils.createCrowdsaleTiers (MintedCappedTokenMockUtils.sol#49) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n",
+          "message": "Parameter '_scope_2' of MintedCappedTokenMockUtils.createCrowdsaleTiers (MintedCappedTokenMockUtils.sol#49) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n",
+          "message": "Parameter '_scope_3' of MintedCappedTokenMockUtils.createCrowdsaleTiers (MintedCappedTokenMockUtils.sol#49) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n",
+          "message": "Parameter '_scope_4' of MintedCappedTokenMockUtils.createCrowdsaleTiers (MintedCappedTokenMockUtils.sol#49) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n",
+          "message": "Parameter '_scope_5' of MintedCappedTokenMockUtils.createCrowdsaleTiers (MintedCappedTokenMockUtils.sol#49) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function whitelistMultiForTier(uint, address[], uint[], uint[])\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.whitelistMultiForTier (MintedCappedTokenMockUtils.sol#51) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function whitelistMultiForTier(uint, address[], uint[], uint[])\n",
+          "message": "Parameter '_scope_0' of MintedCappedTokenMockUtils.whitelistMultiForTier (MintedCappedTokenMockUtils.sol#51) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function whitelistMultiForTier(uint, address[], uint[], uint[])\n",
+          "message": "Parameter '_scope_1' of MintedCappedTokenMockUtils.whitelistMultiForTier (MintedCappedTokenMockUtils.sol#51) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function whitelistMultiForTier(uint, address[], uint[], uint[])\n",
+          "message": "Parameter '_scope_2' of MintedCappedTokenMockUtils.whitelistMultiForTier (MintedCappedTokenMockUtils.sol#51) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateTierDuration(uint, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.updateTierDuration (MintedCappedTokenMockUtils.sol#53) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateTierDuration(uint, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '_scope_0' of MintedCappedTokenMockUtils.updateTierDuration (MintedCappedTokenMockUtils.sol#53) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function initCrowdsaleToken(bytes32, bytes32, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.initCrowdsaleToken (MintedCappedTokenMockUtils.sol#56) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function initCrowdsaleToken(bytes32, bytes32, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '_scope_0' of MintedCappedTokenMockUtils.initCrowdsaleToken (MintedCappedTokenMockUtils.sol#56) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function initCrowdsaleToken(bytes32, bytes32, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '_scope_1' of MintedCappedTokenMockUtils.initCrowdsaleToken (MintedCappedTokenMockUtils.sol#56) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setTransferAgentStatus(address, bool) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.setTransferAgentStatus (MintedCappedTokenMockUtils.sol#57) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setTransferAgentStatus(address, bool) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '_scope_0' of MintedCappedTokenMockUtils.setTransferAgentStatus (MintedCappedTokenMockUtils.sol#57) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateMultipleReservedTokens(address[], uint[], uint[], uint[])\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.updateMultipleReservedTokens (MintedCappedTokenMockUtils.sol#58) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateMultipleReservedTokens(address[], uint[], uint[], uint[])\n",
+          "message": "Parameter '_scope_0' of MintedCappedTokenMockUtils.updateMultipleReservedTokens (MintedCappedTokenMockUtils.sol#58) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateMultipleReservedTokens(address[], uint[], uint[], uint[])\n",
+          "message": "Parameter '_scope_1' of MintedCappedTokenMockUtils.updateMultipleReservedTokens (MintedCappedTokenMockUtils.sol#58) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateMultipleReservedTokens(address[], uint[], uint[], uint[])\n",
+          "message": "Parameter '_scope_2' of MintedCappedTokenMockUtils.updateMultipleReservedTokens (MintedCappedTokenMockUtils.sol#58) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function removeReservedTokens(address) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.removeReservedTokens (MintedCappedTokenMockUtils.sol#60) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function distributeReservedTokens(uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.distributeReservedTokens (MintedCappedTokenMockUtils.sol#61) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.transfer (MintedCappedTokenMockUtils.sol#69) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '_scope_0' of MintedCappedTokenMockUtils.transfer (MintedCappedTokenMockUtils.sol#69) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address, address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.transferFrom (MintedCappedTokenMockUtils.sol#70) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address, address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '_scope_0' of MintedCappedTokenMockUtils.transferFrom (MintedCappedTokenMockUtils.sol#70) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address, address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '_scope_1' of MintedCappedTokenMockUtils.transferFrom (MintedCappedTokenMockUtils.sol#70) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.approve (MintedCappedTokenMockUtils.sol#71) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '_scope_0' of MintedCappedTokenMockUtils.approve (MintedCappedTokenMockUtils.sol#71) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function increaseApproval(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.increaseApproval (MintedCappedTokenMockUtils.sol#72) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function increaseApproval(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '_scope_0' of MintedCappedTokenMockUtils.increaseApproval (MintedCappedTokenMockUtils.sol#72) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function decreaseApproval(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.decreaseApproval (MintedCappedTokenMockUtils.sol#73) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function decreaseApproval(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": "Parameter '_scope_0' of MintedCappedTokenMockUtils.decreaseApproval (MintedCappedTokenMockUtils.sol#73) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address, uint, bytes32, uint, uint, uint, uint, bool, bool, address\n",
+          "message": "Parameter '' of MintedCappedTokenMockUtils.init (MintedCappedTokenMockUtils.sol#76) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address, uint, bytes32, uint, uint, uint, uint, bool, bool, address\n",
+          "message": "Parameter '_scope_0' of MintedCappedTokenMockUtils.init (MintedCappedTokenMockUtils.sol#76) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address, uint, bytes32, uint, uint, uint, uint, bool, bool, address\n",
+          "message": "Parameter '_scope_1' of MintedCappedTokenMockUtils.init (MintedCappedTokenMockUtils.sol#76) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address, uint, bytes32, uint, uint, uint, uint, bool, bool, address\n",
+          "message": "Parameter '_scope_2' of MintedCappedTokenMockUtils.init (MintedCappedTokenMockUtils.sol#76) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address, uint, bytes32, uint, uint, uint, uint, bool, bool, address\n",
+          "message": "Parameter '_scope_3' of MintedCappedTokenMockUtils.init (MintedCappedTokenMockUtils.sol#76) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address, uint, bytes32, uint, uint, uint, uint, bool, bool, address\n",
+          "message": "Parameter '_scope_4' of MintedCappedTokenMockUtils.init (MintedCappedTokenMockUtils.sol#76) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address, uint, bytes32, uint, uint, uint, uint, bool, bool, address\n",
+          "message": "Parameter '_scope_5' of MintedCappedTokenMockUtils.init (MintedCappedTokenMockUtils.sol#76) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address, uint, bytes32, uint, uint, uint, uint, bool, bool, address\n",
+          "message": "Parameter '_scope_6' of MintedCappedTokenMockUtils.init (MintedCappedTokenMockUtils.sol#76) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address, uint, bytes32, uint, uint, uint, uint, bool, bool, address\n",
+          "message": "Parameter '_scope_7' of MintedCappedTokenMockUtils.init (MintedCappedTokenMockUtils.sol#76) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address, uint, bytes32, uint, uint, uint, uint, bool, bool, address\n",
+          "message": "Parameter '_scope_8' of MintedCappedTokenMockUtils.init (MintedCappedTokenMockUtils.sol#76) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.23;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setBalance(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function unlockToken() public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setTransferAgent(address, bool) public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setTotalSold(uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function initializeCrowdsale() public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function finalizeCrowdsale() public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateTierMinimum(uint, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function whitelistMultiForTier(uint, address[], uint[], uint[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function whitelistMultiForTier(uint, address[], uint[], uint[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function whitelistMultiForTier(uint, address[], uint[], uint[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateTierDuration(uint, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function initCrowdsaleToken(bytes32, bytes32, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setTransferAgentStatus(address, bool) public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateMultipleReservedTokens(address[], uint[], uint[], uint[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateMultipleReservedTokens(address[], uint[], uint[], uint[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateMultipleReservedTokens(address[], uint[], uint[], uint[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateMultipleReservedTokens(address[], uint[], uint[], uint[])\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function removeReservedTokens(address) public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function distributeReservedTokens(uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function finalizeCrowdsaleAndToken() public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function finalizeAndDistributeToken() public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function buy() public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address, address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function increaseApproval(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function decreaseApproval(address, uint) public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setTransferAgent(address, bool) public pure returns (bytes) { return msg.data; }\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function createCrowdsaleTiers(bytes32[], uint[], uint[], uint[], uint[], bool[], bool[])\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function whitelistMultiForTier(uint, address[], uint[], uint[])\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updateMultipleReservedTokens(address[], uint[], uint[], uint[])\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

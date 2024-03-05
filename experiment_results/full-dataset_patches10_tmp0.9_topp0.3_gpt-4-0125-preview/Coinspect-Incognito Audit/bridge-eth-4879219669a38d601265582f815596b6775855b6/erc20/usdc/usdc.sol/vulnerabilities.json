@@ -1,0 +1,637 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Blacklistable is Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 221,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Pausable is Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 394,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract FiatTokenV1 is Ownable, ERC20, Pausable, Blacklistable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 228,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bool public paused = false;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 406,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 internal totalSupply_ = 0;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    setOwner(msg.sender);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_54"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 501,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function allowance(address owner, address spender) public view returns (uint256) {\n",
+          "message": "FiatTokenV1.allowance.owner (local variable @ usdc.sol#501) shadows:\n\t- Ownable.owner (function @ usdc.sol#65-67)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 424,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _owner\n",
+          "message": "FiatTokenV1.initialize._owner (local variable @ usdc.sol#424) shadows:\n\t- Ownable._owner (state variable @ usdc.sol#45)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": 92,
+          "vulnerability_code": "  function transferOwnership(address newOwner) public onlyOwner {\n\n    require(newOwner != address(0));\n\n    emit OwnershipTransferred(owner(), newOwner);\n\n    setOwner(newOwner);\n",
+          "message": "Ownable.transferOwnership (usdc.sol#88-92) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": 157,
+          "vulnerability_code": "    function isBlacklisted(address _account) public view returns (bool) {\n\n        return blacklisted[_account];\n",
+          "message": "Blacklistable.isBlacklisted (usdc.sol#155-157) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 163,
+          "vulnerability_to_line": 166,
+          "vulnerability_code": "    function blacklist(address _account) public onlyBlacklister {\n\n        blacklisted[_account] = true;\n\n        emit Blacklisted(_account);\n",
+          "message": "Blacklistable.blacklist (usdc.sol#163-166) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 172,
+          "vulnerability_to_line": 175,
+          "vulnerability_code": "    function unBlacklist(address _account) public onlyBlacklister {\n\n        blacklisted[_account] = false;\n\n        emit UnBlacklisted(_account);\n",
+          "message": "Blacklistable.unBlacklist (usdc.sol#172-175) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 177,
+          "vulnerability_to_line": 181,
+          "vulnerability_code": "    function updateBlacklister(address _newBlacklister) public onlyOwner {\n\n        require(_newBlacklister != address(0));\n\n        blacklister = _newBlacklister;\n\n        emit BlacklisterChanged(blacklister);\n",
+          "message": "Blacklistable.updateBlacklister (usdc.sol#177-181) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 249,
+          "vulnerability_to_line": 252,
+          "vulnerability_code": "  function pause() onlyPauser public {\n\n    paused = true;\n\n    emit Pause();\n",
+          "message": "Pausable.pause (usdc.sol#249-252) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 257,
+          "vulnerability_to_line": 260,
+          "vulnerability_code": "  function unpause() onlyPauser public {\n\n    paused = false;\n\n    emit Unpause();\n",
+          "message": "Pausable.unpause (usdc.sol#257-260) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 265,
+          "vulnerability_to_line": 269,
+          "vulnerability_code": "  function updatePauser(address _newPauser) onlyOwner public {\n\n    require(_newPauser != address(0));\n\n    pauser = _newPauser;\n\n    emit PauserChanged(pauser);\n",
+          "message": "Pausable.updatePauser (usdc.sol#265-269) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 508,
+          "vulnerability_to_line": 510,
+          "vulnerability_code": "    function totalSupply() public view returns (uint256) {\n\n        return totalSupply_;\n",
+          "message": "FiatTokenV1.totalSupply (usdc.sol#508-510) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 333,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function totalSupply() public view returns (uint256);\n",
+          "message": "ERC20Basic.totalSupply (usdc.sol#333) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 516,
+          "vulnerability_to_line": 518,
+          "vulnerability_code": "    function balanceOf(address account) public view returns (uint256) {\n\n        return balances[account];\n",
+          "message": "FiatTokenV1.balanceOf (usdc.sol#516-518) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 334,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address who) public view returns (uint256);\n",
+          "message": "ERC20Basic.balanceOf (usdc.sol#334) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 555,
+          "vulnerability_to_line": 563,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) whenNotPaused notBlacklisted(msg.sender) notBlacklisted(_to) public returns (bool) {\n\n        require(_to != address(0));\n\n        require(_value <= balances[msg.sender]);\n\n\n\n        balances[msg.sender] = balances[msg.sender].sub(_value);\n\n        balances[_to] = balances[_to].add(_value);\n\n        emit Transfer(msg.sender, _to, _value);\n\n        return true;\n",
+          "message": "FiatTokenV1.transfer (usdc.sol#555-563) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 335,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address to, uint256 value) public returns (bool);\n",
+          "message": "ERC20Basic.transfer (usdc.sol#335) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 346,
+          "vulnerability_to_line": 347,
+          "vulnerability_code": "  function allowance(address owner, address spender)\n",
+          "message": "ERC20.allowance (usdc.sol#346-347) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 501,
+          "vulnerability_to_line": 503,
+          "vulnerability_code": "    function allowance(address owner, address spender) public view returns (uint256) {\n\n        return allowed[owner][spender];\n",
+          "message": "FiatTokenV1.allowance (usdc.sol#501-503) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 537,
+          "vulnerability_to_line": 547,
+          "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) whenNotPaused notBlacklisted(_to) notBlacklisted(msg.sender) notBlacklisted(_from) public returns (bool) {\n\n        require(_to != address(0));\n\n        require(_value <= balances[_from]);\n\n        require(_value <= allowed[_from][msg.sender]);\n\n\n\n        balances[_from] = balances[_from].sub(_value);\n\n        balances[_to] = balances[_to].add(_value);\n\n        allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);\n\n        emit Transfer(_from, _to, _value);\n\n        return true;\n",
+          "message": "FiatTokenV1.transferFrom (usdc.sol#537-547) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 349,
+          "vulnerability_to_line": 350,
+          "vulnerability_code": "  function transferFrom(address from, address to, uint256 value)\n",
+          "message": "ERC20.transferFrom (usdc.sol#349-350) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 352,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address spender, uint256 value) public returns (bool);\n",
+          "message": "ERC20.approve (usdc.sol#352) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 524,
+          "vulnerability_to_line": 528,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) whenNotPaused notBlacklisted(msg.sender) notBlacklisted(_spender) public returns (bool) {\n\n        allowed[msg.sender][_spender] = _value;\n\n        emit Approval(msg.sender, _spender, _value);\n\n        return true;\n",
+          "message": "FiatTokenV1.approve (usdc.sol#524-528) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 416,
+          "vulnerability_to_line": 441,
+          "vulnerability_code": "    function initialize(\n\n        string _name,\n\n        string _symbol,\n\n        string _currency,\n\n        uint8 _decimals,\n\n        address _masterMinter,\n\n        address _pauser,\n\n        address _blacklister,\n\n        address _owner\n\n    ) public {\n\n        require(!initialized);\n\n        require(_masterMinter != address(0));\n\n        require(_pauser != address(0));\n\n        require(_blacklister != address(0));\n\n        require(_owner != address(0));\n\n\n\n        name = _name;\n\n        symbol = _symbol;\n\n        currency = _currency;\n\n        decimals = _decimals;\n\n        masterMinter = _masterMinter;\n\n        pauser = _pauser;\n\n        blacklister = _blacklister;\n\n        setOwner(_owner);\n\n        initialized = true;\n",
+          "message": "FiatTokenV1.initialize (usdc.sol#416-441) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 457,
+          "vulnerability_to_line": 470,
+          "vulnerability_code": "    function mint(address _to, uint256 _amount) whenNotPaused onlyMinters notBlacklisted(msg.sender) notBlacklisted(_to) public returns (bool) {\n\n        require(_to != address(0));\n\n        require(_amount > 0);\n\n\n\n        uint256 mintingAllowedAmount = minterAllowed[msg.sender];\n\n        require(_amount <= mintingAllowedAmount);\n\n\n\n        totalSupply_ = totalSupply_.add(_amount);\n\n        balances[_to] = balances[_to].add(_amount);\n\n        minterAllowed[msg.sender] = mintingAllowedAmount.sub(_amount);\n\n        emit Mint(msg.sender, _to, _amount);\n\n        emit Transfer(0x0, _to, _amount);\n\n        return true;\n",
+          "message": "FiatTokenV1.mint (usdc.sol#457-470) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 484,
+          "vulnerability_to_line": 486,
+          "vulnerability_code": "    function minterAllowance(address minter) public view returns (uint256) {\n\n        return minterAllowed[minter];\n",
+          "message": "FiatTokenV1.minterAllowance (usdc.sol#484-486) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 492,
+          "vulnerability_to_line": 494,
+          "vulnerability_code": "    function isMinter(address account) public view returns (bool) {\n\n        return minters[account];\n",
+          "message": "FiatTokenV1.isMinter (usdc.sol#492-494) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 571,
+          "vulnerability_to_line": 576,
+          "vulnerability_code": "    function configureMinter(address minter, uint256 minterAllowedAmount) whenNotPaused onlyMasterMinter public returns (bool) {\n\n        minters[minter] = true;\n\n        minterAllowed[minter] = minterAllowedAmount;\n\n        emit MinterConfigured(minter, minterAllowedAmount);\n\n        return true;\n",
+          "message": "FiatTokenV1.configureMinter (usdc.sol#571-576) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 583,
+          "vulnerability_to_line": 588,
+          "vulnerability_code": "    function removeMinter(address minter) onlyMasterMinter public returns (bool) {\n\n        minters[minter] = false;\n\n        minterAllowed[minter] = 0;\n\n        emit MinterRemoved(minter);\n\n        return true;\n",
+          "message": "FiatTokenV1.removeMinter (usdc.sol#583-588) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 596,
+          "vulnerability_to_line": 605,
+          "vulnerability_code": "    function burn(uint256 _amount) whenNotPaused onlyMinters notBlacklisted(msg.sender) public {\n\n        uint256 balance = balances[msg.sender];\n\n        require(_amount > 0);\n\n        require(balance >= _amount);\n\n\n\n        totalSupply_ = totalSupply_.sub(_amount);\n\n        balances[msg.sender] = balance.sub(_amount);\n\n        emit Burn(msg.sender, _amount);\n\n        emit Transfer(msg.sender, address(0), _amount);\n",
+          "message": "FiatTokenV1.burn (usdc.sol#596-605) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 607,
+          "vulnerability_to_line": 611,
+          "vulnerability_code": "    function updateMasterMinter(address _newMasterMinter) onlyOwner public {\n\n        require(_newMasterMinter != address(0));\n\n        masterMinter = _newMasterMinter;\n\n        emit MasterMinterChanged(masterMinter);\n",
+          "message": "FiatTokenV1.updateMasterMinter (usdc.sol#607-611) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function isBlacklisted(address _account) public view returns (bool) {\n",
+          "message": "Parameter '_account' of Blacklistable.isBlacklisted (usdc.sol#155) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 163,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function blacklist(address _account) public onlyBlacklister {\n",
+          "message": "Parameter '_account' of Blacklistable.blacklist (usdc.sol#163) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 172,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function unBlacklist(address _account) public onlyBlacklister {\n",
+          "message": "Parameter '_account' of Blacklistable.unBlacklist (usdc.sol#172) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 177,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function updateBlacklister(address _newBlacklister) public onlyOwner {\n",
+          "message": "Parameter '_newBlacklister' of Blacklistable.updateBlacklister (usdc.sol#177) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 265,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function updatePauser(address _newPauser) onlyOwner public {\n",
+          "message": "Parameter '_newPauser' of Pausable.updatePauser (usdc.sol#265) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 555,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) whenNotPaused notBlacklisted(msg.sender) notBlacklisted(_to) public returns (bool) {\n",
+          "message": "Parameter '_to' of FiatTokenV1.transfer (usdc.sol#555) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 555,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) whenNotPaused notBlacklisted(msg.sender) notBlacklisted(_to) public returns (bool) {\n",
+          "message": "Parameter '_value' of FiatTokenV1.transfer (usdc.sol#555) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 537,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) whenNotPaused notBlacklisted(_to) notBlacklisted(msg.sender) notBlacklisted(_from) public returns (bool) {\n",
+          "message": "Parameter '_from' of FiatTokenV1.transferFrom (usdc.sol#537) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 537,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) whenNotPaused notBlacklisted(_to) notBlacklisted(msg.sender) notBlacklisted(_from) public returns (bool) {\n",
+          "message": "Parameter '_to' of FiatTokenV1.transferFrom (usdc.sol#537) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 537,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferFrom(address _from, address _to, uint256 _value) whenNotPaused notBlacklisted(_to) notBlacklisted(msg.sender) notBlacklisted(_from) public returns (bool) {\n",
+          "message": "Parameter '_value' of FiatTokenV1.transferFrom (usdc.sol#537) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 524,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) whenNotPaused notBlacklisted(msg.sender) notBlacklisted(_spender) public returns (bool) {\n",
+          "message": "Parameter '_spender' of FiatTokenV1.approve (usdc.sol#524) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 524,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) whenNotPaused notBlacklisted(msg.sender) notBlacklisted(_spender) public returns (bool) {\n",
+          "message": "Parameter '_value' of FiatTokenV1.approve (usdc.sol#524) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 417,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        string _name,\n",
+          "message": "Parameter '_name' of FiatTokenV1.initialize (usdc.sol#417) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 418,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        string _symbol,\n",
+          "message": "Parameter '_symbol' of FiatTokenV1.initialize (usdc.sol#418) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 419,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        string _currency,\n",
+          "message": "Parameter '_currency' of FiatTokenV1.initialize (usdc.sol#419) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 420,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint8 _decimals,\n",
+          "message": "Parameter '_decimals' of FiatTokenV1.initialize (usdc.sol#420) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 421,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _masterMinter,\n",
+          "message": "Parameter '_masterMinter' of FiatTokenV1.initialize (usdc.sol#421) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 422,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _pauser,\n",
+          "message": "Parameter '_pauser' of FiatTokenV1.initialize (usdc.sol#422) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 423,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _blacklister,\n",
+          "message": "Parameter '_blacklister' of FiatTokenV1.initialize (usdc.sol#423) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 424,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        address _owner\n",
+          "message": "Parameter '_owner' of FiatTokenV1.initialize (usdc.sol#424) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 457,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mint(address _to, uint256 _amount) whenNotPaused onlyMinters notBlacklisted(msg.sender) notBlacklisted(_to) public returns (bool) {\n",
+          "message": "Parameter '_to' of FiatTokenV1.mint (usdc.sol#457) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 457,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mint(address _to, uint256 _amount) whenNotPaused onlyMinters notBlacklisted(msg.sender) notBlacklisted(_to) public returns (bool) {\n",
+          "message": "Parameter '_amount' of FiatTokenV1.mint (usdc.sol#457) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 596,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function burn(uint256 _amount) whenNotPaused onlyMinters notBlacklisted(msg.sender) public {\n",
+          "message": "Parameter '_amount' of FiatTokenV1.burn (usdc.sol#596) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 607,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function updateMasterMinter(address _newMasterMinter) onlyOwner public {\n",
+          "message": "Parameter '_newMasterMinter' of FiatTokenV1.updateMasterMinter (usdc.sol#607) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 524,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address _spender, uint256 _value) whenNotPaused notBlacklisted(msg.sender) notBlacklisted(_spender) public returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 118,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 207,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 383,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  address private _owner;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 395,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 417,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        string _name,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 418,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        string _symbol,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 419,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        string _currency,\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 319,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    c = a + b;\n",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 397,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    string public name;\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 416,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function initialize(\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 416,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function initialize(\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 416,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function initialize(\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 416,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function initialize(\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 416,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function initialize(\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 416,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function initialize(\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 416,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function initialize(\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 416,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function initialize(\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.\nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.\nClassification: SWC-101"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

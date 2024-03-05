@@ -1,0 +1,128 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor () internal {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        owner = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        emit OwnershipTransferred(address(0), msg.sender);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(newOwner != address(0) || renounce, \"Ownable: zero address\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == _pendingOwner, \"Ownable: caller != pending owner\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 64,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(msg.sender == owner, \"Ownable: caller is not the owner\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_3"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "    function transferOwnership(address newOwner, bool direct, bool renounce) public onlyOwner {\n\n        if (direct) {\n\n            // Checks\n\n            require(newOwner != address(0) || renounce, \"Ownable: zero address\");\n\n\n\n            // Effects\n\n            emit OwnershipTransferred(owner, newOwner);\n\n            owner = newOwner;\n\n            pendingOwner = address(0);\n\n        } else {\n\n            // Effects\n\n            pendingOwner = newOwner;\n\n        }\n",
+          "message": "Ownable.transferOwnership (Ownable.sol#32-45) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": 59,
+          "vulnerability_code": "    function claimOwnership() public {\n\n        address _pendingOwner = pendingOwner;\n\n\n\n        // Checks\n\n        require(msg.sender == _pendingOwner, \"Ownable: caller != pending owner\");\n\n\n\n        // Effects\n\n        emit OwnershipTransferred(owner, _pendingOwner);\n\n        owner = _pendingOwner;\n\n        pendingOwner = address(0);\n",
+          "message": "Ownable.claimOwnership (Ownable.sol#49-59) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity 0.6.12;\n",
+          "message": "Detected issues with version pragma in Ownable.sol:\n\t- pragma solidity0.6.12 (Ownable.sol#7): it allows old versions\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            pendingOwner = address(0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        pendingOwner = address(0);\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

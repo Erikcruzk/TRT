@@ -1,0 +1,274 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 147,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Destructible is Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_13"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-benign",
+          "vulnerability_from_line": 201,
+          "vulnerability_to_line": 208,
+          "vulnerability_code": "  function claim(Target target) public {\n\n    address researcher = researchers[target];\n\n    require(researcher != 0);\n\n    // Check Target contract invariants\n\n    require(!target.checkInvariant());\n\n    asyncSend(researcher, this.balance);\n\n    claimed = true;\n",
+          "message": "Reentrancy in Bounty.claim (InsecureTargetBounty.sol#201-208):\n\tExternal calls:\n\t- require(bool)(! target.checkInvariant()) (InsecureTargetBounty.sol#205)\n\tState variables written after the call(s):\n\t- claimed (InsecureTargetBounty.sol#207)\n\t- payments (InsecureTargetBounty.sol#206)\n\t- totalPayments (InsecureTargetBounty.sol#206)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": 81,
+          "vulnerability_code": "  function withdrawPayments() public {\n\n    address payee = msg.sender;\n\n    uint256 payment = payments[payee];\n\n\n\n    require(payment != 0);\n\n    require(this.balance >= payment);\n\n\n\n    totalPayments = totalPayments.sub(payment);\n\n    payments[payee] = 0;\n\n\n\n    assert(payee.send(payment));\n",
+          "message": "PullPayment.withdrawPayments (InsecureTargetBounty.sol#70-81) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 131,
+          "vulnerability_to_line": 135,
+          "vulnerability_code": "  function transferOwnership(address newOwner) public onlyOwner {\n\n    require(newOwner != address(0));\n\n    OwnershipTransferred(owner, newOwner);\n\n    owner = newOwner;\n",
+          "message": "Ownable.transferOwnership (InsecureTargetBounty.sol#131-135) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": 156,
+          "vulnerability_code": "  function destroy() onlyOwner public {\n\n    selfdestruct(owner);\n",
+          "message": "Destructible.destroy (InsecureTargetBounty.sol#154-156) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 158,
+          "vulnerability_to_line": 160,
+          "vulnerability_code": "  function destroyAndSend(address _recipient) onlyOwner public {\n\n    selfdestruct(_recipient);\n",
+          "message": "Destructible.destroyAndSend (InsecureTargetBounty.sol#158-160) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 190,
+          "vulnerability_to_line": 195,
+          "vulnerability_code": "  function createTarget() public returns(Target) {\n\n    Target target = Target(deployContract());\n\n    researchers[target] = msg.sender;\n\n    TargetCreated(target);\n\n    return target;\n",
+          "message": "Bounty.createTarget (InsecureTargetBounty.sol#190-195) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 201,
+          "vulnerability_to_line": 208,
+          "vulnerability_code": "  function claim(Target target) public {\n\n    address researcher = researchers[target];\n\n    require(researcher != 0);\n\n    // Check Target contract invariants\n\n    require(!target.checkInvariant());\n\n    asyncSend(researcher, this.balance);\n\n    claimed = true;\n",
+          "message": "Bounty.claim (InsecureTargetBounty.sol#201-208) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 231,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function checkInvariant() public returns(bool);\n",
+          "message": "Target.checkInvariant (InsecureTargetBounty.sol#231) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 239,
+          "vulnerability_to_line": 241,
+          "vulnerability_code": "  function checkInvariant() public returns(bool) {\n\n    return false;\n",
+          "message": "InsecureTargetMock.checkInvariant (InsecureTargetBounty.sol#239-241) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": "Detected issues with version pragma in InsecureTargetBounty.sol:\n\t- pragma solidity^0.4.18 (InsecureTargetBounty.sol#3): it allows old versions\n\t- pragma solidity^0.4.18 (InsecureTargetBounty.sol#54): it allows old versions\n\t- pragma solidity^0.4.18 (InsecureTargetBounty.sol#96): it allows old versions\n\t- pragma solidity^0.4.18 (InsecureTargetBounty.sol#141): it allows old versions\n\t- pragma solidity^0.4.18 (InsecureTargetBounty.sol#165): it allows old versions\n\t- pragma solidity^0.4.18 (InsecureTargetBounty.sol#236): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": 117,
+          "vulnerability_code": "  function Ownable() public {\n\n    owner = msg.sender;\n",
+          "message": "Function 'Ownable.Ownable' (InsecureTargetBounty.sol#115-117) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 149,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function Destructible() public payable { }\n",
+          "message": "Function 'Destructible.Destructible' (InsecureTargetBounty.sol#149) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 158,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function destroyAndSend(address _recipient) onlyOwner public {\n",
+          "message": "Parameter '_recipient' of Destructible.destroyAndSend (InsecureTargetBounty.sol#158) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 172,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Bounty is PullPayment, Destructible {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 165,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 236,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SEND",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assert(payee.send(payment));\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Transaction-Ordering Dependence (TOD)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "Transaction-Ordering Dependence (TOD)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 207,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    claimed = true;\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 207,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    claimed = true;\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    payments[dest] = payments[dest].add(amount);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    payments[dest] = payments[dest].add(amount);\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    totalPayments = totalPayments.add(amount);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    totalPayments = totalPayments.add(amount);\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Concurrency bug",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": null
+        },
+        {
+          "name": "Concurrency bug",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assert(payee.send(payment));\n",
+          "message": null
+        }
+      ]
+    }
+  }
+}

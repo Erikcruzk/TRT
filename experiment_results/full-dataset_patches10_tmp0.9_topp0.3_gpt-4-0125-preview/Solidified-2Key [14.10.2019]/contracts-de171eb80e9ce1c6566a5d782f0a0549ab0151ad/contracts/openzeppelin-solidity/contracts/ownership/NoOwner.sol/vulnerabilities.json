@@ -1,0 +1,433 @@
+{
+  "smartbugs_completed": "No vulnerabilities found",
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract HasNoEther is Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 199,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract CanReclaimToken is Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 258,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract HasNoContracts is Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    owner = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_23"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": 47,
+          "vulnerability_code": "  function renounceOwnership() public onlyOwner {\n\n    emit OwnershipRenounced(owner);\n\n    owner = address(0);\n",
+          "message": "Ownable.renounceOwnership (NoOwner.sol#44-47) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": 55,
+          "vulnerability_code": "  function transferOwnership(address _newOwner) public onlyOwner {\n\n    _transferOwnership(_newOwner);\n",
+          "message": "Ownable.transferOwnership (NoOwner.sol#53-55) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": 121,
+          "vulnerability_code": "  function totalSupply() public view returns (uint256);\n",
+          "message": "ERC20Basic.totalSupply (NoOwner.sol#120-121) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 121,
+          "vulnerability_to_line": 122,
+          "vulnerability_code": "  function balanceOf(address _who) public view returns (uint256);\n",
+          "message": "ERC20Basic.balanceOf (NoOwner.sol#121-122) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 122,
+          "vulnerability_to_line": 123,
+          "vulnerability_code": "  function transfer(address _to, uint256 _value) public returns (bool);\n",
+          "message": "ERC20Basic.transfer (NoOwner.sol#122-123) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 123,
+          "vulnerability_to_line": 124,
+          "vulnerability_code": "  function allowance(address _ocwner, address _spender) public view returns (uint256);\n",
+          "message": "ERC20Basic.allowance (NoOwner.sol#123-124) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": 125,
+          "vulnerability_code": "  function approve(address spender, uint tokens) public returns (bool success);\n",
+          "message": "ERC20Basic.approve (NoOwner.sol#124-125) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": 126,
+          "vulnerability_code": "  function transferFrom(address _from, address _to, uint256 _value) public returns (bool);\n",
+          "message": "ERC20Basic.transferFrom (NoOwner.sol#125-126) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferOwnership(address _newOwner) public onlyOwner {\n",
+          "message": "Parameter '_newOwner' of Ownable.transferOwnership (NoOwner.sol#53) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "  function _transferOwnership(address _newOwner) internal {\n\n    require(_newOwner != address(0));\n\n    emit OwnershipTransferred(owner, _newOwner);\n\n    owner = _newOwner;\n",
+          "message": "Function 'Ownable._transferOwnership' (NoOwner.sol#61-65) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _transferOwnership(address _newOwner) internal {\n",
+          "message": "Parameter '_newOwner' of Ownable._transferOwnership (NoOwner.sol#61) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 156,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ERC20Basic _token,\n",
+          "message": "Parameter '_token' of SafeERC20.safeTransfer (NoOwner.sol#156) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 157,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _to,\n",
+          "message": "Parameter '_to' of SafeERC20.safeTransfer (NoOwner.sol#157) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 158,
+          "vulnerability_to_line": 159,
+          "vulnerability_code": "    uint256 _value\n",
+          "message": "Parameter '_value' of SafeERC20.safeTransfer (NoOwner.sol#158-159) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 166,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ERC20 _token,\n",
+          "message": "Parameter '_token' of SafeERC20.safeTransferFrom (NoOwner.sol#166) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 167,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _from,\n",
+          "message": "Parameter '_from' of SafeERC20.safeTransferFrom (NoOwner.sol#167) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 168,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _to,\n",
+          "message": "Parameter '_to' of SafeERC20.safeTransferFrom (NoOwner.sol#168) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 169,
+          "vulnerability_to_line": 170,
+          "vulnerability_code": "    uint256 _value\n",
+          "message": "Parameter '_value' of SafeERC20.safeTransferFrom (NoOwner.sol#169-170) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 177,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ERC20 _token,\n",
+          "message": "Parameter '_token' of SafeERC20.safeApprove (NoOwner.sol#177) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 178,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _spender,\n",
+          "message": "Parameter '_spender' of SafeERC20.safeApprove (NoOwner.sol#178) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": 180,
+          "vulnerability_code": "    uint256 _value\n",
+          "message": "Parameter '_value' of SafeERC20.safeApprove (NoOwner.sol#179-180) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 206,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function reclaimToken(ERC20Basic _token) external onlyOwner {\n",
+          "message": "Parameter '_token' of CanReclaimToken.reclaimToken (NoOwner.sol#206) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 264,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function reclaimContract(address _contractAddr) external onlyOwner {\n",
+          "message": "Parameter '_contractAddr' of HasNoContracts.reclaimContract (NoOwner.sol#264) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    owner = address(0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 111,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 133,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 189,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 215,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 250,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 272,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 207,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 balance = _token.balanceOf(this);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 266,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    contractInst.transferOwnership(owner);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 208,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _token.safeTransfer(owner, balance);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 207,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 balance = _token.balanceOf(this);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 208,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _token.safeTransfer(owner, balance);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 207,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 balance = _token.balanceOf(this);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 208,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    _token.safeTransfer(owner, balance);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 266,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    contractInst.transferOwnership(owner);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_token.transfer(_to, _value));\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_token.transfer(_to, _value));\n",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_token.transfer(_to, _value));\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_token.transfer(_to, _value));\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_token.transfer(_to, _value));\n",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_token.transfer(_to, _value));\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_token.transfer(_to, _value));\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_token.transfer(_to, _value));\n",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_token.transfer(_to, _value));\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

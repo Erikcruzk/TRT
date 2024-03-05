@@ -1,0 +1,198 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor () internal {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _addSigner(msg.sender);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(!has(role, account), \"Roles: account already has role\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(has(role, account), \"Roles: account does not have role\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(account != address(0), \"Roles: account is the zero address\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(isSigner(msg.sender), \"SignerRole: caller does not have the Signer role\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(has(role, account), \"Roles: account does not have role\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(account != address(0), \"Roles: account is the zero address\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(isSigner(msg.sender), \"SignerRole: caller does not have the Signer role\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_8"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": 68,
+          "vulnerability_code": "    function addSigner(address account) public onlySigner {\n\n        _addSigner(account);\n",
+          "message": "SignerRole.addSigner (SignerRoleMock.sol#66-68) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": 72,
+          "vulnerability_code": "    function renounceSigner() public {\n\n        _removeSigner(msg.sender);\n",
+          "message": "SignerRole.renounceSigner (SignerRoleMock.sol#70-72) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": 92,
+          "vulnerability_code": "    function removeSigner(address account) public {\n\n        _removeSigner(account);\n",
+          "message": "SignerRoleMock.removeSigner (SignerRoleMock.sol#90-92) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": 96,
+          "vulnerability_code": "    function onlySignerMock() public view onlySigner {\n\n        // solhint-disable-previous-line no-empty-blocks\n",
+          "message": "SignerRoleMock.onlySignerMock (SignerRoleMock.sol#94-96) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": "Detected issues with version pragma in SignerRoleMock.sol:\n\t- pragma solidity^0.5.0 (SignerRoleMock.sol#4): it allows old versions\n\t- pragma solidity^0.5.0 (SignerRoleMock.sol#43): it allows old versions\n\t- pragma solidity^0.5.0 (SignerRoleMock.sol#87): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 74,
+          "vulnerability_to_line": 77,
+          "vulnerability_code": "    function _addSigner(address account) internal {\n\n        _signers.add(account);\n\n        emit SignerAdded(account);\n",
+          "message": "Function 'SignerRole._addSigner' (SignerRoleMock.sol#74-77) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 79,
+          "vulnerability_to_line": 82,
+          "vulnerability_code": "    function _removeSigner(address account) internal {\n\n        _signers.remove(account);\n\n        emit SignerRemoved(account);\n",
+          "message": "Function 'SignerRole._removeSigner' (SignerRoleMock.sol#79-82) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": 101,
+          "vulnerability_code": "    function _removeSigner(address account) internal {\n\n        super._removeSigner(account);\n",
+          "message": "Function 'SignerRoleMock._removeSigner' (SignerRoleMock.sol#99-101) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 51,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    Roles.Role private _signers;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

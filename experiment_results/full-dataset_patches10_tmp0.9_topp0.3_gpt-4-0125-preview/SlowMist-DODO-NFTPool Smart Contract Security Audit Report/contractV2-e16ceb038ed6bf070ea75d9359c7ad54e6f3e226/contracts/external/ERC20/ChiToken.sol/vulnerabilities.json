@@ -1,0 +1,310 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 448,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < value; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(c >= a, \"SafeMath: addition overflow\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 176,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(c / a == b, \"SafeMath: multiplication overflow\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 448,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for (uint256 i = 0; i < value; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 176,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(c / a == b, \"SafeMath: multiplication overflow\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_21"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "calls-loop",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "ChiToken._destroyChildren has external calls inside a loop:\n\t- computeAddress2(_totalBurned + i).call() (ChiToken.sol)\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "ChiToken.mint uses assembly (ChiToken.sol)\n\t- ChiToken.sol\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 401,
+          "vulnerability_to_line": 405,
+          "vulnerability_code": "        return totalMinted.sub(totalBurned);\n\n    }\n\n\n\n    function mint(uint256 value) public {\n",
+          "message": "IERC20.transfer (ChiToken.sol#401-405) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 449,
+          "vulnerability_to_line": 455,
+          "vulnerability_code": "            computeAddress2(_totalBurned + i).call(\"\");\n\n        }\n\n        totalBurned = _totalBurned + value;\n\n    }\n\n\n\n    function free(uint256 value) public returns (uint256)  {\n",
+          "message": "ERC20WithoutTotalSupply.transfer (ChiToken.sol#449-455) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 418,
+          "vulnerability_to_line": 419,
+          "vulnerability_code": "                pop(create2(0, 0, 30, add(offset, 16))) pop(create2(0, 0, 30, add(offset, 17)))\n",
+          "message": "IERC20.approve (ChiToken.sol#418-419) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 455,
+          "vulnerability_to_line": 461,
+          "vulnerability_code": "        _burn(msg.sender, value);\n\n        _destroyChildren(value);\n\n        return value;\n\n    }\n\n\n\n    function freeUpTo(uint256 value) public returns (uint256) {\n",
+          "message": "ERC20WithoutTotalSupply.approve (ChiToken.sol#455-461) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 422,
+          "vulnerability_to_line": 423,
+          "vulnerability_code": "                pop(create2(0, 0, 30, add(offset, 24))) pop(create2(0, 0, 30, add(offset, 25)))\n",
+          "message": "IERC20.transferFrom (ChiToken.sol#422-423) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 461,
+          "vulnerability_to_line": 471,
+          "vulnerability_code": "        return free(Math.min(value, balanceOf(msg.sender)));\n\n    }\n\n\n\n    function freeFrom(address from, uint256 value) public returns (uint256) {\n\n        _burnFrom(from, value);\n\n        _destroyChildren(value);\n\n        return value;\n\n    }\n\n\n\n    function freeFromUpTo(address from, uint256 value) public returns (uint256) {\n",
+          "message": "ERC20WithoutTotalSupply.transferFrom (ChiToken.sol#461-471) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 387,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        _approve(account, msg.sender, _allowances[account][msg.sender].sub(amount, \"ERC20: burn amount exceeds allowance\"));\n",
+          "message": "IERC20.totalSupply (ChiToken.sol#387) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "ChiToken.totalSupply (ChiToken.sol) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "ChiToken.mint (ChiToken.sol) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "ChiToken.freeUpTo (ChiToken.sol) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "ChiToken.freeFromUpTo (ChiToken.sol) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 211,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        // assert(a == b * c + a % b); // There is no case in which this doesn't hold\n",
+          "message": "Detected issues with version pragma in ChiToken.sol:\n\t- pragma solidity^0.6.0 (ChiToken.sol#211): it allows old versions\n\t- pragma solidity^0.6.0 (ChiToken.sol#233-235): it allows old versions\n\t- pragma solidity^0.6.0 (ChiToken.sol#382): it allows old versions\n\t- pragma solidity^0.6.0 (ChiToken.sol#436): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "Low level call in ChiToken._destroyChildren (ChiToken.sol):\n\t-computeAddress2(_totalBurned + i).call() ChiToken.sol\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 471,
+          "vulnerability_to_line": 473,
+          "vulnerability_code": "        return freeFrom(from, Math.min(Math.min(value, balanceOf(from)), allowance(from, msg.sender)));\n\n    }\n",
+          "message": "Function 'ERC20WithoutTotalSupply._transfer' (ChiToken.sol#471-473) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "Function 'ERC20WithoutTotalSupply._approve' (ChiToken.sol) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "Function 'ERC20WithoutTotalSupply._mint' (ChiToken.sol) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "Function 'ERC20WithoutTotalSupply._burn' (ChiToken.sol) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "Function 'ERC20WithoutTotalSupply._burnFrom' (ChiToken.sol) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "Function 'ChiToken._destroyChildren' (ChiToken.sol) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 441,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            abi.encodePacked(bytes1(0xff), address(this), salt, bytes32(0x3c1644c68e5d6cb380c36d1bf847fdbc0c7ac28030025a2fc5e63cce23c16348))\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_CALL_WITHOUT_DATA",
+          "vulnerability_from_line": 449,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            computeAddress2(_totalBurned + i).call(\"\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 353,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function approve(address spender, uint256 amount) public override returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 97,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 250,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 328,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 337,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => uint256) private _balances;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 338,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(address => mapping(address => uint256)) private _allowances;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 335,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UNCHECKED_CALL",
+          "vulnerability_from_line": 449,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            computeAddress2(_totalBurned + i).call(\"\");\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 406,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -1,0 +1,349 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 100,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ERC20Basic _token,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _beneficiary,\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 103,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 _releaseTime\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 104,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  )\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 105,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    public\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 106,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 107,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    // solium-disable-next-line security/no-block-members\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_releaseTime > block.timestamp);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 109,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    token = _token;\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_22"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "timestamp",
+          "vulnerability_from_line": 100,
+          "vulnerability_to_line": 112,
+          "vulnerability_code": "  constructor(\n\n    ERC20Basic _token,\n\n    address _beneficiary,\n\n    uint256 _releaseTime\n\n  )\n\n    public\n\n  {\n\n    // solium-disable-next-line security/no-block-members\n\n    require(_releaseTime > block.timestamp);\n\n    token = _token;\n\n    beneficiary = _beneficiary;\n\n    releaseTime = _releaseTime;\n",
+          "message": "TokenTimelock.constructor (TokenTimelock.sol#100-112) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool)(_releaseTime > block.timestamp) (TokenTimelock.sol#108)\n"
+        },
+        {
+          "name": "timestamp",
+          "vulnerability_from_line": 117,
+          "vulnerability_to_line": 125,
+          "vulnerability_code": "  function release() public {\n\n    // solium-disable-next-line security/no-block-members\n\n    require(block.timestamp >= releaseTime);\n\n\n\n    uint256 amount = token.balanceOf(address(this));\n\n    require(amount > 0);\n\n\n\n    token.safeTransfer(beneficiary, amount);\n",
+          "message": "TokenTimelock.release (TokenTimelock.sol#117-125) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool)(block.timestamp >= releaseTime) (TokenTimelock.sol#119)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function totalSupply() public view returns (uint256);\n",
+          "message": "ERC20Basic.totalSupply (TokenTimelock.sol#12) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address _who) public view returns (uint256);\n",
+          "message": "ERC20Basic.balanceOf (TokenTimelock.sol#13) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transfer(address _to, uint256 _value) public returns (bool);\n",
+          "message": "ERC20Basic.transfer (TokenTimelock.sol#14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function allowance(address _ocwner, address _spender) public view returns (uint256);\n",
+          "message": "ERC20Basic.allowance (TokenTimelock.sol#15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address spender, uint tokens) public returns (bool success);\n",
+          "message": "ERC20Basic.approve (TokenTimelock.sol#16) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address _from, address _to, uint256 _value) public returns (bool);\n",
+          "message": "ERC20Basic.transferFrom (TokenTimelock.sol#17) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 117,
+          "vulnerability_to_line": 125,
+          "vulnerability_code": "  function release() public {\n\n    // solium-disable-next-line security/no-block-members\n\n    require(block.timestamp >= releaseTime);\n\n\n\n    uint256 amount = token.balanceOf(address(this));\n\n    require(amount > 0);\n\n\n\n    token.safeTransfer(beneficiary, amount);\n",
+          "message": "TokenTimelock.release (TokenTimelock.sol#117-125) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 48,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ERC20Basic _token,\n",
+          "message": "Parameter '_token' of SafeERC20.safeTransfer (TokenTimelock.sol#48) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _to,\n",
+          "message": "Parameter '_to' of SafeERC20.safeTransfer (TokenTimelock.sol#49) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 _value\n",
+          "message": "Parameter '_value' of SafeERC20.safeTransfer (TokenTimelock.sol#50) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ERC20 _token,\n",
+          "message": "Parameter '_token' of SafeERC20.safeTransferFrom (TokenTimelock.sol#58) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _from,\n",
+          "message": "Parameter '_from' of SafeERC20.safeTransferFrom (TokenTimelock.sol#59) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _to,\n",
+          "message": "Parameter '_to' of SafeERC20.safeTransferFrom (TokenTimelock.sol#60) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 _value\n",
+          "message": "Parameter '_value' of SafeERC20.safeTransferFrom (TokenTimelock.sol#61) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 69,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ERC20 _token,\n",
+          "message": "Parameter '_token' of SafeERC20.safeApprove (TokenTimelock.sol#69) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _spender,\n",
+          "message": "Parameter '_spender' of SafeERC20.safeApprove (TokenTimelock.sol#70) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 _value\n",
+          "message": "Parameter '_value' of SafeERC20.safeApprove (TokenTimelock.sol#71) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    ERC20Basic _token,\n",
+          "message": "Parameter '_token' of TokenTimelock. (TokenTimelock.sol#101) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address _beneficiary,\n",
+          "message": "Parameter '_beneficiary' of TokenTimelock. (TokenTimelock.sol#102) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 103,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 _releaseTime\n",
+          "message": "Parameter '_releaseTime' of TokenTimelock. (TokenTimelock.sol#103) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Dependence on predictable environment variable (SWC 116)",
+          "vulnerability_from_line": 108,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_releaseTime > block.timestamp);\n",
+          "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 116)",
+          "vulnerability_from_line": 119,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(block.timestamp >= releaseTime);\n",
+          "message": "A control flow decision is made based on The block.timestamp environment variable.\nThe block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-116"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 121,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 amount = token.balanceOf(address(this));\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    token.safeTransfer(beneficiary, amount);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    token.safeTransfer(beneficiary, amount);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_token.transfer(_to, _value));\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_token.transfer(_to, _value));\n",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_token.transfer(_to, _value));\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

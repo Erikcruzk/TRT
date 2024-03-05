@@ -1,0 +1,252 @@
+{
+  "smartbugs_completed": "No vulnerabilities found",
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < owners.length; i++) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 j = 0; j < _owners.length; j++) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < owners.length; i++) {\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            ownerByAddress[owners[i]] = false;\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            ownerByAddress[owners[i]] = false;\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "state-variable-read-in-a-loop",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            ownerByAddress[_owners[j]] = true;\n",
+          "message": "Replace state variable reads and writes within loops with local variable reads and writes."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < owners.length; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 j = 0; j < _owners.length; j++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < owners.length; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 j = 0; j < _owners.length; j++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": 37,
+          "vulnerability_code": "    function setOwners(address[] _owners) public {\n\n        require(msg.sender == manager);\n\n        _setOwners(_owners);\n\n\n",
+          "message": "MultiOwnable.setOwners (MultiOwnable.sol#33-37) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": 54,
+          "vulnerability_code": "    function getOwners() public constant returns (address[]) {\n\n        return owners;\n",
+          "message": "MultiOwnable.getOwners (MultiOwnable.sol#52-54) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.21;\n",
+          "message": "Detected issues with version pragma in MultiOwnable.sol:\n\t- pragma solidity^0.4.21 (MultiOwnable.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": 28,
+          "vulnerability_code": "    function MultiOwnable() public {\n\n        manager = msg.sender;\n",
+          "message": "Function 'MultiOwnable.MultiOwnable' (MultiOwnable.sol#26-28) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setOwners(address[] _owners) public {\n",
+          "message": "Parameter '_owners' of MultiOwnable.setOwners (MultiOwnable.sol#33) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": 50,
+          "vulnerability_code": "    function _setOwners(address[] _owners) internal {\n\n        for(uint256 i = 0; i < owners.length; i++) {\n\n            ownerByAddress[owners[i]] = false;\n\n        }\n\n\n\n\n\n        for(uint256 j = 0; j < _owners.length; j++) {\n\n            ownerByAddress[_owners[j]] = true;\n\n        }\n\n        owners = _owners;\n\n        SetOwners(_owners);\n",
+          "message": "Function 'MultiOwnable._setOwners' (MultiOwnable.sol#39-50) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setOwners(address[] _owners) internal {\n",
+          "message": "Parameter '_owners' of MultiOwnable._setOwners (MultiOwnable.sol#39) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getOwners() public constant returns (address[]) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < owners.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 j = 0; j < _owners.length; j++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 i = 0; i < owners.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 45,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        for(uint256 j = 0; j < _owners.length; j++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_OVERPOWERED_ROLE",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setOwners(address[] _owners) public {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.21;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setOwners(address[] _owners) public {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setOwners(address[] _owners) internal {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getOwners() public constant returns (address[]) {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address[] public owners;\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setOwners(address[] _owners) public {\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address[] public owners;\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

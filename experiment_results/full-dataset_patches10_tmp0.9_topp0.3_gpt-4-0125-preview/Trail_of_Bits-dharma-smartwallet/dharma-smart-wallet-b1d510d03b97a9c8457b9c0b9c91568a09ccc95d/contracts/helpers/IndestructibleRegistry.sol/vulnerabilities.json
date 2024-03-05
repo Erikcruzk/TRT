@@ -1,0 +1,220 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 109,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = dataStart; i < dataEnd; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      !_isPotentiallyDestructible(target),\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      \"Supplied target is potentially destructible.\"\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    );\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(size > 0, \"No code at target.\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 104,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require (dataEnd > dataStart, \"SafeMath: addition overflow.\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 128,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (op > 95 && op < 128) { // pushN\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "          i += (op - 95);\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 130,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "          continue;\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 131,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        }\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 109,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = dataStart; i < dataEnd; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      !_isPotentiallyDestructible(target),\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      \"Supplied target is potentially destructible.\"\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    );\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": 146,
+          "vulnerability_code": "  function _isPotentiallyDestructible(\n\n    address target\n\n  ) internal view returns (bool potentiallyDestructible) {\n\n    // Get the size of the target.\n\n    uint256 size;\n\n    assembly { size := extcodesize(target) }\n\n    require(size > 0, \"No code at target.\");\n\n    \n\n    // Get code at the target and the location data starts and ends in memory.\n\n    uint256 dataStart;\n\n    bytes memory extcode = new bytes(size);\n\n    assembly {\n\n      dataStart := add(extcode, 0x20)\n\n      extcodecopy(target, dataStart, 0, size)\n\n    }\n\n    uint256 dataEnd = dataStart + size;\n\n    require (dataEnd > dataStart, \"SafeMath: addition overflow.\");\n\n    \n\n    // Look for any reachable, impermissible opcodes.\n\n    bool reachable = true;\n\n    uint256 op;\n\n    for (uint256 i = dataStart; i < dataEnd; i++) {\n\n      // Get the opcode in question.\n\n      assembly { op := shr(0xf8, mload(i)) }\n\n      \n\n      // Check the opcode if it is reachable (i.e. not a constant or metadata).\n\n      if (reachable) {\n\n        // If execution is halted, mark opcodes that follow as unreachable.\n\n        if (\n\n          op == 254 || // invalid\n\n          op == 243 || // return\n\n          op == 253 || // revert\n\n          op == 86  || // jump\n\n          op == 0      // stop\n\n        ) {\n\n          reachable = false;\n\n          continue;\n\n        }\n\n\n\n        // If the opcode is a PUSH, skip over the push data.\n\n        if (op > 95 && op < 128) { // pushN\n\n          i += (op - 95);\n\n          continue;\n\n        }\n\n        \n\n        // If opcode is impermissible, return true - potential destructibility!\n\n        if (\n\n          op == 242 || // callcode\n\n          op == 244 || // delegatecall\n\n          op == 255    // selfdestruct\n\n        ) {\n\n          return true; // potentially destructible!\n\n        }\n\n      } else if (op == 91) { // jumpdest\n\n        // Whenever a JUMPDEST is found, mark opcodes that follow as reachable. \n\n        reachable = true;\n\n      }\n\n    }\n",
+          "message": "IndestructibleRegistry._isPotentiallyDestructible (IndestructibleRegistry.sol#88-146) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": 146,
+          "vulnerability_code": "  function _isPotentiallyDestructible(\n\n    address target\n\n  ) internal view returns (bool potentiallyDestructible) {\n\n    // Get the size of the target.\n\n    uint256 size;\n\n    assembly { size := extcodesize(target) }\n\n    require(size > 0, \"No code at target.\");\n\n    \n\n    // Get code at the target and the location data starts and ends in memory.\n\n    uint256 dataStart;\n\n    bytes memory extcode = new bytes(size);\n\n    assembly {\n\n      dataStart := add(extcode, 0x20)\n\n      extcodecopy(target, dataStart, 0, size)\n\n    }\n\n    uint256 dataEnd = dataStart + size;\n\n    require (dataEnd > dataStart, \"SafeMath: addition overflow.\");\n\n    \n\n    // Look for any reachable, impermissible opcodes.\n\n    bool reachable = true;\n\n    uint256 op;\n\n    for (uint256 i = dataStart; i < dataEnd; i++) {\n\n      // Get the opcode in question.\n\n      assembly { op := shr(0xf8, mload(i)) }\n\n      \n\n      // Check the opcode if it is reachable (i.e. not a constant or metadata).\n\n      if (reachable) {\n\n        // If execution is halted, mark opcodes that follow as unreachable.\n\n        if (\n\n          op == 254 || // invalid\n\n          op == 243 || // return\n\n          op == 253 || // revert\n\n          op == 86  || // jump\n\n          op == 0      // stop\n\n        ) {\n\n          reachable = false;\n\n          continue;\n\n        }\n\n\n\n        // If the opcode is a PUSH, skip over the push data.\n\n        if (op > 95 && op < 128) { // pushN\n\n          i += (op - 95);\n\n          continue;\n\n        }\n\n        \n\n        // If opcode is impermissible, return true - potential destructibility!\n\n        if (\n\n          op == 242 || // callcode\n\n          op == 244 || // delegatecall\n\n          op == 255    // selfdestruct\n\n        ) {\n\n          return true; // potentially destructible!\n\n        }\n\n      } else if (op == 91) { // jumpdest\n\n        // Whenever a JUMPDEST is found, mark opcodes that follow as reachable. \n\n        reachable = true;\n\n      }\n\n    }\n",
+          "message": "IndestructibleRegistry._isPotentiallyDestructible uses assembly (IndestructibleRegistry.sol#88-146)\n\t- IndestructibleRegistry.sol#93\n\t- IndestructibleRegistry.sol#99-102\n\t- IndestructibleRegistry.sol#111\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity 0.5.11;\n",
+          "message": "Detected issues with version pragma in IndestructibleRegistry.sol:\n\t- pragma solidity0.5.11 (IndestructibleRegistry.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": 146,
+          "vulnerability_code": "  function _isPotentiallyDestructible(\n\n    address target\n\n  ) internal view returns (bool potentiallyDestructible) {\n\n    // Get the size of the target.\n\n    uint256 size;\n\n    assembly { size := extcodesize(target) }\n\n    require(size > 0, \"No code at target.\");\n\n    \n\n    // Get code at the target and the location data starts and ends in memory.\n\n    uint256 dataStart;\n\n    bytes memory extcode = new bytes(size);\n\n    assembly {\n\n      dataStart := add(extcode, 0x20)\n\n      extcodecopy(target, dataStart, 0, size)\n\n    }\n\n    uint256 dataEnd = dataStart + size;\n\n    require (dataEnd > dataStart, \"SafeMath: addition overflow.\");\n\n    \n\n    // Look for any reachable, impermissible opcodes.\n\n    bool reachable = true;\n\n    uint256 op;\n\n    for (uint256 i = dataStart; i < dataEnd; i++) {\n\n      // Get the opcode in question.\n\n      assembly { op := shr(0xf8, mload(i)) }\n\n      \n\n      // Check the opcode if it is reachable (i.e. not a constant or metadata).\n\n      if (reachable) {\n\n        // If execution is halted, mark opcodes that follow as unreachable.\n\n        if (\n\n          op == 254 || // invalid\n\n          op == 243 || // return\n\n          op == 253 || // revert\n\n          op == 86  || // jump\n\n          op == 0      // stop\n\n        ) {\n\n          reachable = false;\n\n          continue;\n\n        }\n\n\n\n        // If the opcode is a PUSH, skip over the push data.\n\n        if (op > 95 && op < 128) { // pushN\n\n          i += (op - 95);\n\n          continue;\n\n        }\n\n        \n\n        // If opcode is impermissible, return true - potential destructibility!\n\n        if (\n\n          op == 242 || // callcode\n\n          op == 244 || // delegatecall\n\n          op == 255    // selfdestruct\n\n        ) {\n\n          return true; // potentially destructible!\n\n        }\n\n      } else if (op == 91) { // jumpdest\n\n        // Whenever a JUMPDEST is found, mark opcodes that follow as reachable. \n\n        reachable = true;\n\n      }\n\n    }\n",
+          "message": "Function 'IndestructibleRegistry._isPotentiallyDestructible' (IndestructibleRegistry.sol#88-146) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  mapping (address => bool) private _definitelyIndestructible;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _isPotentiallyDestructible(\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 111,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      assembly { op := shr(0xf8, mload(i)) }\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHR) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes memory extcode = new bytes(size);\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "UNKNOWN INSTRUCTION: SHR"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

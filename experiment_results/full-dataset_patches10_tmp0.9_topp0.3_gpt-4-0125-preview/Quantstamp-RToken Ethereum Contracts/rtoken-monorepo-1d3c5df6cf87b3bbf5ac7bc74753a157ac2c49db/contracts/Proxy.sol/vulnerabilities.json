@@ -1,0 +1,198 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(bytes memory constructData, address contractLogic) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        // save the code address\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { // solium-disable-line\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            sstore(0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7, contractLogic)\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, /* bytes memory _*/ ) = contractLogic.delegatecall(constructData); // solium-disable-line\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(success, \"Construction failed\");\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 13,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(success, \"Construction failed\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "controlled-delegatecall",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    constructor(bytes memory constructData, address contractLogic) public {\n\n        // save the code address\n\n        assembly { // solium-disable-line\n\n            sstore(0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7, contractLogic)\n\n        }\n\n        (bool success, /* bytes memory _*/ ) = contractLogic.delegatecall(constructData); // solium-disable-line\n\n        require(success, \"Construction failed\");\n",
+          "message": "Proxy.constructor (Proxy.sol#7-14) uses delegatecall to a input-controlled function id\n\t(success) = contractLogic.delegatecall(constructData) (Proxy.sol#12)\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    constructor(bytes memory constructData, address contractLogic) public {\n\n        // save the code address\n\n        assembly { // solium-disable-line\n\n            sstore(0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7, contractLogic)\n\n        }\n\n        (bool success, /* bytes memory _*/ ) = contractLogic.delegatecall(constructData); // solium-disable-line\n\n        require(success, \"Construction failed\");\n",
+          "message": "Proxy.constructor uses assembly (Proxy.sol#7-14)\n\t- Proxy.sol#9-11\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": 31,
+          "vulnerability_code": "    function() external payable {\n\n        assembly { // solium-disable-line\n\n            let contractLogic := sload(0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7)\n\n            calldatacopy(0x0, 0x0, calldatasize)\n\n            let success := delegatecall(sub(gas, 10000), contractLogic, 0x0, calldatasize, 0, 0)\n\n            let retSz := returndatasize\n\n            returndatacopy(0, 0, retSz)\n\n            switch success\n\n            case 0 {\n\n                revert(0, retSz)\n\n            }\n\n            default {\n\n                return(0, retSz)\n\n            }\n\n        }\n",
+          "message": "Proxy.fallback uses assembly (Proxy.sol#16-31)\n\t- Proxy.sol#17-30\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.1;\n",
+          "message": "Detected issues with version pragma in Proxy.sol:\n\t- pragma solidity^0.5.1 (Proxy.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": 14,
+          "vulnerability_code": "    constructor(bytes memory constructData, address contractLogic) public {\n\n        // save the code address\n\n        assembly { // solium-disable-line\n\n            sstore(0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7, contractLogic)\n\n        }\n\n        (bool success, /* bytes memory _*/ ) = contractLogic.delegatecall(constructData); // solium-disable-line\n\n        require(success, \"Construction failed\");\n",
+          "message": "Low level call in Proxy.constructor (Proxy.sol#7-14):\n\t-(success) = contractLogic.delegatecall(constructData) Proxy.sol#12\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Proxy {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.1;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UNCHECKED_CALL",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, /* bytes memory _*/ ) = contractLogic.delegatecall(constructData); // solium-disable-line\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { // solium-disable-line\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 17,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly { // solium-disable-line\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            let success := delegatecall(sub(gas, 10000), contractLogic, 0x0, calldatasize, 0, 0)\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": null,
+          "vulnerability_to_line": null,
+          "vulnerability_code": null,
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        },
+        {
+          "name": "Delegatecall to user-supplied address (SWC 112)",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        (bool success, /* bytes memory _*/ ) = contractLogic.delegatecall(constructData); // solium-disable-line\n",
+          "message": "The contract delegates execution to another contract with a user-supplied address.\nThe smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.\nClassification: SWC-112"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 32; i <= _proof.length; i += 32) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "  function verifyProof(bytes _proof, bytes32 _root, bytes32 _leaf) public pure returns (bool) {\n\n    // Check if proof length is a multiple of 32\n\n    if (_proof.length % 32 != 0) {\n\n      return false;\n\n    }\n\n\n\n    bytes32 proofElement;\n\n    bytes32 computedHash = _leaf;\n\n\n\n    for (uint256 i = 32; i <= _proof.length; i += 32) {\n\n      assembly {\n\n        // Load the current element of the proof\n\n        proofElement := mload(add(_proof, i))\n\n      }\n\n\n\n      if (computedHash < proofElement) {\n\n        // Hash(current computed hash + current element of the proof)\n\n        computedHash = keccak256(computedHash, proofElement);\n\n      } else {\n\n        // Hash(current element of the proof + current computed hash)\n\n        computedHash = keccak256(proofElement, computedHash);\n\n      }\n\n    }\n\n\n\n    // Check if the computed hash (root) is equal to the provided root\n\n    return computedHash == _root;\n",
+          "message": "MerkleProof.verifyProof (MerkleProof.sol#19-45) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "  function verifyProof(bytes _proof, bytes32 _root, bytes32 _leaf) public pure returns (bool) {\n\n    // Check if proof length is a multiple of 32\n\n    if (_proof.length % 32 != 0) {\n\n      return false;\n\n    }\n\n\n\n    bytes32 proofElement;\n\n    bytes32 computedHash = _leaf;\n\n\n\n    for (uint256 i = 32; i <= _proof.length; i += 32) {\n\n      assembly {\n\n        // Load the current element of the proof\n\n        proofElement := mload(add(_proof, i))\n\n      }\n\n\n\n      if (computedHash < proofElement) {\n\n        // Hash(current computed hash + current element of the proof)\n\n        computedHash = keccak256(computedHash, proofElement);\n\n      } else {\n\n        // Hash(current element of the proof + current computed hash)\n\n        computedHash = keccak256(proofElement, computedHash);\n\n      }\n\n    }\n\n\n\n    // Check if the computed hash (root) is equal to the provided root\n\n    return computedHash == _root;\n",
+          "message": "MerkleProof.verifyProof uses assembly (MerkleProof.sol#19-45)\n\t- MerkleProof.sol#29-34\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": 45,
+          "vulnerability_code": "  function verifyProof(bytes _proof, bytes32 _root, bytes32 _leaf) public pure returns (bool) {\n\n    // Check if proof length is a multiple of 32\n\n    if (_proof.length % 32 != 0) {\n\n      return false;\n\n    }\n\n\n\n    bytes32 proofElement;\n\n    bytes32 computedHash = _leaf;\n\n\n\n    for (uint256 i = 32; i <= _proof.length; i += 32) {\n\n      assembly {\n\n        // Load the current element of the proof\n\n        proofElement := mload(add(_proof, i))\n\n      }\n\n\n\n      if (computedHash < proofElement) {\n\n        // Hash(current computed hash + current element of the proof)\n\n        computedHash = keccak256(computedHash, proofElement);\n\n      } else {\n\n        // Hash(current element of the proof + current computed hash)\n\n        computedHash = keccak256(proofElement, computedHash);\n\n      }\n\n    }\n\n\n\n    // Check if the computed hash (root) is equal to the provided root\n\n    return computedHash == _root;\n",
+          "message": "MerkleProof.verifyProof (MerkleProof.sol#19-45) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": "Detected issues with version pragma in MerkleProof.sol:\n\t- pragma solidity^0.4.18 (MerkleProof.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function verifyProof(bytes _proof, bytes32 _root, bytes32 _leaf) public pure returns (bool) {\n",
+          "message": "Parameter '_proof' of MerkleProof.verifyProof (MerkleProof.sol#19) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function verifyProof(bytes _proof, bytes32 _root, bytes32 _leaf) public pure returns (bool) {\n",
+          "message": "Parameter '_root' of MerkleProof.verifyProof (MerkleProof.sol#19) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function verifyProof(bytes _proof, bytes32 _root, bytes32 _leaf) public pure returns (bool) {\n",
+          "message": "Parameter '_leaf' of MerkleProof.verifyProof (MerkleProof.sol#19) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 32; i <= _proof.length; i += 32) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function verifyProof(bytes _proof, bytes32 _root, bytes32 _leaf) public pure returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 36,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        computedHash = keccak256(computedHash, proofElement);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        computedHash = keccak256(proofElement, computedHash);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function verifyProof(bytes _proof, bytes32 _root, bytes32 _leaf) public pure returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "      assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function verifyProof(bytes _proof, bytes32 _root, bytes32 _leaf) public pure returns (bool) {\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function verifyProof(bytes _proof, bytes32 _root, bytes32 _leaf) public pure returns (bool) {\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 19,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function verifyProof(bytes _proof, bytes32 _root, bytes32 _leaf) public pure returns (bool) {\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

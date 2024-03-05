@@ -1,0 +1,269 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _implementationAddress, address _ownerAddress) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (_implementationAddress != address(0)) {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 88,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            require(_isContract(_implementationAddress));\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 89,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            _setImplementation(_implementationAddress);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 90,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (_ownerAddress != address(0)) {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 92,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            _owner = _ownerAddress;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 93,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        } else {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 94,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            _owner = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 95,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 143,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            newVersion++;\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_17"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": 183,
+          "vulnerability_code": "    function _isContract(address _addr) private view returns(bool) {\n\n        uint256 size;\n\n        assembly { size := extcodesize(_addr) } // solhint-disable-line no-inline-assembly\n\n        return size != 0;\n",
+          "message": "EternalStorageProxy._isContract (EternalStorageProxy.sol#179-183) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "locked-ether",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": 122,
+          "vulnerability_code": "    function() external payable {\n\n        address _impl = implementation();\n\n        require(_impl != address(0));\n\n\n\n        assembly {\n\n            // Copy `msg.data`. We take full control of memory in this inline assembly\n\n            // block because it will not return to Solidity code. We overwrite the\n\n            // Solidity scratch pad at memory position 0\n\n            calldatacopy(0, 0, calldatasize)\n\n\n\n            // Call the implementation. Out and outsize are 0 because we don't know the size yet\n\n            let result := delegatecall(gas, _impl, 0, calldatasize, 0, 0)\n\n\n\n            // Copy the returned data\n\n            returndatacopy(0, 0, returndatasize)\n\n\n\n            switch result\n\n            // delegatecall returns 0 on error\n\n            case 0 { revert(0, returndatasize) }\n\n            default { return(0, returndatasize) }\n\n        }\n",
+          "message": "Contract locking ether found in EternalStorageProxy.sol:\n\tContract EternalStorageProxy has payable functions:\n\t - fallback (EternalStorageProxy.sol#101-122)\n\tBut does not have a function to withdraw the ether\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": 122,
+          "vulnerability_code": "    function() external payable {\n\n        address _impl = implementation();\n\n        require(_impl != address(0));\n\n\n\n        assembly {\n\n            // Copy `msg.data`. We take full control of memory in this inline assembly\n\n            // block because it will not return to Solidity code. We overwrite the\n\n            // Solidity scratch pad at memory position 0\n\n            calldatacopy(0, 0, calldatasize)\n\n\n\n            // Call the implementation. Out and outsize are 0 because we don't know the size yet\n\n            let result := delegatecall(gas, _impl, 0, calldatasize, 0, 0)\n\n\n\n            // Copy the returned data\n\n            returndatacopy(0, 0, returndatasize)\n\n\n\n            switch result\n\n            // delegatecall returns 0 on error\n\n            case 0 { revert(0, returndatasize) }\n\n            default { return(0, returndatasize) }\n\n        }\n",
+          "message": "EternalStorageProxy.fallback uses assembly (EternalStorageProxy.sol#101-122)\n\t- EternalStorageProxy.sol#105-121\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": 183,
+          "vulnerability_code": "    function _isContract(address _addr) private view returns(bool) {\n\n        uint256 size;\n\n        assembly { size := extcodesize(_addr) } // solhint-disable-line no-inline-assembly\n\n        return size != 0;\n",
+          "message": "EternalStorageProxy._isContract uses assembly (EternalStorageProxy.sol#179-183)\n\t- EternalStorageProxy.sol#181\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity 0.5.9;\n",
+          "message": "Detected issues with version pragma in EternalStorageProxy.sol:\n\t- pragma solidity0.5.9 (EternalStorageProxy.sol#3): it allows old versions\n\t- pragma solidity0.5.9 (EternalStorageProxy.sol#34): it allows old versions\n\t- pragma solidity0.5.9 (EternalStorageProxy.sol#52): it allows old versions\n\t- pragma solidity0.5.9 (EternalStorageProxy.sol#61): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    address internal _owner;\n",
+          "message": "Variable 'EternalStorage._owner' (EternalStorageProxy.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 56,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function upgradeTo(address) external returns(bool);\n",
+          "message": "Parameter '' of IEternalStorageProxy.upgradeTo (EternalStorageProxy.sol#56) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 135,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function upgradeTo(address _newImplementation) external onlyOwner returns(bool) {\n",
+          "message": "Parameter '_newImplementation' of EternalStorageProxy.upgradeTo (EternalStorageProxy.sol#135) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _implementationAddress, address _ownerAddress) public {\n",
+          "message": "Parameter '_implementationAddress' of EternalStorageProxy. (EternalStorageProxy.sol#86) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(address _implementationAddress, address _ownerAddress) public {\n",
+          "message": "Parameter '_ownerAddress' of EternalStorageProxy. (EternalStorageProxy.sol#86) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 127,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transferOwnership(address _newOwner) external onlyOwner {\n",
+          "message": "Parameter '_newOwner' of EternalStorageProxy.transferOwnership (EternalStorageProxy.sol#127) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": 183,
+          "vulnerability_code": "    function _isContract(address _addr) private view returns(bool) {\n\n        uint256 size;\n\n        assembly { size := extcodesize(_addr) } // solhint-disable-line no-inline-assembly\n\n        return size != 0;\n",
+          "message": "Function 'EternalStorageProxy._isContract' (EternalStorageProxy.sol#179-183) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 187,
+          "vulnerability_to_line": 189,
+          "vulnerability_code": "    function _setImplementation(address _implementationAddress) private {\n\n        addressStorage[IMPLEMENTATION] = _implementationAddress;\n",
+          "message": "Function 'EternalStorageProxy._setImplementation' (EternalStorageProxy.sol#187-189) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 187,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setImplementation(address _implementationAddress) private {\n",
+          "message": "Parameter '_implementationAddress' of EternalStorageProxy._setImplementation (EternalStorageProxy.sol#187) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 193,
+          "vulnerability_to_line": 195,
+          "vulnerability_code": "    function _setVersion(uint256 _newVersion) private {\n\n        uintStorage[VERSION] = _newVersion;\n",
+          "message": "Function 'EternalStorageProxy._setVersion' (EternalStorageProxy.sol#193-195) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 193,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _setVersion(uint256 _newVersion) private {\n",
+          "message": "Parameter '_newVersion' of EternalStorageProxy._setVersion (EternalStorageProxy.sol#193) is not in mixedCase\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping(bytes32 => string) internal stringStorage;\n",
+          "message": "EternalStorage.stringStorage (EternalStorageProxy.sol#15) is never used in EternalStorageProxy\nEternalStorage.bytesStorage (EternalStorageProxy.sol#17) is never used in EternalStorageProxy\nEternalStorage.boolStorage (EternalStorageProxy.sol#18) is never used in EternalStorageProxy\nEternalStorage.intStorage (EternalStorageProxy.sol#19) is never used in EternalStorageProxy\nEternalStorage.bytes32Storage (EternalStorageProxy.sol#20) is never used in EternalStorageProxy\nEternalStorage.uintArrayStorage (EternalStorageProxy.sol#22) is never used in EternalStorageProxy\nEternalStorage.stringArrayStorage (EternalStorageProxy.sol#23) is never used in EternalStorageProxy\nEternalStorage.addressArrayStorage (EternalStorageProxy.sol#24) is never used in EternalStorageProxy\nEternalStorage.bytesArrayStorage (EternalStorageProxy.sol#25) is never used in EternalStorageProxy\nEternalStorage.boolArrayStorage (EternalStorageProxy.sol#26) is never used in EternalStorageProxy\nEternalStorage.intArrayStorage (EternalStorageProxy.sol#27) is never used in EternalStorageProxy\nEternalStorage.bytes32ArrayStorage (EternalStorageProxy.sol#28) is never used in EternalStorageProxy\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract EternalStorageProxy is OwnedEternalStorage, IEternalStorageProxy {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _isContract(address _addr) private view returns(bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 105,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Delegatecall to user-supplied address (SWC 112)",
+          "vulnerability_from_line": 112,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            let result := delegatecall(gas, _impl, 0, calldatasize, 0, 0)\n",
+          "message": "The contract delegates execution to another contract with a user-supplied address.\nThe smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.\nClassification: SWC-112"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

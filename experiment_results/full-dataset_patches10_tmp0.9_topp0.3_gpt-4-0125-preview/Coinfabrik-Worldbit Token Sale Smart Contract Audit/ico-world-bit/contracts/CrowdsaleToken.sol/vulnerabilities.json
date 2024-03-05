@@ -1,0 +1,701 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 336,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract ReleasableToken is StandardToken, Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 647,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract MintableToken is Mintable, Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 342,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bool public released = false;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 486,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint public totalUpgraded = 0;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        },
+        {
+          "name": "init-variables-with-default-value",
+          "vulnerability_from_line": 651,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  bool public mintingFinished = false;\n",
+          "message": "Uninitialized variables are assigned with the types default value. Explicitly initializing a variable with its default value costs unnecessary gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_38"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "reentrancy-no-eth",
+          "vulnerability_from_line": 519,
+          "vulnerability_to_line": 535,
+          "vulnerability_code": "  function upgrade(uint value) public {\n\n    UpgradeState state = getUpgradeState();\n\n    // Ensure it's not called in a bad state\n\n    require(state == UpgradeState.ReadyToUpgrade || state == UpgradeState.Upgrading);\n\n\n\n    // Validate input value.\n\n    require(value != 0);\n\n\n\n    // Upgrade agent reissues the tokens\n\n    upgradeAgent.upgradeFrom(msg.sender, value);\n\n    \n\n    // Take tokens out from circulation\n\n    burnTokens(msg.sender, value);\n\n    totalUpgraded = totalUpgraded.add(value);\n\n\n\n    Upgrade(msg.sender, upgradeAgent, value);\n",
+          "message": "Reentrancy in UpgradeableToken.upgrade (CrowdsaleToken.sol#519-535):\n\tExternal calls:\n\t- upgradeAgent.upgradeFrom(msg.sender,value) (CrowdsaleToken.sol#528)\n\tState variables written after the call(s):\n\t- totalUpgraded (CrowdsaleToken.sol#532)\n"
+        },
+        {
+          "name": "unused-return",
+          "vulnerability_from_line": 621,
+          "vulnerability_to_line": 626,
+          "vulnerability_code": "  function enableLostAndFound(address agent, uint tokens, EIP20Token token_contract) public {\n\n    require(msg.sender == getLostAndFoundMaster());\n\n    // We use approve instead of transfer to minimize the possibility of the lost and found master\n\n    //  getting them stuck in another address by accident.\n\n    token_contract.approve(agent, tokens);\n",
+          "message": "LostAndFoundToken.enableLostAndFound (CrowdsaleToken.sol#621-626) does not use the value returned by external calls:\n\t-token_contract.approve(agent,tokens) (CrowdsaleToken.sol#625)\n"
+        },
+        {
+          "name": "shadowing-local",
+          "vulnerability_from_line": 178,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint allowance = allowed[from][msg.sender];\n",
+          "message": "StandardToken.transferFrom.allowance (local variable @ CrowdsaleToken.sol#178) shadows:\n\t- StandardToken.allowance (function @ CrowdsaleToken.sol#215-217)\n\t- EIP20Token.allowance (function @ CrowdsaleToken.sol#16)\n"
+        },
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 726,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  string public name = \"WorldBit Token\";\n",
+          "message": "CrowdsaleToken.name should be constant (CrowdsaleToken.sol#726)\nCrowdsaleToken.symbol should be constant (CrowdsaleToken.sol#728)\nUpgradeAgent.originalSupply should be constant (CrowdsaleToken.sol#432)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address who) public constant returns (uint256);\n",
+          "message": "EIP20Token.balanceOf (CrowdsaleToken.sol#12) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 167,
+          "vulnerability_to_line": 169,
+          "vulnerability_code": "  function balanceOf(address account) public constant returns (uint balance) {\n\n    return balances[account];\n",
+          "message": "StandardToken.balanceOf (CrowdsaleToken.sol#167-169) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 196,
+          "vulnerability_to_line": 207,
+          "vulnerability_code": "  function approve(address spender, uint value) public returns (bool success) {\n\n\n\n    // To change the approve amount you first have to reduce the addresses'\n\n    //  allowance to zero by calling `approve(spender, 0)` if it is not\n\n    //  already 0 to mitigate the race condition described here:\n\n    //  https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729\n\n    require (value == 0 || allowed[msg.sender][spender] == 0);\n\n\n\n    allowed[msg.sender][spender] = value;\n\n    Approval(msg.sender, spender, value);\n\n    return true;\n",
+          "message": "StandardToken.approve (CrowdsaleToken.sol#196-207) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 15,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address spender, uint256 value) public returns (bool success);\n",
+          "message": "EIP20Token.approve (CrowdsaleToken.sol#15) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function allowance(address owner, address spender) public constant returns (uint256 remaining);\n",
+          "message": "EIP20Token.allowance (CrowdsaleToken.sol#16) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 215,
+          "vulnerability_to_line": 217,
+          "vulnerability_code": "  function allowance(address account, address spender) public constant returns (uint remaining) {\n\n    return allowed[account][spender];\n",
+          "message": "StandardToken.allowance (CrowdsaleToken.sol#215-217) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 225,
+          "vulnerability_to_line": 230,
+          "vulnerability_code": "  function addApproval(address spender, uint addedValue) public returns (bool success) {\n\n      uint oldValue = allowed[msg.sender][spender];\n\n      allowed[msg.sender][spender] = oldValue.add(addedValue);\n\n      Approval(msg.sender, spender, allowed[msg.sender][spender]);\n\n      return true;\n",
+          "message": "StandardToken.addApproval (CrowdsaleToken.sol#225-230) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 237,
+          "vulnerability_to_line": 248,
+          "vulnerability_code": "  function subApproval(address spender, uint subtractedValue) public returns (bool success) {\n\n\n\n      uint oldVal = allowed[msg.sender][spender];\n\n\n\n      if (subtractedValue > oldVal) {\n\n          allowed[msg.sender][spender] = 0;\n\n      } else {\n\n          allowed[msg.sender][spender] = oldVal.sub(subtractedValue);\n\n      }\n\n      Approval(msg.sender, spender, allowed[msg.sender][spender]);\n\n      return true;\n",
+          "message": "StandardToken.subApproval (CrowdsaleToken.sol#237-248) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 316,
+          "vulnerability_to_line": 319,
+          "vulnerability_code": "  function transferOwnership(address newOwner) onlyOwner public {\n\n    require(newOwner != address(0));\n\n    owner = newOwner;\n",
+          "message": "Ownable.transferOwnership (CrowdsaleToken.sol#316-319) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 353,
+          "vulnerability_to_line": 356,
+          "vulnerability_code": "  function setReleaseAgent(address addr) onlyOwner inReleaseState(false) public {\n\n    // We don't do interface check here as we might want to have a normal wallet address to act as a release agent.\n\n    releaseAgent = addr;\n",
+          "message": "ReleasableToken.setReleaseAgent (CrowdsaleToken.sol#353-356) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 361,
+          "vulnerability_to_line": 363,
+          "vulnerability_code": "  function setTransferAgent(address addr, bool state) onlyOwner inReleaseState(false) public {\n\n    transferAgents[addr] = state;\n",
+          "message": "ReleasableToken.setTransferAgent (CrowdsaleToken.sol#361-363) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 435,
+          "vulnerability_to_line": 437,
+          "vulnerability_code": "  function isUpgradeAgent() public constant returns (bool) {\n\n    return true;\n",
+          "message": "UpgradeAgent.isUpgradeAgent (CrowdsaleToken.sol#435-437) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 455,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function upgradeFrom(address from, uint value) public;\n",
+          "message": "UpgradeAgent.upgradeFrom (CrowdsaleToken.sol#455) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 519,
+          "vulnerability_to_line": 535,
+          "vulnerability_code": "  function upgrade(uint value) public {\n\n    UpgradeState state = getUpgradeState();\n\n    // Ensure it's not called in a bad state\n\n    require(state == UpgradeState.ReadyToUpgrade || state == UpgradeState.Upgrading);\n\n\n\n    // Validate input value.\n\n    require(value != 0);\n\n\n\n    // Upgrade agent reissues the tokens\n\n    upgradeAgent.upgradeFrom(msg.sender, value);\n\n    \n\n    // Take tokens out from circulation\n\n    burnTokens(msg.sender, value);\n\n    totalUpgraded = totalUpgraded.add(value);\n\n\n\n    Upgrade(msg.sender, upgradeAgent, value);\n",
+          "message": "UpgradeableToken.upgrade (CrowdsaleToken.sol#519-535) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 573,
+          "vulnerability_to_line": 575,
+          "vulnerability_code": "  function changeUpgradeMaster(address new_master) onlyMaster public {\n\n    setUpgradeMaster(new_master);\n",
+          "message": "UpgradeableToken.changeUpgradeMaster (CrowdsaleToken.sol#573-575) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 621,
+          "vulnerability_to_line": 626,
+          "vulnerability_code": "  function enableLostAndFound(address agent, uint tokens, EIP20Token token_contract) public {\n\n    require(msg.sender == getLostAndFoundMaster());\n\n    // We use approve instead of transfer to minimize the possibility of the lost and found master\n\n    //  getting them stuck in another address by accident.\n\n    token_contract.approve(agent, tokens);\n",
+          "message": "LostAndFoundToken.enableLostAndFound (CrowdsaleToken.sol#621-626) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 675,
+          "vulnerability_to_line": 677,
+          "vulnerability_code": "  function mint(address receiver, uint amount) onlyMintAgent canMint public {\n\n    mintInternal(receiver, amount);\n",
+          "message": "MintableToken.mint (CrowdsaleToken.sol#675-677) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 682,
+          "vulnerability_to_line": 685,
+          "vulnerability_code": "  function setMintAgent(address addr, bool state) onlyOwner canMint public {\n\n    mintAgents[addr] = state;\n\n    MintingAgentChanged(addr, state);\n",
+          "message": "MintableToken.setMintAgent (CrowdsaleToken.sol#682-685) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 771,
+          "vulnerability_to_line": 773,
+          "vulnerability_code": "  function WorldBit(address object, bytes2 operand, bytes2 command, uint256 val1, uint256 val2, string location, string str1, string str2, string comment) public {\n\n    WorldBitEvent(object, operand, command, val1, val2, location, str1, str2, comment);\n",
+          "message": "CrowdsaleToken.WorldBit (CrowdsaleToken.sol#771-773) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": "Detected issues with version pragma in CrowdsaleToken.sol:\n\t- pragma solidity^0.4.15 (CrowdsaleToken.sol#3): it allows old versions\n\t- pragma solidity^0.4.15 (CrowdsaleToken.sol#33): it allows old versions\n\t- pragma solidity^0.4.15 (CrowdsaleToken.sol#87): it allows old versions\n\t- pragma solidity^0.4.15 (CrowdsaleToken.sol#100): it allows old versions\n\t- pragma solidity^0.4.15 (CrowdsaleToken.sol#124): it allows old versions\n\t- pragma solidity^0.4.15 (CrowdsaleToken.sol#278): it allows old versions\n\t- pragma solidity^0.4.15 (CrowdsaleToken.sol#325): it allows old versions\n\t- pragma solidity^0.4.15 (CrowdsaleToken.sol#411): it allows old versions\n\t- pragma solidity^0.4.15 (CrowdsaleToken.sol#461): it allows old versions\n\t- pragma solidity^0.4.15 (CrowdsaleToken.sol#601): it allows old versions\n\t- pragma solidity^0.4.15 (CrowdsaleToken.sol#631): it allows old versions\n\t- pragma solidity^0.4.15 (CrowdsaleToken.sol#702): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint private total_supply;\n",
+          "message": "Variable 'StandardToken.total_supply' (CrowdsaleToken.sol#141) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 298,
+          "vulnerability_to_line": 300,
+          "vulnerability_code": "  function Ownable() internal {\n\n    owner = msg.sender;\n",
+          "message": "Function 'Ownable.Ownable' (CrowdsaleToken.sol#298-300) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 512,
+          "vulnerability_to_line": 514,
+          "vulnerability_code": "  function UpgradeableToken(address master) internal {\n\n    setUpgradeMaster(master);\n",
+          "message": "Function 'UpgradeableToken.UpgradeableToken' (CrowdsaleToken.sol#512-514) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 573,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function changeUpgradeMaster(address new_master) onlyMaster public {\n",
+          "message": "Parameter 'new_master' of UpgradeableToken.changeUpgradeMaster (CrowdsaleToken.sol#573) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 580,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setUpgradeMaster(address new_master) private {\n",
+          "message": "Parameter 'new_master' of UpgradeableToken.setUpgradeMaster (CrowdsaleToken.sol#580) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 621,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function enableLostAndFound(address agent, uint tokens, EIP20Token token_contract) public {\n",
+          "message": "Parameter 'token_contract' of LostAndFoundToken.enableLostAndFound (CrowdsaleToken.sol#621) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 659,
+          "vulnerability_to_line": 668,
+          "vulnerability_code": "  function MintableToken(uint initialSupply, address multisig, bool mintable) internal {\n\n    require(multisig != address(0));\n\n    // Cannot create a token without supply and no minting\n\n    require(mintable || initialSupply != 0);\n\n    // Create initially all balance on the team multisig\n\n    if (initialSupply > 0)\n\n      mintInternal(multisig, initialSupply);\n\n    // No more new supply allowed after the token creation\n\n    mintingFinished = !mintable;\n",
+          "message": "Function 'MintableToken.MintableToken' (CrowdsaleToken.sol#659-668) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 745,
+          "vulnerability_to_line": 750,
+          "vulnerability_code": "  function CrowdsaleToken(uint initial_supply, uint8 token_decimals, address team_multisig, bool mintable, address token_retriever) public\n\n  UpgradeableToken(team_multisig) MintableToken(initial_supply, team_multisig, mintable) {\n\n    require(token_retriever != address(0));\n\n    decimals = token_decimals;\n\n    lost_and_found_master = token_retriever;\n",
+          "message": "Function 'CrowdsaleToken.CrowdsaleToken' (CrowdsaleToken.sol#745-750) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 745,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function CrowdsaleToken(uint initial_supply, uint8 token_decimals, address team_multisig, bool mintable, address token_retriever) public\n",
+          "message": "Parameter 'initial_supply' of CrowdsaleToken.CrowdsaleToken (CrowdsaleToken.sol#745) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 745,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function CrowdsaleToken(uint initial_supply, uint8 token_decimals, address team_multisig, bool mintable, address token_retriever) public\n",
+          "message": "Parameter 'token_decimals' of CrowdsaleToken.CrowdsaleToken (CrowdsaleToken.sol#745) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 745,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function CrowdsaleToken(uint initial_supply, uint8 token_decimals, address team_multisig, bool mintable, address token_retriever) public\n",
+          "message": "Parameter 'team_multisig' of CrowdsaleToken.CrowdsaleToken (CrowdsaleToken.sol#745) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 745,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function CrowdsaleToken(uint initial_supply, uint8 token_decimals, address team_multisig, bool mintable, address token_retriever) public\n",
+          "message": "Parameter 'token_retriever' of CrowdsaleToken.CrowdsaleToken (CrowdsaleToken.sol#745) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 771,
+          "vulnerability_to_line": 773,
+          "vulnerability_code": "  function WorldBit(address object, bytes2 operand, bytes2 command, uint256 val1, uint256 val2, string location, string str1, string str2, string comment) public {\n\n    WorldBitEvent(object, operand, command, val1, val2, location, str1, str2, comment);\n",
+          "message": "Function 'CrowdsaleToken.WorldBit' (CrowdsaleToken.sol#771-773) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 732,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  address public lost_and_found_master;\n",
+          "message": "Variable 'CrowdsaleToken.lost_and_found_master' (CrowdsaleToken.sol#732) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 563,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    else if (address(upgradeAgent) == 0x00) return UpgradeState.WaitingForAgent;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function totalSupply() public constant returns (uint256);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address who) public constant returns (uint256);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 16,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function allowance(address owner, address spender) public constant returns (uint256 remaining);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function mul(uint a, uint b) internal constant returns (uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function div(uint a, uint b) internal constant returns (uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function sub(uint a, uint b) internal constant returns (uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function add(uint a, uint b) internal constant returns (uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 68,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function max64(uint64 a, uint64 b) internal constant returns (uint64) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function min64(uint64 a, uint64 b) internal constant returns (uint64) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function max256(uint a, uint b) internal constant returns (uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 80,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function min256(uint a, uint b) internal constant returns (uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function totalSupply() public constant returns (uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 167,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address account) public constant returns (uint balance) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 215,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function allowance(address account, address spender) public constant returns (uint remaining) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 435,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function isUpgradeAgent() public constant returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 561,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function getUpgradeState() public constant returns(UpgradeState) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 588,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function canUpgrade() public constant returns(bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 614,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function getLostAndFoundMaster() internal constant returns (address);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 763,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function canUpgrade() public constant returns(bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_DEPRECATED_CONSTRUCTIONS",
+          "vulnerability_from_line": 767,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function getLostAndFoundMaster() internal constant returns(address) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 196,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address spender, uint value) public returns (bool success) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_OVERPOWERED_ROLE",
+          "vulnerability_from_line": 353,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setReleaseAgent(address addr) onlyOwner inReleaseState(false) public {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_OVERPOWERED_ROLE",
+          "vulnerability_from_line": 361,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setTransferAgent(address addr, bool state) onlyOwner inReleaseState(false) public {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_OVERPOWERED_ROLE",
+          "vulnerability_from_line": 682,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function setMintAgent(address addr, bool state) onlyOwner canMint public {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 100,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 124,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 278,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 325,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 411,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 461,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 601,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 631,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 702,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.15;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint private total_supply;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 142,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  mapping(address => uint) private balances;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 143,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  mapping(address => mapping (address => uint)) private allowed;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 139,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 477,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 649,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 771,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function WorldBit(address object, bytes2 operand, bytes2 command, uint256 val1, uint256 val2, string location, string str1, string str2, string comment) public {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 771,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function WorldBit(address object, bytes2 operand, bytes2 command, uint256 val1, uint256 val2, string location, string str1, string str2, string comment) public {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 771,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function WorldBit(address object, bytes2 operand, bytes2 command, uint256 val1, uint256 val2, string location, string str1, string str2, string comment) public {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_UPGRADE_TO_050",
+          "vulnerability_from_line": 771,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function WorldBit(address object, bytes2 operand, bytes2 command, uint256 val1, uint256 val2, string location, string str1, string str2, string comment) public {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint c = a + b;\n",
+          "message": null
+        },
+        {
+          "name": "Integer Underflow",
+          "vulnerability_from_line": 726,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  string public name = \"WorldBit Token\";\n",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint c = a + b;\n",
+          "message": null
+        },
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 63,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint c = a + b;\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_TIMEOUT"
+      ],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

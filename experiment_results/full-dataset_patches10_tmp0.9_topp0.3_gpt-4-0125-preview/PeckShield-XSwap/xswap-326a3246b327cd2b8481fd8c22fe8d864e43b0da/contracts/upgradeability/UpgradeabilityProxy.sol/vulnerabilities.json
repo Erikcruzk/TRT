@@ -1,0 +1,275 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(OpenZeppelinUpgradesAddress.isContract(newImplementation), \"Cannot set a proxy implementation to a non-contract address\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(OpenZeppelinUpgradesAddress.isContract(newImplementation), \"Cannot set a proxy implementation to a non-contract address\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_19"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "controlled-delegatecall",
+          "vulnerability_from_line": 183,
+          "vulnerability_to_line": 190,
+          "vulnerability_code": "  constructor(address _logic, bytes memory _data) public payable {\n\n    assert(IMPLEMENTATION_SLOT == bytes32(uint256(keccak256('eip1967.proxy.implementation')) - 1));\n\n    _setImplementation(_logic);\n\n    if(_data.length > 0) {\n\n      (bool success,) = _logic.delegatecall(_data);\n\n      require(success);\n\n    }\n",
+          "message": "UpgradeabilityProxy.constructor (UpgradeabilityProxy.sol#183-190) uses delegatecall to a input-controlled function id\n\t(success) = _logic.delegatecall(_data) (UpgradeabilityProxy.sol#187)\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": 102,
+          "vulnerability_code": "    function isContract(address account) internal view returns (bool) {\n\n        uint256 size;\n\n        // XXX Currently there is no better way to check if there is a contract in an address\n\n        // than to check the size of the code at that address.\n\n        // See https://ethereum.stackexchange.com/a/14016/36603\n\n        // for more details about how this works.\n\n        // TODO Check this again before the Serenity release, because all addresses will be\n\n        // contracts then.\n\n        // solhint-disable-next-line no-inline-assembly\n\n        assembly { size := extcodesize(account) }\n\n        return size > 0;\n",
+          "message": "OpenZeppelinUpgradesAddress.isContract (UpgradeabilityProxy.sol#91-102) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": 139,
+          "vulnerability_code": "  function _implementation() internal view returns (address impl) {\n\n    bytes32 slot = IMPLEMENTATION_SLOT;\n\n    assembly {\n\n      impl := sload(slot)\n\n    }\n",
+          "message": "BaseUpgradeabilityProxy._implementation (UpgradeabilityProxy.sol#134-139) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": 51,
+          "vulnerability_code": "  function _delegate(address implementation) internal {\n\n    assembly {\n\n      // Copy msg.data. We take full control of memory in this inline assembly\n\n      // block because it will not return to Solidity code. We overwrite the\n\n      // Solidity scratch pad at memory position 0.\n\n      calldatacopy(0, 0, calldatasize)\n\n\n\n      // Call the implementation.\n\n      // out and outsize are 0 because we don't know the size yet.\n\n      let result := delegatecall(gas, implementation, 0, calldatasize, 0, 0)\n\n\n\n      // Copy the returned data.\n\n      returndatacopy(0, 0, returndatasize)\n\n\n\n      switch result\n\n      // delegatecall returns 0 on error.\n\n      case 0 { revert(0, returndatasize) }\n\n      default { return(0, returndatasize) }\n\n    }\n",
+          "message": "Proxy._delegate uses assembly (UpgradeabilityProxy.sol#32-51)\n\t- UpgradeabilityProxy.sol#33-50\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": 102,
+          "vulnerability_code": "    function isContract(address account) internal view returns (bool) {\n\n        uint256 size;\n\n        // XXX Currently there is no better way to check if there is a contract in an address\n\n        // than to check the size of the code at that address.\n\n        // See https://ethereum.stackexchange.com/a/14016/36603\n\n        // for more details about how this works.\n\n        // TODO Check this again before the Serenity release, because all addresses will be\n\n        // contracts then.\n\n        // solhint-disable-next-line no-inline-assembly\n\n        assembly { size := extcodesize(account) }\n\n        return size > 0;\n",
+          "message": "OpenZeppelinUpgradesAddress.isContract uses assembly (UpgradeabilityProxy.sol#91-102)\n\t- UpgradeabilityProxy.sol#100\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": 139,
+          "vulnerability_code": "  function _implementation() internal view returns (address impl) {\n\n    bytes32 slot = IMPLEMENTATION_SLOT;\n\n    assembly {\n\n      impl := sload(slot)\n\n    }\n",
+          "message": "BaseUpgradeabilityProxy._implementation uses assembly (UpgradeabilityProxy.sol#134-139)\n\t- UpgradeabilityProxy.sol#136-138\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": 162,
+          "vulnerability_code": "  function _setImplementation(address newImplementation) internal {\n\n    require(OpenZeppelinUpgradesAddress.isContract(newImplementation), \"Cannot set a proxy implementation to a non-contract address\");\n\n\n\n    bytes32 slot = IMPLEMENTATION_SLOT;\n\n\n\n    assembly {\n\n      sstore(slot, newImplementation)\n\n    }\n",
+          "message": "BaseUpgradeabilityProxy._setImplementation uses assembly (UpgradeabilityProxy.sol#154-162)\n\t- UpgradeabilityProxy.sol#159-161\n"
+        },
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": "Different versions of Solidity is used in UpgradeabilityProxy.sol:\n\t- Version used: ['^0.5.0', '^0.5.4']\n\t- UpgradeabilityProxy.sol#3 declares pragma solidity^0.5.4\n\t- UpgradeabilityProxy.sol#73 declares pragma solidity^0.5.0\n\t- UpgradeabilityProxy.sol#107 declares pragma solidity^0.5.4\n\t- UpgradeabilityProxy.sol#167 declares pragma solidity^0.5.4\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": "Detected issues with version pragma in UpgradeabilityProxy.sol:\n\t- pragma solidity^0.5.4 (UpgradeabilityProxy.sol#3): it allows old versions\n\t- pragma solidity^0.5.0 (UpgradeabilityProxy.sol#73): it allows old versions\n\t- pragma solidity^0.5.4 (UpgradeabilityProxy.sol#107): it allows old versions\n\t- pragma solidity^0.5.4 (UpgradeabilityProxy.sol#167): it allows old versions\n"
+        },
+        {
+          "name": "low-level-calls",
+          "vulnerability_from_line": 183,
+          "vulnerability_to_line": 190,
+          "vulnerability_code": "  constructor(address _logic, bytes memory _data) public payable {\n\n    assert(IMPLEMENTATION_SLOT == bytes32(uint256(keccak256('eip1967.proxy.implementation')) - 1));\n\n    _setImplementation(_logic);\n\n    if(_data.length > 0) {\n\n      (bool success,) = _logic.delegatecall(_data);\n\n      require(success);\n\n    }\n",
+          "message": "Low level call in UpgradeabilityProxy.constructor (UpgradeabilityProxy.sol#183-190):\n\t-(success) = _logic.delegatecall(_data) UpgradeabilityProxy.sol#187\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _implementation() internal view returns (address);\n",
+          "message": "Function 'Proxy._implementation' (UpgradeabilityProxy.sol#24) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 32,
+          "vulnerability_to_line": 51,
+          "vulnerability_code": "  function _delegate(address implementation) internal {\n\n    assembly {\n\n      // Copy msg.data. We take full control of memory in this inline assembly\n\n      // block because it will not return to Solidity code. We overwrite the\n\n      // Solidity scratch pad at memory position 0.\n\n      calldatacopy(0, 0, calldatasize)\n\n\n\n      // Call the implementation.\n\n      // out and outsize are 0 because we don't know the size yet.\n\n      let result := delegatecall(gas, implementation, 0, calldatasize, 0, 0)\n\n\n\n      // Copy the returned data.\n\n      returndatacopy(0, 0, returndatasize)\n\n\n\n      switch result\n\n      // delegatecall returns 0 on error.\n\n      case 0 { revert(0, returndatasize) }\n\n      default { return(0, returndatasize) }\n\n    }\n",
+          "message": "Function 'Proxy._delegate' (UpgradeabilityProxy.sol#32-51) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": 59,
+          "vulnerability_code": "  function _willFallback() internal {\n",
+          "message": "Function 'Proxy._willFallback' (UpgradeabilityProxy.sol#58-59) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": 68,
+          "vulnerability_code": "  function _fallback() internal {\n\n    _willFallback();\n\n    _delegate(_implementation());\n",
+          "message": "Function 'Proxy._fallback' (UpgradeabilityProxy.sol#65-68) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": 139,
+          "vulnerability_code": "  function _implementation() internal view returns (address impl) {\n\n    bytes32 slot = IMPLEMENTATION_SLOT;\n\n    assembly {\n\n      impl := sload(slot)\n\n    }\n",
+          "message": "Function 'BaseUpgradeabilityProxy._implementation' (UpgradeabilityProxy.sol#134-139) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": 148,
+          "vulnerability_code": "  function _upgradeTo(address newImplementation) internal {\n\n    _setImplementation(newImplementation);\n\n    emit Upgraded(newImplementation);\n",
+          "message": "Function 'BaseUpgradeabilityProxy._upgradeTo' (UpgradeabilityProxy.sol#145-148) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": 162,
+          "vulnerability_code": "  function _setImplementation(address newImplementation) internal {\n\n    require(OpenZeppelinUpgradesAddress.isContract(newImplementation), \"Cannot set a proxy implementation to a non-contract address\");\n\n\n\n    bytes32 slot = IMPLEMENTATION_SLOT;\n\n\n\n    assembly {\n\n      sstore(slot, newImplementation)\n\n    }\n",
+          "message": "Function 'BaseUpgradeabilityProxy._setImplementation' (UpgradeabilityProxy.sol#154-162) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 183,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address _logic, bytes memory _data) public payable {\n",
+          "message": "Parameter '_logic' of UpgradeabilityProxy. (UpgradeabilityProxy.sol#183) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 183,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor(address _logic, bytes memory _data) public payable {\n",
+          "message": "Parameter '_data' of UpgradeabilityProxy. (UpgradeabilityProxy.sol#183) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _implementation() internal view returns (address impl) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Proxy {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_LOCKED_MONEY",
+          "vulnerability_from_line": 174,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract UpgradeabilityProxy is BaseUpgradeabilityProxy {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 73,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 107,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 167,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.4;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function isContract(address account) internal view returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_VIEW",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _implementation() internal view returns (address impl) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 136,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 159,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (RuntimeError: Source map error, unknown name(SHL) or instr_name(INVALID))"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

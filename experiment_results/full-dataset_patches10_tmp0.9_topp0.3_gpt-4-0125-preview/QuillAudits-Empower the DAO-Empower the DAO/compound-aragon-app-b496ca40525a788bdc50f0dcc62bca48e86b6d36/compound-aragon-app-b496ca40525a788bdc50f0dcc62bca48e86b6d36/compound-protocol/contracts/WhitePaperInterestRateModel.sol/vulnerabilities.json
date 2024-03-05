@@ -1,0 +1,339 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 379,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    constructor(uint baseRate_, uint multiplier_) public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 380,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        baseRate = baseRate_;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 381,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        multiplier = multiplier_;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 382,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_8"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 338,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getBorrowRate(uint cash, uint borrows, uint reserves) external view returns (uint, uint);\n",
+          "message": "InterestRateModel.getBorrowRate (WhitePaperInterestRateModel.sol#338) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 462,
+          "vulnerability_to_line": 479,
+          "vulnerability_code": "    function getBorrowRate(uint cash, uint borrows, uint _reserves) public view returns (uint, uint) {\n\n        _reserves; // pragma ignore unused argument\n\n\n\n        (IRError err0, Exp memory _utilizationRate, Exp memory annualBorrowRate) = getUtilizationAndAnnualBorrowRate(cash, borrows);\n\n        if (err0 != IRError.NO_ERROR) {\n\n            return (uint(err0), 0);\n\n        }\n\n\n\n        // And then divide down by blocks per year.\n\n        (MathError err1, Exp memory borrowRate) = divScalar(annualBorrowRate, blocksPerYear); // basis points * blocks per year\n\n        // divScalar only fails when divisor is zero. This is clearly not the case.\n\n        assert(err1 == MathError.NO_ERROR);\n\n\n\n        _utilizationRate; // pragma ignore unused variable\n\n\n\n        // Note: mantissa is the rate scaled 1e18, which matches the expected result\n\n        return (uint(IRError.NO_ERROR), borrowRate.mantissa);\n",
+          "message": "WhitePaperInterestRateModel.getBorrowRate (WhitePaperInterestRateModel.sol#462-479) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.8;\n",
+          "message": "Detected issues with version pragma in WhitePaperInterestRateModel.sol:\n\t- pragma solidity^0.5.8 (WhitePaperInterestRateModel.sol#3): it allows old versions\n\t- pragma solidity^0.5.8 (WhitePaperInterestRateModel.sol#91): it allows old versions\n\t- pragma solidity^0.5.8 (WhitePaperInterestRateModel.sol#318): it allows old versions\n\t- pragma solidity^0.5.8 (WhitePaperInterestRateModel.sol#350): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant expScale = 1e18;\n",
+          "message": "Constant 'Exponential.expScale' (WhitePaperInterestRateModel.sol#101) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant halfExpScale = expScale/2;\n",
+          "message": "Constant 'Exponential.halfExpScale' (WhitePaperInterestRateModel.sol#102) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 103,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant mantissaOne = expScale;\n",
+          "message": "Constant 'Exponential.mantissaOne' (WhitePaperInterestRateModel.sol#103) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 362,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bool public constant isInterestRateModel = true;\n",
+          "message": "Constant 'WhitePaperInterestRateModel.isInterestRateModel' (WhitePaperInterestRateModel.sol#362) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 377,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint public constant blocksPerYear = 2102400;\n",
+          "message": "Constant 'WhitePaperInterestRateModel.blocksPerYear' (WhitePaperInterestRateModel.sol#377) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.8;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 91,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.8;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 318,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.8;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 350,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.8;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulUInt(uint a, uint b) internal pure returns (MathError, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divUInt(uint a, uint b) internal pure returns (MathError, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function subUInt(uint a, uint b) internal pure returns (MathError, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 65,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addUInt(uint a, uint b) internal pure returns (MathError, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addThenSubUInt(uint a, uint b, uint c) internal pure returns (MathError, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 114,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getExp(uint num, uint denom) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 131,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function addExp(Exp memory a, Exp memory b) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 140,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function subExp(Exp memory a, Exp memory b) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 149,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulScalar(Exp memory a, uint scalar) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 161,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulScalarTruncate(Exp memory a, uint scalar) pure internal returns (MathError, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 173,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulScalarTruncateAddUInt(Exp memory a, uint scalar, uint addend) pure internal returns (MathError, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 185,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divScalar(Exp memory a, uint scalar) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 197,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divScalarByExp(uint scalar, Exp memory divisor) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 217,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divScalarByExpTruncate(uint scalar, Exp memory divisor) pure internal returns (MathError, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 229,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulExp(Exp memory a, Exp memory b) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 254,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulExp(uint a, uint b) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 261,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function mulExp3(Exp memory a, Exp memory b, Exp memory c) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 274,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function divExp(Exp memory a, Exp memory b) pure internal returns (MathError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 338,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getBorrowRate(uint cash, uint borrows, uint reserves) external view returns (uint, uint);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 395,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getUtilizationRate(uint cash, uint borrows) pure internal returns (IRError, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 417,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getUtilizationAndAnnualBorrowRate(uint cash, uint borrows) view internal returns (IRError, Exp memory, Exp memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 462,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function getBorrowRate(uint cash, uint borrows, uint _reserves) public view returns (uint, uint) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 101,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant expScale = 1e18;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant halfExpScale = expScale/2;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 103,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint constant mantissaOne = expScale;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint c = a + b;\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

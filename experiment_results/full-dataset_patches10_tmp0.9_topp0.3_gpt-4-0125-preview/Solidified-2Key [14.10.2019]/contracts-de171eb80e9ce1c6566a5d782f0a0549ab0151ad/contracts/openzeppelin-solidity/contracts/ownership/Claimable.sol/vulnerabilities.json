@@ -1,0 +1,145 @@
+{
+  "smartbugs_completed": "No vulnerabilities found",
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-ownable2step",
+          "vulnerability_from_line": 77,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "contract Claimable is Ownable {\n",
+          "message": "By demanding that the receiver of the owner permissions actively accept via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable` prevent the contract ownership from accidentally being transferred  to an address that cannot handle it."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    owner = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_7"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 44,
+          "vulnerability_to_line": 47,
+          "vulnerability_code": "  function renounceOwnership() public onlyOwner {\n\n    emit OwnershipRenounced(owner);\n\n    owner = address(0);\n",
+          "message": "Ownable.renounceOwnership (Claimable.sol#44-47) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 92,
+          "vulnerability_to_line": 94,
+          "vulnerability_code": "  function transferOwnership(address newOwner) public onlyOwner {\n\n    pendingOwner = newOwner;\n",
+          "message": "Claimable.transferOwnership (Claimable.sol#92-94) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": 55,
+          "vulnerability_code": "  function transferOwnership(address _newOwner) public onlyOwner {\n\n    _transferOwnership(_newOwner);\n",
+          "message": "Ownable.transferOwnership (Claimable.sol#53-55) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 99,
+          "vulnerability_to_line": 103,
+          "vulnerability_code": "  function claimOwnership() public onlyPendingOwner {\n\n    emit OwnershipTransferred(owner, pendingOwner);\n\n    owner = pendingOwner;\n\n    pendingOwner = address(0);\n",
+          "message": "Claimable.claimOwnership (Claimable.sol#99-103) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferOwnership(address _newOwner) public onlyOwner {\n",
+          "message": "Parameter '_newOwner' of Ownable.transferOwnership (Claimable.sol#53) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "  function _transferOwnership(address _newOwner) internal {\n\n    require(_newOwner != address(0));\n\n    emit OwnershipTransferred(owner, _newOwner);\n\n    owner = _newOwner;\n",
+          "message": "Function 'Ownable._transferOwnership' (Claimable.sol#61-65) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 61,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function _transferOwnership(address _newOwner) internal {\n",
+          "message": "Parameter '_newOwner' of Ownable._transferOwnership (Claimable.sol#61) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    owner = address(0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 102,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    pendingOwner = address(0);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 70,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.24;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    }
+  }
+}

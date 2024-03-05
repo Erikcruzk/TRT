@@ -1,0 +1,128 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        return abi.encodeWithSelector(\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 41,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            STANDARD_ERROR_SELECTOR,\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            bytes(message)\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        },
+        {
+          "name": "use-abi-encodecall-instead-of-encodewithselector",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        );\n",
+          "message": "To guarantee arguments type safety it is recommended to use `abi.encodeCall` instead of `abi.encodeWithSelector`."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_4"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": 56,
+          "vulnerability_code": "    function rrevert(bytes memory errorData)\n\n        internal\n\n        pure\n\n    {\n\n        assembly {\n\n            revert(add(errorData, 0x20), mload(errorData))\n\n        }\n",
+          "message": "LibRichErrorsV06.rrevert (LibRichErrorsV06.sol#49-56) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": 56,
+          "vulnerability_code": "    function rrevert(bytes memory errorData)\n\n        internal\n\n        pure\n\n    {\n\n        assembly {\n\n            revert(add(errorData, 0x20), mload(errorData))\n\n        }\n",
+          "message": "LibRichErrorsV06.rrevert uses assembly (LibRichErrorsV06.sol#49-56)\n\t- LibRichErrorsV06.sol#53-55\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.5;\n",
+          "message": "Detected issues with version pragma in LibRichErrorsV06.sol:\n\t- pragma solidity^0.6.5 (LibRichErrorsV06.sol#21): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": 44,
+          "vulnerability_code": "    function StandardError(string memory message)\n\n        internal\n\n        pure\n\n        returns (bytes memory)\n\n    {\n\n        return abi.encodeWithSelector(\n\n            STANDARD_ERROR_SELECTOR,\n\n            bytes(message)\n\n        );\n",
+          "message": "Function 'LibRichErrorsV06.StandardError' (LibRichErrorsV06.sol#35-44) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    bytes4 internal constant STANDARD_ERROR_SELECTOR = 0x08c379a0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.5;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 49,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function rrevert(bytes memory errorData)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

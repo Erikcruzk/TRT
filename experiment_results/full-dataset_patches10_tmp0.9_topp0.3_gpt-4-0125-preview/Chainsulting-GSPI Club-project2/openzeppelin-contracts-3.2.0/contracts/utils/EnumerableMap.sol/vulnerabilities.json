@@ -1,0 +1,142 @@
+{
+  "smartbugs_completed": "No vulnerabilities found",
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 142,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(map._entries.length > index, \"EnumerableMap: index out of bounds\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 142,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(map._entries.length > index, \"EnumerableMap: index out of bounds\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_9"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "unused-return",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": 115,
+          "vulnerability_code": "    function _remove(Map storage map, bytes32 key) private returns (bool) {\n\n        // We read and store the key's index to prevent multiple reads from the same storage slot\n\n        uint256 keyIndex = map._indexes[key];\n\n\n\n        if (keyIndex != 0) { // Equivalent to contains(map, key)\n\n            // To delete a key-value pair from the _entries array in O(1), we swap the entry to delete with the last one\n\n            // in the array, and then remove the last entry (sometimes called as 'swap and pop').\n\n            // This modifies the order of the array, as noted in {at}.\n\n\n\n            uint256 toDeleteIndex = keyIndex - 1;\n\n            uint256 lastIndex = map._entries.length - 1;\n\n\n\n            // When the entry to delete is the last one, the swap operation is unnecessary. However, since this occurs\n\n            // so rarely, we still do the swap anyway to avoid the gas cost of adding an 'if' statement.\n\n\n\n            MapEntry storage lastEntry = map._entries[lastIndex];\n\n\n\n            // Move the last entry to the index where the entry to delete is\n\n            map._entries[toDeleteIndex] = lastEntry;\n\n            // Update the index for the moved entry\n\n            map._indexes[lastEntry._key] = toDeleteIndex + 1; // All indexes are 1-based\n\n\n\n            // Delete the slot where the moved entry was stored\n\n            map._entries.pop();\n\n\n\n            // Delete the index for the deleted slot\n\n            delete map._indexes[key];\n\n\n\n            return true;\n\n        } else {\n\n            return false;\n\n        }\n",
+          "message": "EnumerableMap._remove (EnumerableMap.sol#83-115) does not use the value returned by external calls:\n\t-map._entries.pop() (EnumerableMap.sol#106)\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.0;\n",
+          "message": "Detected issues with version pragma in EnumerableMap.sol:\n\t- pragma solidity^0.6.0 (EnumerableMap.sol#5): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 62,
+          "vulnerability_to_line": 76,
+          "vulnerability_code": "    function _set(Map storage map, bytes32 key, bytes32 value) private returns (bool) {\n\n        // We read and store the key's index to prevent multiple reads from the same storage slot\n\n        uint256 keyIndex = map._indexes[key];\n\n\n\n        if (keyIndex == 0) { // Equivalent to !contains(map, key)\n\n            map._entries.push(MapEntry({ _key: key, _value: value }));\n\n            // The entry is stored at length-1, but we add 1 to all indexes\n\n            // and use 0 as a sentinel value\n\n            map._indexes[key] = map._entries.length;\n\n            return true;\n\n        } else {\n\n            map._entries[keyIndex - 1]._value = value;\n\n            return false;\n\n        }\n",
+          "message": "Function 'EnumerableMap._set' (EnumerableMap.sol#62-76) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": 115,
+          "vulnerability_code": "    function _remove(Map storage map, bytes32 key) private returns (bool) {\n\n        // We read and store the key's index to prevent multiple reads from the same storage slot\n\n        uint256 keyIndex = map._indexes[key];\n\n\n\n        if (keyIndex != 0) { // Equivalent to contains(map, key)\n\n            // To delete a key-value pair from the _entries array in O(1), we swap the entry to delete with the last one\n\n            // in the array, and then remove the last entry (sometimes called as 'swap and pop').\n\n            // This modifies the order of the array, as noted in {at}.\n\n\n\n            uint256 toDeleteIndex = keyIndex - 1;\n\n            uint256 lastIndex = map._entries.length - 1;\n\n\n\n            // When the entry to delete is the last one, the swap operation is unnecessary. However, since this occurs\n\n            // so rarely, we still do the swap anyway to avoid the gas cost of adding an 'if' statement.\n\n\n\n            MapEntry storage lastEntry = map._entries[lastIndex];\n\n\n\n            // Move the last entry to the index where the entry to delete is\n\n            map._entries[toDeleteIndex] = lastEntry;\n\n            // Update the index for the moved entry\n\n            map._indexes[lastEntry._key] = toDeleteIndex + 1; // All indexes are 1-based\n\n\n\n            // Delete the slot where the moved entry was stored\n\n            map._entries.pop();\n\n\n\n            // Delete the index for the deleted slot\n\n            delete map._indexes[key];\n\n\n\n            return true;\n\n        } else {\n\n            return false;\n\n        }\n",
+          "message": "Function 'EnumerableMap._remove' (EnumerableMap.sol#83-115) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": 122,
+          "vulnerability_code": "    function _contains(Map storage map, bytes32 key) private view returns (bool) {\n\n        return map._indexes[key] != 0;\n",
+          "message": "Function 'EnumerableMap._contains' (EnumerableMap.sol#120-122) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 127,
+          "vulnerability_to_line": 129,
+          "vulnerability_code": "    function _length(Map storage map) private view returns (uint256) {\n\n        return map._entries.length;\n",
+          "message": "Function 'EnumerableMap._length' (EnumerableMap.sol#127-129) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": 146,
+          "vulnerability_code": "    function _at(Map storage map, uint256 index) private view returns (bytes32, bytes32) {\n\n        require(map._entries.length > index, \"EnumerableMap: index out of bounds\");\n\n\n\n        MapEntry storage entry = map._entries[index];\n\n        return (entry._key, entry._value);\n",
+          "message": "Function 'EnumerableMap._at' (EnumerableMap.sol#141-146) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 155,
+          "vulnerability_to_line": 157,
+          "vulnerability_code": "    function _get(Map storage map, bytes32 key) private view returns (bytes32) {\n\n        return _get(map, key, \"EnumerableMap: nonexistent key\");\n",
+          "message": "Function 'EnumerableMap._get' (EnumerableMap.sol#155-157) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 162,
+          "vulnerability_to_line": 166,
+          "vulnerability_code": "    function _get(Map storage map, bytes32 key, string memory errorMessage) private view returns (bytes32) {\n\n        uint256 keyIndex = map._indexes[key];\n\n        require(keyIndex != 0, errorMessage); // Equivalent to contains(map, key)\n\n        return map._entries[keyIndex - 1]._value; // All indexes are 1-based\n",
+          "message": "Function 'EnumerableMap._get' (EnumerableMap.sol#162-166) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.6.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 141,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function _at(Map storage map, uint256 index) private view returns (bytes32, bytes32) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_RETURN_STRUCT",
+          "vulnerability_from_line": 217,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function at(UintToAddressMap storage map, uint256 index) internal view returns (uint256, address) {\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

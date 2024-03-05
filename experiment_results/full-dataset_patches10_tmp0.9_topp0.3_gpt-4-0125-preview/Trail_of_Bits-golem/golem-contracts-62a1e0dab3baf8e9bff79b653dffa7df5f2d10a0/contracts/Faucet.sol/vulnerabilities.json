@@ -1,0 +1,723 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "inefficient-state-variable-increment",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        totalMigrated += _value;\n",
+          "message": "<x> += <y> costs more gas than <x> = <x> + <y> for state variables."
+        },
+        {
+          "name": "inefficient-state-variable-increment",
+          "vulnerability_from_line": 158,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        totalTokens += numTokens;\n",
+          "message": "<x> += <y> costs more gas than <x> = <x> + <y> for state variables."
+        },
+        {
+          "name": "inefficient-state-variable-increment",
+          "vulnerability_from_line": 190,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        totalTokens += additionalTokens;\n",
+          "message": "<x> += <y> costs more gas than <x> = <x> + <y> for state variables."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 81,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (senderBalance >= _value && _value > 0) {\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            senderBalance -= _value;\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 83,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            balances[msg.sender] = senderBalance;\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 84,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            balances[_to] += _value;\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 85,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            Transfer(msg.sender, _to, _value);\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            return true;\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 87,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        }\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 176,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if ((block.number <= fundingEndBlock ||\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 177,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "             totalTokens < tokenCreationMin) &&\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        },
+        {
+          "name": "use-nested-if",
+          "vulnerability_from_line": 178,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            totalTokens < tokenCreationCap) revert();\n",
+          "message": "Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_22"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "arbitrary-send",
+          "vulnerability_from_line": 173,
+          "vulnerability_to_line": 196,
+          "vulnerability_code": "    function finalize() external {\n\n        // Abort if not in Funding Success state.\n\n        if (!funding) revert();\n\n        if ((block.number <= fundingEndBlock ||\n\n             totalTokens < tokenCreationMin) &&\n\n            totalTokens < tokenCreationCap) revert();\n\n\n\n        // Switch to Operational state. This is the only place this can happen.\n\n        funding = false;\n\n\n\n        // Create additional GNT for the Golem Factory and developers as\n\n        // the 18% of total number of tokens.\n\n        // All additional tokens are transfered to the account controller by\n\n        // GNTAllocation contract which will not allow using them for 6 months.\n\n        uint256 percentOfTotal = 18;\n\n        uint256 additionalTokens =\n\n            totalTokens * percentOfTotal / (100 - percentOfTotal);\n\n        totalTokens += additionalTokens;\n\n        balances[lockedAllocation] += additionalTokens;\n\n        Transfer(0, lockedAllocation, additionalTokens);\n\n\n\n        // Transfer ETH to the Golem Factory address.\n\n        if (!golemFactory.send(this.balance)) revert();\n",
+          "message": "GolemNetworkToken.finalize (Faucet.sol#173-196) sends eth to arbitrary user\n\tDangerous calls:\n\t- ! golemFactory.send(this.balance) (Faucet.sol#195)\n"
+        },
+        {
+          "name": "unused-return",
+          "vulnerability_from_line": 234,
+          "vulnerability_to_line": 238,
+          "vulnerability_code": "    function create() external {\n\n        uint256 tokens = 1000 * 10 ** uint256(token.decimals());\n\n        if (token.balanceOf(msg.sender) >= tokens) revert();\n\n        token.transfer(msg.sender, tokens);\n",
+          "message": "Faucet.create (Faucet.sol#234-238) does not use the value returned by external calls:\n\t-token.transfer(msg.sender,tokens) (Faucet.sol#237)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function migrateFrom(address _from, uint256 _value);\n",
+          "message": "MigrationAgent.migrateFrom (Faucet.sol#7) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": 89,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) returns (bool) {\n\n        // Abort if not in Operational state.\n\n        if (funding) revert();\n\n\n\n        var senderBalance = balances[msg.sender];\n\n        if (senderBalance >= _value && _value > 0) {\n\n            senderBalance -= _value;\n\n            balances[msg.sender] = senderBalance;\n\n            balances[_to] += _value;\n\n            Transfer(msg.sender, _to, _value);\n\n            return true;\n\n        }\n\n        return false;\n",
+          "message": "GolemNetworkToken.transfer (Faucet.sol#76-89) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.16;\n",
+          "message": "Detected issues with version pragma in Faucet.sol:\n\t- pragma solidity^0.4.16 (Faucet.sol#4): it allows old versions\n\t- pragma solidity^0.4.16 (Faucet.sol#221): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function GNTAllocation(address _golemFactory) {}\n",
+          "message": "Function 'GNTAllocation.GNTAllocation' (Faucet.sol#11) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": 67,
+          "vulnerability_code": "    function GolemNetworkToken(address _golemFactory,\n\n                               address _migrationMaster,\n\n                               uint256 _fundingStartBlock,\n\n                               uint256 _fundingEndBlock) {\n\n\n\n        if (_golemFactory == 0) revert();\n\n        if (_migrationMaster == 0) revert();\n\n        if (_fundingStartBlock <= block.number) revert();\n\n        if (_fundingEndBlock   <= _fundingStartBlock) revert();\n\n\n\n        lockedAllocation = new GNTAllocation(_golemFactory);\n\n        migrationMaster = _migrationMaster;\n\n        golemFactory = _golemFactory;\n\n        fundingStartBlock = _fundingStartBlock;\n\n        fundingEndBlock = _fundingEndBlock;\n",
+          "message": "Function 'GolemNetworkToken.GolemNetworkToken' (Faucet.sol#52-67) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function GolemNetworkToken(address _golemFactory,\n",
+          "message": "Parameter '_golemFactory' of GolemNetworkToken.GolemNetworkToken (Faucet.sol#52) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 53,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                               address _migrationMaster,\n",
+          "message": "Parameter '_migrationMaster' of GolemNetworkToken.GolemNetworkToken (Faucet.sol#53) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 54,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                               uint256 _fundingStartBlock,\n",
+          "message": "Parameter '_fundingStartBlock' of GolemNetworkToken.GolemNetworkToken (Faucet.sol#54) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "                               uint256 _fundingEndBlock) {\n",
+          "message": "Parameter '_fundingEndBlock' of GolemNetworkToken.GolemNetworkToken (Faucet.sol#55) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) returns (bool) {\n",
+          "message": "Parameter '_to' of GolemNetworkToken.transfer (Faucet.sol#76) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) returns (bool) {\n",
+          "message": "Parameter '_value' of GolemNetworkToken.transfer (Faucet.sol#76) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 95,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function balanceOf(address _owner) external view returns (uint256) {\n",
+          "message": "Parameter '_owner' of GolemNetworkToken.balanceOf (Faucet.sol#95) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 104,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function migrate(uint256 _value) external {\n",
+          "message": "Parameter '_value' of GolemNetworkToken.migrate (Faucet.sol#104) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 125,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setMigrationAgent(address _agent) external {\n",
+          "message": "Parameter '_agent' of GolemNetworkToken.setMigrationAgent (Faucet.sol#125) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 133,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function setMigrationMaster(address _master) external {\n",
+          "message": "Parameter '_master' of GolemNetworkToken.setMigrationMaster (Faucet.sol#133) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public constant tokenCreationRate = 10000000000;\n",
+          "message": "Constant 'GolemNetworkToken.tokenCreationRate' (Faucet.sol#20) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public constant tokenCreationCap = 82 finney * tokenCreationRate;\n",
+          "message": "Constant 'GolemNetworkToken.tokenCreationCap' (Faucet.sol#23) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    uint256 public constant tokenCreationMin = 15 finney * tokenCreationRate;\n",
+          "message": "Constant 'GolemNetworkToken.tokenCreationMin' (Faucet.sol#24) is not in UPPER_CASE_WITH_UNDERSCORES\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 228,
+          "vulnerability_to_line": 230,
+          "vulnerability_code": "    function Faucet(address _token) {\n\n        token = GolemNetworkToken(_token);\n",
+          "message": "Function 'Faucet.Faucet' (Faucet.sol#228-230) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 228,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function Faucet(address _token) {\n",
+          "message": "Parameter '_token' of Faucet.Faucet (Faucet.sol#228) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_MSGVALUE_EQUALS_ZERO",
+          "vulnerability_from_line": 153,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (msg.value == 0) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 4,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 221,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.16;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (_golemFactory == 0) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 58,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (_migrationMaster == 0) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (_fundingStartBlock <= block.number) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 60,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (_fundingEndBlock   <= _fundingStartBlock) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 78,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (funding) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 106,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (funding) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 107,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (migrationAgent == 0) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 110,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (_value == 0) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 111,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (_value > balances[msg.sender]) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 127,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (funding) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 128,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (migrationAgent != 0) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 129,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (msg.sender != migrationMaster) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 134,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (msg.sender != migrationMaster) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 135,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (_master == 0) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 148,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (!funding) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 149,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (block.number < fundingStartBlock) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 150,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (block.number > fundingEndBlock) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 153,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (msg.value == 0) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (msg.value > (tokenCreationCap - totalTokens) / tokenCreationRate)\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 175,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (!funding) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 176,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if ((block.number <= fundingEndBlock ||\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 195,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (!golemFactory.send(this.balance)) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 203,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (!funding) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 204,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (block.number <= fundingEndBlock) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 205,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (totalTokens >= tokenCreationMin) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 208,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (gntValue == 0) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 214,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (!msg.sender.send(ethValue)) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_REVERT_REQUIRE",
+          "vulnerability_from_line": 236,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (token.balanceOf(msg.sender) >= tokens) revert();\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 7,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function migrateFrom(address _from, uint256 _value);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 11,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function GNTAllocation(address _golemFactory) {}\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 52,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function GolemNetworkToken(address _golemFactory,\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 76,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function transfer(address _to, uint256 _value) returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 228,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function Faucet(address _token) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    GNTAllocation lockedAllocation;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 43,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    mapping (address => uint256) balances;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "DOCKER_SEGV"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Dependence on predictable environment variable (SWC 120)",
+          "vulnerability_from_line": 59,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (_fundingStartBlock <= block.number) revert();\n",
+          "message": "A control flow decision is made based on The block.number environment variable.\nThe block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-120"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 235,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 tokens = 1000 * 10 ** uint256(token.decimals());\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 235,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 tokens = 1000 * 10 ** uint256(token.decimals());\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 235,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        uint256 tokens = 1000 * 10 ** uint256(token.decimals());\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 236,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (token.balanceOf(msg.sender) >= tokens) revert();\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 236,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (token.balanceOf(msg.sender) >= tokens) revert();\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 236,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (token.balanceOf(msg.sender) >= tokens) revert();\n",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 236,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (token.balanceOf(msg.sender) >= tokens) revert();\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 237,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        token.transfer(msg.sender, tokens);\n",
+          "message": "Read of persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 237,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        token.transfer(msg.sender, tokens);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        },
+        {
+          "name": "Multiple Calls in a Single Transaction (SWC 113)",
+          "vulnerability_from_line": 237,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        token.transfer(msg.sender, tokens);\n",
+          "message": "Multiple calls are executed in the same transaction.\nThis call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they\u2019re part of your own codebase).\nClassification: SWC-113"
+        },
+        {
+          "name": "State access after external call (SWC 107)",
+          "vulnerability_from_line": 237,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        token.transfer(msg.sender, tokens);\n",
+          "message": "Write to persistent state following external call\nThe contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.\nClassification: SWC-107"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 120)",
+          "vulnerability_from_line": 176,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if ((block.number <= fundingEndBlock ||\n",
+          "message": "A control flow decision is made based on The block.number environment variable.\nThe block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-120"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 120)",
+          "vulnerability_from_line": 176,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if ((block.number <= fundingEndBlock ||\n",
+          "message": "A control flow decision is made based on The block.number environment variable.\nThe block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-120"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 120)",
+          "vulnerability_from_line": 204,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (block.number <= fundingEndBlock) revert();\n",
+          "message": "A control flow decision is made based on The block.number environment variable.\nThe block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-120"
+        },
+        {
+          "name": "Dependence on predictable environment variable (SWC 120)",
+          "vulnerability_from_line": 149,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (block.number < fundingStartBlock) revert();\n",
+          "message": "A control flow decision is made based on The block.number environment variable.\nThe block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.\nClassification: SWC-120"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Concurrency bug",
+          "vulnerability_from_line": 195,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (!golemFactory.send(this.balance)) revert();\n",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 84,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            balances[_to] += _value;\n",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 115,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        totalMigrated += _value;\n",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 189,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            totalTokens * percentOfTotal / (100 - percentOfTotal);\n",
+          "message": null
+        },
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 191,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        balances[lockedAllocation] += additionalTokens;\n",
+          "message": null
+        },
+        {
+          "name": "Underflow bugs",
+          "vulnerability_from_line": 114,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        totalTokens -= _value;\n",
+          "message": null
+        },
+        {
+          "name": "Underflow bugs",
+          "vulnerability_from_line": 154,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (msg.value > (tokenCreationCap - totalTokens) / tokenCreationRate)\n",
+          "message": null
+        },
+        {
+          "name": "Underflow bugs",
+          "vulnerability_from_line": 210,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        totalTokens -= gntValue;\n",
+          "message": null
+        }
+      ]
+    }
+  }
+}

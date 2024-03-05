@@ -1,0 +1,338 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 146,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        require(v <= 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, \"Value exceeds uint255 range\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_22"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": 41,
+          "vulnerability_code": "    function WriteBool(bool b) internal pure returns (bytes memory) {\n\n        bytes memory buff;\n\n        assembly{\n\n            buff := mload(0x40)\n\n            mstore(buff, 1)\n\n            switch iszero(b)\n\n            case 1 {\n\n                mstore(add(buff, 0x20), shl(248, 0x00))\n\n                // mstore8(add(buff, 0x20), 0x00)\n\n            }\n\n            default {\n\n                mstore(add(buff, 0x20), shl(248, 0x01))\n\n                // mstore8(add(buff, 0x20), 0x01)\n\n            }\n\n            mstore(0x40, add(buff, 0x21))\n\n        }\n\n        return buff;\n",
+          "message": "ZeroCopySink.WriteBool (ZeroCopySink.sol#24-41) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "    function WriteUint8(uint8 v) internal pure returns (bytes memory) {\n\n        bytes memory buff;\n\n        assembly{\n\n            buff := mload(0x40)\n\n            mstore(buff, 1)\n\n            mstore(add(buff, 0x20), shl(248, v))\n\n            // mstore(add(buff, 0x20), byte(0x1f, v))\n\n            mstore(0x40, add(buff, 0x21))\n\n        }\n\n        return buff;\n",
+          "message": "ZeroCopySink.WriteUint8 (ZeroCopySink.sol#55-65) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": 90,
+          "vulnerability_code": "    function WriteUint16(uint16 v) internal pure returns (bytes memory) {\n\n        bytes memory buff;\n\n\n\n        assembly{\n\n            buff := mload(0x40)\n\n            let byteLen := 0x02\n\n            mstore(buff, byteLen)\n\n            for {\n\n                let mindex := 0x00\n\n                let vindex := 0x1f\n\n            } lt(mindex, byteLen) {\n\n                mindex := add(mindex, 0x01)\n\n                vindex := sub(vindex, 0x01)\n\n            }{\n\n                mstore8(add(add(buff, 0x20), mindex), byte(vindex, v))\n\n            }\n\n            mstore(0x40, add(buff, 0x22))\n\n        }\n\n        return buff;\n",
+          "message": "ZeroCopySink.WriteUint16 (ZeroCopySink.sol#71-90) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": 114,
+          "vulnerability_code": "    function WriteUint32(uint32 v) internal pure returns(bytes memory) {\n\n        bytes memory buff;\n\n        assembly{\n\n            buff := mload(0x40)\n\n            let byteLen := 0x04\n\n            mstore(buff, byteLen)\n\n            for {\n\n                let mindex := 0x00\n\n                let vindex := 0x1f\n\n            } lt(mindex, byteLen) {\n\n                mindex := add(mindex, 0x01)\n\n                vindex := sub(vindex, 0x01)\n\n            }{\n\n                mstore8(add(add(buff, 0x20), mindex), byte(vindex, v))\n\n            }\n\n            mstore(0x40, add(buff, 0x24))\n\n        }\n\n        return buff;\n",
+          "message": "ZeroCopySink.WriteUint32 (ZeroCopySink.sol#96-114) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": 139,
+          "vulnerability_code": "    function WriteUint64(uint64 v) internal pure returns(bytes memory) {\n\n        bytes memory buff;\n\n\n\n        assembly{\n\n            buff := mload(0x40)\n\n            let byteLen := 0x08\n\n            mstore(buff, byteLen)\n\n            for {\n\n                let mindex := 0x00\n\n                let vindex := 0x1f\n\n            } lt(mindex, byteLen) {\n\n                mindex := add(mindex, 0x01)\n\n                vindex := sub(vindex, 0x01)\n\n            }{\n\n                mstore8(add(add(buff, 0x20), mindex), byte(vindex, v))\n\n            }\n\n            mstore(0x40, add(buff, 0x28))\n\n        }\n\n        return buff;\n",
+          "message": "ZeroCopySink.WriteUint64 (ZeroCopySink.sol#120-139) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "constant-function",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": 165,
+          "vulnerability_code": "    function WriteUint255(uint256 v) internal pure returns (bytes memory) {\n\n        require(v <= 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, \"Value exceeds uint255 range\");\n\n        bytes memory buff;\n\n\n\n        assembly{\n\n            buff := mload(0x40)\n\n            let byteLen := 0x20\n\n            mstore(buff, byteLen)\n\n            for {\n\n                let mindex := 0x00\n\n                let vindex := 0x1f\n\n            } lt(mindex, byteLen) {\n\n                mindex := add(mindex, 0x01)\n\n                vindex := sub(vindex, 0x01)\n\n            }{\n\n                mstore8(add(add(buff, 0x20), mindex), byte(vindex, v))\n\n            }\n\n            mstore(0x40, add(buff, 0x40))\n\n        }\n\n        return buff;\n",
+          "message": "ZeroCopySink.WriteUint255 (ZeroCopySink.sol#145-165) is declared view but contains assembly code\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": 41,
+          "vulnerability_code": "    function WriteBool(bool b) internal pure returns (bytes memory) {\n\n        bytes memory buff;\n\n        assembly{\n\n            buff := mload(0x40)\n\n            mstore(buff, 1)\n\n            switch iszero(b)\n\n            case 1 {\n\n                mstore(add(buff, 0x20), shl(248, 0x00))\n\n                // mstore8(add(buff, 0x20), 0x00)\n\n            }\n\n            default {\n\n                mstore(add(buff, 0x20), shl(248, 0x01))\n\n                // mstore8(add(buff, 0x20), 0x01)\n\n            }\n\n            mstore(0x40, add(buff, 0x21))\n\n        }\n\n        return buff;\n",
+          "message": "ZeroCopySink.WriteBool uses assembly (ZeroCopySink.sol#24-41)\n\t- ZeroCopySink.sol#26-39\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "    function WriteUint8(uint8 v) internal pure returns (bytes memory) {\n\n        bytes memory buff;\n\n        assembly{\n\n            buff := mload(0x40)\n\n            mstore(buff, 1)\n\n            mstore(add(buff, 0x20), shl(248, v))\n\n            // mstore(add(buff, 0x20), byte(0x1f, v))\n\n            mstore(0x40, add(buff, 0x21))\n\n        }\n\n        return buff;\n",
+          "message": "ZeroCopySink.WriteUint8 uses assembly (ZeroCopySink.sol#55-65)\n\t- ZeroCopySink.sol#57-63\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": 90,
+          "vulnerability_code": "    function WriteUint16(uint16 v) internal pure returns (bytes memory) {\n\n        bytes memory buff;\n\n\n\n        assembly{\n\n            buff := mload(0x40)\n\n            let byteLen := 0x02\n\n            mstore(buff, byteLen)\n\n            for {\n\n                let mindex := 0x00\n\n                let vindex := 0x1f\n\n            } lt(mindex, byteLen) {\n\n                mindex := add(mindex, 0x01)\n\n                vindex := sub(vindex, 0x01)\n\n            }{\n\n                mstore8(add(add(buff, 0x20), mindex), byte(vindex, v))\n\n            }\n\n            mstore(0x40, add(buff, 0x22))\n\n        }\n\n        return buff;\n",
+          "message": "ZeroCopySink.WriteUint16 uses assembly (ZeroCopySink.sol#71-90)\n\t- ZeroCopySink.sol#74-88\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": 114,
+          "vulnerability_code": "    function WriteUint32(uint32 v) internal pure returns(bytes memory) {\n\n        bytes memory buff;\n\n        assembly{\n\n            buff := mload(0x40)\n\n            let byteLen := 0x04\n\n            mstore(buff, byteLen)\n\n            for {\n\n                let mindex := 0x00\n\n                let vindex := 0x1f\n\n            } lt(mindex, byteLen) {\n\n                mindex := add(mindex, 0x01)\n\n                vindex := sub(vindex, 0x01)\n\n            }{\n\n                mstore8(add(add(buff, 0x20), mindex), byte(vindex, v))\n\n            }\n\n            mstore(0x40, add(buff, 0x24))\n\n        }\n\n        return buff;\n",
+          "message": "ZeroCopySink.WriteUint32 uses assembly (ZeroCopySink.sol#96-114)\n\t- ZeroCopySink.sol#98-112\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": 139,
+          "vulnerability_code": "    function WriteUint64(uint64 v) internal pure returns(bytes memory) {\n\n        bytes memory buff;\n\n\n\n        assembly{\n\n            buff := mload(0x40)\n\n            let byteLen := 0x08\n\n            mstore(buff, byteLen)\n\n            for {\n\n                let mindex := 0x00\n\n                let vindex := 0x1f\n\n            } lt(mindex, byteLen) {\n\n                mindex := add(mindex, 0x01)\n\n                vindex := sub(vindex, 0x01)\n\n            }{\n\n                mstore8(add(add(buff, 0x20), mindex), byte(vindex, v))\n\n            }\n\n            mstore(0x40, add(buff, 0x28))\n\n        }\n\n        return buff;\n",
+          "message": "ZeroCopySink.WriteUint64 uses assembly (ZeroCopySink.sol#120-139)\n\t- ZeroCopySink.sol#123-137\n"
+        },
+        {
+          "name": "assembly",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": 165,
+          "vulnerability_code": "    function WriteUint255(uint256 v) internal pure returns (bytes memory) {\n\n        require(v <= 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, \"Value exceeds uint255 range\");\n\n        bytes memory buff;\n\n\n\n        assembly{\n\n            buff := mload(0x40)\n\n            let byteLen := 0x20\n\n            mstore(buff, byteLen)\n\n            for {\n\n                let mindex := 0x00\n\n                let vindex := 0x1f\n\n            } lt(mindex, byteLen) {\n\n                mindex := add(mindex, 0x01)\n\n                vindex := sub(vindex, 0x01)\n\n            }{\n\n                mstore8(add(add(buff, 0x20), mindex), byte(vindex, v))\n\n            }\n\n            mstore(0x40, add(buff, 0x40))\n\n        }\n\n        return buff;\n",
+          "message": "ZeroCopySink.WriteUint255 uses assembly (ZeroCopySink.sol#145-165)\n\t- ZeroCopySink.sol#149-163\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": "Detected issues with version pragma in ZeroCopySink.sol:\n\t- pragma solidity^0.5.0 (ZeroCopySink.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": 41,
+          "vulnerability_code": "    function WriteBool(bool b) internal pure returns (bytes memory) {\n\n        bytes memory buff;\n\n        assembly{\n\n            buff := mload(0x40)\n\n            mstore(buff, 1)\n\n            switch iszero(b)\n\n            case 1 {\n\n                mstore(add(buff, 0x20), shl(248, 0x00))\n\n                // mstore8(add(buff, 0x20), 0x00)\n\n            }\n\n            default {\n\n                mstore(add(buff, 0x20), shl(248, 0x01))\n\n                // mstore8(add(buff, 0x20), 0x01)\n\n            }\n\n            mstore(0x40, add(buff, 0x21))\n\n        }\n\n        return buff;\n",
+          "message": "Function 'ZeroCopySink.WriteBool' (ZeroCopySink.sol#24-41) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 47,
+          "vulnerability_to_line": 49,
+          "vulnerability_code": "    function WriteByte(byte b) internal pure returns (bytes memory) {\n\n        return WriteUint8(uint8(b));\n",
+          "message": "Function 'ZeroCopySink.WriteByte' (ZeroCopySink.sol#47-49) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": 65,
+          "vulnerability_code": "    function WriteUint8(uint8 v) internal pure returns (bytes memory) {\n\n        bytes memory buff;\n\n        assembly{\n\n            buff := mload(0x40)\n\n            mstore(buff, 1)\n\n            mstore(add(buff, 0x20), shl(248, v))\n\n            // mstore(add(buff, 0x20), byte(0x1f, v))\n\n            mstore(0x40, add(buff, 0x21))\n\n        }\n\n        return buff;\n",
+          "message": "Function 'ZeroCopySink.WriteUint8' (ZeroCopySink.sol#55-65) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": 90,
+          "vulnerability_code": "    function WriteUint16(uint16 v) internal pure returns (bytes memory) {\n\n        bytes memory buff;\n\n\n\n        assembly{\n\n            buff := mload(0x40)\n\n            let byteLen := 0x02\n\n            mstore(buff, byteLen)\n\n            for {\n\n                let mindex := 0x00\n\n                let vindex := 0x1f\n\n            } lt(mindex, byteLen) {\n\n                mindex := add(mindex, 0x01)\n\n                vindex := sub(vindex, 0x01)\n\n            }{\n\n                mstore8(add(add(buff, 0x20), mindex), byte(vindex, v))\n\n            }\n\n            mstore(0x40, add(buff, 0x22))\n\n        }\n\n        return buff;\n",
+          "message": "Function 'ZeroCopySink.WriteUint16' (ZeroCopySink.sol#71-90) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": 114,
+          "vulnerability_code": "    function WriteUint32(uint32 v) internal pure returns(bytes memory) {\n\n        bytes memory buff;\n\n        assembly{\n\n            buff := mload(0x40)\n\n            let byteLen := 0x04\n\n            mstore(buff, byteLen)\n\n            for {\n\n                let mindex := 0x00\n\n                let vindex := 0x1f\n\n            } lt(mindex, byteLen) {\n\n                mindex := add(mindex, 0x01)\n\n                vindex := sub(vindex, 0x01)\n\n            }{\n\n                mstore8(add(add(buff, 0x20), mindex), byte(vindex, v))\n\n            }\n\n            mstore(0x40, add(buff, 0x24))\n\n        }\n\n        return buff;\n",
+          "message": "Function 'ZeroCopySink.WriteUint32' (ZeroCopySink.sol#96-114) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": 139,
+          "vulnerability_code": "    function WriteUint64(uint64 v) internal pure returns(bytes memory) {\n\n        bytes memory buff;\n\n\n\n        assembly{\n\n            buff := mload(0x40)\n\n            let byteLen := 0x08\n\n            mstore(buff, byteLen)\n\n            for {\n\n                let mindex := 0x00\n\n                let vindex := 0x1f\n\n            } lt(mindex, byteLen) {\n\n                mindex := add(mindex, 0x01)\n\n                vindex := sub(vindex, 0x01)\n\n            }{\n\n                mstore8(add(add(buff, 0x20), mindex), byte(vindex, v))\n\n            }\n\n            mstore(0x40, add(buff, 0x28))\n\n        }\n\n        return buff;\n",
+          "message": "Function 'ZeroCopySink.WriteUint64' (ZeroCopySink.sol#120-139) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": 165,
+          "vulnerability_code": "    function WriteUint255(uint256 v) internal pure returns (bytes memory) {\n\n        require(v <= 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, \"Value exceeds uint255 range\");\n\n        bytes memory buff;\n\n\n\n        assembly{\n\n            buff := mload(0x40)\n\n            let byteLen := 0x20\n\n            mstore(buff, byteLen)\n\n            for {\n\n                let mindex := 0x00\n\n                let vindex := 0x1f\n\n            } lt(mindex, byteLen) {\n\n                mindex := add(mindex, 0x01)\n\n                vindex := sub(vindex, 0x01)\n\n            }{\n\n                mstore8(add(add(buff, 0x20), mindex), byte(vindex, v))\n\n            }\n\n            mstore(0x40, add(buff, 0x40))\n\n        }\n\n        return buff;\n",
+          "message": "Function 'ZeroCopySink.WriteUint255' (ZeroCopySink.sol#145-165) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 171,
+          "vulnerability_to_line": 174,
+          "vulnerability_code": "    function WriteVarBytes(bytes memory data) internal pure returns (bytes memory) {\n\n        uint64 l = uint64(data.length);\n\n        return abi.encodePacked(WriteVarUint(l), data);\n",
+          "message": "Function 'ZeroCopySink.WriteVarBytes' (ZeroCopySink.sol#171-174) is not in mixedCase\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 176,
+          "vulnerability_to_line": 186,
+          "vulnerability_code": "    function WriteVarUint(uint64 v) internal pure returns (bytes memory) {\n\n        if (v < 0xFD){\n\n    \t\treturn WriteUint8(uint8(v));\n\n    \t} else if (v <= 0xFFFF) {\n\n    \t\treturn abi.encodePacked(WriteByte(0xFD), WriteUint16(uint16(v)));\n\n    \t} else if (v <= 0xFFFFFFFF) {\n\n            return abi.encodePacked(WriteByte(0xFE), WriteUint32(uint32(v)));\n\n    \t} else {\n\n    \t\treturn abi.encodePacked(WriteByte(0xFF), WriteUint64(uint64(v)));\n\n    \t}\n",
+          "message": "Function 'ZeroCopySink.WriteVarUint' (ZeroCopySink.sol#176-186) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 177,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        if (v < 0xFD){\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 179,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    \t} else if (v <= 0xFFFF) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 180,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    \t\treturn abi.encodePacked(WriteByte(0xFD), WriteUint16(uint16(v)));\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 181,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    \t} else if (v <= 0xFFFFFFFF) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 182,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "            return abi.encodePacked(WriteByte(0xFE), WriteUint32(uint32(v)));\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ADDRESS_HARDCODED",
+          "vulnerability_from_line": 184,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    \t\treturn abi.encodePacked(WriteByte(0xFF), WriteUint64(uint64(v)));\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.0;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 24,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function WriteBool(bool b) internal pure returns (bytes memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 55,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function WriteUint8(uint8 v) internal pure returns (bytes memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 71,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function WriteUint16(uint16 v) internal pure returns (bytes memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 96,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function WriteUint32(uint32 v) internal pure returns(bytes memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 120,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function WriteUint64(uint64 v) internal pure returns(bytes memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SHOULD_NOT_BE_PURE",
+          "vulnerability_from_line": 145,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    function WriteUint255(uint256 v) internal pure returns (bytes memory) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 26,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly{\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 57,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly{\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 74,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly{\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 98,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly{\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 123,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly{\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_USING_INLINE_ASSEMBLY",
+          "vulnerability_from_line": 149,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        assembly{\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "exception (IndexError: pop from empty list)"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

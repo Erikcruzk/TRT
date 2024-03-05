@@ -1,0 +1,144 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 20,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor () internal {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 21,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    owner = msg.sender;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 22,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    emit OwnershipTransferred(address(0), owner);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 23,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(msg.sender == owner, \"Ownable#onlyOwner: SENDER_IS_NOT_OWNER\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-custom-error-not-require",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_newOwner != address(0), \"Ownable#transferOwnership: INVALID_ADDRESS\");\n",
+          "message": "Consider using custom errors as they are more gas efficient while allowing developers  to describe the error in detail using NatSpec."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 29,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(msg.sender == owner, \"Ownable#onlyOwner: SENDER_IS_NOT_OWNER\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        },
+        {
+          "name": "use-short-revert-string",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    require(_newOwner != address(0), \"Ownable#transferOwnership: INVALID_ADDRESS\");\n",
+          "message": "Shortening revert strings to fit in 32 bytes will decrease gas costs for deployment and  gas costs when the revert condition has been met."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_5"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "pragma",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": "Different versions of Solidity is used in Ownable.sol:\n\t- Version used: ['ABIEncoderV2', '^0.5.16']\n\t- Ownable.sol#3 declares pragma solidity^0.5.16\n\t- Ownable.sol#4 declares pragma experimentalABIEncoderV2\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": 41,
+          "vulnerability_code": "  function transferOwnership(address _newOwner) public onlyOwner {\n\n    require(_newOwner != address(0), \"Ownable#transferOwnership: INVALID_ADDRESS\");\n\n    owner = _newOwner;\n\n    emit OwnershipTransferred(owner, _newOwner);\n",
+          "message": "Ownable.transferOwnership (Ownable.sol#37-41) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": 48,
+          "vulnerability_code": "  function getOwner() public view returns (address) {\n\n    return owner;\n",
+          "message": "Ownable.getOwner (Ownable.sol#46-48) should be declared external\n"
+        },
+        {
+          "name": "solc-version",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": "Detected issues with version pragma in Ownable.sol:\n\t- pragma solidity^0.5.16 (Ownable.sol#3): it allows old versions\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferOwnership(address _newOwner) public onlyOwner {\n",
+          "message": "Parameter '_newOwner' of Ownable.transferOwnership (Ownable.sol#37) is not in mixedCase\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 3,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.5.16;\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": false,
+      "errors": [
+        "execution failed"
+      ],
+      "vulnerability_findings": []
+    },
+    "mythril": {
+      "successfull_analysis": false,
+      "errors": [
+        "input files do not contain any valid contracts"
+      ],
+      "vulnerability_findings": []
+    },
+    "osiris": {
+      "successfull_analysis": false,
+      "errors": [
+        "Solidity compilation failed"
+      ],
+      "vulnerability_findings": []
+    }
+  }
+}

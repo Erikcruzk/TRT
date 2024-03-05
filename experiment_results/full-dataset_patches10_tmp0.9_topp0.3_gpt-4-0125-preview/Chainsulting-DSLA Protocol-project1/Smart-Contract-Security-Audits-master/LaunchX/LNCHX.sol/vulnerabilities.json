@@ -1,0 +1,309 @@
+{
+  "smartbugs_completed": true,
+  "analyzer_results": {
+    "semgrep": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "array-length-outside-loop",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < receivers.length; i++) {\n",
+          "message": "Caching the array length outside a loop saves reading it on each iteration, as long as the array's length is not changed during the loop."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 37,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  constructor() public {\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 38,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    balances[msg.sender] = _totalSupply;\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 39,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    emit Transfer(address(0), msg.sender, _totalSupply);\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "non-payable-constructor",
+          "vulnerability_from_line": 40,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  }\n",
+          "message": "Consider making costructor payable to save gas."
+        },
+        {
+          "name": "unnecessary-checked-arithmetic-in-loop",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < receivers.length; i++) {\n",
+          "message": "A lot of times there is no risk that the loop counter can overflow. Using Solidity's unchecked block saves the overflow checks."
+        },
+        {
+          "name": "use-prefix-increment-not-postfix",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < receivers.length; i++) {\n",
+          "message": "Consider using the prefix increment expression whenever the return value is not needed. The prefix increment expression is cheaper in terms of gas."
+        }
+      ]
+    },
+    "slither": {
+      "successfull_analysis": true,
+      "errors": [
+        "EXIT_CODE_14"
+      ],
+      "vulnerability_findings": [
+        {
+          "name": "constable-states",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint256 _totalSupply = 75000000 * (10**18); // 75 million LAUNCHX token supply\n",
+          "message": "LaunchX._totalSupply should be constant (LNCHX.sol#35)\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 8,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function totalSupply() external view returns (uint256);\n",
+          "message": "ERC20.totalSupply (LNCHX.sol#8) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 42,
+          "vulnerability_to_line": 44,
+          "vulnerability_code": "  function totalSupply() public view returns (uint256) {\n\n    return _totalSupply;\n",
+          "message": "LaunchX.totalSupply (LNCHX.sol#42-44) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 46,
+          "vulnerability_to_line": 48,
+          "vulnerability_code": "  function balanceOf(address player) public view returns (uint256) {\n\n    return balances[player];\n",
+          "message": "LaunchX.balanceOf (LNCHX.sol#46-48) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 9,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function balanceOf(address who) external view returns (uint256);\n",
+          "message": "ERC20.balanceOf (LNCHX.sol#9) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 10,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function allowance(address owner, address spender) external view returns (uint256);\n",
+          "message": "ERC20.allowance (LNCHX.sol#10) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 50,
+          "vulnerability_to_line": 52,
+          "vulnerability_code": "  function allowance(address player, address spender) public view returns (uint256) {\n\n    return allowed[player][spender];\n",
+          "message": "LaunchX.allowance (LNCHX.sol#50-52) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": 77,
+          "vulnerability_code": "  function approve(address spender, uint256 value) public returns (bool) {\n\n    require(spender != address(0));\n\n    allowed[msg.sender][spender] = value;\n\n    emit Approval(msg.sender, spender, value);\n\n    return true;\n",
+          "message": "LaunchX.approve (LNCHX.sol#72-77) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 12,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address spender, uint256 value) external returns (bool);\n",
+          "message": "ERC20.approve (LNCHX.sol#12) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 86,
+          "vulnerability_to_line": 98,
+          "vulnerability_code": "  function transferFrom(address from, address to, uint256 value) public returns (bool) {\n\n    require(value <= balances[from]);\n\n    require(value <= allowed[from][msg.sender]);\n\n    require(to != address(0));\n\n\n\n    balances[from] = balances[from].sub(value);\n\n    balances[to] = balances[to].add(value);\n\n\n\n    allowed[from][msg.sender] = allowed[from][msg.sender].sub(value);\n\n\n\n    emit Transfer(from, to, value);\n\n    return true;\n",
+          "message": "LaunchX.transferFrom (LNCHX.sol#86-98) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 14,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function transferFrom(address from, address to, uint256 value) external returns (bool);\n",
+          "message": "ERC20.transferFrom (LNCHX.sol#14) should be declared external\n"
+        },
+        {
+          "name": "external-function",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": 70,
+          "vulnerability_code": "  function multiTransfer(address[] memory receivers, uint256[] memory amounts) public {\n\n    for (uint256 i = 0; i < receivers.length; i++) {\n\n      transfer(receivers[i], amounts[i]);\n\n    }\n",
+          "message": "LaunchX.multiTransfer (LNCHX.sol#66-70) should be declared external\n"
+        },
+        {
+          "name": "naming-convention",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint256 _totalSupply = 75000000 * (10**18); // 75 million LAUNCHX token supply\n",
+          "message": "Variable 'LaunchX._totalSupply' (LNCHX.sol#35) is not in mixedCase\n"
+        },
+        {
+          "name": "unused-state",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  address owner = msg.sender;\n",
+          "message": "LaunchX.owner (LNCHX.sol#33) is never used in LaunchX\n"
+        }
+      ]
+    },
+    "smartcheck": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "SOLIDITY_DIV_MUL",
+          "vulnerability_from_line": 135,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    return mul(div(d,m),m);\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_ERC20_APPROVE",
+          "vulnerability_from_line": 72,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function approve(address spender, uint256 value) public returns (bool) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_EXTRA_GAS_IN_LOOPS",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < receivers.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_GAS_LIMIT_IN_LOOPS",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < receivers.length; i++) {\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRAGMAS_VERSION",
+          "vulnerability_from_line": 5,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "pragma solidity ^0.4.25;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 27,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  mapping (address => uint256) private balances;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA",
+          "vulnerability_from_line": 28,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  mapping (address => mapping (address => uint256)) private allowed;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_SAFEMATH",
+          "vulnerability_from_line": 25,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  using SafeMath for uint256;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 33,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  address owner = msg.sender;\n",
+          "message": null
+        },
+        {
+          "name": "SOLIDITY_VISIBILITY",
+          "vulnerability_from_line": 35,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  uint256 _totalSupply = 75000000 * (10**18); // 75 million LAUNCHX token supply\n",
+          "message": null
+        }
+      ]
+    },
+    "oyente": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Overflow",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function multiTransfer(address[] memory receivers, uint256[] memory amounts) public {\n",
+          "message": null
+        }
+      ]
+    },
+    "mythril": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function multiTransfer(address[] memory receivers, uint256[] memory amounts) public {\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Integer Arithmetic Bugs (SWC 101)",
+          "vulnerability_from_line": 66,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "  function multiTransfer(address[] memory receivers, uint256[] memory amounts) public {\n",
+          "message": "The arithmetic operator can overflow.\nIt is possible to cause an integer overflow or underflow in the arithmetic operation. \nClassification: SWC-101"
+        },
+        {
+          "name": "Exception State (SWC 110)",
+          "vulnerability_from_line": 67,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "    for (uint256 i = 0; i < receivers.length; i++) {\n",
+          "message": "An assertion violation was triggered.\nIt is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).\nClassification: SWC-110"
+        },
+        {
+          "name": "External Call To User-Supplied Address (SWC 107)",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, this, data);\n",
+          "message": "A call to a user-supplied address is executed.\nAn external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.\nClassification: SWC-107"
+        }
+      ]
+    },
+    "osiris": {
+      "successfull_analysis": true,
+      "errors": [],
+      "vulnerability_findings": [
+        {
+          "name": "Overflow bugs",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, this, data);\n",
+          "message": null
+        },
+        {
+          "name": "Underflow bugs",
+          "vulnerability_from_line": 82,
+          "vulnerability_to_line": null,
+          "vulnerability_code": "        ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, this, data);\n",
+          "message": null
+        }
+      ]
+    }
+  }
+}
