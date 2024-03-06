@@ -4,6 +4,17 @@ import re
 
 class Explorer:
     DEBUG = False
+    BLOCKS = [
+        "function",
+        "contract",
+        "library",
+        "abstract contract",
+        "interface",
+        "while",
+        "for",
+        "assembly",
+        "unchecked"
+    ]
 
     @staticmethod
     def dprint(arg):
@@ -72,19 +83,14 @@ class Explorer:
     @staticmethod
     def get_enclosing_nodes(src, start, end) -> dict:
         Explorer.dprint(f"\nstart: {start}, end: {end}\n")
-        '''
-        if end is None and start is not None:
-            end = start + 1
-        if end is None and start is None:
-            return {
-                'function': None,
-                'contract': None
-            }
-        '''
-        end = start + 1
-
+        
+        # if end is None:
+        #     end = start + 1
+        
         if start > end:
             raise ValueError("Start line cannot be greater than the end line.")
+        
+        
         function_keywords = [
             "constructor",
             "function"
@@ -103,13 +109,25 @@ class Explorer:
 
         stack = Stack()
 
-        up = start + 1
-        down = end - 1
+        
 
         src_lines = src.split('\n')
         len_src_lines = len(src_lines)
+        
+        # there is a difference between difinition start and block start of the unit; we point to block start with start variable
+        definition_start = start
 
-        to_find = ['function', 'contract', 'modifier']
+
+        if any(element in src_lines[start] for element in ['contract', 'function', 'abstract contract', 'interface', 'library']):
+            while "{" not in src_lines[start]:
+                start += 1                
+
+        end = start + 1
+
+        up = start + 1
+        down = end - 1
+
+        to_find = ['function', 'contract']
         enclosing_nodes = {
             'function': None,
             'contract': None
@@ -143,6 +161,11 @@ class Explorer:
                     Explorer.dprint(f"Saw a }} at line {down} (going down), and skipping it... ---- stack items: {stack.items}")
                     c_down -= 1
             if direction == 'up':
+                
+                if up <= 1245:
+                    print(f'+++ up: {up} line: {src_lines[up]}')
+                    
+
                 up -= 1
                 if up <= 0:
                     Explorer.dprint(f"Reaching the begining of the file going up, going down (next down is {down+1}) ---- stack items: {stack.items}")
@@ -152,12 +175,21 @@ class Explorer:
                 if "{" in src_lines[up] and "}" in src_lines[up]:
                     pass    
                 elif "{" in src_lines[up] and c_up == 0:
+                    Explorer.dprint('we found one!!!')
+                    # trying to see if the function, contract, etc. identifier exists in the same line as { is
+                    any_blocks = any(element in src_lines[up] for element in Explorer.BLOCKS)
+                    while not any_blocks:
+                        # go up so you find anything
+                        direction = 'up'
+                        up -= 1
+                        any_blocks = any(element in src_lines[up] for element in Explorer.BLOCKS)
+
                     stack.push({
                         'token': "{",
                         'line': up
                     })
                     top = stack.pop()
-                    found_statement = src_lines[top['line']]
+                    found_statement = src_lines[top['line']]                    
                     start_of_found_statement = top['line']
 
                     top = stack.pop()
@@ -175,10 +207,11 @@ class Explorer:
 
                         if len(to_find) > 0:
                             Explorer.dprint(f"Just identified an enclosing node (at line {up}) while moving up, going down now (next down is: {down+1})")
+
                             direction = 'down'
                             continue
                     elif len(to_find) > 0:
-                        Explorer.dprint(f"Just identified an enclosing node (at line {up}) while moving up, going down now (next down is: {down+1}) ---- stack items: {stack.items}")                            
+                        Explorer.dprint(f"Just identified an undesirable enclosing node (at line {up}) while moving up, going down now (next down is: {down+1}) ---- stack items: {stack.items}")                            
                         direction = 'down'
                         continue
                     else:
