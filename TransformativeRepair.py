@@ -766,9 +766,9 @@ class TransformativeRepair:
                     
                     # assumption: whatever immediately encloses the vulnerable chunk will be what LLM will return to us as the repaired chunk
                     try: 
-                        explorer.Explorer.DEBUG = True
+                        #explorer.Explorer.DEBUG = True
                         vulnerable_chunk_enclosing_nodes = explorer.Explorer.get_enclosing_nodes(sc.source_code, result['vulnerability_from_line']-1 if result['vulnerability_from_line'] is not None else None, result['vulnerability_to_line']-1 if result['vulnerability_to_line'] is not None else None)
-                        print(f"\n\n$$$$ Vulnerable chunk enclosing nodes is: \n{vulnerable_chunk_enclosing_nodes} \n\n")
+                        #print(f"\n\n$$$$ Vulnerable chunk enclosing nodes is: \n{vulnerable_chunk_enclosing_nodes} \n\n")
                     except stack.StackEmptyError as e:
                         TransformativeRepair.failed_enclosing_nodes_list.append({
                             'sc_path': str(sc_path),
