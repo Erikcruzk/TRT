@@ -8,7 +8,7 @@ TRT is the first tool for Automatic Program Repair (APR) of Solidity Smart Contr
 ## Init
 
 1. Clone repo
-2. Add your openAI key in the .env file
+2. Add your openAI key in the .env file (You can find an example on .env.example)
 ```
 cd TRT
 touch .env
