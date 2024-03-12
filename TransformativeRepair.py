@@ -85,7 +85,7 @@ class TransformativeRepair:
         self.shave = experiment_settings["shave"]
         self.threshold = experiment_settings["threshold"]
 
-        self.preanalized = experiment_settings["preanalized"]
+        self.preanalyzed = experiment_settings["preanalyzed"]
         self.analysis_results_directory = experiment_settings["analysis_results_directory"]
 
         # Create queues for smartbugs and repair smart contracts
@@ -249,7 +249,7 @@ class TransformativeRepair:
         repair_target_graphs = {}
         compile_graph = nx.DiGraph()
 
-        if experiment_settings['preanalized']:
+        if experiment_settings['preanalyzed']:
             sc_result_dirs = []
             print(results_dir)
             for root, dirs, files in os.walk(results_dir):
@@ -465,7 +465,7 @@ class TransformativeRepair:
                 finished = True
                 
                 
-                if experiment_settings['preanalized']:
+                if experiment_settings['preanalyzed']:
                     sc_result_dirs = []
                     for root, dirs, files in os.walk(results_dir):
                         for item in dirs:
@@ -547,7 +547,7 @@ class TransformativeRepair:
                 
                 print('` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` line 456` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ')
 
-                if experiment_settings['preanalized']:
+                if experiment_settings['preanalyzed']:
                     print('` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` line 459` ` ` ` ` `  ` ` ` ` ` ` ` ` ` ` ` ` `  ` ` ` ` ` ` ')
                     sc_result_dirs = []
                     for root, dirs, files in os.walk(results_dir):
@@ -991,8 +991,8 @@ class TransformativeRepair:
     def start(self):
         #### Start!
         print(f'Starting experiment: {self.experiment_results_dir}')
-        log.info("TRT RUNNING ON PREANALYZED == %s",self.preanalized )
-        if not self.preanalized:
+        log.info("TRT RUNNING ON PREANALYZED == %s",self.preanalyzed )
+        if not self.preanalyzed:
             self.full_analysis()
         else:
             self.minimal_analysis()
@@ -1142,6 +1142,8 @@ class TransformativeRepair:
    
     def minimal_analysis(self):
         log.info("STARTING MINIMAL ANALYSIS")
+
+        
         #### Step 1: Add all vulnerable sc to smartbugs_sc_queue
         self.experiment_results_dir.mkdir(parents=True, exist_ok=True)
         shutil.copyfile('config.yml', os.path.join(self.experiment_results_dir, "config.yml"))
@@ -1204,7 +1206,7 @@ class TransformativeRepair:
                         #print(f'\nk is: {k}\n\nv is: {v}\n\n')
 
                         sc_vulnerable_count += 1
-                        log.info("ADDING \s TO repair_sc_queue", str(result_path))
+                        log.info("ADDING %s TO repair_sc_queue", str(result_path))
                         self.repair_sc_queue.put(Path(os.path.join(result_path, file_name)))
                 # print(f'The total target_vulnerabilities_found is: {target_vulnerabilities_found}')
                 # print(f'Total number of files at least contained one vulnerability: {count_srcs_containing_at_least_one_vulnerability}')
@@ -1219,7 +1221,7 @@ class TransformativeRepair:
         # Initialize progress bar
         n_candidate_patches = self.llm_settings[self.experiment_settings["llm_model_name"]]["num_candidate_patches"]
         #print(f"Vulnerability count is {sc_vulnerable_count * n_candidate_patches}")
-        log.info("TOTAL VULNERABILITIES FOUND \s",target_vulnerabilities_found)
+        log.info("TOTAL VULNERABILITIES FOUND %s",target_vulnerabilities_found)
         progressbar = tqdm(total=target_vulnerabilities_found,
                            desc="repair process", colour='#ff5a5f')
         
