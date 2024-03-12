@@ -655,7 +655,6 @@ class TransformativeRepair:
                                           progressbar: tqdm) -> None:
         atexit.register(clear_queue, smartbugs_sc_queue)
         atexit.register(clear_queue, repair_sc_queue)
-        log.info("STARTING CONSUMING VULNERABILITITES QUEUE")
         while not stop_event.is_set():
             try:
                 sc_path, do_repair_sc = smartbugs_sc_queue.get(block=False)
@@ -1002,6 +1001,8 @@ class TransformativeRepair:
 
     def full_analysis(self):
         log.info("STARTING FULL ANALYSIS")
+
+        log.info("STEP 1: Adding all vulnerable sc to smartbugs_sc_queue")
         #### Step 1: Add all vulnerable sc to smartbugs_sc_queue
         self.experiment_results_dir.mkdir(parents=True, exist_ok=True)
 
@@ -1037,12 +1038,14 @@ class TransformativeRepair:
         stop_event = threading.Event()
         atexit.register(close_all_threads, stop_event)
 
+        log.info("STEP 2: Consume smartbugs_queue")
         #### Step 2: Consume smartbugs_queue
         for i in range(self.experiment_settings["n_smartbugs_threads"]):
             smartbugs_thread = threading.Thread(target=TransformativeRepair.consumer_of_vulnerabilities_queue, args=(
                 self.experiment_settings, self.smartbugs_sc_queue, self.repair_sc_queue, stop_event, progressbar))
             smartbugs_thread.start()
 
+        log.info("STEP 3: Consume smart repair_sc_queue")
         #### Step 2: Consume smart repair_sc_queue
         for i in range(self.experiment_settings["n_repair_threads"]):
             repair_thread = threading.Thread(target=TransformativeRepair.consumer_of_repair_queue, args=(
