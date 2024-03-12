@@ -10,6 +10,8 @@ import time
 import networkx as nx
 import openai
 import tiktoken
+import logging as log
+log.basicConfig(format='%(levelname)s:%(message)s', level=log.DEBUG)
 
 from pyvis.network import Network
 from SmartContract import SmartContract
@@ -41,6 +43,7 @@ class TransformativeRepair:
     failed_llm_repair_list = []
     successful_repair_list = []
     failed_enclosing_nodes_list = []
+    log.info("TRT STARTS")
 
     def __init__(self, experiment_settings: dict, llm_settings: dict) -> None:
         """
@@ -652,10 +655,11 @@ class TransformativeRepair:
                                           progressbar: tqdm) -> None:
         atexit.register(clear_queue, smartbugs_sc_queue)
         atexit.register(clear_queue, repair_sc_queue)
+        log.info("STARTING CONSUMING VULNERABILITITES QUEUE")
         while not stop_event.is_set():
             try:
-                
                 sc_path, do_repair_sc = smartbugs_sc_queue.get(block=False)
+                log.info("STARTING SMARTBUGS FOR "+ str(sc_path))
                 TransformativeRepair.find_vulnerabilities(experiment_setting, sc_path, do_repair_sc, repair_sc_queue,
                                                           progressbar)
                 # print(progressbar.n) 
@@ -665,36 +669,10 @@ class TransformativeRepair:
     @staticmethod
     def repair_sc(experiment_settings: dict, llm_settings: dict, sc_path: Path, smartbugs_sc_queue: queue.Queue,
                   progressbar: tqdm, repair_sc_queue: queue.Queue):
-        '''
-        candidate_patches_dir = Path(os.path.join(sc_path.parent.absolute(), f"{analyzer}", f"{result_index}", "candidate_patches"))
-        print(f"Candidate patches directory is: {candidate_patches_dir}")
-        candidate_patches_dir.mkdir(parents=True, exist_ok=True)
 
-        Load patch results if exists
-        patches_results_path = os.path.join(candidate_patches_dir, "patch_results.json")
-        patches_results = json.load(open(patches_results_path, 'r')) if os.path.isfile(patches_results_path) else {}
-        patches_results["patch_generation_completed"] = patches_results.get("patch_generation_completed", False) == True
-
-        Return if patches already generated and successfull
-        if patches_results["patch_generation_completed"]:
-            for patch_name, duplicate_list in patches_results["unique_patches"].items():
-                patch_dir, _ = os.path.splitext(patch_name)
-                patch_path = Path(os.path.join(candidate_patches_dir, patch_dir, patch_name))
-
-                sc = SmartContract(experiment_settings, patch_path)
-                if not sc.vulnerabilities.get("smartbugs_completed", False):
-                    smartbugs_sc_queue.put((patch_path, False))
-                else:
-                    sc.remove_old_smartbugs_directories()
-                    progressbar.update(1)
-
-                    # Add duplicate patches as completed
-                progressbar.update(len(duplicate_list))
-                # print(progressbar.n)
-            return
-        '''
+        log.info("CALL TO repair_sc")
         
-        
+        log.info("STEP 1:  Initialize SC")
         #### Step 1: Initialize SC
         sc = SmartContract(experiment_settings, sc_path)
         #sc.source_code = reducer.remove_NatSpec_and_comments(sc.source_code)
@@ -702,7 +680,7 @@ class TransformativeRepair:
             reduced_vuln_file.write(sc.source_code)
                     
         filtered_analysis_results = PromptEngine.delete_empty_analyzers(sc.vulnerabilities["analyzer_results"], experiment_settings["target_vulnerabilities"], sc.path)
-        
+        log.info("STEP 2:  Iterate over all target analyzers and vulnerabilities")
         if filtered_analysis_results:
             #### Step 2: Iterate over all target analyzers as well as their detected vulnerabilities
             for analyzer, results in filtered_analysis_results.items():
@@ -757,7 +735,7 @@ class TransformativeRepair:
                         "vulnerability_from_line": result["vulnerability_from_line"],
                         "vulnerability_to_line": result["vulnerability_to_line"]
                     }
-
+                    log.info("STEP 3: Create Prompt Engine and generate prompt")
                     #### Step 3: Create Prompt Engine and generate prompt
                     pe = PromptEngine(sc, experiment_settings)
                     
@@ -810,10 +788,12 @@ class TransformativeRepair:
                     with open(os.path.join(this_vuln_results_directory, "vulnerable_chunk_info.json"), "w") as vulnerable_chunk_info_file: 
                         json.dump(vulnerable_chunk_info, vulnerable_chunk_info_file)
 
+                    log.info("STEP 4: Save prompt")
                     #### Step 4: Save prompt
                     with open(os.path.join(this_vuln_results_directory, "prompt.txt"), 'w') as file:
                         file.write(prompt)
 
+                    log.info("STEP 5: Repair smart contract")
                     #### Step 5: Repair smart contract
                     model_name = experiment_settings["llm_model_name"]
                     candidate_patches_paths = []
@@ -984,7 +964,9 @@ class TransformativeRepair:
         atexit.register(clear_queue, repair_sc_queue)
         while not stop_event.is_set():
             try:
+                
                 sc_path = repair_sc_queue.get(block=False)
+                print("START REPAIR FOR "+ str(sc_path))
                 TransformativeRepair.repair_sc(experiment_setting, llm_settings, sc_path, smartbugs_sc_queue,
                                                progressbar, repair_sc_queue)
                 #print(f'\n### Items currently left in repair_sc_queue are: {repair_sc_queue.qsize()} ;;; stop_event is not set! \n')
@@ -1010,15 +992,16 @@ class TransformativeRepair:
     def start(self):
         #### Start!
         print(f'Starting experiment: {self.experiment_results_dir}')
-
+        log.info("TRT RUNNING ON PREANALYZED == %s",self.preanalized )
         if not self.preanalized:
             self.full_analysis()
         else:
             self.minimal_analysis()
+            
             #self.partial_analysis()
 
     def full_analysis(self):
-
+        log.info("STARTING FULL ANALYSIS")
         #### Step 1: Add all vulnerable sc to smartbugs_sc_queue
         self.experiment_results_dir.mkdir(parents=True, exist_ok=True)
 
@@ -1045,9 +1028,10 @@ class TransformativeRepair:
                     sc_vulnerable_count += 1
                     self.smartbugs_sc_queue.put((sc_results_path, True))
 
-        # Initialize progress bar
+        # Initialize progress bar           
         n_candidate_patches = self.llm_settings[self.experiment_settings["llm_model_name"]]["num_candidate_patches"]
-        progressbar = tqdm(total=sc_vulnerable_count + sc_vulnerable_count * n_candidate_patches,
+        log.info("STARTING PROGRESS BAR WITH %s contracts to analyze", str(sc_vulnerable_count)) 
+        progressbar = tqdm(total=sc_vulnerable_count ,
                            desc="Smartbugs processes", colour='#ff5a5f')
 
         stop_event = threading.Event()
@@ -1154,10 +1138,9 @@ class TransformativeRepair:
         return
    
     def minimal_analysis(self):
-        
+        log.info("STARTING MINIMAL ANALYSIS")
         #### Step 1: Add all vulnerable sc to smartbugs_sc_queue
         self.experiment_results_dir.mkdir(parents=True, exist_ok=True)
-
         shutil.copyfile('config.yml', os.path.join(self.experiment_results_dir, "config.yml"))
 
         sc_vulnerable_count = 0
@@ -1165,7 +1148,6 @@ class TransformativeRepair:
         count_srcs_containing_at_least_one_vulnerability = 0
 
         for project in os.listdir(self.analysis_results_directory):
-
             results_dir = Path(os.path.join(self.experiment_results_dir, project))
             results_dir.mkdir(parents=True, exist_ok=True)
             
@@ -1175,9 +1157,9 @@ class TransformativeRepair:
                 with open(project_vulnerabilities_src, 'r') as f:
                     
                     project_vulnerabilities = json.load(f)
-                    
                     for k, v in project_vulnerabilities.items():
                         #print(f"\n\n source file: {k}\n\n")    
+                        
                         
                         filtered_analysis_results = PromptEngine.delete_empty_analyzers(v, self.experiment_settings["target_vulnerabilities"], "")
                         
@@ -1193,7 +1175,7 @@ class TransformativeRepair:
                                 
                                 # vulnerability array is accessible through results['vulnerability_findings']
                                 for result in results['vulnerability_findings']:
-                                    #print(f"\n\n Vulnerability: {result}\n\n")        
+                                    log.info(f"\n\n Vulnerability: {result}\n\n")        
                                     target_vulnerabilities_found += 1
                                 
 
@@ -1219,6 +1201,7 @@ class TransformativeRepair:
                         #print(f'\nk is: {k}\n\nv is: {v}\n\n')
 
                         sc_vulnerable_count += 1
+                        log.info("ADDING \s TO repair_sc_queue", str(result_path))
                         self.repair_sc_queue.put(Path(os.path.join(result_path, file_name)))
                 # print(f'The total target_vulnerabilities_found is: {target_vulnerabilities_found}')
                 # print(f'Total number of files at least contained one vulnerability: {count_srcs_containing_at_least_one_vulnerability}')
@@ -1226,18 +1209,20 @@ class TransformativeRepair:
             except NotADirectoryError as e:
                 print(f'Skipping {project_vulnerabilities_src} project as no vulnerabilities.json detected.')
             try: 
+                log.info("FOLDER LOOKING FOR project_vulnerabilities "+ str(results_dir))
                 shutil.copyfile(project_vulnerabilities_src, os.path.join(results_dir, "project_vulnerabilities.json"))
             except NotADirectoryError as e:
                 print(f'Skipping {project_vulnerabilities_src} project as no vulnerabilities.json detected.')
         # Initialize progress bar
         n_candidate_patches = self.llm_settings[self.experiment_settings["llm_model_name"]]["num_candidate_patches"]
         #print(f"Vulnerability count is {sc_vulnerable_count * n_candidate_patches}")
+        log.info("TOTAL VULNERABILITIES FOUND \s",target_vulnerabilities_found)
         progressbar = tqdm(total=target_vulnerabilities_found,
-                           desc="Smartbugs processes", colour='#ff5a5f')
+                           desc="repair process", colour='#ff5a5f')
         
         stop_event = threading.Event()
         atexit.register(close_all_threads, stop_event)
-
+        log.info("STEP 2: CONSUMING SMARTBUGS_QUEUE")
         #### Step 2: Consume smartbugs_queue
         for i in range(self.experiment_settings["n_smartbugs_threads"]):
             smartbugs_thread = threading.Thread(target=TransformativeRepair.consumer_of_vulnerabilities_queue, args=(
@@ -1245,7 +1230,7 @@ class TransformativeRepair:
             smartbugs_thread.start()
 
         #### Step 2: Consume smart repair_sc_queue
-
+        log.info("STEP 3: CONSUMING REPAIR_QUEUE")
         for i in range(self.experiment_settings["n_repair_threads"]):
             repair_thread = threading.Thread(target=TransformativeRepair.consumer_of_repair_queue, args=(
                 self.experiment_settings, self.llm_settings, self.smartbugs_sc_queue, self.repair_sc_queue, stop_event,
@@ -1256,5 +1241,4 @@ class TransformativeRepair:
         shutdown_thread = threading.Thread(target=TransformativeRepair.shutdown_thread,
                                            args=(self.experiment_settings, self.llm_settings, stop_event))
         shutdown_thread.start()
-
         return   
