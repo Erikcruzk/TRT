@@ -162,8 +162,8 @@ class Explorer:
                     c_down -= 1
             if direction == 'up':
                 
-                if up <= 1245:
-                    print(f'+++ up: {up} line: {src_lines[up]}')
+                #if up <= 1245:
+                    #print(f'+++ up: {up} line: {src_lines[up]}')
                     
 
                 up -= 1
