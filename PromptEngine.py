@@ -85,7 +85,7 @@ class PromptEngine:
             List[str]:
         # Generate Repair
         #openai.api_key = os.environ.get(llm_settings["secret_api_key"])
-        openai.api_key = llm_settings["secret_api_key"]
+        openai.api_key = os.environ.get(llm_settings["secret_api_key"])
         
         try:
 

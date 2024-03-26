@@ -993,16 +993,17 @@ class TransformativeRepair:
                     TransformativeRepair.failed_enclosing_nodes_list
                     TransformativeRepair.failed_llm_repair_list
                     TransformativeRepair.successful_repair_list
-
-                    with open(f"{os.path.join('failed_enclosing_nodes_list.json')}", 'w') as file:
+                    exp_folder=re.search(r'.*?_gpt-[^/]+/', str(sc_path)).group()
+                    
+                    with open(f"{os.path.join(exp_folder+'/failed_enclosing_nodes_list.json')}", 'w') as file:
                         json.dump(TransformativeRepair.failed_enclosing_nodes_list, file, indent=4) 
 
-                    with open(f"{os.path.join('failed_llm_repair_list.json')}", 'w') as file:
+                    with open(f"{os.path.join(exp_folder+'failed_llm_repair_list.json')}", 'w') as file:
                         json.dump(TransformativeRepair.failed_llm_repair_list, file, indent=4) 
 
-                    with open(f"{os.path.join('successful_repair_list.json')}", 'w') as file:
+                    with open(f"{os.path.join(exp_folder+'successful_repair_list.json')}", 'w') as file:
                         json.dump(TransformativeRepair.successful_repair_list, file, indent=4) 
-
+                    
                     exit()
             except queue.Empty:
                 time.sleep(1)
